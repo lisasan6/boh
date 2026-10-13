@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScrollJar — Prototype v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="night">
+<div class="sky"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="var(--jar-rim-1)"/><stop offset=".36" stop-color="var(--jar-rim-2)"/><stop offset=".6" stop-color="var(--jar-rim-1)"/><stop offset="1" stop-color="var(--jar-rim-3)"/>
+  </linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="var(--glass-a)"/><stop offset=".42" stop-color="var(--glass-b)"/>
+    <stop offset=".78" stop-color="var(--glass-c)"/><stop offset="1" stop-color="var(--glass-d)"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFC94D"/><stop offset="1" stop-color="#D8951A"/>
+  </linearGradient>
+  <clipPath id="body"><path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z"/></clipPath>
+  <radialGradient id="caustic"><stop offset="0" stop-color="var(--glass-a)" stop-opacity=".9"/><stop offset="1" stop-color="var(--glass-a)" stop-opacity="0"/></radialGradient>
+  <linearGradient id="rimlight" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="innerdark" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+  <linearGradient id="coinface" x1="0" y1="0" x2=".6" y2="1">
+    <stop offset="0" stop-color="#FFF6D4"/><stop offset=".35" stop-color="#FFD469"/><stop offset=".62" stop-color="#F0B22E"/><stop offset="1" stop-color="#B87A0B"/>
+  </linearGradient>
+  <filter id="soften" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="coinsoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation=".9"/></filter>
+  <radialGradient id="cBody" cx=".36" cy=".28" r=".88">
+    <stop offset="0" stop-color="#FFFBE6"/><stop offset=".3" stop-color="#FFDD7A"/>
+    <stop offset=".58" stop-color="#F2B633"/><stop offset=".82" stop-color="#CE8F14"/><stop offset="1" stop-color="#96650A"/>
+  </radialGradient>
+  <linearGradient id="cRim" x1="0" y1="0" x2=".45" y2="1">
+    <stop offset="0" stop-color="#FFF0BE"/><stop offset=".4" stop-color="#E0A422"/><stop offset="1" stop-color="#8A5D06"/>
+  </linearGradient>
+  <radialGradient id="cSpec" cx=".35" cy=".3" r=".55">
+    <stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <!-- ═══ the minted coin ═══ -->
+  <symbol id="coin" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="19.2" fill="url(#cRim)"/>
+    <circle cx="20" cy="20" r="16.4" fill="url(#cBody)"/>
+    <circle cx="20" cy="20" r="16.4" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".9"/>
+    <path d="M20 11.4 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#B4780D" opacity=".5"/>
+    <path d="M20 10.6 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#FFF3CE" opacity=".55"/>
+    <ellipse cx="13.6" cy="12.4" rx="7" ry="4.2" fill="url(#cSpec)" transform="rotate(-30 13.6 12.4)" filter="url(#coinsoft)"/>
+    <path d="M7.4 26.5 a13.6 13.6 0 0 0 25.2 0" fill="none" stroke="#FFEEB8" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round" filter="url(#coinsoft)"/>
+  </symbol>
+  <!-- ═══ glyphs — same stroke language as the jar ═══ -->
+  <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/>
+  </symbol>
+  <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21v-8"/><path d="M12 13c0-3.3-2.7-6-6-6 0 3.3 2.7 6 6 6z"/><path d="M12 13c0-3.9 3.1-7 7-7 0 3.9-3.1 7-7 7z"/>
+  </symbol>
+  <symbol id="i-rings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="8.6" cy="12" r="5.6"/><circle cx="15.4" cy="12" r="5.6"/>
+  </symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+    <circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M12 2.8l7 2.8v6c0 4.6-3 8.1-7 9.6-4-1.5-7-5-7-9.6v-6l7-2.8z"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.6A9 9 0 019.4 3.5a9 9 0 1011.1 11.1z" fill="currentColor"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 1.8l2.9 7.3 7.3 2.9-7.3 2.9-2.9 7.3-2.9-7.3L1.8 12l7.3-2.9z" fill="currentColor"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.4 3.4h9.2v5.2a4.6 4.6 0 01-9.2 0V3.4z"/><path d="M7.4 5h-2.6a2.6 2.6 0 002.6 2.6M16.6 5h2.6a2.6 2.6 0 01-2.6 2.6"/>
+    <path d="M12 13.2v3.6M8.8 20.6h6.4l-.8-3.8H9.6z"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/>
+  </symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4.2a3 3 0 00-5.6 1.4A2.8 2.8 0 004.2 9c0 .8.3 1.5.8 2a2.9 2.9 0 00.6 4.4A3 3 0 009 19.8a3 3 0 003-1.6V4.2z"/>
+    <path d="M12 4.2a3 3 0 015.6 1.4A2.8 2.8 0 0119.8 9c0 .8-.3 1.5-.8 2a2.9 2.9 0 01-.6 4.4A3 3 0 0115 19.8a3 3 0 01-3-1.6"/>
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M3.4 4.6h6.2c1.3 0 2.4 1.1 2.4 2.4v12.4c0-1.3-1.1-2.4-2.4-2.4H3.4V4.6z"/><path d="M20.6 4.6h-6.2c-1.3 0-2.4 1.1-2.4 2.4v12.4c0-1.3 1.1-2.4 2.4-2.4h6.2V4.6z"/>
+  </symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16.4 3.6l4 4L8.6 19.4l-5.2 1.2 1.2-5.2z"/><path d="M14.4 5.6l4 4"/>
+  </symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+    <path d="M2.4 14c2.4-4.6 4.2-4.6 6.6 0s4.2 4.6 6.6 0 4.2-4.6 6-1.4"/>
+  </symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M3.4 8.2h3.3l1.5-2.4h7.6l1.5 2.4h3.3v10.2c0 .9-.7 1.6-1.6 1.6H5c-.9 0-1.6-.7-1.6-1.6V8.2z"/><circle cx="12" cy="13.4" r="3.5"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <path d="M9.6 14.4l4.8-4.8"/><path d="M11.4 6.6l1.5-1.5a3.9 3.9 0 015.5 5.5l-1.5 1.5"/><path d="M12.6 17.4l-1.5 1.5a3.9 3.9 0 01-5.5-5.5l1.5-1.5"/>
+  </symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.5 2.6h11M6.5 21.4h11"/><path d="M7.6 2.6v3.1c0 2.4 1.6 4.4 4.4 6.3 2.8-1.9 4.4-3.9 4.4-6.3V2.6"/>
+    <path d="M7.6 21.4v-3.1c0-2.4 1.6-4.4 4.4-6.3 2.8 1.9 4.4 3.9 4.4 6.3v3.1"/>
+    <path d="M12 12c-1.7 1.2-2.7 2.4-3.1 3.8h6.2c-.4-1.4-1.4-2.6-3.1-3.8z" fill="currentColor" stroke="none" opacity=".85"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4l-1.5-1.4C5.3 14.3 2.4 11.6 2.4 8.3 2.4 5.6 4.5 3.5 7.2 3.5c1.5 0 3 .7 3.9 1.9l.9 1.1.9-1.1c.9-1.2 2.4-1.9 3.9-1.9 2.7 0 4.8 2.1 4.8 4.8 0 3.3-2.9 6-7.9 10.7L12 20.4z" fill="currentColor"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.3 1.8L4.2 13.6h6.1l-1.6 8.6 9.1-11.8h-6.1z" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/>
+    <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/>
+  </symbol>
+  <symbol id="i-app" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <rect x="4.2" y="4.2" width="15.6" height="15.6" rx="4.6"/><path d="M4.2 9.4h15.6"/><circle cx="7.6" cy="6.8" r=".9" fill="currentColor" stroke="none"/>
+  </symbol>
+</defs></svg>
+
+<div class="topbar">
+  <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
+  <div class="hint">Tap through it like a real app — start with onboarding</div>
+  <div class="modes"><button class="ms" onclick="restart()">↻ Restart</button></div>
+</div>
+
+<div class="phone"><div class="app" id="app">
+  <div class="statusbar"><span>9:41</span><span>􀙇 􀛨</span></div>
+
+  <!-- ══ HOME ══ -->
+  <div class="screen on" id="s-home">
+    <div class="heroPanel">
+      <div class="eyebrow">THIS WEEK</div>
+      <div class="display num" id="timeBig" style="font-size:54px;letter-spacing:-.045em;line-height:1;margin-top:6px">9h 40m</div>
+      <div class="sub" style="margin-top:6px">returned to you</div>
+      <div class="winLine" id="winLine">
+        <svg width="15" height="15"><use href="#i-trophy"/></svg>
+        <span>Your best week yet — 3h 10m more than last</span>
+      </div>
+      <div class="sparks" id="weekSpark"></div>
+      <div class="sparkLegend"><span>last week</span><span id="goalLine">2 nights to your 15-night mark</span></div>
+      <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
+    </div>
+
+    <div class="card" id="focusCard">
+      <div class="spread" style="margin-bottom:10px">
+        <div class="row" style="gap:8px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-clock"/></svg><b style="font-size:13.5px">Focus session</b></div>
+        <span class="tiny" id="focusHint">shield everything, right now</span>
+      </div>
+      <div id="focusIdle" style="display:flex;gap:7px">
+        <button class="btn ghost timerBtn" onclick="startFocus(25)">25m</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(60)">1h</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(90)">1h30</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(0)">Set…</button>
+      </div>
+      <div id="focusRun" style="display:none">
+        <div class="row" style="gap:14px">
+          <div style="position:relative;width:64px;height:64px;flex:none">
+            <svg width="64" height="64" style="transform:rotate(-90deg)">
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="6"/>
+              <circle id="focusRing" cx="32" cy="32" r="27" fill="none" stroke="var(--mint)" stroke-width="6" stroke-linecap="round"
+                      stroke-dasharray="169.6" stroke-dashoffset="0" style="filter:drop-shadow(0 0 6px var(--mint))"/>
+            </svg>
+          </div>
+          <div style="flex:1"><div class="display num" style="font-size:26px" id="focusTime">25:00</div><div class="tiny" id="focusSub">everything is shielded</div></div>
+          <button class="btn ghost" style="width:auto;padding:10px 14px;font-size:12px" onclick="endFocus(true)">End</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Promises</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ New</span></div>
+    <div id="commitList"></div>
+
+    <div class="winStrip" id="winStrip"></div>
+    <div class="card tipCard" style="cursor:pointer" id="tipCard" onclick="tipAction()">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)" id="tipIcon"><use href="#i-brain"/></svg>
+        <div style="flex:1"><b style="font-size:13px" id="tipTitle"></b>
+        <div class="tiny" style="margin-top:3px;line-height:1.5" id="tipBody"></div></div></div>
+      <div class="spread" style="margin-top:9px">
+        <span class="tiny" style="color:var(--violet)" id="tipCta">Discover more ›</span>
+        <span class="tiny" onclick="event.stopPropagation();nextTip()" style="cursor:pointer">next tip</span>
+      </div>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('usage')">
+      <div class="row"><svg width="19" height="19" style="color:var(--peach)"><use href="#i-chart"/></svg>
+      <div><b style="font-size:13.5px">Where your time goes</b><div class="tiny">this week's screen report · 3 apps worth shielding</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('story')">
+      <div><b style="font-size:13.5px">Your story</b><div class="tiny">hours, nights, the shape of your weeks</div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('jar')">
+      <div class="row"><svg width="20" height="20" style="color:var(--chrome-2)"><use href="#i-jar"/></svg>
+      <div><b style="font-size:13.5px">The jar · <span id="jarAmtMini">$47</span></b><div class="tiny">tips out to Doctors Without Borders on Aug 1</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+  </div>
+
+  <!-- ══ THE JAR (money moved off the hero) ══ -->
+  <div class="screen" id="s-jar">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">The jar</div></div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="jarbox" id="homeJar">
+        <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="homeJarSvg">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <ellipse cx="100" cy="216" rx="58" ry="11" fill="url(#caustic)" filter="url(#soften)" opacity=".85"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g clip-path="url(#body)"><rect x="58" y="46" width="13" height="150" rx="6.5" fill="#fff" opacity=".16"/></g>
+          <g id="coinStack" clip-path="url(#body)"></g>
+          <g class="blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle class="eye" cx="116" cy="104" r="4.6" fill="var(--jar-face)"/></g>
+          <path id="mouth" d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="amount num" id="jarAmt" style="margin-top:8px">$47</div>
+      <div class="tiny" style="margin-top:6px">→ Doctors Without Borders · tips Aug 1</div>
+    </div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+      <div class="eyebrow">IMPACT · JULY</div>
+      <div class="sub" style="margin-top:8px">Your July coins covered a month of school lunches for <b>one girl in Kakuma</b>. Her name is Aisha and she's seven.</div>
+      <div class="row" style="margin-top:12px;gap:14px">
+        <div><div class="display num" style="font-size:22px;color:var(--gold-text)">$83</div><div class="tiny">given all-time</div></div>
+        <div><div class="display num" style="font-size:22px">166</div><div class="tiny">meals, if you want the total</div></div>
+      </div>
+      <div class="tiny" style="margin-top:10px">100% reached the program.</div>
+    </div>
+    <button class="btn ghost" onclick="showTipout()">Preview the monthly tip-out</button>
+  </div>
+
+  <!-- ══ STORY ══ -->
+  <div class="screen" id="s-story">
+    <div class="display h1" style="margin-bottom:12px">Your story</div>
+    <div style="display:flex;gap:9px;margin-bottom:12px">
+      <div class="card" style="flex:1;margin:0;text-align:center"><div class="display" style="font-size:21px">9h 40m</div><div class="tiny">returned</div></div>
+      <div class="card" style="flex:1;margin:0;text-align:center"><div class="display" style="font-size:21px">47</div><div class="tiny">resisted</div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">Hours returned · this week</b>
+      <div class="bars" id="hoursChart"></div>
+      <div class="legend"><span><i style="background:var(--mint)"></i>clean</span><span><i style="background:var(--gold)"></i>coin day</span></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">July</b>
+      <div class="tiny" style="margin-top:2px">both kinds of day count</div>
+      <div class="cal" id="cal"></div>
+    </div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="tiny">back to today</div></div>
+  </div>
+
+  <!-- ══ WHERE YOUR TIME GOES ══ -->
+  <div class="screen" id="s-usage">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">Where your time goes</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow">LAST 7 DAYS · ON THIS PHONE</div>
+      <div class="display num" style="font-size:40px;margin-top:6px">21h 12m</div>
+      <div class="sub" style="margin-top:5px">on screens · <b>4h 30m</b> of it on apps you've shielded</div>
+      <div class="sparks" id="usageSpark" style="height:40px"></div>
+    </div>
+    <div class="spread" style="margin:2px 2px 9px"><div class="display h2">Biggest draws</div><span class="tiny">iOS renders this — we never read it</span></div>
+    <div id="appList"></div>
+    <div class="card tipCard">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)"><use href="#i-brain"/></svg>
+        <div style="flex:1"><b style="font-size:13px">Two of these are worth a promise</b>
+        <div class="tiny" style="margin-top:2px">Not the biggest — the ones you open most often without deciding to. That's the tell.</div></div></div>
+    </div>
+    <div class="tiny" style="text-align:center;margin-top:4px;line-height:1.5">Apple draws this report inside a sealed window. We can show it to you; we can't store it, read it, or send it anywhere.</div>
+  </div>
+
+  <!-- ══ RESOURCES ══ -->
+  <div class="screen" id="s-resources">
+    <div class="row" style="margin-bottom:6px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Why it's hard</div></div>
+    <div class="sub" style="margin-bottom:14px">Not willpower. Design. Here's what's actually happening — and what we do about each one.</div>
+    <div id="resList"></div>
+    <div class="card" style="background:rgba(255,255,255,.05)">
+      <b style="font-size:13px">Everything here has a source</b>
+      <div class="tiny" style="margin-top:5px">We cite the study, and we say when the evidence is thin. No "dopamine detox", no "21 days", no invented statistics.</div>
+    </div>
+  </div>
+
+  <!-- ══ RESOURCE DETAIL ══ -->
+  <div class="screen" id="s-resdetail">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('resources')">‹</span><div class="display h1" id="rdTitle">Mechanism</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow" id="rdKicker">THE MECHANISM</div>
+      <div class="display" style="font-size:19px;margin-top:9px;line-height:1.3" id="rdHook"></div>
+      <div class="sub" style="margin-top:9px" id="rdBody"></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">What it feels like</b>
+      <div class="sub" style="margin-top:5px" id="rdFeels"></div>
+    </div>
+    <div class="card" style="background:rgba(55,226,192,.1);border-color:rgba(55,226,192,.28)">
+      <b style="font-size:13px">What ScrollJar does about it</b>
+      <div class="sub" style="margin-top:5px" id="rdWeDo"></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">Try this tonight</b>
+      <div class="sub" style="margin-top:5px" id="rdTry"></div>
+      <button class="btn ghost" style="margin-top:11px" onclick="openEntry('feeling')">Write about it</button>
+    </div>
+    <div class="tiny" style="text-align:center" id="rdSource"></div>
+  </div>
+
+  <!-- ══ DIARY ══ -->
+  <div class="screen" id="s-diary">
+    <div class="spread" style="margin-bottom:10px">
+      <div class="display h1">Diary</div>
+      <button class="iconBtn" onclick="openEntry('free')"><svg width="16" height="16"><use href="#i-pen"/></svg></button>
+    </div>
+    <div class="modeSeg" id="diaryMode">
+      <div class="on" onclick="setDiaryMode('both',this)">Both</div>
+      <div onclick="setDiaryMode('blank',this)">Blank page</div>
+      <div onclick="setDiaryMode('guided',this)">Guided</div>
+    </div>
+    <div class="tiny" id="diaryModeNote" style="margin:-4px 2px 12px">Prompts when you want them, an empty page when you don't.</div>
+
+    <div class="card">
+      <b style="font-size:13.5px">How's the pull right now?</b>
+      <div class="tiny" style="margin-top:3px">one tap — it teaches the app your weather</div>
+      <div style="display:flex;gap:7px;margin-top:11px">
+        <div class="pullChip" onclick="logPull(this,'calm','Calm')">Calm</div>
+        <div class="pullChip" onclick="logPull(this,'itchy','Itchy')">Itchy</div>
+        <div class="pullChip" onclick="logPull(this,'strong','Pulling hard')">Pulling hard</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:4px"><b style="font-size:13.5px">Does it actually help?</b>
+        <span class="tiny">your own answers</span></div>
+      <div class="sub" style="margin-bottom:11px" id="ledgerHead">You've felt <b>worse</b> after 7 of your last 10 sessions.</div>
+      <div class="ledger" id="moodLedger"></div>
+      <div class="ledgerKey"><span><i style="background:var(--mint)"></i>better</span><span><i style="background:var(--ink-3)"></i>same</span><span><i style="background:var(--peach)"></i>worse</span></div>
+      <div class="tiny" style="margin-top:10px">We ask before and after. Nobody's opinion involved — just yours, over time.</div>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">Something to sit with</b>
+        <span class="tiny" id="reflCount">1 of 6</span></div>
+      <div class="display" style="font-size:17px;line-height:1.3;margin-bottom:6px" id="reflQ">How do you feel when you're in there?</div>
+      <div class="sub" id="reflSub">Not afterwards — during. Try to catch it while it's happening.</div>
+      <div id="reflHeavy" style="display:none;margin-top:11px;padding:11px;border-radius:13px;background:rgba(147,211,198,.1);border:1px solid var(--calm-ghost-border)">
+        <div class="tiny" style="line-height:1.55;color:var(--calm-soft)">If what comes up feels heavier than an evening, that's worth saying out loud to someone who isn't an app. We keep a short list of places to start — no diagnosis, no algorithms.</div>
+        <div class="tiny" style="margin-top:7px;color:var(--calm);cursor:pointer" onclick="toast('Support directory — real humans, not chatbots.')">Where to look ›</div>
+      </div>
+      <div class="row" style="gap:7px;margin-top:13px">
+        <button class="btn mint" style="flex:1" onclick="answerReflection()">Answer it</button>
+        <button class="btn ghost" style="flex:1" id="reflSwap" onclick="nextReflection()">Another</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,158,122,.14),rgba(255,201,77,.1))">
+      <div class="row" style="gap:11px">
+        <div class="display num" style="font-size:30px;color:var(--peach)" id="detoxN">4</div>
+        <div style="flex:1"><b style="font-size:13px">times you've said "I need a detox"</b>
+          <div class="tiny" style="margin-top:3px">since March, by your own count. This is the first time you put a price on it.</div></div>
+      </div>
+      <button class="btn ghost" style="margin-top:11px" onclick="addDetox()">I said it again today</button>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">What this time is for</b>
+        <span class="pill chr" style="cursor:pointer" onclick="addGoal()">+ Goal</span></div>
+      <div id="goalList"></div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+      <div class="spread"><div class="eyebrow">WEEKLY RECAP · SUNDAY</div><span class="pill mint">ready</span></div>
+      <div class="display" style="font-size:16px;margin:9px 0 6px;line-height:1.3">Your week, in your own words</div>
+      <div class="sub">Three entries mentioned tiredness before 10pm. Two mentioned reading afterwards and feeling better.</div>
+      <button class="btn ghost" style="margin-top:12px" onclick="go('recap')">Read the recap</button>
+    </div>
+
+    <div class="card spread" style="cursor:pointer" onclick="go('resources')">
+      <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-brain"/></svg>
+      <div><b style="font-size:13.5px">Why it's hard</b><div class="tiny">the mechanisms behind the pull, explained</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Entries</div><span class="tiny">only you can read these</span></div>
+    <div id="entryList"></div>
+  </div>
+
+  <!-- ══ WEEKLY RECAP ══ -->
+  <div class="screen" id="s-recap">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Week of Jul 21</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow">IN YOUR OWN WORDS</div>
+      <div class="display" style="font-size:20px;margin:10px 0;line-height:1.25">"Tired, but I read instead."</div>
+      <div class="sub">You wrote some version of that three times this week. It's the sentence your week keeps arriving at.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">What showed up</b>
+      <div class="themeRow"><span class="themeDot" style="background:var(--peach)"></span><div><b style="font-size:12.5px">Tiredness before 10pm</b><div class="tiny">4 entries · usually right before a coin</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a clean night</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--violet)"></span><div><b style="font-size:12.5px">Boredom at lunch</b><div class="tiny">2 entries · the pull was mild, you rode it out</div></div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">Hours, next to feelings</b>
+      <div class="bars" id="recapBars" style="height:78px"></div>
+      <div class="tiny" style="margin-top:8px">Gold days are coin days. Notice they're the tired ones — not the weak ones.</div>
+    </div>
+    <div class="card aiCard">
+      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Legend</span></div>
+      <div class="sub" style="margin-top:9px">Your hardest hour is Sunday 10pm and your entries say it's tiredness, not craving. Moving that shield an hour earlier would meet the real problem. Want me to suggest a wind-down that isn't a screen?</div>
+      <div class="row" style="gap:7px;margin-top:12px">
+        <button class="btn mint" style="flex:1" onclick="toast('Shield moved to 9pm on Sundays.')">Do it</button>
+        <button class="btn ghost" style="flex:1" onclick="toast('Kept as is — you know your week.')">Not now</button>
+      </div>
+      <div class="tiny" style="margin-top:10px">Reads patterns and your own words. Never your screen content — we can't see it.</div>
+    </div>
+  </div>
+
+  <!-- ══ FEED ══ -->
+  <div class="screen" id="s-friends">
+    <div class="spread" style="margin-bottom:12px">
+      <div class="display h1">Your jars</div>
+      <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
+    </div>
+    <div class="jarStrip">
+      <div class="jarChip on" onclick="go('jardetail')"><b>Casa Jar</b><span>you + 3</span></div>
+      <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
+      <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
+    </div>
+    <div id="feedList"></div>
+    <div class="feedEnd">
+      <svg width="15" height="15" style="color:var(--mint)"><use href="#i-sprout"/></svg>
+      <div class="display" style="font-size:15px;margin-top:6px">That's everything.</div>
+      <div class="tiny" style="margin-top:3px">The rest of your life is off-screen.</div>
+    </div>
+  </div>
+
+  <!-- ══ JAR DETAIL ══ -->
+  <div class="screen" id="s-jardetail">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span>
+      <div class="display h1" id="jarName" onclick="renameJar()" style="cursor:pointer">Casa Jar</div>
+      <span class="tiny" onclick="renameJar()" style="cursor:pointer">rename</span></div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="eyebrow">JULY · EVERYONE GIVES TO UNICEF</div>
+      <div class="amount num" style="margin-top:8px" id="groupTotal">$38</div>
+      <div class="tiny" style="margin-top:6px">each person's coins go from their own card</div>
+      <div class="row" style="justify-content:center;gap:6px;margin-top:14px">
+        <div class="av" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)">L</div>
+        <div class="av" style="background:linear-gradient(150deg,#FFB86B,#FF5C8A)">G</div>
+        <div class="av" style="background:linear-gradient(150deg,#8B7CF6,#5AA9FF)">M</div>
+        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);color:#3A2A00">You</div>
+      </div>
+    </div>
+    <div class="spread" style="margin:4px 2px 8px"><div class="display h2">Members</div>
+      <span class="chip" style="font-size:11px" onclick="toggleAmounts(this)">Showing $</span></div>
+    <div id="memberList"></div>
+    <div class="card" style="cursor:pointer" onclick="go('challenge')">
+      <div class="spread"><div><b style="font-size:13.5px">Focus Week</b><div class="tiny">3 days left · everyone halves their scroll</div></div>
+      <span class="pill mint">Open</span></div>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:9px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg>
+        <div style="flex:1"><b style="font-size:13.5px">Your standby note</b><div class="tiny">sent for you when someone wobbles and you're in your own session</div></div></div>
+      <div class="noteQ" id="standbyPreview" style="font-size:13.5px">Not written yet.</div>
+      <div class="row" style="gap:8px;margin-top:4px">
+        <button class="btn ghost" style="flex:1" onclick="openStandby()">Write it</button>
+        <button class="btn ghost" style="flex:1" onclick="openWobble()">Ask for a hand</button>
+      </div>
+    </div>
+    <button class="btn violet" onclick="go('invite')">Invite someone to this jar</button>
+  </div>
+
+  <!-- ══ CHALLENGE ══ -->
+  <div class="screen" id="s-challenge">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('jardetail')">‹</span><div class="display h1">Focus Week</div></div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(55,226,192,.14),rgba(139,124,246,.12))">
+      <div class="eyebrow">DAY 4 OF 7</div>
+      <div class="display" style="font-size:19px;margin:8px 0 6px">9 of 11 jars are holding</div>
+      <div class="sub">Not a ranking — just the weather. Nobody is behind anybody here.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">Your week</b>
+      <div class="bars" id="challengeBars" style="height:78px"></div>
+      <div class="tiny" style="margin-top:8px">You're matched with people whose baseline looks like yours — comparison only makes sense between comparable weeks.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">If everyone finishes</b>
+      <div class="sub" style="margin-top:5px">Casa Jar unlocks a <b>double tip-out</b> — we match the week's coins from our own pocket, to UNICEF.</div>
+    </div>
+    <button class="btn mint" onclick="toast('Everyone in the jar just got a nudge — kindly worded.')">Cheer the jar on</button>
+  </div>
+
+  <!-- ══ INVITE ══ -->
+  <div class="screen" id="s-invite">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Invite</div></div>
+    <div class="card" style="text-align:center">
+      <div class="qr" id="qrBox"></div>
+      <div class="display" style="font-size:15px;margin-top:12px">scrolljar.app/j/casa-jar</div>
+      <div class="tiny" style="margin-top:5px">opens a page about the jar — no login, no app needed</div>
+    </div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+      <div class="row"><svg width="20" height="20" style="color:var(--gold)"><use href="#i-heart"/></svg>
+      <div><b style="font-size:13.5px">Your invite gives</b><div class="tiny" style="margin-top:2px">When they join and finish their first week, we donate $1 to UNICEF. The invitation itself does good.</div></div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">They'll land on this</b>
+      <div class="webPrev">
+        <div class="webBar"><span></span><span></span><span></span></div>
+        <div style="padding:16px;text-align:center">
+          <svg width="34" height="34" style="color:var(--chrome-1)"><use href="#i-jar"/></svg>
+          <div class="display" style="font-size:15px;margin-top:8px">Luca invited you to Casa Jar</div>
+          <div class="tiny" style="margin-top:5px">4 people keeping promises together.<br>This month they've given $38 to UNICEF.</div>
+          <div class="fakeBtn">Join the jar</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn chrome" onclick="toast('Link copied. You invite people to a jar, never to an app.')"><svg width="15" height="15" style="vertical-align:-2px;margin-right:6px"><use href="#i-link"/></svg>Copy invite link</button>
+  </div>
+
+  <!-- ══ YOU ══ -->
+  <div class="screen" id="s-you">
+    <div class="display h1" style="margin-bottom:12px">You</div>
+    <div class="card">
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Peek valve</b><div class="tiny">one free peek every 48h</div></div><span class="pill mint" id="peekState">5 min · ready</span></div>
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Monthly cap</b><div class="tiny">your safety valve</div></div><span class="pill gold">$50</span></div>
+      <div class="spread"><div><b style="font-size:13px">Quiet mode</b><div class="tiny">schedule 24h ahead</div></div><span class="pill chr">Off</span></div>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:12px">
+        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);width:44px;height:44px;border-radius:14px;font-size:15px">You</div>
+        <div style="flex:1"><b style="font-size:14px" id="profName">Luca</b>
+          <div class="tiny" id="profPronoun">they/them · shown as "themselves" in quiet posts</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px" id="pronounChips"></div>
+      <div class="tiny" style="margin-top:9px">We use this so the app can talk about you correctly — "regained an hour for themselves".</div>
+    </div>
+    <div class="card" id="workCard">
+      <div class="spread">
+        <div class="row" style="gap:9px"><svg width="18" height="18" style="color:var(--blue)"><use href="#i-clock"/></svg>
+        <div><b style="font-size:13.5px">I work in these apps</b><div class="tiny">for people whose job lives there</div></div></div>
+        <div class="toggle" id="workToggle" onclick="toggleWork(this)"></div>
+      </div>
+      <div id="workBody" style="display:none;margin-top:13px">
+        <div class="sub" style="margin-bottom:11px">Work is never a weak moment. Inside your work windows the shield steps aside, nothing is charged, and those minutes are counted separately — they're not "returned time" and they're not a slip.</div>
+        <div class="row" style="gap:10px;margin-bottom:11px">
+          <div style="flex:1"><div class="tiny" style="margin-bottom:5px">WORK WINDOW</div><input class="timeIn" type="time" value="09:00"></div>
+          <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="18:00"></div>
+        </div>
+        <div class="card" style="margin:0 0 11px;background:var(--panel-2)">
+          <b style="font-size:12.5px">Clocking in</b>
+          <div class="tiny" style="margin-top:4px;line-height:1.55">Opening a shielded app in a work window asks one question — "working?" — and starts a 30-minute work session. No pause, no price. When it ends we ask once more. Drift after that becomes ordinary time again.</div>
+        </div>
+        <div class="spread" style="margin-bottom:10px"><div><div style="font-size:12.5px;font-weight:700">Count work time as reclaimed</div><div class="tiny">off by default — it isn't your evening</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="tiny">Weekends and evenings stay fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
+      </div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">What your jars can see</b>
+      <div class="spread" style="margin:11px 0"><div><div style="font-size:12.5px;font-weight:700">Your coins</div><div class="tiny">when you pay, and how much</div></div>
+        <span class="chip" onclick="cycleSetting(this,['Nobody','My jars'])">Nobody</span></div>
+      <div class="spread" style="margin-bottom:11px"><div><div style="font-size:12.5px;font-weight:700">Jar totals</div><div class="tiny">the collective number, never who</div></div>
+        <span class="chip on" style="cursor:default">Always shared</span></div>
+      <div class="spread"><div><div style="font-size:12.5px;font-weight:700">Default post</div><div class="tiny">how your reclaimed hours appear</div></div>
+        <span class="chip" onclick="cycleSetting(this,['Quiet','Full'])">Quiet</span></div>
+      <div class="tiny" style="margin-top:10px">Coins are private by default. Shame makes people relapse — we designed against it.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">If you pull the plug</b>
+      <div class="sub" style="margin-top:5px">Turning off Screen Time or deleting ScrollJar mid-promise counts as breaking the jar: <b>5× your override price</b>. You get a warning and one hour to restore first. Ending a promise honestly is always free, with 24h notice.</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="go('paywall')">
+      <div class="spread"><div><b style="font-size:13px">Ghost Jar</b><div class="tiny">free forever · 1 commitment</div></div><span class="pill mint">Upgrade</span></div>
+    </div>
+    <div class="card" style="background:rgba(55,226,192,.09)">
+      <b style="font-size:13px"><svg class="glyph" width="13" height="13" style="color:var(--mint)"><use href="#i-heart"/></svg> Our promise</b>
+      <div class="sub" style="margin-top:5px">We never keep a cent of your jar. Memberships are our only revenue — so we only win when you do.</div>
+    </div>
+    <button class="btn ghost" onclick="showRough()">See the rough-day check-in</button>
+  </div>
+
+  <!-- ══ NEW COMMITMENT ══ -->
+  <div class="screen" id="s-new">
+    <div class="row" style="margin-bottom:14px"><span style="font-size:19px;cursor:pointer" onclick="go('home')">‹</span><div class="display h1">New promise</div></div>
+    <div class="eyebrow" style="margin-bottom:8px">1 · WHAT ARE WE TAMING?</div>
+    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#FF7AC6,#8B5CF6)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The scroll one</b></div>
+    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The loud one</b></div>
+    <div class="eyebrow" style="margin:14px 0 8px">2 · WHEN IS THE SHIELD ON?</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px" id="schedChips">
+      <div class="chip on" onclick="pickSched(this,'always')">Always</div>
+      <div class="chip" onclick="pickSched(this,'evenings')">Evenings</div>
+      <div class="chip" onclick="pickSched(this,'work')">Work hours</div>
+      <div class="chip" onclick="pickSched(this,'weekend')">Weekends</div>
+      <div class="chip" onclick="pickSched(this,'custom')">Custom…</div>
+    </div>
+    <div class="card" id="customWindow" style="display:none">
+      <div class="row" style="gap:10px">
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" value="21:00" id="schedFrom"></div>
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="07:00" id="schedTo"></div>
+      </div>
+      <div class="tiny" style="margin-top:9px">Tightening is instant. Loosening takes 24 hours — cold blood, remember.</div>
+    </div>
+    <div class="eyebrow" style="margin:14px 0 8px">3 · PRICE OF A WEAK MOMENT</div>
+    <div class="card" style="text-align:center">
+      <div class="amount num">$<span id="priceV">5</span></div>
+      <input type="range" min="2" max="25" value="5" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="document.getElementById('priceV').textContent=this.value">
+      <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
+    </div>
+    <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR?</div>
+    <div class="card"><input placeholder="my novel · evening runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the promise</button>
+    <div class="tiny" style="text-align:center;margin-top:8px">made in cold blood, kept in warm moments</div>
+  </div>
+
+  <!-- ══ PAYWALL ══ -->
+  <div class="screen" id="s-paywall">
+    <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">Make it real</div></div>
+    <div class="sub" style="margin-bottom:14px">Kindness is never paywalled — the pause, the peek valve and rough-day support are yours at every tier.</div>
+    <div class="tierbox" onclick="selTier(this,'Ghost Jar')"><div class="spread"><b style="font-size:14px">Ghost Jar</b><span class="display" style="font-size:15px">Free</span></div><div class="tiny" style="margin-top:4px">Blocking · friction · 1 commitment · buddy jar</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'Jar Hero')"><div class="spread"><b style="font-size:14px">Jar Hero</b><span class="display" style="font-size:15px">$49.99/yr</span></div><div class="tiny" style="margin-top:4px">The stakes engine · unlimited promises · group jars · danger-hours forecast</div></div>
+    <div class="tierbox" onclick="selTier(this,'Jar Legend')"><div class="spread"><b style="font-size:14px">Jar Legend</b><span class="display" style="font-size:15px">$79.99/yr</span></div><div class="tiny" style="margin-top:4px">Everything + deep stats + Year in the Jar</div><div class="pill gold" style="margin-top:7px">We give half of everything we receive</div></div>
+    <button class="btn gold" style="margin-top:6px" onclick="toast('Your membership is what lets us give away 100% of every penalty.')">Continue</button>
+  </div>
+
+  <!-- ══ TABS ══ -->
+  <div class="tabs">
+    <div class="tab on" data-s="home" onclick="go('home')"><svg class="i"><use href="#i-sprout"/></svg>TODAY</div>
+    <div class="tab" data-s="diary" onclick="go('diary')"><svg class="i"><use href="#i-book"/></svg>DIARY</div>
+    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-rings"/></svg>JARS</div>
+    <div class="tab" data-s="you" onclick="go('you')"><svg class="i"><use href="#i-target"/></svg>YOU</div>
+  </div>
+
+  <!-- ══ ONBOARDING ══ -->
+  <div class="ov on" id="ov-onb" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:40px 26px">
+    <div id="onbSlides" style="width:100%">
+      <div class="onb" data-i="0">
+        <svg width="60" height="60" style="color:var(--peach);filter:drop-shadow(0 0 18px rgba(255,158,122,.5))"><use href="#i-hourglass"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Some apps<br>drink your time.</div>
+        <div class="sub">You already know which ones. ScrollJar helps you keep the promises you make to yourself.</div>
+      </div>
+      <div class="onb" data-i="1" style="display:none">
+        <svg width="60" height="60" style="color:var(--chrome-1);filter:drop-shadow(0 0 18px rgba(168,184,200,.45))"><use href="#i-jar"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">A swear jar,<br>for scrolling.</div>
+        <div class="sub">You set the price of breaking your own promise. Open anyway? A coin drops in the jar. Your choice, your price.</div>
+      </div>
+      <div class="onb" data-i="2" style="display:none">
+        <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">We never keep<br>your money.</div>
+        <div class="sub">Every month the jar tips out — 100% to the charity you chose. Even your weak moments do some good in this world.</div>
+      </div>
+      <div class="onb" data-i="3" style="display:none">
+        <svg width="58" height="58" style="color:var(--mint);filter:drop-shadow(0 0 20px rgba(55,226,192,.6))"><use href="#i-bolt"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Blocked in<br>two minutes.</div>
+        <div class="sub">Pick your apps, we shield them. No card, no account wall — stakes come later, only if you want them.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center;margin:22px 0" id="onbDots"></div>
+    <button class="btn chrome" style="max-width:250px" id="onbBtn" onclick="onbNext()">Next</button>
+    <div class="tiny" style="margin-top:12px;cursor:pointer" onclick="closeOnb()">Skip</div>
+  </div>
+
+  <!-- ══ SHIELD ══ -->
+  <div class="ov shield" id="ov-shield">
+    <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
+    <div class="display" style="font-size:23px;margin:14px 0 8px">You made a jar promise</div>
+    <div class="sub" style="color:#A9A4D8;margin-bottom:6px">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
+    <div class="tiny" style="margin-bottom:24px">12 clean days and counting</div>
+    <button class="btn mint" onclick="resist()">I'll stay committed</button>
+    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" onclick="showBreath()">Open anyway · $5</button>
+    <div class="tiny" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
+  </div>
+
+  <!-- ══ BREATH (calm register) ══ -->
+  <div class="ov" id="ov-breath" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <div class="breathorb">breathe</div>
+    <div class="display" style="font-size:22px;margin-top:24px;color:var(--calm-ink)" id="breathTitle">No rush.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:210px;margin-top:8px" id="breathSub">The scroll will wait. Six seconds, then it's your call.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px" id="breathBtns" style="display:none">
+      <button class="btn calm" onclick="resist()">I'll stay committed</button>
+      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="showInstead()">Never mind, continue</button>
+    </div>
+  </div>
+
+  <!-- ══ INSTEAD — what else this hour could be ══ -->
+  <div class="ov" id="ov-instead" style="background:var(--scr-calm);padding:30px 22px;overflow-y:auto">
+    <div class="eyebrow" style="color:var(--calm-soft)">YOU SAID THIS HOUR WAS FOR YOUR NOVEL</div>
+    <div class="display" style="font-size:23px;margin:10px 0 6px;color:var(--calm-ink);line-height:1.2">Instead, you could…</div>
+    <div class="sub" style="color:var(--calm-soft)" id="insteadSub">Three things that fit the twenty minutes you have and the mood you logged.</div>
+    <div class="modeSeg" style="margin-top:14px">
+      <div class="on" id="segWorth" onclick="setInsteadMode('worth',this)">Something worthwhile</div>
+      <div id="segFun" onclick="setInsteadMode('fun',this)">Just entertain me</div>
+    </div>
+    <div id="insteadList"></div>
+    <div class="card" style="background:rgba(255,255,255,.07);border-color:var(--calm-ghost-border)">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--calm)"><use href="#i-pen"/></svg>
+        <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">Or write a line first</b><div class="tiny">what's the pull actually about tonight?</div></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px" id="promptChips"></div>
+      <button class="btn calm" style="margin-top:11px" onclick="closeOv('ov-instead');openEntry('impulse')">Write it</button>
+    </div>
+    <button class="btn ghost" style="margin-top:6px;border-color:var(--calm-soft);color:var(--calm)" id="wobEntryBtn" onclick="openWobble()">Ask someone to sit with me</button>
+    <button class="btn ghost" style="margin-top:6px" onclick="closeOv('ov-instead');resist()">None of it — I'll stay committed</button>
+    <button class="btn ghost" style="margin-top:9px;opacity:.75" onclick="closeOv('ov-instead');showOverride()">Still want in</button>
+  </div>
+
+  <!-- ══ OVERRIDE ══ -->
+  <div class="ov sheetwrap" id="ov-override">
+    <div class="sheet-card">
+      <div class="eyebrow">INSTAGRAM · 15 MINUTES</div>
+      <div class="display" style="font-size:21px;margin:8px 0 6px">Still want in?</div>
+      <div class="sub">Totally allowed. It just isn't free — you decided that.</div>
+      <div class="cost">
+        <div><b style="font-size:12.5px">Drops into your jar</b><div class="tiny" style="margin-top:2px">→ Doctors Without Borders</div></div>
+        <div class="display num" style="font-size:24px;color:var(--gold-text)">$5</div>
+      </div>
+      <button class="btn gold" onclick="payOverride()">Drop a coin &amp; open</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="resist()">Actually, I'll stay committed</button>
+      <div class="tiny" style="text-align:center;margin-top:10px">refundable for 48h, no questions</div>
+    </div>
+  </div>
+
+  <!-- ══ ACCESS WINDOW ══ -->
+  <div class="ov" id="ov-window" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg viewBox="0 0 40 40" width="56" height="56" style="filter:drop-shadow(0 0 20px rgba(255,201,77,.7))"><use href="#coin"/></svg>
+    <div class="display" style="font-size:22px;margin:14px 0 8px">Coin dropped. Enjoy it.</div>
+    <div class="sub" style="max-width:230px">No guilt — your $5 is on its way to Doctors Without Borders.</div>
+    <div class="display num" style="font-size:40px;margin:20px 0;color:var(--gold-text)" id="winTimer">14:59</div>
+    <button class="btn ghost" style="max-width:230px" onclick="endWindow()">Done early — back to the jar</button>
+  </div>
+
+  <!-- ══ TIP-OUT ══ -->
+  <div class="ov" id="ov-tipout" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 24px">
+    <div class="pill chr">AUGUST 1 · TIP-OUT</div>
+    <div class="jarbox" style="margin-top:18px" id="tipJarBox">
+      <svg viewBox="0 0 200 226" width="150" height="172" id="tipJar">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <ellipse cx="100" cy="216" rx="58" ry="11" fill="url(#caustic)" filter="url(#soften)" opacity=".85"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <g clip-path="url(#body)">
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#innerdark)"/>
+          <rect x="58" y="46" width="13" height="150" rx="6.5" fill="#fff" opacity=".16"/>
+          <rect x="76" y="52" width="5" height="120" rx="2.5" fill="#fff" opacity=".1"/>
+        </g>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="none" stroke="url(#rimlight)" stroke-width="1.4"/>
+        <g id="tipCoins" clip-path="url(#body)"></g>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M86 116 q14 11 28 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="amount num" style="margin-top:14px" id="tipAmt">$47</div>
+    <div class="sub" style="margin-top:6px">is on its way to Doctors Without Borders</div>
+    <div class="card" style="margin-top:14px;width:100%;text-align:left">
+      <div class="eyebrow">HOW YOUR MONEY TRAVELS</div>
+      <div id="settleSteps" style="margin-top:9px"></div>
+    </div>
+    <div class="card" style="margin-top:4px;width:100%;text-align:center;background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+      <div class="eyebrow">JULY · RECEIPT</div>
+      <div class="display" style="font-size:16px;margin-top:6px;line-height:1.3">9h 40m returned.<br>$47 given.</div>
+      <div class="tiny" style="margin-top:6px">≈ 94 meals · scrolljar.app</div>
+    </div>
+    <button class="btn violet" style="margin-top:12px" onclick="closeOv('ov-tipout')">Share the receipt</button>
+  </div>
+
+  <!-- ══ ROUGH DAY ══ -->
+  <div class="ov" id="ov-rough" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="50" height="50" style="color:var(--calm-soft);filter:drop-shadow(0 0 18px rgba(147,211,198,.5))"><use href="#i-moon"/></svg>
+    <div class="display" style="font-size:21px;margin:14px 0 8px;color:var(--calm-ink)">That was an expensive evening.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:240px">It happens — and $15 just became 30 meals. One thing we noticed: your coins tend to drop after 10pm on Sundays.</div>
+    <div class="card" style="margin-top:18px;width:100%;text-align:left;background:rgba(255,255,255,.06)">
+      <b style="font-size:13px;color:var(--calm-ink)">Want to try something?</b>
+      <div class="sub" style="color:var(--calm-soft);margin-top:4px">Move Sunday's shield an hour earlier — cold blood, tonight's you will thank you.</div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-rough');toast('Sunday shield moved to 9pm.')">Yes, shift it earlier</button>
+      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="closeOv('ov-rough')">Not tonight</button>
+    </div>
+  </div>
+
+  <button class="cornerSwitch" id="cornerSwitch" onclick="setMode(document.body.dataset.mode==='night'?'day':'night')" title="Day / night">
+    <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
+  </button>
+  <!-- ══ FIRST WIN — the real aha moment ══ -->
+  <div class="ov" id="ov-firstwin" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <div class="jarbox" id="winJarBox" style="width:132px;height:152px">
+      <svg viewBox="0 0 200 226" width="132" height="152" class="jarbreathe" id="winJar">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M84 114 q16 13 32 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="display" style="font-size:25px;margin-top:20px;line-height:1.15">That's the whole product.<br>You just didn't scroll.</div>
+    <div class="sub" style="max-width:250px;margin-top:10px">No coin, no lecture, nothing to celebrate loudly. Just three minutes that stayed yours.</div>
+    <div class="row" style="gap:18px;margin-top:22px">
+      <div style="text-align:center"><div class="display num" style="font-size:23px">3m</div><div class="tiny">returned</div></div>
+      <div style="text-align:center"><div class="display num" style="font-size:23px">1</div><div class="tiny">temptation</div></div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn mint" onclick="closeOv('ov-firstwin');showExit('Go be somewhere else.','You don\'t need us right now — that\'s the point.')">Nice</button>
+    </div>
+  </div>
+
+  <!-- ══ EXIT BEAT — we invite you to leave ══ -->
+  <div class="ov" id="ov-exit" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="46" height="46" style="color:var(--calm-soft);filter:drop-shadow(0 0 16px rgba(147,211,198,.45))"><use href="#i-sprout"/></svg>
+    <div class="display" style="font-size:24px;margin-top:18px;line-height:1.15;color:var(--calm-ink)" id="exitTitle">Go be somewhere else.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:240px;margin-top:10px" id="exitSub">You don't need us right now — that's the point.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-exit');toast('See you at the tip-out.')">Close ScrollJar</button>
+      <div class="tiny" style="text-align:center;margin-top:11px;cursor:pointer" onclick="closeOv('ov-exit')">Stay a moment</div>
+    </div>
+  </div>
+
+  <!-- ══ WOBBLE — ask for a hand ══ -->
+  <div class="ov sheetwrap" id="ov-wobble">
+    <div class="sheet-card" style="max-height:88vh;overflow-y:auto">
+      <div id="wobBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ STANDBY NOTE EDITOR ══ -->
+  <div class="ov sheetwrap" id="ov-standby">
+    <div class="sheet-card" style="max-height:90vh;overflow-y:auto">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px" id="sbTitle">Your standby note</div>
+        <span class="backBtn" onclick="closeOv('ov-standby')">✕</span></div>
+      <div class="sbDots" id="sbDots"><i></i><i></i><i></i></div>
+      <div id="sbBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ MOOD AFTER ══ -->
+  <div class="ov sheetwrap" id="ov-mood">
+    <div class="sheet-card">
+      <div class="eyebrow">YOU'RE BACK · 15 MINUTES</div>
+      <div class="display" style="font-size:20px;margin:8px 0 6px">How do you feel now?</div>
+      <div class="sub">Before you went in, you said you felt <b id="moodBefore">tired</b>.</div>
+      <div style="display:flex;gap:7px;margin:14px 0">
+        <div class="pullChip" onclick="logMood('better','Better')">Better</div>
+        <div class="pullChip" onclick="logMood('same','About the same')">The same</div>
+        <div class="pullChip" onclick="logMood('worse','Worse')">Worse</div>
+      </div>
+      <div class="tiny" style="text-align:center">No judgement either way — we're just keeping the receipts of how it actually goes.</div>
+    </div>
+  </div>
+
+  <!-- ══ DIARY ENTRY ══ -->
+  <div class="ov sheetwrap" id="ov-entry">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px" id="entryTitle">A line for yourself</div>
+        <span class="backBtn" onclick="closeOv('ov-entry')">✕</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px" id="entryTags"></div>
+      <textarea id="entryText" class="timeIn" style="height:96px;resize:none;line-height:1.5" placeholder="tired, not really wanting the phone — wanting to switch off"></textarea>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:11px 0" id="entryPrompts"></div>
+      <button class="btn mint" onclick="saveEntry()">Keep it</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">private by default · never leaves your phone unless you ask</div>
+    </div>
+  </div>
+
+  <!-- ══ COMPOSE ══ -->
+  <div class="ov sheetwrap" id="ov-compose">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px">What did you do with it?</div>
+        <span class="backBtn" onclick="closeOv('ov-compose')">✕</span></div>
+      <div class="sub" style="margin-bottom:12px">Reclaimed time, not screen time. Only your jars see this.</div>
+      <div style="display:flex;gap:7px;margin-bottom:12px">
+        <div class="chip on" id="visShare" onclick="setVis('share')">Share it</div>
+        <div class="chip" id="visQuiet" onclick="setVis('quiet')">Keep it quiet</div>
+      </div>
+      <div id="shareFields">
+        <div class="photoPick" id="photoPick"></div>
+        <input id="postText" class="timeIn" placeholder="finished chapter three" style="margin:12px 0">
+      </div>
+      <div id="quietFields" style="display:none">
+        <div class="card" style="margin:0 0 12px;text-align:center;background:var(--panel-2)">
+          <div class="sub" id="quietPreview">You regained an hour for yourself.</div>
+          <div class="tiny" style="margin-top:7px">that's all anyone sees — no photo, no words, no number</div>
+        </div>
+        <div class="row" style="gap:7px;margin-bottom:12px">
+          <span class="tiny" style="flex:none">Your words:</span>
+          <div class="chip" onclick="setPronoun(this,'herself')">herself</div>
+          <div class="chip" onclick="setPronoun(this,'himself')">himself</div>
+          <div class="chip on" onclick="setPronoun(this,'themselves')">themselves</div>
+        </div>
+      </div>
+      <button class="btn mint" onclick="publishPost()">Post to Casa Jar</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">no likes counter, no followers, no algorithm</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div></div>
+
+<script src="app.js"></script>
+</body>
+</html>

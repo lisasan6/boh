@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScrollJar — Prototype v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0B0C1A;
+  --panel:rgba(255,255,255,.05); --panel-2:rgba(255,255,255,.085);
+  --line:rgba(180,175,255,.15);
+  --mint:#37E2C0; --violet:#8B7CF6; --blue:#5AA9FF; --peach:#FF9E7A;
+  --chrome-1:#F2F7FA; --chrome-2:#A8B8C8;
+  --gold:#FFC94D; --gold-hi:#FFE9A8; --gold-lo:#D8951A; --gold-text:#FFC94D;
+  --ink:#EFEDFF; --ink-2:#A9A4D8; --ink-3:#6C6795;
+  --calm-bg:#0C1A1C; --calm:#4DB6A5; --calm-soft:#93D3C6; --calm-ink:#EAF7F3;
+  --scr-bg:radial-gradient(125% 92% at 15% 0%, #221F52 0%, #14142E 44%, #0B0C1A 100%);
+  --scr-calm:radial-gradient(125% 92% at 20% 5%, #123231 0%, #0E211F 46%, #0A1614 100%);
+  --sheet:rgba(18,20,42,.93); --cost-bg:rgba(0,0,0,.3);
+  --frame:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.03));
+  --frame-sh:0 40px 90px rgba(0,0,0,.6);
+  --btn-r:16px; --blob-op:.42; --stage:#0B0C1A;
+  --primary-bg:linear-gradient(165deg,#7BF6E0,#18D2B0); --primary-fg:#04241E; --primary-edge:#0A8E77;
+  --tabbar-bg:rgba(18,20,42,.93); --tabbar-fg:#6C6795; --card-sh:none; --card-bd:1px solid var(--line);
+  --jar-rim-1:#F2F7FA; --jar-rim-2:#8798A8; --jar-rim-3:#5F6E80; --jar-face:#F2F7FA;
+  --hero-bg:transparent; --hero-sh:none; --hero-aurora:none; --hero-aurora-op:0;
+  --tint-a:var(--panel); --tint-b:var(--panel);
+  --glass-a:rgba(55,226,192,.22); --glass-b:rgba(90,169,255,.18); --glass-c:rgba(139,124,246,.22); --glass-d:rgba(255,158,122,.14);
+  --jar-stroke:2.6;
+}
+body[data-mode="day"]{
+  /* warm white, never clinical blue-white */
+  --ground:#D9CFDF;
+  --panel:rgba(255,255,255,.66); --panel-2:rgba(255,255,255,.5);
+  --line:rgba(13,15,31,.12);
+  /* saturated aurora — color-blocking, not mist */
+  --mint:#00C2A3; --violet:#6A2CF0; --blue:#1E63FF; --peach:#FF5C2B;
+  --chrome-1:#FFFFFF; --chrome-2:#7A8B9C;
+  --gold-text:#B26B00;
+  --ink:#0D0F1F; --ink-2:#3C4159; --ink-3:#6E7488;
+  --calm-bg:#E3F1EA; --calm:#00806C; --calm-soft:#3A6B60; --calm-ink:#06302A;
+  --scr-bg:
+    radial-gradient(88% 46% at 4% -8%, rgba(255,138,74,.28), transparent 60%),
+    radial-gradient(80% 44% at 104% 6%, rgba(120,60,240,.22), transparent 62%),
+    radial-gradient(96% 52% at 50% 112%, rgba(0,190,160,.3), transparent 66%),
+    linear-gradient(172deg,#F7E2D0 0%,#E6DBF3 46%,#D3E9DF 100%);
+  --scr-calm:
+    radial-gradient(90% 48% at 10% -4%, rgba(0,190,160,.3), transparent 62%),
+    linear-gradient(172deg,#DDEFE6 0%,#CFE7DE 55%,#C7E2DA 100%);
+  --sheet:rgba(252,250,255,.94); --cost-bg:rgba(20,23,51,.06);
+  --frame:linear-gradient(160deg,#20222E,#0D0F1F); --frame-sh:0 34px 70px rgba(13,15,31,.28);
+  --blob-op:.55; --stage:#EDEAE3;
+  /* dark anchors — what stops a light UI reading as pyjamas */
+  --primary-bg:linear-gradient(165deg,#5EEBD1,#00B899); --primary-fg:#04241E; --primary-edge:#00806C;
+  --tabbar-bg:#141733; --tabbar-fg:#9AA0BA;
+  --card-sh:0 2px 10px rgba(13,15,31,.05); --card-bd:1px solid rgba(13,15,31,.1);
+  --jar-rim-1:#FFFFFF; --jar-rim-2:#6E8194; --jar-rim-3:#2E3E4E; --jar-face:#141733;
+  --hero-bg:#111436; --hero-sh:0 20px 44px -20px rgba(13,15,31,.55), inset 0 0 0 1px rgba(255,255,255,.07);
+  --hero-aurora:radial-gradient(70% 60% at 18% 8%, rgba(106,44,240,.75), transparent 62%),
+                radial-gradient(66% 58% at 88% 22%, rgba(0,194,163,.6), transparent 60%),
+                radial-gradient(70% 60% at 50% 108%, rgba(30,99,255,.55), transparent 62%);
+  --hero-aurora-op:.85;
+  --tint-a:linear-gradient(180deg,rgba(255,255,255,.78),rgba(226,247,240,.6)); --tint-b:linear-gradient(180deg,rgba(255,255,255,.78),rgba(233,226,250,.6));
+  --glass-a:rgba(55,226,192,.26); --glass-b:rgba(90,169,255,.22); --glass-c:rgba(139,124,246,.26); --glass-d:rgba(255,158,122,.16);
+  --jar-stroke:3.4;
+}
+body[data-mode="day"] .heroPanel{
+  color:#F4F2FF;
+  --ink:#F4F2FF; --ink-2:#BFC2E0; --ink-3:#9096BC; --gold-text:#FFC94D;
+  --jar-rim-1:#F2F7FA; --jar-rim-2:#8798A8; --jar-rim-3:#5F6E80; --jar-face:#F2F7FA; --jar-stroke:2.6;
+  --panel-2:rgba(255,255,255,.1);
+}
+body[data-mode="day"] .heroPanel .pill.mint{background:rgba(55,226,192,.18);color:#5EEBD1}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--ground);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 14px 40px;transition:background .5s}
+.display{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.025em;font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.sky{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:var(--blob-op)}
+.b1{width:600px;height:520px;background:var(--violet);top:-140px;left:-80px;animation:d1 26s ease-in-out infinite}
+.b2{width:520px;height:480px;background:var(--mint);top:-40px;right:-100px;animation:d2 32s ease-in-out infinite;opacity:.34}
+.b3{width:480px;height:400px;background:var(--blue);bottom:-120px;left:30%;animation:d3 38s ease-in-out infinite;opacity:.28}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,60px) scale(1.12)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,80px) scale(1.15)}}
+@keyframes d3{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-60px) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.blob,.jarbreathe{animation:none}}
+
+/* ── shell ── */
+.topbar{position:relative;z-index:5;display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.modes{display:flex;gap:4px;padding:4px;border-radius:13px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(14px)}
+.ms{border:none;background:transparent;color:var(--ink-2);font-size:12px;font-weight:800;padding:7px 14px;border-radius:10px;cursor:pointer}
+.ms.on{background:var(--ink);color:var(--ground)}
+.hint{font-size:12.5px;color:var(--ink-2);font-weight:600;background:var(--panel);border:1px solid var(--line);padding:7px 14px;border-radius:11px;backdrop-filter:blur(14px)}
+.phone{position:relative;z-index:5;width:330px;border-radius:50px;padding:10px;background:var(--frame);box-shadow:var(--frame-sh), inset 0 0 0 1px rgba(255,255,255,.1)}
+.app{position:relative;border-radius:41px;overflow:hidden;height:668px;background:var(--scr-bg);display:flex;flex-direction:column}
+.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;border-radius:41px;
+  box-shadow:inset 0 0 60px 10px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.06);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+  opacity:.5;mix-blend-mode:overlay}
+body[data-mode="day"] .app::after{box-shadow:inset 0 0 50px 8px rgba(20,23,51,.07), inset 0 0 0 1px rgba(13,15,31,.06);opacity:.3}
+.statusbar{flex:none;display:flex;justify-content:space-between;padding:14px 22px 4px;font-size:11px;font-weight:700;color:var(--ink-2)}
+.screen{position:absolute;inset:0;padding:38px 17px 78px;overflow-y:auto;display:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tabs{position:absolute;bottom:0;left:0;right:0;height:64px;display:flex;background:var(--tabbar-bg);backdrop-filter:blur(20px);border-top:1px solid var(--line);z-index:6}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-size:9px;font-weight:800;letter-spacing:.06em;color:var(--tabbar-fg)}
+.tab .i{width:21px;height:21px;color:currentColor;transition:filter .2s,transform .2s}
+.tab.on .i{filter:drop-shadow(0 0 7px var(--mint));transform:translateY(-1px)}
+.tab.on{color:var(--mint)}
+
+/* ── hero panel: the jar gets its own sky, even in daylight ── */
+.heroPanel{border-radius:28px;padding:16px 14px 20px;margin:-4px -2px 16px;position:relative;overflow:hidden;
+  background:var(--hero-bg);box-shadow:var(--hero-sh)}
+.heroPanel::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--hero-aurora);opacity:var(--hero-aurora-op)}
+.heroPanel::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E")}
+.heroPanel > *{position:relative;z-index:2}
+
+/* ── atoms ── */
+.h1{font-size:23px;line-height:1.1}
+.h2{font-size:17px;line-height:1.15}
+.sub{font-size:13px;color:var(--ink-2);font-weight:500;line-height:1.5}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+.card{background:var(--panel);border:var(--card-bd);border-radius:18px;padding:14px;backdrop-filter:blur(10px);box-shadow:var(--card-sh);margin-bottom:10px}
+.btn{border:none;width:100%;border-radius:var(--btn-r);padding:15px;font-family:'Inter';font-size:13.5px;font-weight:800;cursor:pointer;
+  position:relative;overflow:hidden;isolation:isolate;
+  --glow:rgba(24,210,176,.55); --bevel:rgba(0,0,0,.2); --rim:rgba(255,255,255,.6);
+  box-shadow:
+    inset 0 1.5px 0 var(--rim),                     /* lit top edge */
+    inset 0 -3px 6px -2px var(--bevel),             /* body bevel */
+    inset 0 0 0 1px rgba(255,255,255,.14),          /* form edge */
+    0 1px 2px rgba(6,9,24,.28),                     /* contact */
+    0 8px 18px -8px var(--glow),                    /* near bloom */
+    0 18px 44px -14px var(--glow);                  /* far spill onto surface */
+  transition:transform .1s cubic-bezier(.34,1.5,.64,1), box-shadow .12s ease, filter .12s}
+.btn::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
+  background:linear-gradient(178deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.08) 42%,rgba(255,255,255,0) 58%)}
+.btn::before{content:"";position:absolute;top:0;bottom:0;left:-45%;width:38%;pointer-events:none;z-index:-1;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.32),transparent);filter:blur(5px);
+  transform:skewX(-16deg);animation:gloss 7s ease-in-out infinite}
+@keyframes gloss{0%,72%{left:-45%}92%,100%{left:118%}}
+.btn:active{transform:translateY(2px) scale(.996);filter:saturate(1.08) brightness(.97);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.3),
+    inset 0 -1px 3px -1px var(--bevel),
+    inset 0 0 0 1px rgba(255,255,255,.1),
+    0 1px 1px rgba(6,9,24,.24),
+    0 4px 10px -8px var(--glow),
+    0 8px 20px -14px var(--glow)}
+.btn.chrome{background:var(--primary-bg);color:var(--primary-fg);--glow:rgba(24,222,186,.6)}
+.btn.mint{background:linear-gradient(180deg,#9BF8E5,var(--mint));color:#04352A;--glow:rgba(24,210,176,.55)}
+.btn.gold{background:linear-gradient(180deg,#FFEFC2,var(--gold));color:#3A2A00;--glow:rgba(255,180,40,.6)}
+.btn.violet{background:linear-gradient(180deg,#D4CBFF,var(--violet));color:#150C3F;--glow:rgba(122,92,255,.55)}
+.btn.calm{background:linear-gradient(180deg,#8FE3D2,var(--calm));color:#06231D;--glow:rgba(30,160,138,.5)}
+.btn.ghost{background:var(--panel-2);color:var(--ink);--glow:transparent;--rim:rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 var(--rim), inset 0 0 0 1px var(--line), 0 1px 2px rgba(6,9,24,.14)}
+.btn.ghost::before{display:none}
+.btn.ghost:active{transform:translateY(1px);box-shadow:inset 0 0 0 1px var(--line)}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:9px;padding:5px 10px;font-size:10.5px;font-weight:800}
+.pill.mint{background:rgba(55,226,192,.14);color:var(--mint)}
+.pill.gold{background:rgba(255,201,77,.14);color:var(--gold-text)}
+.pill.chr{background:var(--panel-2);color:var(--ink-2)}
+.row{display:flex;align-items:center;gap:11px}
+.spread{display:flex;align-items:center;justify-content:space-between}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.ic.token{box-shadow:inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px -2px rgba(6,9,24,.4)}
+.shieldchip{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:rgba(55,226,192,.14);color:var(--mint)}
+.amount{font-family:'Bricolage Grotesque';font-size:46px;font-weight:700;letter-spacing:-.04em;color:var(--gold-text);line-height:1}
+.tiny{font-size:11.5px;color:var(--ink-3);font-weight:600}
+.glyph{display:inline-block;vertical-align:-2px;margin-right:2px}
+.timerBtn{flex:1;padding:11px 0;font-size:12.5px}
+.sparks{display:flex;align-items:flex-end;gap:4px;height:34px;margin-top:14px}
+.sparks div{flex:1;border-radius:4px 4px 0 0;background:var(--mint);opacity:.85}
+.sparks div.coin{background:var(--gold)}
+.sparks div.ghost{background:var(--ink-3);opacity:.28}
+.sparkLegend{display:flex;justify-content:space-between;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--ink-3)}
+.sparkLegend span:last-child{color:var(--mint)}
+.winLine{display:flex;align-items:center;gap:7px;margin-top:12px;padding:8px 11px;border-radius:12px;font-size:12.5px;font-weight:800;
+  background:linear-gradient(100deg,rgba(255,201,77,.2),rgba(55,226,192,.14));color:var(--gold-text);
+  box-shadow:inset 0 0 0 1px rgba(255,201,77,.25)}
+body[data-mode="day"] .heroPanel .winLine{color:#FFDF95}
+.winStrip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
+.winStrip::-webkit-scrollbar{display:none}
+.winBadge{flex:none;border-radius:14px;padding:10px 12px;min-width:112px;background:var(--panel);border:var(--card-bd);backdrop-filter:blur(10px)}
+.winBadge b{display:block;font-size:12.5px}
+.winBadge span{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.appRow{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:15px;background:var(--panel);border:var(--card-bd);margin-bottom:8px;backdrop-filter:blur(10px)}
+.appBar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:5px}
+.appBar i{display:block;height:100%;border-radius:3px;background:var(--peach)}
+.resCard{border-radius:18px;padding:14px;margin-bottom:10px;cursor:pointer;border:var(--card-bd);background:var(--panel);backdrop-filter:blur(10px);box-shadow:var(--card-sh)}
+.resCard:active{transform:scale(.99)}
+.tipCard{background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(90,169,255,.1));border-color:rgba(139,124,246,.3)}
+.pullChip{flex:1;text-align:center;border:1px solid var(--line);background:var(--panel-2);border-radius:12px;padding:10px 6px;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:.15s}
+.pullChip.on{background:rgba(55,226,192,.16);border-color:var(--mint);color:var(--mint)}
+.goalRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.goalRow:last-child{border-bottom:none}
+.goalDot{width:9px;height:9px;border-radius:50%;flex:none}
+.entryCard{background:var(--panel);border:var(--card-bd);border-radius:16px;padding:13px;margin-bottom:9px;backdrop-filter:blur(10px);box-shadow:var(--card-sh)}
+.entryMeta{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.entryTag{font-size:9.5px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:3px 6px}
+.tag-impulse{background:rgba(255,158,122,.16);color:var(--peach)}
+.tag-feeling{background:rgba(139,124,246,.16);color:var(--violet)}
+.tag-goal{background:rgba(55,226,192,.16);color:var(--mint)}
+.tag-free{background:var(--panel-2);color:var(--ink-3)}
+.toggle{width:46px;height:27px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);position:relative;cursor:pointer;flex:none;transition:.2s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--ink-3);transition:.2s}
+.toggle.on{background:rgba(55,226,192,.22);border-color:var(--mint)}
+.toggle.on::after{left:22px;background:var(--mint)}
+.modeSeg{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line);margin-bottom:12px}
+.modeSeg div{flex:1;text-align:center;padding:9px 4px;border-radius:10px;font-size:12px;font-weight:800;color:var(--ink-3);cursor:pointer;transition:.18s}
+.modeSeg div.on{background:rgba(55,226,192,.16);color:var(--mint)}
+.ledger{display:flex;gap:4px;height:38px;align-items:flex-end}
+.ledger div{flex:1;border-radius:5px}
+.ledgerKey{display:flex;gap:13px;margin-top:9px;font-size:10.5px;font-weight:700;color:var(--ink-3)}
+.ledgerKey i{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:4px}
+.themeRow{display:flex;align-items:center;gap:10px;margin-top:11px}
+.themeDot{width:10px;height:10px;border-radius:50%;flex:none}
+.aiCard{background:linear-gradient(150deg,rgba(139,124,246,.18),rgba(90,169,255,.1));border-color:rgba(139,124,246,.3)}
+.insteadCard{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.07);border:1px solid var(--calm-ghost-border);border-radius:16px;padding:12px;margin-bottom:9px;cursor:pointer}
+.insteadCard:active{transform:scale(.985)}
+.promptChip{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:6px 10px;font-size:11.5px;font-weight:700;color:var(--ink-2);cursor:pointer}
+.promptChip:active{background:rgba(55,226,192,.14)}
+.chip{border:1px solid var(--line);background:var(--panel-2);border-radius:12px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink-2)}
+.chip.on{background:rgba(55,226,192,.16);border-color:var(--mint);color:var(--mint)}
+.timeIn{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--ink);font-family:'Inter';font-weight:700;font-size:13px;width:100%}
+
+/* ── jar ── */
+.jarbox{position:relative;width:150px;height:172px;margin:0 auto}
+.jarbreathe{animation:breathe 5.2s ease-in-out infinite;transform-origin:50% 92%}
+@keyframes breathe{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.018) translateY(-3px)}}
+@keyframes squash{0%{transform:scaleX(1) scaleY(1)}22%{transform:scaleX(1.13) scaleY(.87)}52%{transform:scaleX(.95) scaleY(1.06)}78%{transform:scaleX(1.03) scaleY(.98)}100%{transform:scaleX(1) scaleY(1)}}
+.squash{animation:squash .52s cubic-bezier(.34,1.56,.64,1) !important}
+@keyframes hop{0%,100%{transform:translateY(0) scaleY(1)}18%{transform:scaleY(.9) scaleX(1.08)}45%{transform:translateY(-22px) scaleY(1.08) scaleX(.95)}72%{transform:translateY(0) scaleY(.94) scaleX(1.05)}}
+.hop{animation:hop .78s cubic-bezier(.34,1.4,.5,1) !important}
+.flyer{position:absolute;width:26px;height:26px;pointer-events:none;z-index:3;
+  filter:drop-shadow(0 0 12px rgba(255,201,77,.85));
+  display:flex;align-items:center;justify-content:center;font:800 12px/1 'Inter';color:#8a6206}
+.star{position:absolute;pointer-events:none;z-index:4;line-height:0;filter:drop-shadow(0 0 7px rgba(255,220,140,.95))}
+@keyframes starOut{0%{transform:translate(0,0) scale(.2);opacity:0}25%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.05) rotate(var(--rot));opacity:0}}
+@keyframes fanfare{0%{opacity:0;transform:translate(-50%,12px) scale(.6)}30%{opacity:1;transform:translate(-50%,-6px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-44px) scale(1)}}
+.fanfare{position:absolute;left:50%;top:22%;font-family:'Bricolage Grotesque';font-weight:800;font-size:16px;color:#FFF4CE;
+  text-shadow:0 2px 0 #C98A12, 0 0 18px rgba(255,201,77,.85);pointer-events:none;white-space:nowrap;z-index:9;animation:fanfare 1.3s cubic-bezier(.34,1.4,.5,1) forwards}
+.eye{transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}
+.blinking{animation:blink 5.6s ease-in-out infinite}
+
+/* ── overlays ── */
+.ov{position:absolute;inset:0;z-index:10;display:none;flex-direction:column}
+.ov.on{display:flex;animation:fade .28s ease}
+.ov.sheetwrap{justify-content:flex-end;background:rgba(6,7,18,.55)}
+body[data-mode="day"] .ov.sheetwrap{background:rgba(20,23,51,.32)}
+.sheet-card{background:var(--sheet);backdrop-filter:blur(24px);border-top:1px solid var(--line);border-radius:28px 28px 41px 41px;padding:22px 18px 20px}
+.shield{background:linear-gradient(170deg,#141733,#0A0B1A);color:#EFEDFF;align-items:center;justify-content:center;text-align:center;padding:34px 26px}
+.cost{display:flex;justify-content:space-between;align-items:center;background:var(--cost-bg);border:1px solid var(--line);border-radius:15px;padding:13px;margin:14px 0}
+.breathorb{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#8FE3D4,#2E7D6E);
+  display:flex;align-items:center;justify-content:center;color:#06231D;font-family:'Bricolage Grotesque';font-size:14px;font-weight:600;animation:breathe 4s ease-in-out infinite}
+/* stats */
+.bars{display:flex;align-items:flex-end;gap:4px;height:96px;margin-top:12px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.bar .b{width:70%;background:var(--mint);border-radius:5px 5px 0 0;min-height:3px}
+.bar .b.coin{background:var(--gold)}
+.bar .l{font-size:9.5px;font-weight:800;color:var(--ink-3)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cal div{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800}
+.d-clean{background:rgba(55,226,192,.16);color:var(--mint)}
+.d-coin{background:rgba(255,201,77,.18);color:var(--gold-text)}
+.d-off{background:var(--panel);color:var(--ink-3)}
+.feed{display:flex;gap:10px;margin-bottom:12px}
+.iconBtn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.iconBtn:active{transform:scale(.94)}
+.backBtn{font-size:19px;cursor:pointer;color:var(--ink-2);padding-right:2px}
+.jarStrip{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.jarStrip::-webkit-scrollbar{display:none}
+.jarChip{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:9px 13px;cursor:pointer;backdrop-filter:blur(10px)}
+.jarChip b{display:block;font-size:12.5px}
+.jarChip span{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.jarChip.on{border-color:var(--mint);background:rgba(55,226,192,.1)}
+.jarChip.ghost{display:flex;align-items:center;justify-content:center;color:var(--ink-3);padding:9px 14px}
+.fcard{background:var(--panel);border:var(--card-bd);border-radius:18px;padding:13px;margin-bottom:10px;backdrop-filter:blur(10px);box-shadow:var(--card-sh)}
+.fhead{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.fname{font-size:12.5px;font-weight:800}
+.fwhen{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.fbody{font-size:13.5px;font-weight:600;line-height:1.4}
+.fphoto{border-radius:13px;overflow:hidden;margin:10px 0 4px;line-height:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.frow{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.supporter{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--ink-3);border:1px dashed var(--line);border-radius:8px;padding:3px 7px}
+.feedEnd{text-align:center;padding:16px 0 4px}
+.settleRow{display:flex;align-items:center;gap:9px;margin-bottom:7px;opacity:.32;transition:opacity .4s}
+.settleRow.done{opacity:1}
+.settleDot{width:16px;height:16px;border-radius:50%;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none;transition:.3s}
+.settleRow.done .settleDot{background:var(--mint);border-color:var(--mint);color:#04241E;font-size:9px;font-weight:900}
+.settleTxt{font-size:12px;font-weight:700}
+.memberRow{display:flex;align-items:center;gap:11px;padding:11px 12px;background:var(--panel);border:var(--card-bd);border-radius:15px;margin-bottom:8px;backdrop-filter:blur(10px)}
+.wobRow{cursor:pointer;transition:.16s}
+.wobRow:active{transform:scale(.985)}
+.sdot{width:7px;height:7px;border-radius:50%;flex:none}
+.sdot.live{background:var(--mint);box-shadow:0 0 9px var(--mint)}
+.sdot.away{background:var(--ink-3);opacity:.75}
+.noteQ{border-left:2px solid var(--mint);padding:3px 0 3px 13px;margin:13px 0 6px;font-size:14.5px;line-height:1.55;color:var(--ink)}
+.noteQ.own{border-left-color:var(--gold-text)}
+.sbDots{display:flex;gap:5px;margin:0 0 14px}
+.sbDots i{height:3px;flex:1;border-radius:2px;background:var(--line);transition:.25s}
+.sbDots i.on{background:var(--mint)}
+.sbQ{margin-bottom:12px}
+.sbQ label{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);margin-bottom:6px;line-height:1.35}
+.draft{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:12px 13px;margin-bottom:8px;cursor:pointer;transition:.16s;font-size:13.5px;line-height:1.5;color:var(--ink)}
+.draft:active{transform:scale(.99)}
+.draft.sel{border-color:var(--mint);background:rgba(55,226,192,.1);box-shadow:0 0 0 1px var(--mint) inset}
+.draft .dlab{display:block;font-size:9.5px;letter-spacing:.09em;font-weight:800;color:var(--ink-3);margin-bottom:5px;text-transform:uppercase}
+.flagRow{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.45;color:var(--ink-2);padding:7px 0;border-top:1px solid var(--line)}
+.flagRow:first-child{border-top:0}
+.flagDot{width:6px;height:6px;border-radius:50%;flex:none;margin-top:5px}
+.flagDot.warn{background:var(--gold-text)}
+.flagDot.ok{background:var(--mint)}
+.exNote{border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:11px 12px;margin-bottom:7px;font-size:13px;line-height:1.5;color:var(--ink-2);cursor:pointer}
+.exNote:active{transform:scale(.99)}
+.wobBubble{background:var(--panel-2);border:1px solid var(--line);border-radius:16px 16px 16px 5px;padding:10px 13px;font-size:13.5px;line-height:1.5;color:var(--ink);max-width:84%;margin-top:9px}
+.wobBubble.me{border-radius:16px 16px 5px 16px;margin-left:auto;background:rgba(55,226,192,.14);border-color:rgba(55,226,192,.3)}
+.wobDots{display:inline-flex;gap:3px;vertical-align:middle}
+.wobDots i{width:5px;height:5px;border-radius:50%;background:var(--ink-3);animation:wd 1.1s infinite}
+.wobDots i:nth-child(2){animation-delay:.16s}.wobDots i:nth-child(3){animation-delay:.32s}
+@keyframes wd{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.qr{width:118px;height:118px;margin:0 auto;border-radius:14px;background:
+  repeating-linear-gradient(0deg,var(--ink) 0 6px,transparent 6px 12px),
+  repeating-linear-gradient(90deg,var(--ink) 0 6px,transparent 6px 12px);opacity:.85;
+  box-shadow:0 0 0 8px var(--panel-2), inset 0 0 0 1px var(--line)}
+.webPrev{margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--panel-2)}
+.webBar{display:flex;gap:5px;padding:8px 10px;background:rgba(0,0,0,.18)}
+.webBar span{width:7px;height:7px;border-radius:50%;background:var(--ink-3);opacity:.5}
+.fakeBtn{margin-top:12px;border-radius:12px;padding:10px;background:linear-gradient(180deg,#9BF8E5,var(--mint));color:#04352A;font-size:12px;font-weight:800}
+.photoPick{display:flex;gap:8px}
+.photoPick > div{flex:1;border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid transparent;line-height:0}
+.photoPick > div.sel{border-color:var(--mint)}
+.av{width:34px;height:34px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#0B0C1A}
+.kudos{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:5px 10px;font-size:11px;font-weight:800;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:4px;line-height:1}
+.kudos.done{background:rgba(55,226,192,.16);color:var(--mint);border-color:transparent}
+.kudos.done{background:rgba(55,226,192,.16);color:var(--mint);border-color:transparent}
+.tierbox{border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:9px;background:var(--panel);cursor:pointer}
+.tierbox.sel{border-color:var(--mint);background:rgba(55,226,192,.09)}
+.cornerSwitch{position:absolute;right:14px;bottom:76px;z-index:9;width:36px;height:36px;border-radius:12px;border:1px solid var(--line);
+  background:var(--panel-2);backdrop-filter:blur(16px);color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 6px 16px -8px rgba(6,9,24,.6);transition:transform .12s cubic-bezier(.34,1.5,.64,1), color .2s}
+.cornerSwitch:active{transform:scale(.92)}
+.cornerSwitch:hover{color:var(--ink)}
+.toast{position:absolute;left:50%;transform:translateX(-50%) translateY(14px);bottom:78px;z-index:20;background:var(--ink);color:var(--ground);
+  padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:700;opacity:0;transition:.28s;pointer-events:none;max-width:280px;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.legend{display:flex;gap:12px;margin-top:9px;font-size:10.5px;font-weight:700;color:var(--ink-3)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
+</style>
+</head>
+<body data-mode="night">
+<div class="sky"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="var(--jar-rim-1)"/><stop offset=".36" stop-color="var(--jar-rim-2)"/><stop offset=".6" stop-color="var(--jar-rim-1)"/><stop offset="1" stop-color="var(--jar-rim-3)"/>
+  </linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="var(--glass-a)"/><stop offset=".42" stop-color="var(--glass-b)"/>
+    <stop offset=".78" stop-color="var(--glass-c)"/><stop offset="1" stop-color="var(--glass-d)"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFC94D"/><stop offset="1" stop-color="#D8951A"/>
+  </linearGradient>
+  <clipPath id="body"><path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z"/></clipPath>
+  <radialGradient id="caustic"><stop offset="0" stop-color="var(--glass-a)" stop-opacity=".9"/><stop offset="1" stop-color="var(--glass-a)" stop-opacity="0"/></radialGradient>
+  <linearGradient id="rimlight" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="innerdark" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+  <linearGradient id="coinface" x1="0" y1="0" x2=".6" y2="1">
+    <stop offset="0" stop-color="#FFF6D4"/><stop offset=".35" stop-color="#FFD469"/><stop offset=".62" stop-color="#F0B22E"/><stop offset="1" stop-color="#B87A0B"/>
+  </linearGradient>
+  <filter id="soften" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="coinsoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation=".9"/></filter>
+  <radialGradient id="cBody" cx=".36" cy=".28" r=".88">
+    <stop offset="0" stop-color="#FFFBE6"/><stop offset=".3" stop-color="#FFDD7A"/>
+    <stop offset=".58" stop-color="#F2B633"/><stop offset=".82" stop-color="#CE8F14"/><stop offset="1" stop-color="#96650A"/>
+  </radialGradient>
+  <linearGradient id="cRim" x1="0" y1="0" x2=".45" y2="1">
+    <stop offset="0" stop-color="#FFF0BE"/><stop offset=".4" stop-color="#E0A422"/><stop offset="1" stop-color="#8A5D06"/>
+  </linearGradient>
+  <radialGradient id="cSpec" cx=".35" cy=".3" r=".55">
+    <stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <!-- ═══ the minted coin ═══ -->
+  <symbol id="coin" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="19.2" fill="url(#cRim)"/>
+    <circle cx="20" cy="20" r="16.4" fill="url(#cBody)"/>
+    <circle cx="20" cy="20" r="16.4" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".9"/>
+    <path d="M20 11.4 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#B4780D" opacity=".5"/>
+    <path d="M20 10.6 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#FFF3CE" opacity=".55"/>
+    <ellipse cx="13.6" cy="12.4" rx="7" ry="4.2" fill="url(#cSpec)" transform="rotate(-30 13.6 12.4)" filter="url(#coinsoft)"/>
+    <path d="M7.4 26.5 a13.6 13.6 0 0 0 25.2 0" fill="none" stroke="#FFEEB8" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round" filter="url(#coinsoft)"/>
+  </symbol>
+  <!-- ═══ glyphs — same stroke language as the jar ═══ -->
+  <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/>
+  </symbol>
+  <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21v-8"/><path d="M12 13c0-3.3-2.7-6-6-6 0 3.3 2.7 6 6 6z"/><path d="M12 13c0-3.9 3.1-7 7-7 0 3.9-3.1 7-7 7z"/>
+  </symbol>
+  <symbol id="i-rings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="8.6" cy="12" r="5.6"/><circle cx="15.4" cy="12" r="5.6"/>
+  </symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+    <circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M12 2.8l7 2.8v6c0 4.6-3 8.1-7 9.6-4-1.5-7-5-7-9.6v-6l7-2.8z"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.6A9 9 0 019.4 3.5a9 9 0 1011.1 11.1z" fill="currentColor"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 1.8l2.9 7.3 7.3 2.9-7.3 2.9-2.9 7.3-2.9-7.3L1.8 12l7.3-2.9z" fill="currentColor"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.4 3.4h9.2v5.2a4.6 4.6 0 01-9.2 0V3.4z"/><path d="M7.4 5h-2.6a2.6 2.6 0 002.6 2.6M16.6 5h2.6a2.6 2.6 0 01-2.6 2.6"/>
+    <path d="M12 13.2v3.6M8.8 20.6h6.4l-.8-3.8H9.6z"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/>
+  </symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4.2a3 3 0 00-5.6 1.4A2.8 2.8 0 004.2 9c0 .8.3 1.5.8 2a2.9 2.9 0 00.6 4.4A3 3 0 009 19.8a3 3 0 003-1.6V4.2z"/>
+    <path d="M12 4.2a3 3 0 015.6 1.4A2.8 2.8 0 0119.8 9c0 .8-.3 1.5-.8 2a2.9 2.9 0 01-.6 4.4A3 3 0 0115 19.8a3 3 0 01-3-1.6"/>
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M3.4 4.6h6.2c1.3 0 2.4 1.1 2.4 2.4v12.4c0-1.3-1.1-2.4-2.4-2.4H3.4V4.6z"/><path d="M20.6 4.6h-6.2c-1.3 0-2.4 1.1-2.4 2.4v12.4c0-1.3 1.1-2.4 2.4-2.4h6.2V4.6z"/>
+  </symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16.4 3.6l4 4L8.6 19.4l-5.2 1.2 1.2-5.2z"/><path d="M14.4 5.6l4 4"/>
+  </symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+    <path d="M2.4 14c2.4-4.6 4.2-4.6 6.6 0s4.2 4.6 6.6 0 4.2-4.6 6-1.4"/>
+  </symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+    <path d="M3.4 8.2h3.3l1.5-2.4h7.6l1.5 2.4h3.3v10.2c0 .9-.7 1.6-1.6 1.6H5c-.9 0-1.6-.7-1.6-1.6V8.2z"/><circle cx="12" cy="13.4" r="3.5"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <path d="M9.6 14.4l4.8-4.8"/><path d="M11.4 6.6l1.5-1.5a3.9 3.9 0 015.5 5.5l-1.5 1.5"/><path d="M12.6 17.4l-1.5 1.5a3.9 3.9 0 01-5.5-5.5l1.5-1.5"/>
+  </symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.5 2.6h11M6.5 21.4h11"/><path d="M7.6 2.6v3.1c0 2.4 1.6 4.4 4.4 6.3 2.8-1.9 4.4-3.9 4.4-6.3V2.6"/>
+    <path d="M7.6 21.4v-3.1c0-2.4 1.6-4.4 4.4-6.3 2.8 1.9 4.4 3.9 4.4 6.3v3.1"/>
+    <path d="M12 12c-1.7 1.2-2.7 2.4-3.1 3.8h6.2c-.4-1.4-1.4-2.6-3.1-3.8z" fill="currentColor" stroke="none" opacity=".85"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4l-1.5-1.4C5.3 14.3 2.4 11.6 2.4 8.3 2.4 5.6 4.5 3.5 7.2 3.5c1.5 0 3 .7 3.9 1.9l.9 1.1.9-1.1c.9-1.2 2.4-1.9 3.9-1.9 2.7 0 4.8 2.1 4.8 4.8 0 3.3-2.9 6-7.9 10.7L12 20.4z" fill="currentColor"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.3 1.8L4.2 13.6h6.1l-1.6 8.6 9.1-11.8h-6.1z" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/>
+    <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.2 2"/>
+  </symbol>
+  <symbol id="i-app" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+    <rect x="4.2" y="4.2" width="15.6" height="15.6" rx="4.6"/><path d="M4.2 9.4h15.6"/><circle cx="7.6" cy="6.8" r=".9" fill="currentColor" stroke="none"/>
+  </symbol>
+</defs></svg>
+
+<div class="topbar">
+  <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
+  <div class="hint">Tap through it like a real app — start with onboarding</div>
+  <div class="modes"><button class="ms" onclick="restart()">↻ Restart</button></div>
+</div>
+
+<div class="phone"><div class="app" id="app">
+  <div class="statusbar"><span>9:41</span><span>􀙇 􀛨</span></div>
+
+  <!-- ══ HOME ══ -->
+  <div class="screen on" id="s-home">
+    <div class="heroPanel">
+      <div class="eyebrow">THIS WEEK</div>
+      <div class="display num" id="timeBig" style="font-size:54px;letter-spacing:-.045em;line-height:1;margin-top:6px">9h 40m</div>
+      <div class="sub" style="margin-top:6px">returned to you</div>
+      <div class="winLine" id="winLine">
+        <svg width="15" height="15"><use href="#i-trophy"/></svg>
+        <span>Your best week yet — 3h 10m more than last</span>
+      </div>
+      <div class="sparks" id="weekSpark"></div>
+      <div class="sparkLegend"><span>last week</span><span id="goalLine">2 nights to your 15-night mark</span></div>
+      <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
+    </div>
+
+    <div class="card" id="focusCard">
+      <div class="spread" style="margin-bottom:10px">
+        <div class="row" style="gap:8px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-clock"/></svg><b style="font-size:13.5px">Focus session</b></div>
+        <span class="tiny" id="focusHint">shield everything, right now</span>
+      </div>
+      <div id="focusIdle" style="display:flex;gap:7px">
+        <button class="btn ghost timerBtn" onclick="startFocus(25)">25m</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(60)">1h</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(90)">1h30</button>
+        <button class="btn ghost timerBtn" onclick="startFocus(0)">Set…</button>
+      </div>
+      <div id="focusRun" style="display:none">
+        <div class="row" style="gap:14px">
+          <div style="position:relative;width:64px;height:64px;flex:none">
+            <svg width="64" height="64" style="transform:rotate(-90deg)">
+              <circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="6"/>
+              <circle id="focusRing" cx="32" cy="32" r="27" fill="none" stroke="var(--mint)" stroke-width="6" stroke-linecap="round"
+                      stroke-dasharray="169.6" stroke-dashoffset="0" style="filter:drop-shadow(0 0 6px var(--mint))"/>
+            </svg>
+          </div>
+          <div style="flex:1"><div class="display num" style="font-size:26px" id="focusTime">25:00</div><div class="tiny" id="focusSub">everything is shielded</div></div>
+          <button class="btn ghost" style="width:auto;padding:10px 14px;font-size:12px" onclick="endFocus(true)">End</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Promises</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ New</span></div>
+    <div id="commitList"></div>
+
+    <div class="winStrip" id="winStrip"></div>
+    <div class="card tipCard" style="cursor:pointer" id="tipCard" onclick="tipAction()">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)" id="tipIcon"><use href="#i-brain"/></svg>
+        <div style="flex:1"><b style="font-size:13px" id="tipTitle"></b>
+        <div class="tiny" style="margin-top:3px;line-height:1.5" id="tipBody"></div></div></div>
+      <div class="spread" style="margin-top:9px">
+        <span class="tiny" style="color:var(--violet)" id="tipCta">Discover more ›</span>
+        <span class="tiny" onclick="event.stopPropagation();nextTip()" style="cursor:pointer">next tip</span>
+      </div>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('usage')">
+      <div class="row"><svg width="19" height="19" style="color:var(--peach)"><use href="#i-chart"/></svg>
+      <div><b style="font-size:13.5px">Where your time goes</b><div class="tiny">this week's screen report · 3 apps worth shielding</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('story')">
+      <div><b style="font-size:13.5px">Your story</b><div class="tiny">hours, nights, the shape of your weeks</div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('jar')">
+      <div class="row"><svg width="20" height="20" style="color:var(--chrome-2)"><use href="#i-jar"/></svg>
+      <div><b style="font-size:13.5px">The jar · <span id="jarAmtMini">$47</span></b><div class="tiny">tips out to Doctors Without Borders on Aug 1</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+  </div>
+
+  <!-- ══ THE JAR (money moved off the hero) ══ -->
+  <div class="screen" id="s-jar">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">The jar</div></div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="jarbox" id="homeJar">
+        <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="homeJarSvg">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <ellipse cx="100" cy="216" rx="58" ry="11" fill="url(#caustic)" filter="url(#soften)" opacity=".85"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g clip-path="url(#body)"><rect x="58" y="46" width="13" height="150" rx="6.5" fill="#fff" opacity=".16"/></g>
+          <g id="coinStack" clip-path="url(#body)"></g>
+          <g class="blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle class="eye" cx="116" cy="104" r="4.6" fill="var(--jar-face)"/></g>
+          <path id="mouth" d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="amount num" id="jarAmt" style="margin-top:8px">$47</div>
+      <div class="tiny" style="margin-top:6px">→ Doctors Without Borders · tips Aug 1</div>
+    </div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+      <div class="eyebrow">IMPACT · JULY</div>
+      <div class="sub" style="margin-top:8px">Your July coins covered a month of school lunches for <b>one girl in Kakuma</b>. Her name is Aisha and she's seven.</div>
+      <div class="row" style="margin-top:12px;gap:14px">
+        <div><div class="display num" style="font-size:22px;color:var(--gold-text)">$83</div><div class="tiny">given all-time</div></div>
+        <div><div class="display num" style="font-size:22px">166</div><div class="tiny">meals, if you want the total</div></div>
+      </div>
+      <div class="tiny" style="margin-top:10px">100% reached the program.</div>
+    </div>
+    <button class="btn ghost" onclick="showTipout()">Preview the monthly tip-out</button>
+  </div>
+
+  <!-- ══ STORY ══ -->
+  <div class="screen" id="s-story">
+    <div class="display h1" style="margin-bottom:12px">Your story</div>
+    <div style="display:flex;gap:9px;margin-bottom:12px">
+      <div class="card" style="flex:1;margin:0;text-align:center"><div class="display" style="font-size:21px">9h 40m</div><div class="tiny">returned</div></div>
+      <div class="card" style="flex:1;margin:0;text-align:center"><div class="display" style="font-size:21px">47</div><div class="tiny">resisted</div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">Hours returned · this week</b>
+      <div class="bars" id="hoursChart"></div>
+      <div class="legend"><span><i style="background:var(--mint)"></i>clean</span><span><i style="background:var(--gold)"></i>coin day</span></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">July</b>
+      <div class="tiny" style="margin-top:2px">both kinds of day count</div>
+      <div class="cal" id="cal"></div>
+    </div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="tiny">back to today</div></div>
+  </div>
+
+  <!-- ══ WHERE YOUR TIME GOES ══ -->
+  <div class="screen" id="s-usage">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">Where your time goes</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow">LAST 7 DAYS · ON THIS PHONE</div>
+      <div class="display num" style="font-size:40px;margin-top:6px">21h 12m</div>
+      <div class="sub" style="margin-top:5px">on screens · <b>4h 30m</b> of it on apps you've shielded</div>
+      <div class="sparks" id="usageSpark" style="height:40px"></div>
+    </div>
+    <div class="spread" style="margin:2px 2px 9px"><div class="display h2">Biggest draws</div><span class="tiny">iOS renders this — we never read it</span></div>
+    <div id="appList"></div>
+    <div class="card tipCard">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)"><use href="#i-brain"/></svg>
+        <div style="flex:1"><b style="font-size:13px">Two of these are worth a promise</b>
+        <div class="tiny" style="margin-top:2px">Not the biggest — the ones you open most often without deciding to. That's the tell.</div></div></div>
+    </div>
+    <div class="tiny" style="text-align:center;margin-top:4px;line-height:1.5">Apple draws this report inside a sealed window. We can show it to you; we can't store it, read it, or send it anywhere.</div>
+  </div>
+
+  <!-- ══ RESOURCES ══ -->
+  <div class="screen" id="s-resources">
+    <div class="row" style="margin-bottom:6px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Why it's hard</div></div>
+    <div class="sub" style="margin-bottom:14px">Not willpower. Design. Here's what's actually happening — and what we do about each one.</div>
+    <div id="resList"></div>
+    <div class="card" style="background:rgba(255,255,255,.05)">
+      <b style="font-size:13px">Everything here has a source</b>
+      <div class="tiny" style="margin-top:5px">We cite the study, and we say when the evidence is thin. No "dopamine detox", no "21 days", no invented statistics.</div>
+    </div>
+  </div>
+
+  <!-- ══ RESOURCE DETAIL ══ -->
+  <div class="screen" id="s-resdetail">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('resources')">‹</span><div class="display h1" id="rdTitle">Mechanism</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow" id="rdKicker">THE MECHANISM</div>
+      <div class="display" style="font-size:19px;margin-top:9px;line-height:1.3" id="rdHook"></div>
+      <div class="sub" style="margin-top:9px" id="rdBody"></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">What it feels like</b>
+      <div class="sub" style="margin-top:5px" id="rdFeels"></div>
+    </div>
+    <div class="card" style="background:rgba(55,226,192,.1);border-color:rgba(55,226,192,.28)">
+      <b style="font-size:13px">What ScrollJar does about it</b>
+      <div class="sub" style="margin-top:5px" id="rdWeDo"></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">Try this tonight</b>
+      <div class="sub" style="margin-top:5px" id="rdTry"></div>
+      <button class="btn ghost" style="margin-top:11px" onclick="openEntry('feeling')">Write about it</button>
+    </div>
+    <div class="tiny" style="text-align:center" id="rdSource"></div>
+  </div>
+
+  <!-- ══ DIARY ══ -->
+  <div class="screen" id="s-diary">
+    <div class="spread" style="margin-bottom:10px">
+      <div class="display h1">Diary</div>
+      <button class="iconBtn" onclick="openEntry('free')"><svg width="16" height="16"><use href="#i-pen"/></svg></button>
+    </div>
+    <div class="modeSeg" id="diaryMode">
+      <div class="on" onclick="setDiaryMode('both',this)">Both</div>
+      <div onclick="setDiaryMode('blank',this)">Blank page</div>
+      <div onclick="setDiaryMode('guided',this)">Guided</div>
+    </div>
+    <div class="tiny" id="diaryModeNote" style="margin:-4px 2px 12px">Prompts when you want them, an empty page when you don't.</div>
+
+    <div class="card">
+      <b style="font-size:13.5px">How's the pull right now?</b>
+      <div class="tiny" style="margin-top:3px">one tap — it teaches the app your weather</div>
+      <div style="display:flex;gap:7px;margin-top:11px">
+        <div class="pullChip" onclick="logPull(this,'calm','Calm')">Calm</div>
+        <div class="pullChip" onclick="logPull(this,'itchy','Itchy')">Itchy</div>
+        <div class="pullChip" onclick="logPull(this,'strong','Pulling hard')">Pulling hard</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:4px"><b style="font-size:13.5px">Does it actually help?</b>
+        <span class="tiny">your own answers</span></div>
+      <div class="sub" style="margin-bottom:11px" id="ledgerHead">You've felt <b>worse</b> after 7 of your last 10 sessions.</div>
+      <div class="ledger" id="moodLedger"></div>
+      <div class="ledgerKey"><span><i style="background:var(--mint)"></i>better</span><span><i style="background:var(--ink-3)"></i>same</span><span><i style="background:var(--peach)"></i>worse</span></div>
+      <div class="tiny" style="margin-top:10px">We ask before and after. Nobody's opinion involved — just yours, over time.</div>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">Something to sit with</b>
+        <span class="tiny" id="reflCount">1 of 6</span></div>
+      <div class="display" style="font-size:17px;line-height:1.3;margin-bottom:6px" id="reflQ">How do you feel when you're in there?</div>
+      <div class="sub" id="reflSub">Not afterwards — during. Try to catch it while it's happening.</div>
+      <div id="reflHeavy" style="display:none;margin-top:11px;padding:11px;border-radius:13px;background:rgba(147,211,198,.1);border:1px solid var(--calm-ghost-border)">
+        <div class="tiny" style="line-height:1.55;color:var(--calm-soft)">If what comes up feels heavier than an evening, that's worth saying out loud to someone who isn't an app. We keep a short list of places to start — no diagnosis, no algorithms.</div>
+        <div class="tiny" style="margin-top:7px;color:var(--calm);cursor:pointer" onclick="toast('Support directory — real humans, not chatbots.')">Where to look ›</div>
+      </div>
+      <div class="row" style="gap:7px;margin-top:13px">
+        <button class="btn mint" style="flex:1" onclick="answerReflection()">Answer it</button>
+        <button class="btn ghost" style="flex:1" id="reflSwap" onclick="nextReflection()">Another</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,158,122,.14),rgba(255,201,77,.1))">
+      <div class="row" style="gap:11px">
+        <div class="display num" style="font-size:30px;color:var(--peach)" id="detoxN">4</div>
+        <div style="flex:1"><b style="font-size:13px">times you've said "I need a detox"</b>
+          <div class="tiny" style="margin-top:3px">since March, by your own count. This is the first time you put a price on it.</div></div>
+      </div>
+      <button class="btn ghost" style="margin-top:11px" onclick="addDetox()">I said it again today</button>
+    </div>
+
+    <div class="card">
+      <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">What this time is for</b>
+        <span class="pill chr" style="cursor:pointer" onclick="addGoal()">+ Goal</span></div>
+      <div id="goalList"></div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+      <div class="spread"><div class="eyebrow">WEEKLY RECAP · SUNDAY</div><span class="pill mint">ready</span></div>
+      <div class="display" style="font-size:16px;margin:9px 0 6px;line-height:1.3">Your week, in your own words</div>
+      <div class="sub">Three entries mentioned tiredness before 10pm. Two mentioned reading afterwards and feeling better.</div>
+      <button class="btn ghost" style="margin-top:12px" onclick="go('recap')">Read the recap</button>
+    </div>
+
+    <div class="card spread" style="cursor:pointer" onclick="go('resources')">
+      <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-brain"/></svg>
+      <div><b style="font-size:13.5px">Why it's hard</b><div class="tiny">the mechanisms behind the pull, explained</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Entries</div><span class="tiny">only you can read these</span></div>
+    <div id="entryList"></div>
+  </div>
+
+  <!-- ══ WEEKLY RECAP ══ -->
+  <div class="screen" id="s-recap">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Week of Jul 21</div></div>
+    <div class="heroPanel">
+      <div class="eyebrow">IN YOUR OWN WORDS</div>
+      <div class="display" style="font-size:20px;margin:10px 0;line-height:1.25">"Tired, but I read instead."</div>
+      <div class="sub">You wrote some version of that three times this week. It's the sentence your week keeps arriving at.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">What showed up</b>
+      <div class="themeRow"><span class="themeDot" style="background:var(--peach)"></span><div><b style="font-size:12.5px">Tiredness before 10pm</b><div class="tiny">4 entries · usually right before a coin</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a clean night</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--violet)"></span><div><b style="font-size:12.5px">Boredom at lunch</b><div class="tiny">2 entries · the pull was mild, you rode it out</div></div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">Hours, next to feelings</b>
+      <div class="bars" id="recapBars" style="height:78px"></div>
+      <div class="tiny" style="margin-top:8px">Gold days are coin days. Notice they're the tired ones — not the weak ones.</div>
+    </div>
+    <div class="card aiCard">
+      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Legend</span></div>
+      <div class="sub" style="margin-top:9px">Your hardest hour is Sunday 10pm and your entries say it's tiredness, not craving. Moving that shield an hour earlier would meet the real problem. Want me to suggest a wind-down that isn't a screen?</div>
+      <div class="row" style="gap:7px;margin-top:12px">
+        <button class="btn mint" style="flex:1" onclick="toast('Shield moved to 9pm on Sundays.')">Do it</button>
+        <button class="btn ghost" style="flex:1" onclick="toast('Kept as is — you know your week.')">Not now</button>
+      </div>
+      <div class="tiny" style="margin-top:10px">Reads patterns and your own words. Never your screen content — we can't see it.</div>
+    </div>
+  </div>
+
+  <!-- ══ FEED ══ -->
+  <div class="screen" id="s-friends">
+    <div class="spread" style="margin-bottom:12px">
+      <div class="display h1">Your jars</div>
+      <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
+    </div>
+    <div class="jarStrip">
+      <div class="jarChip on" onclick="go('jardetail')"><b>Casa Jar</b><span>you + 3</span></div>
+      <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
+      <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
+    </div>
+    <div id="feedList"></div>
+    <div class="feedEnd">
+      <svg width="15" height="15" style="color:var(--mint)"><use href="#i-sprout"/></svg>
+      <div class="display" style="font-size:15px;margin-top:6px">That's everything.</div>
+      <div class="tiny" style="margin-top:3px">The rest of your life is off-screen.</div>
+    </div>
+  </div>
+
+  <!-- ══ JAR DETAIL ══ -->
+  <div class="screen" id="s-jardetail">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span>
+      <div class="display h1" id="jarName" onclick="renameJar()" style="cursor:pointer">Casa Jar</div>
+      <span class="tiny" onclick="renameJar()" style="cursor:pointer">rename</span></div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="eyebrow">JULY · EVERYONE GIVES TO UNICEF</div>
+      <div class="amount num" style="margin-top:8px" id="groupTotal">$38</div>
+      <div class="tiny" style="margin-top:6px">each person's coins go from their own card</div>
+      <div class="row" style="justify-content:center;gap:6px;margin-top:14px">
+        <div class="av" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)">L</div>
+        <div class="av" style="background:linear-gradient(150deg,#FFB86B,#FF5C8A)">G</div>
+        <div class="av" style="background:linear-gradient(150deg,#8B7CF6,#5AA9FF)">M</div>
+        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);color:#3A2A00">You</div>
+      </div>
+    </div>
+    <div class="spread" style="margin:4px 2px 8px"><div class="display h2">Members</div>
+      <span class="chip" style="font-size:11px" onclick="toggleAmounts(this)">Showing $</span></div>
+    <div id="memberList"></div>
+    <div class="card" style="cursor:pointer" onclick="go('challenge')">
+      <div class="spread"><div><b style="font-size:13.5px">Focus Week</b><div class="tiny">3 days left · everyone halves their scroll</div></div>
+      <span class="pill mint">Open</span></div>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:9px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg>
+        <div style="flex:1"><b style="font-size:13.5px">Your standby note</b><div class="tiny">sent for you when someone wobbles and you're in your own session</div></div></div>
+      <div class="noteQ" id="standbyPreview" style="font-size:13.5px">Not written yet.</div>
+      <div class="row" style="gap:8px;margin-top:4px">
+        <button class="btn ghost" style="flex:1" onclick="openStandby()">Write it</button>
+        <button class="btn ghost" style="flex:1" onclick="openWobble()">Ask for a hand</button>
+      </div>
+    </div>
+    <button class="btn violet" onclick="go('invite')">Invite someone to this jar</button>
+  </div>
+
+  <!-- ══ CHALLENGE ══ -->
+  <div class="screen" id="s-challenge">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('jardetail')">‹</span><div class="display h1">Focus Week</div></div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(55,226,192,.14),rgba(139,124,246,.12))">
+      <div class="eyebrow">DAY 4 OF 7</div>
+      <div class="display" style="font-size:19px;margin:8px 0 6px">9 of 11 jars are holding</div>
+      <div class="sub">Not a ranking — just the weather. Nobody is behind anybody here.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">Your week</b>
+      <div class="bars" id="challengeBars" style="height:78px"></div>
+      <div class="tiny" style="margin-top:8px">You're matched with people whose baseline looks like yours — comparison only makes sense between comparable weeks.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">If everyone finishes</b>
+      <div class="sub" style="margin-top:5px">Casa Jar unlocks a <b>double tip-out</b> — we match the week's coins from our own pocket, to UNICEF.</div>
+    </div>
+    <button class="btn mint" onclick="toast('Everyone in the jar just got a nudge — kindly worded.')">Cheer the jar on</button>
+  </div>
+
+  <!-- ══ INVITE ══ -->
+  <div class="screen" id="s-invite">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Invite</div></div>
+    <div class="card" style="text-align:center">
+      <div class="qr" id="qrBox"></div>
+      <div class="display" style="font-size:15px;margin-top:12px">scrolljar.app/j/casa-jar</div>
+      <div class="tiny" style="margin-top:5px">opens a page about the jar — no login, no app needed</div>
+    </div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+      <div class="row"><svg width="20" height="20" style="color:var(--gold)"><use href="#i-heart"/></svg>
+      <div><b style="font-size:13.5px">Your invite gives</b><div class="tiny" style="margin-top:2px">When they join and finish their first week, we donate $1 to UNICEF. The invitation itself does good.</div></div></div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">They'll land on this</b>
+      <div class="webPrev">
+        <div class="webBar"><span></span><span></span><span></span></div>
+        <div style="padding:16px;text-align:center">
+          <svg width="34" height="34" style="color:var(--chrome-1)"><use href="#i-jar"/></svg>
+          <div class="display" style="font-size:15px;margin-top:8px">Luca invited you to Casa Jar</div>
+          <div class="tiny" style="margin-top:5px">4 people keeping promises together.<br>This month they've given $38 to UNICEF.</div>
+          <div class="fakeBtn">Join the jar</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn chrome" onclick="toast('Link copied. You invite people to a jar, never to an app.')"><svg width="15" height="15" style="vertical-align:-2px;margin-right:6px"><use href="#i-link"/></svg>Copy invite link</button>
+  </div>
+
+  <!-- ══ YOU ══ -->
+  <div class="screen" id="s-you">
+    <div class="display h1" style="margin-bottom:12px">You</div>
+    <div class="card">
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Peek valve</b><div class="tiny">one free peek every 48h</div></div><span class="pill mint" id="peekState">5 min · ready</span></div>
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Monthly cap</b><div class="tiny">your safety valve</div></div><span class="pill gold">$50</span></div>
+      <div class="spread"><div><b style="font-size:13px">Quiet mode</b><div class="tiny">schedule 24h ahead</div></div><span class="pill chr">Off</span></div>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:12px">
+        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);width:44px;height:44px;border-radius:14px;font-size:15px">You</div>
+        <div style="flex:1"><b style="font-size:14px" id="profName">Luca</b>
+          <div class="tiny" id="profPronoun">they/them · shown as "themselves" in quiet posts</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px" id="pronounChips"></div>
+      <div class="tiny" style="margin-top:9px">We use this so the app can talk about you correctly — "regained an hour for themselves".</div>
+    </div>
+    <div class="card" id="workCard">
+      <div class="spread">
+        <div class="row" style="gap:9px"><svg width="18" height="18" style="color:var(--blue)"><use href="#i-clock"/></svg>
+        <div><b style="font-size:13.5px">I work in these apps</b><div class="tiny">for people whose job lives there</div></div></div>
+        <div class="toggle" id="workToggle" onclick="toggleWork(this)"></div>
+      </div>
+      <div id="workBody" style="display:none;margin-top:13px">
+        <div class="sub" style="margin-bottom:11px">Work is never a weak moment. Inside your work windows the shield steps aside, nothing is charged, and those minutes are counted separately — they're not "returned time" and they're not a slip.</div>
+        <div class="row" style="gap:10px;margin-bottom:11px">
+          <div style="flex:1"><div class="tiny" style="margin-bottom:5px">WORK WINDOW</div><input class="timeIn" type="time" value="09:00"></div>
+          <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="18:00"></div>
+        </div>
+        <div class="card" style="margin:0 0 11px;background:var(--panel-2)">
+          <b style="font-size:12.5px">Clocking in</b>
+          <div class="tiny" style="margin-top:4px;line-height:1.55">Opening a shielded app in a work window asks one question — "working?" — and starts a 30-minute work session. No pause, no price. When it ends we ask once more. Drift after that becomes ordinary time again.</div>
+        </div>
+        <div class="spread" style="margin-bottom:10px"><div><div style="font-size:12.5px;font-weight:700">Count work time as reclaimed</div><div class="tiny">off by default — it isn't your evening</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="tiny">Weekends and evenings stay fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
+      </div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">What your jars can see</b>
+      <div class="spread" style="margin:11px 0"><div><div style="font-size:12.5px;font-weight:700">Your coins</div><div class="tiny">when you pay, and how much</div></div>
+        <span class="chip" onclick="cycleSetting(this,['Nobody','My jars'])">Nobody</span></div>
+      <div class="spread" style="margin-bottom:11px"><div><div style="font-size:12.5px;font-weight:700">Jar totals</div><div class="tiny">the collective number, never who</div></div>
+        <span class="chip on" style="cursor:default">Always shared</span></div>
+      <div class="spread"><div><div style="font-size:12.5px;font-weight:700">Default post</div><div class="tiny">how your reclaimed hours appear</div></div>
+        <span class="chip" onclick="cycleSetting(this,['Quiet','Full'])">Quiet</span></div>
+      <div class="tiny" style="margin-top:10px">Coins are private by default. Shame makes people relapse — we designed against it.</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">If you pull the plug</b>
+      <div class="sub" style="margin-top:5px">Turning off Screen Time or deleting ScrollJar mid-promise counts as breaking the jar: <b>5× your override price</b>. You get a warning and one hour to restore first. Ending a promise honestly is always free, with 24h notice.</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="go('paywall')">
+      <div class="spread"><div><b style="font-size:13px">Ghost Jar</b><div class="tiny">free forever · 1 commitment</div></div><span class="pill mint">Upgrade</span></div>
+    </div>
+    <div class="card" style="background:rgba(55,226,192,.09)">
+      <b style="font-size:13px"><svg class="glyph" width="13" height="13" style="color:var(--mint)"><use href="#i-heart"/></svg> Our promise</b>
+      <div class="sub" style="margin-top:5px">We never keep a cent of your jar. Memberships are our only revenue — so we only win when you do.</div>
+    </div>
+    <button class="btn ghost" onclick="showRough()">See the rough-day check-in</button>
+  </div>
+
+  <!-- ══ NEW COMMITMENT ══ -->
+  <div class="screen" id="s-new">
+    <div class="row" style="margin-bottom:14px"><span style="font-size:19px;cursor:pointer" onclick="go('home')">‹</span><div class="display h1">New promise</div></div>
+    <div class="eyebrow" style="margin-bottom:8px">1 · WHAT ARE WE TAMING?</div>
+    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#FF7AC6,#8B5CF6)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The scroll one</b></div>
+    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The loud one</b></div>
+    <div class="eyebrow" style="margin:14px 0 8px">2 · WHEN IS THE SHIELD ON?</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px" id="schedChips">
+      <div class="chip on" onclick="pickSched(this,'always')">Always</div>
+      <div class="chip" onclick="pickSched(this,'evenings')">Evenings</div>
+      <div class="chip" onclick="pickSched(this,'work')">Work hours</div>
+      <div class="chip" onclick="pickSched(this,'weekend')">Weekends</div>
+      <div class="chip" onclick="pickSched(this,'custom')">Custom…</div>
+    </div>
+    <div class="card" id="customWindow" style="display:none">
+      <div class="row" style="gap:10px">
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" value="21:00" id="schedFrom"></div>
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="07:00" id="schedTo"></div>
+      </div>
+      <div class="tiny" style="margin-top:9px">Tightening is instant. Loosening takes 24 hours — cold blood, remember.</div>
+    </div>
+    <div class="eyebrow" style="margin:14px 0 8px">3 · PRICE OF A WEAK MOMENT</div>
+    <div class="card" style="text-align:center">
+      <div class="amount num">$<span id="priceV">5</span></div>
+      <input type="range" min="2" max="25" value="5" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="document.getElementById('priceV').textContent=this.value">
+      <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
+    </div>
+    <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR?</div>
+    <div class="card"><input placeholder="my novel · evening runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the promise</button>
+    <div class="tiny" style="text-align:center;margin-top:8px">made in cold blood, kept in warm moments</div>
+  </div>
+
+  <!-- ══ PAYWALL ══ -->
+  <div class="screen" id="s-paywall">
+    <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">Make it real</div></div>
+    <div class="sub" style="margin-bottom:14px">Kindness is never paywalled — the pause, the peek valve and rough-day support are yours at every tier.</div>
+    <div class="tierbox" onclick="selTier(this,'Ghost Jar')"><div class="spread"><b style="font-size:14px">Ghost Jar</b><span class="display" style="font-size:15px">Free</span></div><div class="tiny" style="margin-top:4px">Blocking · friction · 1 commitment · buddy jar</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'Jar Hero')"><div class="spread"><b style="font-size:14px">Jar Hero</b><span class="display" style="font-size:15px">$49.99/yr</span></div><div class="tiny" style="margin-top:4px">The stakes engine · unlimited promises · group jars · danger-hours forecast</div></div>
+    <div class="tierbox" onclick="selTier(this,'Jar Legend')"><div class="spread"><b style="font-size:14px">Jar Legend</b><span class="display" style="font-size:15px">$79.99/yr</span></div><div class="tiny" style="margin-top:4px">Everything + deep stats + Year in the Jar</div><div class="pill gold" style="margin-top:7px">We give half of everything we receive</div></div>
+    <button class="btn gold" style="margin-top:6px" onclick="toast('Your membership is what lets us give away 100% of every penalty.')">Continue</button>
+  </div>
+
+  <!-- ══ TABS ══ -->
+  <div class="tabs">
+    <div class="tab on" data-s="home" onclick="go('home')"><svg class="i"><use href="#i-sprout"/></svg>TODAY</div>
+    <div class="tab" data-s="diary" onclick="go('diary')"><svg class="i"><use href="#i-book"/></svg>DIARY</div>
+    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-rings"/></svg>JARS</div>
+    <div class="tab" data-s="you" onclick="go('you')"><svg class="i"><use href="#i-target"/></svg>YOU</div>
+  </div>
+
+  <!-- ══ ONBOARDING ══ -->
+  <div class="ov on" id="ov-onb" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:40px 26px">
+    <div id="onbSlides" style="width:100%">
+      <div class="onb" data-i="0">
+        <svg width="60" height="60" style="color:var(--peach);filter:drop-shadow(0 0 18px rgba(255,158,122,.5))"><use href="#i-hourglass"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Some apps<br>drink your time.</div>
+        <div class="sub">You already know which ones. ScrollJar helps you keep the promises you make to yourself.</div>
+      </div>
+      <div class="onb" data-i="1" style="display:none">
+        <svg width="60" height="60" style="color:var(--chrome-1);filter:drop-shadow(0 0 18px rgba(168,184,200,.45))"><use href="#i-jar"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">A swear jar,<br>for scrolling.</div>
+        <div class="sub">You set the price of breaking your own promise. Open anyway? A coin drops in the jar. Your choice, your price.</div>
+      </div>
+      <div class="onb" data-i="2" style="display:none">
+        <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">We never keep<br>your money.</div>
+        <div class="sub">Every month the jar tips out — 100% to the charity you chose. Even your weak moments do some good in this world.</div>
+      </div>
+      <div class="onb" data-i="3" style="display:none">
+        <svg width="58" height="58" style="color:var(--mint);filter:drop-shadow(0 0 20px rgba(55,226,192,.6))"><use href="#i-bolt"/></svg>
+        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Blocked in<br>two minutes.</div>
+        <div class="sub">Pick your apps, we shield them. No card, no account wall — stakes come later, only if you want them.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center;margin:22px 0" id="onbDots"></div>
+    <button class="btn chrome" style="max-width:250px" id="onbBtn" onclick="onbNext()">Next</button>
+    <div class="tiny" style="margin-top:12px;cursor:pointer" onclick="closeOnb()">Skip</div>
+  </div>
+
+  <!-- ══ SHIELD ══ -->
+  <div class="ov shield" id="ov-shield">
+    <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
+    <div class="display" style="font-size:23px;margin:14px 0 8px">You made a jar promise</div>
+    <div class="sub" style="color:#A9A4D8;margin-bottom:6px">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
+    <div class="tiny" style="margin-bottom:24px">12 clean days and counting</div>
+    <button class="btn mint" onclick="resist()">I'll stay committed</button>
+    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" onclick="showBreath()">Open anyway · $5</button>
+    <div class="tiny" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
+  </div>
+
+  <!-- ══ BREATH (calm register) ══ -->
+  <div class="ov" id="ov-breath" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <div class="breathorb">breathe</div>
+    <div class="display" style="font-size:22px;margin-top:24px;color:var(--calm-ink)" id="breathTitle">No rush.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:210px;margin-top:8px" id="breathSub">The scroll will wait. Six seconds, then it's your call.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px" id="breathBtns" style="display:none">
+      <button class="btn calm" onclick="resist()">I'll stay committed</button>
+      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="showInstead()">Never mind, continue</button>
+    </div>
+  </div>
+
+  <!-- ══ INSTEAD — what else this hour could be ══ -->
+  <div class="ov" id="ov-instead" style="background:var(--scr-calm);padding:30px 22px;overflow-y:auto">
+    <div class="eyebrow" style="color:var(--calm-soft)">YOU SAID THIS HOUR WAS FOR YOUR NOVEL</div>
+    <div class="display" style="font-size:23px;margin:10px 0 6px;color:var(--calm-ink);line-height:1.2">Instead, you could…</div>
+    <div class="sub" style="color:var(--calm-soft)" id="insteadSub">Three things that fit the twenty minutes you have and the mood you logged.</div>
+    <div class="modeSeg" style="margin-top:14px">
+      <div class="on" id="segWorth" onclick="setInsteadMode('worth',this)">Something worthwhile</div>
+      <div id="segFun" onclick="setInsteadMode('fun',this)">Just entertain me</div>
+    </div>
+    <div id="insteadList"></div>
+    <div class="card" style="background:rgba(255,255,255,.07);border-color:var(--calm-ghost-border)">
+      <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--calm)"><use href="#i-pen"/></svg>
+        <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">Or write a line first</b><div class="tiny">what's the pull actually about tonight?</div></div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px" id="promptChips"></div>
+      <button class="btn calm" style="margin-top:11px" onclick="closeOv('ov-instead');openEntry('impulse')">Write it</button>
+    </div>
+    <button class="btn ghost" style="margin-top:6px;border-color:var(--calm-soft);color:var(--calm)" id="wobEntryBtn" onclick="openWobble()">Ask someone to sit with me</button>
+    <button class="btn ghost" style="margin-top:6px" onclick="closeOv('ov-instead');resist()">None of it — I'll stay committed</button>
+    <button class="btn ghost" style="margin-top:9px;opacity:.75" onclick="closeOv('ov-instead');showOverride()">Still want in</button>
+  </div>
+
+  <!-- ══ OVERRIDE ══ -->
+  <div class="ov sheetwrap" id="ov-override">
+    <div class="sheet-card">
+      <div class="eyebrow">INSTAGRAM · 15 MINUTES</div>
+      <div class="display" style="font-size:21px;margin:8px 0 6px">Still want in?</div>
+      <div class="sub">Totally allowed. It just isn't free — you decided that.</div>
+      <div class="cost">
+        <div><b style="font-size:12.5px">Drops into your jar</b><div class="tiny" style="margin-top:2px">→ Doctors Without Borders</div></div>
+        <div class="display num" style="font-size:24px;color:var(--gold-text)">$5</div>
+      </div>
+      <button class="btn gold" onclick="payOverride()">Drop a coin &amp; open</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="resist()">Actually, I'll stay committed</button>
+      <div class="tiny" style="text-align:center;margin-top:10px">refundable for 48h, no questions</div>
+    </div>
+  </div>
+
+  <!-- ══ ACCESS WINDOW ══ -->
+  <div class="ov" id="ov-window" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg viewBox="0 0 40 40" width="56" height="56" style="filter:drop-shadow(0 0 20px rgba(255,201,77,.7))"><use href="#coin"/></svg>
+    <div class="display" style="font-size:22px;margin:14px 0 8px">Coin dropped. Enjoy it.</div>
+    <div class="sub" style="max-width:230px">No guilt — your $5 is on its way to Doctors Without Borders.</div>
+    <div class="display num" style="font-size:40px;margin:20px 0;color:var(--gold-text)" id="winTimer">14:59</div>
+    <button class="btn ghost" style="max-width:230px" onclick="endWindow()">Done early — back to the jar</button>
+  </div>
+
+  <!-- ══ TIP-OUT ══ -->
+  <div class="ov" id="ov-tipout" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 24px">
+    <div class="pill chr">AUGUST 1 · TIP-OUT</div>
+    <div class="jarbox" style="margin-top:18px" id="tipJarBox">
+      <svg viewBox="0 0 200 226" width="150" height="172" id="tipJar">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <ellipse cx="100" cy="216" rx="58" ry="11" fill="url(#caustic)" filter="url(#soften)" opacity=".85"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <g clip-path="url(#body)">
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#innerdark)"/>
+          <rect x="58" y="46" width="13" height="150" rx="6.5" fill="#fff" opacity=".16"/>
+          <rect x="76" y="52" width="5" height="120" rx="2.5" fill="#fff" opacity=".1"/>
+        </g>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="none" stroke="url(#rimlight)" stroke-width="1.4"/>
+        <g id="tipCoins" clip-path="url(#body)"></g>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M86 116 q14 11 28 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="amount num" style="margin-top:14px" id="tipAmt">$47</div>
+    <div class="sub" style="margin-top:6px">is on its way to Doctors Without Borders</div>
+    <div class="card" style="margin-top:14px;width:100%;text-align:left">
+      <div class="eyebrow">HOW YOUR MONEY TRAVELS</div>
+      <div id="settleSteps" style="margin-top:9px"></div>
+    </div>
+    <div class="card" style="margin-top:4px;width:100%;text-align:center;background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+      <div class="eyebrow">JULY · RECEIPT</div>
+      <div class="display" style="font-size:16px;margin-top:6px;line-height:1.3">9h 40m returned.<br>$47 given.</div>
+      <div class="tiny" style="margin-top:6px">≈ 94 meals · scrolljar.app</div>
+    </div>
+    <button class="btn violet" style="margin-top:12px" onclick="closeOv('ov-tipout')">Share the receipt</button>
+  </div>
+
+  <!-- ══ ROUGH DAY ══ -->
+  <div class="ov" id="ov-rough" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="50" height="50" style="color:var(--calm-soft);filter:drop-shadow(0 0 18px rgba(147,211,198,.5))"><use href="#i-moon"/></svg>
+    <div class="display" style="font-size:21px;margin:14px 0 8px;color:var(--calm-ink)">That was an expensive evening.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:240px">It happens — and $15 just became 30 meals. One thing we noticed: your coins tend to drop after 10pm on Sundays.</div>
+    <div class="card" style="margin-top:18px;width:100%;text-align:left;background:rgba(255,255,255,.06)">
+      <b style="font-size:13px;color:var(--calm-ink)">Want to try something?</b>
+      <div class="sub" style="color:var(--calm-soft);margin-top:4px">Move Sunday's shield an hour earlier — cold blood, tonight's you will thank you.</div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-rough');toast('Sunday shield moved to 9pm.')">Yes, shift it earlier</button>
+      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="closeOv('ov-rough')">Not tonight</button>
+    </div>
+  </div>
+
+  <button class="cornerSwitch" id="cornerSwitch" onclick="setMode(document.body.dataset.mode==='night'?'day':'night')" title="Day / night">
+    <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
+  </button>
+  <!-- ══ FIRST WIN — the real aha moment ══ -->
+  <div class="ov" id="ov-firstwin" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <div class="jarbox" id="winJarBox" style="width:132px;height:152px">
+      <svg viewBox="0 0 200 226" width="132" height="152" class="jarbreathe" id="winJar">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M84 114 q16 13 32 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="display" style="font-size:25px;margin-top:20px;line-height:1.15">That's the whole product.<br>You just didn't scroll.</div>
+    <div class="sub" style="max-width:250px;margin-top:10px">No coin, no lecture, nothing to celebrate loudly. Just three minutes that stayed yours.</div>
+    <div class="row" style="gap:18px;margin-top:22px">
+      <div style="text-align:center"><div class="display num" style="font-size:23px">3m</div><div class="tiny">returned</div></div>
+      <div style="text-align:center"><div class="display num" style="font-size:23px">1</div><div class="tiny">temptation</div></div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn mint" onclick="closeOv('ov-firstwin');showExit('Go be somewhere else.','You don\'t need us right now — that\'s the point.')">Nice</button>
+    </div>
+  </div>
+
+  <!-- ══ EXIT BEAT — we invite you to leave ══ -->
+  <div class="ov" id="ov-exit" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="46" height="46" style="color:var(--calm-soft);filter:drop-shadow(0 0 16px rgba(147,211,198,.45))"><use href="#i-sprout"/></svg>
+    <div class="display" style="font-size:24px;margin-top:18px;line-height:1.15;color:var(--calm-ink)" id="exitTitle">Go be somewhere else.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:240px;margin-top:10px" id="exitSub">You don't need us right now — that's the point.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-exit');toast('See you at the tip-out.')">Close ScrollJar</button>
+      <div class="tiny" style="text-align:center;margin-top:11px;cursor:pointer" onclick="closeOv('ov-exit')">Stay a moment</div>
+    </div>
+  </div>
+
+  <!-- ══ WOBBLE — ask for a hand ══ -->
+  <div class="ov sheetwrap" id="ov-wobble">
+    <div class="sheet-card" style="max-height:88vh;overflow-y:auto">
+      <div id="wobBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ STANDBY NOTE EDITOR ══ -->
+  <div class="ov sheetwrap" id="ov-standby">
+    <div class="sheet-card" style="max-height:90vh;overflow-y:auto">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px" id="sbTitle">Your standby note</div>
+        <span class="backBtn" onclick="closeOv('ov-standby')">✕</span></div>
+      <div class="sbDots" id="sbDots"><i></i><i></i><i></i></div>
+      <div id="sbBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ MOOD AFTER ══ -->
+  <div class="ov sheetwrap" id="ov-mood">
+    <div class="sheet-card">
+      <div class="eyebrow">YOU'RE BACK · 15 MINUTES</div>
+      <div class="display" style="font-size:20px;margin:8px 0 6px">How do you feel now?</div>
+      <div class="sub">Before you went in, you said you felt <b id="moodBefore">tired</b>.</div>
+      <div style="display:flex;gap:7px;margin:14px 0">
+        <div class="pullChip" onclick="logMood('better','Better')">Better</div>
+        <div class="pullChip" onclick="logMood('same','About the same')">The same</div>
+        <div class="pullChip" onclick="logMood('worse','Worse')">Worse</div>
+      </div>
+      <div class="tiny" style="text-align:center">No judgement either way — we're just keeping the receipts of how it actually goes.</div>
+    </div>
+  </div>
+
+  <!-- ══ DIARY ENTRY ══ -->
+  <div class="ov sheetwrap" id="ov-entry">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px" id="entryTitle">A line for yourself</div>
+        <span class="backBtn" onclick="closeOv('ov-entry')">✕</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px" id="entryTags"></div>
+      <textarea id="entryText" class="timeIn" style="height:96px;resize:none;line-height:1.5" placeholder="tired, not really wanting the phone — wanting to switch off"></textarea>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:11px 0" id="entryPrompts"></div>
+      <button class="btn mint" onclick="saveEntry()">Keep it</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">private by default · never leaves your phone unless you ask</div>
+    </div>
+  </div>
+
+  <!-- ══ COMPOSE ══ -->
+  <div class="ov sheetwrap" id="ov-compose">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px">What did you do with it?</div>
+        <span class="backBtn" onclick="closeOv('ov-compose')">✕</span></div>
+      <div class="sub" style="margin-bottom:12px">Reclaimed time, not screen time. Only your jars see this.</div>
+      <div style="display:flex;gap:7px;margin-bottom:12px">
+        <div class="chip on" id="visShare" onclick="setVis('share')">Share it</div>
+        <div class="chip" id="visQuiet" onclick="setVis('quiet')">Keep it quiet</div>
+      </div>
+      <div id="shareFields">
+        <div class="photoPick" id="photoPick"></div>
+        <input id="postText" class="timeIn" placeholder="finished chapter three" style="margin:12px 0">
+      </div>
+      <div id="quietFields" style="display:none">
+        <div class="card" style="margin:0 0 12px;text-align:center;background:var(--panel-2)">
+          <div class="sub" id="quietPreview">You regained an hour for yourself.</div>
+          <div class="tiny" style="margin-top:7px">that's all anyone sees — no photo, no words, no number</div>
+        </div>
+        <div class="row" style="gap:7px;margin-bottom:12px">
+          <span class="tiny" style="flex:none">Your words:</span>
+          <div class="chip" onclick="setPronoun(this,'herself')">herself</div>
+          <div class="chip" onclick="setPronoun(this,'himself')">himself</div>
+          <div class="chip on" onclick="setPronoun(this,'themselves')">themselves</div>
+        </div>
+      </div>
+      <button class="btn mint" onclick="publishPost()">Post to Casa Jar</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">no likes counter, no followers, no algorithm</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div></div>
+
+<script>
+const S = {jar:47, coins:3, streak:12, tier:'Ghost Jar', firstResist:false};
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2600)}
+function setMode(m){
+  document.body.dataset.mode=m;
+  $('mN').classList.toggle('on',m==='night');$('mD').classList.toggle('on',m==='day');
+  $('cornerIcon').setAttribute('href', m==='night' ? '#i-sun' : '#i-moon');
+}
+function go(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
+  $('s-'+s).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.s===s));
+}
+function closeOv(id){$(id).classList.remove('on')}
+
+/* ── onboarding ── */
+let oi=0;
+$('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===0?18:7}px;height:7px;border-radius:99px;background:${i===0?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
+function onbNext(){
+  if(oi===3){closeOnb();return}
+  oi++;
+  document.querySelectorAll('.onb').forEach(s=>s.style.display=(+s.dataset.i===oi)?'block':'none');
+  $('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===oi?18:7}px;height:7px;border-radius:99px;background:${i===oi?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
+  $('onbBtn').textContent = oi===3 ? 'Shield my apps' : 'Next';
+}
+function closeOnb(){$('ov-onb').classList.remove('on');toast('Both apps are shielded. Try opening one.')}
+
+/* ── jar rendering ── */
+const POS=[[76,182],[112,188],[95,158],[70,152],[118,158],[95,128],[76,104],[112,110]];
+function renderCoins(target, n){
+  target.innerHTML='';
+  for(let i=0;i<Math.min(n,8);i++){
+    const [cx,cy]=POS[i];
+    const c=document.createElementNS('http://www.w3.org/2000/svg','use');
+    c.setAttribute('href','#coin');c.setAttribute('x',cx-17);c.setAttribute('y',cy-17);
+    c.setAttribute('width',34);c.setAttribute('height',34);
+    c.setAttribute('transform',`rotate(${(i%3-1)*11} ${cx} ${cy})`);
+    target.appendChild(c);
+  }
+}
+function stars(box,n,big){
+  for(let i=0;i<n;i++){
+    const st=document.createElement('div');st.className='star';
+    st.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" style="color:#FFEFC0"><use href="#i-spark"/></svg>';
+    const a=-Math.PI/2+(Math.PI*1.6*(i/Math.max(n-1,1))-Math.PI*.8), d=(big?70:46)+(i%3)*12;
+    st.style.left='50%';st.style.top=big?'32%':'58%';
+    st.style.setProperty('--dx',Math.cos(a)*d+'px');st.style.setProperty('--dy',Math.sin(a)*d+'px');
+    st.style.setProperty('--rot',(i%2?200:-200)+'deg');
+    st.style.animation=`starOut ${big?.95:.72}s cubic-bezier(.34,1.56,.64,1) forwards`;
+    box.appendChild(st);setTimeout(()=>st.remove(),1000);
+  }
+}
+function fanfare(box,txt){const f=document.createElement('div');f.className='fanfare';f.textContent=txt;box.appendChild(f);setTimeout(()=>f.remove(),1400)}
+
+/* ── the moment of choice ── */
+function showShield(){$('ov-shield').classList.add('on')}
+function resist(){
+  ['ov-shield','ov-breath','ov-override'].forEach(closeOv);
+  const box=$('homeJar'), svg=$('homeJarSvg');
+  svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop');
+  stars(box,7,true);
+  $('mouth').setAttribute('d','M84 114 q16 13 32 0');setTimeout(()=>$('mouth').setAttribute('d','M88 118 q12 8 24 0'),1000);
+  if(!S.firstResist){
+    S.firstResist=true;
+    setTimeout(()=>{ $('ov-firstwin').classList.add('on'); stars($('winJarBox'),11,true); },520);
+  } else {
+    S.streak++; updateGoal();
+    toast('The jar smiled. Streak intact.');
+  }
+}
+function showExit(title,sub){ $('exitTitle').textContent=title; $('exitSub').textContent=sub; $('ov-exit').classList.add('on'); }
+let breathT;
+function showBreath(){
+  closeOv('ov-shield');$('ov-breath').classList.add('on');
+  $('breathBtns').style.display='none';
+  $('breathTitle').textContent='No rush.';
+  $('breathSub').textContent='The scroll will wait. Six seconds, then it\'s your call.';
+  clearTimeout(breathT);
+  breathT=setTimeout(()=>{$('breathBtns').style.display='block'},3200);
+}
+function showOverride(){closeOv('ov-breath');$('ov-override').classList.add('on')}
+let winT;
+function payOverride(){
+  closeOv('ov-override');
+  const box=$('homeJar'), svg=$('homeJarSvg');
+  const f=document.createElement('div');f.className='flyer';
+  f.innerHTML='<svg viewBox="0 0 40 40" width="26" height="26"><use href="#coin"/></svg>';
+  f.style.left='calc(50% - 12px)';f.style.top='56%';box.appendChild(f);
+  f.animate([{transform:'translateY(0) scale(.8) rotateY(0)',opacity:0},
+             {transform:'translateY(-86px) scale(1.15) rotateY(360deg)',opacity:1,offset:.42},
+             {transform:'translateY(-62px) scale(1.05) rotateY(560deg)',opacity:1,offset:.62},
+             {transform:'translateY(6px) scale(.85) rotateY(900deg)',opacity:0}],
+            {duration:820,easing:'cubic-bezier(.3,.05,.4,1)'}).onfinish=()=>{
+    f.remove();
+    svg.classList.remove('squash');void svg.offsetWidth;svg.classList.add('squash');
+    stars(box,5,false);
+    S.jar+=5;S.coins++;renderCoins($('coinStack'),S.coins);$('jarAmt').textContent='$'+S.jar;$('jarAmtMini').textContent='$'+S.jar;
+    $('ov-window').classList.add('on');
+    let sec=899;clearInterval(winT);
+    winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
+      $('winTimer').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
+  };
+}
+function endWindow(){
+  clearInterval(winT);closeOv('ov-window');go('home');
+  setTimeout(()=>{ $('moodBefore').textContent = pullState==='strong'?'pulled hard':(pullState==='itchy'?'itchy':'tired'); $('ov-mood').classList.add('on'); }, 500);
+}
+function logMood(k,label){
+  MOODLOG.unshift({k,when:'just now'});
+  closeOv('ov-mood'); renderMoodLedger();
+  if(k==='worse') toast('Noted. That\'s the eighth time out of ten — worth knowing.');
+  else if(k==='better') toast('Noted. Sometimes it genuinely helps — that counts too.');
+  else toast('Noted. Fifteen minutes, no change.');
+}
+
+/* ── tip-out ceremony ── */
+const SETTLE=['Collecting your coins','Verifying with Every.org','Sending to Doctors Without Borders','Receipt issued to you'];
+function runSettlement(){
+  $('settleSteps').innerHTML=SETTLE.map(t=>`<div class="settleRow"><div class="settleDot">✓</div><div class="settleTxt">${t}</div></div>`).join('');
+  document.querySelectorAll('#settleSteps .settleRow').forEach((r,i)=>setTimeout(()=>r.classList.add('done'), 1400+i*620));
+}
+function showTipout(){
+  $('ov-tipout').classList.add('on'); runSettlement();
+  $('tipAmt').textContent='$'+S.jar;
+  renderCoins($('tipCoins'),S.coins+2);
+  const svg=$('tipJar'), box=$('tipJarBox');
+  setTimeout(()=>{
+    svg.animate([{transform:'rotate(0)'},{transform:'rotate(-11deg)',offset:.2},{transform:'rotate(40deg)',offset:.6},
+                 {transform:'rotate(40deg)',offset:.78},{transform:'rotate(0)'}],{duration:1900,easing:'cubic-bezier(.4,.1,.3,1)'});
+    setTimeout(()=>{[...$('tipCoins').children].forEach((c,i)=>setTimeout(()=>{
+      c.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate(70px,58px) scale(.4)',opacity:0}],
+                {duration:600,easing:'cubic-bezier(.3,.05,.5,1)',fill:'forwards'})},i*90));stars(box,7,false)},620);
+    setTimeout(()=>{$('tipCoins').innerHTML='';stars(box,11,true);fanfare(box,'$'+S.jar+' GIVEN!')},1950);
+  },400);
+}
+function showRough(){$('ov-rough').classList.add('on')}
+
+/* ── lists ── */
+const COMMITS=[
+  {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',m:'always · $5 · for my novel'},
+  {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',m:'9pm–7am · $10 · for sleep'},
+];
+function renderCommits(){
+  $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}">
+    <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
+    <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${c.m}</div></div></div>
+    <span class="shieldchip"><svg width="15" height="15"><use href="#i-shield"/></svg></span></div>`).join('');
+}
+function sealIt(){
+  const when = sched==='custom' ? ($('schedFrom').value+'–'+$('schedTo').value) : SCHED_LABEL[sched];
+  COMMITS.unshift({g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'New promise',m:when+' · $'+$('priceV').textContent+' · for my novel'});
+  renderCommits();go('home');toast('Sealed. Your future self says thanks.');
+}
+function selTier(el,name){document.querySelectorAll('.tierbox').forEach(t=>t.classList.remove('sel'));el.classList.add('sel');S.tier=name}
+/* ── the feed: outcomes only, never announcements ── */
+function scene(kind){
+  const S={
+    run:`<svg viewBox="0 0 300 150" width="100%"><defs><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9E7A"/><stop offset=".55" stop-color="#8B7CF6"/><stop offset="1" stop-color="#2B2153"/></linearGradient></defs>
+      <rect width="300" height="150" fill="url(#sk1)"/><circle cx="228" cy="46" r="17" fill="#FFE9A8" opacity=".95"/>
+      <path d="M0 108 L64 78 L118 100 L172 68 L232 96 L300 74 V150 H0z" fill="#241C4A" opacity=".85"/>
+      <path d="M0 128 L70 112 L140 126 L212 106 L300 122 V150 H0z" fill="#150F30"/></svg>`,
+    book:`<svg viewBox="0 0 300 150" width="100%"><rect width="300" height="150" fill="#1A1633"/>
+      <rect x="42" y="26" width="216" height="98" rx="7" fill="#F3EEE2"/><rect x="146" y="26" width="8" height="98" fill="#DCD3C0"/>
+      ${Array.from({length:6},(_,i)=>`<rect x="58" y="${44+i*12}" width="72" height="4" rx="2" fill="#C9BFA8"/><rect x="170" y="${44+i*12}" width="72" height="4" rx="2" fill="#C9BFA8"/>`).join('')}
+      <circle cx="252" cy="120" r="26" fill="#FFC94D" opacity=".22"/></svg>`,
+    guitar:`<svg viewBox="0 0 300 150" width="100%"><rect width="300" height="150" fill="#12233A"/>
+      <ellipse cx="120" cy="92" rx="52" ry="44" fill="#C9772E"/><ellipse cx="120" cy="92" rx="15" ry="15" fill="#3A2412"/>
+      <rect x="160" y="82" width="118" height="14" rx="5" fill="#7A4A1E"/><rect x="266" y="70" width="20" height="38" rx="6" fill="#5C3616"/>
+      <circle cx="60" cy="40" r="30" fill="#37E2C0" opacity=".16"/></svg>`,
+  };return S[kind];
+}
+const FEED=[
+  {t:'post',a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',w:'2h ago',
+   body:'Ran the long way home instead of scrolling on the sofa.',photo:'run',kudos:4},
+  {t:'week',a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',w:'5h ago',
+   body:"Luca's week held — 6 clean nights.",kudos:7},
+  {t:'quiet',a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',w:'yesterday',
+   body:'Giulia regained an hour for herself.',sub:'kept private — she chose the quiet post',kudos:3,supporter:true},
+  {t:'jar',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'this week',
+   body:'The jar gained $23 this week.',sub:'from the four of you — never who, never how much each',kudos:6},
+  {t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'yesterday',
+   body:'Finished chapter three. Turns out books still work.',photo:'book',kudos:5},
+  {t:'tipout',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'Jul 1',
+   body:'The jar tipped out — $52 to UNICEF.',sub:'≈ 104 meals',kudos:11},
+  {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:'Jun 28',
+   body:'Sofia joined the jar.',sub:'we donated $1 to UNICEF for the invite',kudos:2},
+];
+function renderFeed(){
+  $('feedList').innerHTML=FEED.map((f,i)=>`
+   <div class="fcard">
+     <div class="fhead">
+       <div class="av" style="background:${f.c};font-size:${f.a.length>1?10:14}px">${f.a}</div>
+       <div style="flex:1"><div class="fname">${f.n}</div><div class="fwhen">${f.w}</div></div>
+       ${f.supporter?'<span class="supporter">SUPPORTER</span>':''}
+     </div>
+     <div class="fbody">${f.body}</div>
+     ${f.sub?`<div class="tiny" style="margin-top:3px">${f.sub}</div>`:''}
+     ${f.photo?`<div class="fphoto">${scene(f.photo)}</div>`:''}
+     <div class="frow">
+       <div class="kudos" onclick="giveKudos(this,${i})"><svg width="13" height="13"><use href="#i-heart"/></svg><span>${f.kudos}</span></div>
+       <span class="tiny">${f.t==='coin'?'reported, not judged':''}</span>
+     </div>
+   </div>`).join('');
+}
+function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].kudos++; el.querySelector('span').textContent=FEED[i].kudos; }
+/* members — per-member settlement, amounts hideable */
+let showDollars=true;
+const MEMBERS=[
+  {a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',coins:2,amt:10,note:'9 clean nights'},
+  {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true},
+  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 clean nights'},
+  {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 clean nights'},
+];
+function renderMembers(){
+  $('memberList').innerHTML=MEMBERS.map(m=>`
+   <div class="memberRow">
+     <div class="av" style="background:${m.c};font-size:${m.a.length>1?10:14}px">${m.a}</div>
+     <div style="flex:1"><b style="font-size:13px">${m.n}</b><div class="tiny">${m.note}</div></div>
+     ${m.sup?'<span class="supporter">SUPPORTER</span>':
+       `<span class="pill gold">${showDollars?'$'+m.amt:m.coins+' coins'}</span>`}
+   </div>`).join('');
+}
+function toggleAmounts(el){ showDollars=!showDollars; el.textContent=showDollars?'Showing $':'Showing coins'; renderMembers(); }
+/* ══ WOBBLE — asking a friend for a hand ══
+   Ladder of who speaks: (1) your friend, live  (2) your friend, in advance
+   (3) you, in advance.  We only ever speak last, and briefly. */
+const BUDDIES=[
+  {id:'sofia',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',st:'live',
+   sub:'around right now'},
+  {id:'marta',a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',st:'away',
+   sub:'in her own session until 9:40 · left a note',
+   note:"Whatever it is, it will still be there in twenty minutes and you'll be less tired. Put the kettle on. Tell me about it tomorrow. — M",
+   when:'she wrote this on 12 June, in her own words, on a calm Tuesday'},
+  {id:'luca',a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',st:'away',
+   sub:'in his own session · no note left yet'},
+  {id:'casa',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',st:'live',
+   sub:'3 people · Giulia is around', via:'Giulia', vc:'linear-gradient(150deg,#FFB86B,#FF5C8A)', va:'G'},
+];
+/* your own words, from your diary — the last rung of the ladder */
+const OWNWORDS={t:"I want to be someone who finishes things. Not someone who meant to.",w:'you wrote this on the 14th, after a good day'};
+const PULLS=['bored','wired','lonely','anxious','just habit',"can't say"];
+let wobPull='', wobOpen=null, standbyNote='';
+
+function openWobble(){
+  closeOv('ov-instead');
+  if(wobOpen){ wobResolved(wobOpen); $('ov-wobble').classList.add('on'); return; }
+  $('wobBody').innerHTML=`
+    <div class="spread" style="margin-bottom:8px"><div class="display" style="font-size:19px">Who's around?</div>
+      <span class="backBtn" onclick="closeOv('ov-wobble')">✕</span></div>
+    <div class="sub" style="margin-bottom:13px">One tap. They get one quiet ping — it can't unlock anything and it won't break their shield.</div>
+    <div id="wobList"></div>
+    <div class="tiny" style="margin:2px 2px 10px">what's pulling? — optional, and only they see it</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="wobPulls"></div>
+    <div class="tiny" style="text-align:center;margin-top:14px">This isn't a hall pass. A coin still costs what you set it at — this is just company.</div>`;
+  $('wobList').innerHTML=BUDDIES.map(b=>`
+    <div class="memberRow wobRow" onclick="sendWobble('${b.id}')">
+      <div class="av" style="background:${b.c};font-size:${b.a.length>1?10:14}px">${b.a}</div>
+      <div style="flex:1"><b style="font-size:13px">${b.n}</b><div class="tiny">${b.sub}</div></div>
+      <span class="sdot ${b.st}"></span>
+    </div>`).join('');
+  $('wobPulls').innerHTML=PULLS.map(p=>`<span class="chip" onclick="pickPull(this,'${p}')">${p}</span>`).join('');
+  $('ov-wobble').classList.add('on');
+}
+function pickPull(el,p){
+  const on=el.classList.contains('on');
+  document.querySelectorAll('#wobPulls .chip').forEach(c=>c.classList.remove('on'));
+  if(!on){el.classList.add('on');wobPull=p}else{wobPull=''}
+}
+function sendWobble(id){
+  const b=BUDDIES.find(x=>x.id===id); wobOpen=id;
+  $('wobBody').innerHTML=`
+    <div style="text-align:center;padding:26px 6px 20px">
+      <svg width="34" height="34" style="color:var(--violet)"><use href="#i-wave"/></svg>
+      <div class="display" style="font-size:18px;margin-top:14px">Sent to ${b.n}.</div>
+      <div class="sub" style="margin-top:7px">Nothing else happens on your side. Stay here or don't.</div>
+      <div class="wobDots" style="margin-top:16px"><i></i><i></i><i></i></div>
+    </div>`;
+  setTimeout(()=>{ if(wobOpen===id) wobResolved(id); },1300);
+}
+function wobResolved(id){
+  const b=BUDDIES.find(x=>x.id===id);
+  if(b.st==='live') return wobLive(b);
+  if(b.note) return wobStandby(b);
+  return wobOwn(b);
+}
+/* (1) friend is available — a real, small exchange that closes itself */
+function wobLive(b){
+  const who=b.via||b.n, av=b.va||b.a, col=b.vc||b.c;
+  $('wobBody').innerHTML=`
+    <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:19px">${who} is around.</div>
+      <span class="backBtn" onclick="closeOv('ov-wobble')">✕</span></div>
+    <div class="row" style="gap:9px;margin-bottom:4px">
+      <div class="av" style="background:${col};font-size:${av.length>1?10:14}px">${av}</div>
+      <div class="tiny">answered in 11 seconds</div></div>
+    <div class="wobBubble me">${wobPull?'wobbling — '+wobPull:'wobbling.'}</div>
+    <div class="wobBubble">here. don't do anything for a minute, I'm putting the kettle on too.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px" id="wobReplies"></div>
+    <button class="btn mint" style="margin-top:14px" onclick="wobEnd('${b.id}',true)">That's enough — I'm alright</button>
+    <div class="tiny" style="text-align:center;margin-top:10px">This closes itself in five minutes. It's a hand, not a chat app.</div>`;
+  $('wobReplies').innerHTML=['thanks','stay a sec','tell me something dull','I nearly opened it']
+    .map(r=>`<span class="chip" onclick="wobReply(this,'${r}')">${r}</span>`).join('');
+}
+function wobReply(el,r){
+  el.parentElement.remove();
+  const bod=$('wobBody');
+  const me=document.createElement('div'); me.className='wobBubble me'; me.textContent=r;
+  bod.insertBefore(me, bod.querySelector('.btn'));
+  setTimeout(()=>{
+    const them=document.createElement('div'); them.className='wobBubble';
+    them.textContent='ok. going to stop typing now so you can go do the thing.';
+    bod.insertBefore(them, bod.querySelector('.btn'));
+  },700);
+}
+/* (2) friend is in their own session — their words, written in cold blood */
+function wobStandby(b){
+  $('wobBody').innerHTML=`
+    <div class="spread" style="margin-bottom:8px"><div class="display" style="font-size:19px;line-height:1.2">${b.n} is in her own session.</div>
+      <span class="backBtn" onclick="closeOv('ov-wobble')">✕</span></div>
+    <div class="sub">We didn't interrupt her — that's the deal we make with everyone, including you.</div>
+    <div class="card" style="margin-top:14px">
+      <div class="eyebrow">SHE LEFT THIS FOR EXACTLY THIS MOMENT</div>
+      <div class="noteQ">${b.note}</div>
+      <div class="tiny">${b.when}</div>
+    </div>
+    <div class="tiny" style="margin:2px 2px 0">She'll see that you reached for her — later, gently, and never as something she missed.</div>
+    <button class="btn mint" style="margin-top:14px" onclick="wobEnd('${b.id}',true)">Alright. I'll wait it out</button>
+    <button class="btn ghost" style="margin-top:9px" onclick="wobThank('${b.n}')">Tell her it landed</button>`;
+}
+/* (3) nobody left words — so we hand you your own, and say almost nothing */
+function wobOwn(b){
+  $('wobBody').innerHTML=`
+    <div class="spread" style="margin-bottom:8px"><div class="display" style="font-size:19px;line-height:1.2">${b.n} is in his own session.</div>
+      <span class="backBtn" onclick="closeOv('ov-wobble')">✕</span></div>
+    <div class="sub">He hasn't left a note yet, and we're not going to write one in his voice.</div>
+    <div class="card" style="margin-top:14px">
+      <div class="eyebrow">SO HERE ARE YOURS INSTEAD</div>
+      <div class="noteQ own">${OWNWORDS.t}</div>
+      <div class="tiny">${OWNWORDS.w}</div>
+    </div>
+    <button class="btn mint" style="margin-top:14px" onclick="wobEnd('${b.id}',true)">Right. Still true</button>
+    <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-wobble');openStandby()">Write mine, for when it's me</button>`;
+}
+function wobThank(n){ toast(n+' will see that her words landed. Nothing else — not when, not why.'); }
+function wobEnd(id,ok){
+  wobOpen=null; wobPull='';
+  document.querySelectorAll('#wobPulls .chip').forEach(c=>c.classList.remove('on'));
+  closeOv('ov-wobble');
+  if(ok) showExit('Go put the kettle on.','Nothing else is being asked of you tonight.');
+}
+/* ══ STANDBY NOTE COMPOSER ══
+   The one place we let a model near this feature — and only *before* the moment,
+   never during it. It helps you find your words; it never writes them for you and
+   it never speaks at delivery time. Delivery is a dumb lookup, by design. */
+const SB_Q=[
+  {k:'say',   q:"What do you actually say to them when they're like this?", ph:"it's late, it's not urgent"},
+  {k:'works', q:"And what works on you, at 11pm?",                          ph:"someone telling me to go outside"},
+  {k:'small', q:"One small thing they could do in the next ten minutes",    ph:"put the kettle on"},
+];
+const SB_EX=[
+  "It's late, not urgent. Put the kettle on and text me in the morning — I'll ask.",
+  "You're tired. Tired wants an off switch, not content. Go find a better one.",
+  "Nothing in there tonight is worth the twenty minutes. I'd know.",
+  "I'm not around, but I'm on your side. Go outside for four minutes — it usually does it.",
+  "Do the boring thing. The boring thing always works and I hate that too.",
+  "If it still feels like this tomorrow, call me. It usually doesn't.",
+];
+const SB_TONES=[
+  {k:'warm',      n:'warm'},
+  {k:'dry',       n:'dry'},
+  {k:'funny',     n:'funny'},
+  {k:'practical', n:'practical'},
+];
+let sbStep=0, sbAns={say:'',works:'',small:''}, sbTone='warm', sbDraft='';
+
+function openStandby(){ sbStep = standbyNote ? 2 : 0; sbRender(); $('ov-standby').classList.add('on'); }
+function sbGo(n){ sbStep=n; sbRender(); }
+function sbRender(){
+  [...$('sbDots').children].forEach((d,i)=>d.classList.toggle('on',i<=sbStep));
+  if(sbStep===0) return sbStart();
+  if(sbStep===1) return sbQuestions();
+  return sbEditor();
+}
+/* step 0 — start honestly: your words, or someone else's to push off from */
+function sbStart(){
+  $('sbTitle').textContent='Your standby note';
+  $('sbBody').innerHTML=`
+    <div class="sub" style="margin-bottom:14px">Write it now, while you're calm. It's only ever sent when a friend reaches for you and you're in your own session — so what they get is you, not us.</div>
+    <button class="btn mint" onclick="sbGo(1)">Help me find the words</button>
+    <button class="btn ghost" style="margin-top:9px" onclick="sbBlank()">I know what to say</button>
+    <div class="eyebrow" style="margin:18px 2px 9px">OR START FROM SOMEONE ELSE'S</div>
+    <div id="sbEx"></div>
+    <div class="tiny" style="margin-top:4px">Other people let us share these. Take one and make it yours — a borrowed note still beats no note.</div>`;
+  $('sbEx').innerHTML=SB_EX.map((x,i)=>`<div class="exNote" onclick="sbUseEx(${i})">${x}</div>`).join('');
+}
+function sbBlank(){ sbDraft=standbyNote||''; sbGo(2); }
+function sbUseEx(i){ sbDraft=SB_EX[i]; sbGo(2); toast("Now change it until it sounds like you."); }
+/* step 1 — three questions. every word in the draft comes from these answers. */
+function sbQuestions(){
+  $('sbTitle').textContent='Three questions';
+  $('sbBody').innerHTML=`
+    <div class="sub" style="margin-bottom:14px">Answer however you like. Everything in the draft will be built from what you type here — nothing gets invented in your voice.</div>
+    ${SB_Q.map(q=>`<div class="sbQ"><label>${q.q}</label>
+      <input id="sb-${q.k}" class="timeIn" placeholder="${q.ph}" value="${sbAns[q.k]}"></div>`).join('')}
+    <button class="btn mint" style="margin-top:4px" onclick="sbBuild()">Build me some options</button>
+    <button class="btn ghost" style="margin-top:9px" onclick="sbGo(0)">Back</button>`;
+}
+function sbBuild(){
+  SB_Q.forEach(q=>sbAns[q.k]=($('sb-'+q.k).value||'').trim().replace(/[.!]+$/,''));
+  if(!sbAns.say && !sbAns.works && !sbAns.small){ toast('Give me one line to work from — anything.'); return; }
+  sbGo(2);
+  if(!sbDraft) sbDraft=sbDrafts()[0].t;
+  sbRender();
+}
+const cap=t=>t?t.charAt(0).toUpperCase()+t.slice(1):'';
+function sbDrafts(){
+  const say=sbAns.say||"it's late, it's not urgent",
+        wor=sbAns.works||"getting away from the screen",
+        sml=sbAns.small||"put the kettle on";
+  return [
+    {k:'warm',      lab:'warm',      t:`${cap(say)}. ${cap(sml)} — I'm not around, but I'm on your side.`},
+    {k:'dry',       lab:'dry',       t:`${cap(say)}. ${cap(sml)}. That's the whole plan.`},
+    {k:'funny',     lab:'funny',     t:`${cap(say)}. Also ${sml}, which is annoyingly effective.`},
+    {k:'practical', lab:'practical', t:`${cap(sml)} — for me it's ${wor}. Tell me tomorrow, I'll ask.`},
+  ];
+}
+/* step 2 — editor: their text, a cold-read check, and the exact card it becomes */
+function sbEditor(){
+  $('sbTitle').textContent='Read it cold';
+  const hasAns = sbAns.say||sbAns.works||sbAns.small;
+  $('sbBody').innerHTML=`
+    <textarea id="standbyText" class="timeIn" style="height:96px;resize:none;line-height:1.5"
+      oninput="sbCheck()" placeholder="Whatever it is, it'll still be there in twenty minutes.">${sbDraft}</textarea>
+    ${hasAns?`<div class="eyebrow" style="margin:14px 2px 8px">SAME WORDS, DIFFERENT TEMPERATURE</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="sbTones"></div>`:''}
+    <div class="card" style="margin-top:14px">
+      <div class="eyebrow">THE COLD READ</div>
+      <div id="sbFlags" style="margin-top:7px"></div>
+    </div>
+    <div class="card" style="background:linear-gradient(150deg,rgba(139,124,246,.14),rgba(55,226,192,.09))">
+      <div class="eyebrow">THIS IS WHAT LANDS</div>
+      <div class="noteQ" id="sbPrev" style="font-size:13.5px"></div>
+      <div class="tiny">you wrote this today, on a calm Thursday</div>
+    </div>
+    <button class="btn mint" onclick="saveStandby()">Keep it on standby</button>
+    <div class="row" style="gap:8px;margin-top:9px">
+      <button class="btn ghost" style="flex:1" onclick="sbGo(1)">Rework it</button>
+      <button class="btn ghost" style="flex:1" onclick="sbSign()">Sign it — L</button>
+    </div>
+    <div class="tiny" style="text-align:center;margin-top:10px">stays on your phone · nothing is generated at the moment it's sent · change it any time</div>`;
+  if(hasAns) $('sbTones').innerHTML=sbDrafts().map(d=>
+    `<span class="chip${d.k===sbTone?' on':''}" onclick="sbSetTone('${d.k}')">${d.lab}</span>`).join('');
+  sbCheck();
+}
+function sbSetTone(k){
+  sbTone=k; const d=sbDrafts().find(x=>x.k===k);
+  $('standbyText').value=d.t;
+  document.querySelectorAll('#sbTones .chip').forEach(c=>c.classList.toggle('on',c.textContent===d.lab));
+  sbCheck();
+}
+function sbSign(){ const t=$('standbyText'); if(/—\s*L$/.test(t.value))return; t.value=t.value.trim()+' — L'; sbCheck(); }
+/* the cold read — Voice Law + what actually survives being read at 11pm */
+function sbCheck(){
+  const t=($('standbyText').value||'').trim();
+  const w=t?t.split(/\s+/).filter(Boolean).length:0;
+  const f=[];
+  const banned=t.match(/\b(failed?|wasted?|addicted?|addict|guilty|guilt|shame(ful)?|broke|violation|weak)\b/i);
+  if(banned) f.push(['warn',`“${banned[0]}” is on the banned list. Name what's true, not what's wrong with them.`]);
+  if(/^(don'?t|do not|stop|quit|no more)\b/i.test(t)) f.push(['warn',"That opens as an order. Orders bounce at 11pm — an invitation lands."]);
+  if(/\b(streaks?|coins?|\$\d|\d+\s*(days?|nights?))\b/i.test(t)) f.push(['warn',"There's a number in here. They don't need a metric from you — they need you."]);
+  if(w>40) f.push(['warn',`${w} words. This gets read at the worst possible moment; under 30 lands.`]);
+  if(w&&w<5) f.push(['warn',"Very short. Fine if it's the right five words — read it again cold."]);
+  if(!/[a-z]/i.test(t)) f.push(['warn',"Nothing to read yet."]);
+  else if(!f.length) f.push(['ok',`${w} words, about ${Math.max(3,Math.round(w/3.2))} seconds. Reads clean — it'll land.`]);
+  $('sbFlags').innerHTML=f.map(([k,m])=>`<div class="flagRow"><span class="flagDot ${k}"></span><span>${m}</span></div>`).join('');
+  $('sbPrev').textContent=t||'—';
+  $('sbPrev').style.opacity=t?1:.5;
+}
+function saveStandby(){
+  standbyNote=($('standbyText').value||'').trim(); sbDraft=standbyNote;
+  renderStandby(); closeOv('ov-standby');
+  toast(standbyNote?'On standby. Only a friend who reaches for you will ever read it.':'Cleared.');
+}
+function renderStandby(){
+  const el=$('standbyPreview'); if(!el)return;
+  el.textContent=standbyNote||'Not written yet — so a friend who reaches for you gets their own words back instead of yours.';
+  el.style.opacity=standbyNote?1:.62;
+}
+/* compose */
+let pickedPhoto='run';
+function openCompose(){
+  $('photoPick').innerHTML=['run','book','guitar'].map(k=>`<div class="${k===pickedPhoto?'sel':''}" onclick="pickPhoto(this,'${k}')">${scene(k)}</div>`).join('');
+  $('ov-compose').classList.add('on');
+}
+function pickPhoto(el,k){ pickedPhoto=k; document.querySelectorAll('.photoPick > div').forEach(d=>d.classList.remove('sel')); el.classList.add('sel'); }
+let vis='share', pronoun='themselves';
+function setVis(v){
+  vis=v;
+  $('visShare').classList.toggle('on',v==='share'); $('visQuiet').classList.toggle('on',v==='quiet');
+  $('shareFields').style.display = v==='share'?'block':'none';
+  $('quietFields').style.display = v==='quiet'?'block':'none';
+}
+function setPronoun(el,p){
+  pronoun=p;
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on');
+  $('quietPreview').textContent='You regained an hour for '+(p==='themselves'?'yourself':'yourself')+'.';
+}
+function publishPost(){
+  if(vis==='quiet'){
+    FEED.unshift({t:'quiet',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'just now',
+      body:'You regained an hour for yourself.',sub:'kept private — the quiet post',kudos:0});
+    toast('Posted quietly. The hour counts; the details stay yours.');
+  } else {
+    const txt=$('postText').value.trim()||'Did something better with the hour.';
+    FEED.unshift({t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'just now',body:txt,photo:pickedPhoto,kudos:0});
+    toast('Posted to Casa Jar. Only your jars can see it.');
+  }
+  renderFeed(); closeOv('ov-compose'); $('postText').value='';
+}
+/* charts *//* charts */
+const HRS=[{d:'M',v:1.2},{d:'T',v:1.8},{d:'W',v:.9,coin:1},{d:'T',v:2.1},{d:'F',v:1.4},{d:'S',v:.8,coin:1},{d:'S',v:1.5}];
+const mx=Math.max(...HRS.map(h=>h.v));
+$('hoursChart').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*76)}px"></div><div class="l">${h.d}</div></div>`).join('');
+let cal='';for(let d=1;d<=31;d++){cal+=d>26?`<div class="d-off">${d}</div>`:([3,11,19].includes(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`)}
+$('cal').innerHTML=cal;
+/* ── focus session timers ── */
+let focusT, focusTotal=0, focusLeft=0;
+const RING=169.6;
+function startFocus(min){
+  if(min===0){ const v=prompt('How many minutes?','45'); min=parseInt(v||'0',10); if(!min) return; }
+  focusTotal=min*60; focusLeft=focusTotal;
+  $('focusIdle').style.display='none'; $('focusRun').style.display='block';
+  $('focusHint').textContent='ends at '+new Date(Date.now()+min*60000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  tickFocus();
+  clearInterval(focusT); focusT=setInterval(tickFocus,1000);
+  toast(min+' minutes shielded. Go be somewhere else.');
+}
+function tickFocus(){
+  const m=Math.floor(focusLeft/60), sec=focusLeft%60;
+  $('focusTime').textContent=m+':'+String(sec).padStart(2,'0');
+  $('focusRing').setAttribute('stroke-dashoffset', RING*(1-focusLeft/focusTotal));
+  if(focusLeft<=0){ endFocus(false); return; }
+  focusLeft--;
+}
+function endFocus(early){
+  clearInterval(focusT);
+  $('focusIdle').style.display='flex'; $('focusRun').style.display='none';
+  $('focusHint').textContent='shield everything, right now';
+  if(early){ toast('Session ended. No coin — you set it, you can end it.'); }
+  else { const svg=$('homeJarSvg'); svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop'); stars($('homeJar'),9,true);
+    setTimeout(()=>showExit('Session complete.','That hour was yours. Now close this and go spend the next one too.'),600); }
+}
+/* ── schedule picker ── */
+let sched='always';
+function pickSched(el,kind){
+  document.querySelectorAll('#schedChips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); sched=kind;
+  $('customWindow').style.display = kind==='custom' ? 'block' : 'none';
+}
+const SCHED_LABEL={always:'always',evenings:'9pm–7am',work:'9am–5pm',weekend:'weekends',custom:'custom window'};
+function cycleSetting(el,opts){
+  const i=(opts.indexOf(el.textContent.trim())+1)%opts.length;
+  el.textContent=opts[i]; el.classList.toggle('on', i===1);
+  toast(opts[i]==='My jars' ? 'Your jars will see your coins now — your call, always.' : 'Setting saved.');
+}
+function renameJar(){
+  const n=prompt('What do you call this jar?', $('jarName').textContent);
+  if(n && n.trim()){ $('jarName').textContent=n.trim(); document.querySelector('.jarChip b').textContent=n.trim(); toast('Yours to name. That matters more than it sounds.'); }
+}
+function updateGoal(){
+  const marks=[15,30,60,100], next=marks.find(m=>m>S.streak)||S.streak+30;
+  const g=$('goalLine'); if(g) g.textContent=(next-S.streak)+' night'+((next-S.streak)===1?'':'s')+' to your '+next+'-night mark';
+}
+/* ── tips: some are science, some are permission ── */
+const TIPS=[
+  {i:'i-brain',t:"Why it's so hard at 10pm",b:'Tiredness lowers the effort your brain will spend on deciding. The feed never asks you to decide.',cta:'Discover more ›',go:()=>openRes(3)},
+  {i:'i-camera',t:"Some nights you just want to be entertained",b:"I get it — we don't always want to optimise the evening or do something meaningful. That's completely fine. What about a good film, or the series you keep meaning to start? It ends by itself, which is more than the feed will ever do for you.",cta:'Find something that ends ›',go:()=>{ showInstead(); setInsteadMode('fun',document.getElementById('segFun')); }},
+  {i:'i-wave',t:'The pull is usually tiredness, not craving',b:"Your own entries say so four times this month. Tired wants an off switch, not content — and a film is a much better off switch than a feed.",cta:'Read your recap ›',go:()=>go('recap')},
+  {i:'i-brain',t:"You didn't decide to open it",b:'Most phone opens last under 30 seconds and begin with no decision at all. The habit is the reach, not the app.',cta:'Discover more ›',go:()=>openRes(4)},
+  {i:'i-heart',t:'Boredom is where ideas live',b:"Nothing has gone wrong when you're bored. It's the state most people's best thinking arrives in — the feed just gets there first.",cta:'Sit with it ›',go:()=>openEntry('feeling')},
+];
+let tipIdx=0;
+function renderTip(){
+  const t=TIPS[tipIdx];
+  $('tipIcon').innerHTML=`<use href="#${t.i}"/>`;
+  $('tipTitle').textContent=t.t; $('tipBody').textContent=t.b; $('tipCta').textContent=t.cta;
+}
+function nextTip(){ tipIdx=(tipIdx+1)%TIPS.length; renderTip(); }
+function tipAction(){ TIPS[tipIdx].go(); }
+/* ── celebrations ── */
+const WINS=[
+  {t:'Best week yet',s:'9h 40m returned'},
+  {t:'12 clean nights',s:'your longest run'},
+  {t:'First $50 given',s:'≈100 meals'},
+  {t:'Focus Week finished',s:'with Casa Jar'},
+];
+/* ── usage report ── */
+const APPS=[
+  {n:'The scroll one',g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',h:'6h 20m',pct:82,opens:47,shield:true},
+  {n:'The loud one',g:'linear-gradient(150deg,#37E2C0,#1E63FF)',h:'4h 05m',pct:54,opens:38,shield:true},
+  {n:'The endless one',g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',h:'3h 12m',pct:42,opens:61,shield:false},
+  {n:'The news one',g:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',h:'1h 48m',pct:24,opens:29,shield:false},
+];
+function renderApps(){
+  $('appList').innerHTML=APPS.map((a,i)=>`<div class="appRow">
+    <div class="ic token" style="background:${a.g}"><svg width="16" height="16" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
+    <div style="flex:1"><div class="spread"><b style="font-size:13px">${a.n}</b><span class="tiny">${a.h}</span></div>
+      <div class="appBar"><i style="width:${a.pct}%"></i></div>
+      <div class="tiny" style="margin-top:4px">${a.opens} opens · ${a.opens>40?'mostly without deciding to':'usually on purpose'}</div></div>
+    ${a.shield?'<span class="shieldchip"><svg width="14" height="14"><use href="#i-shield"/></svg></span>'
+      :`<button class="btn mint" style="width:auto;padding:8px 12px;font-size:11.5px" onclick="suggestBlock(${i})">Shield it</button>`}
+  </div>`).join('');
+}
+function suggestBlock(i){
+  APPS[i].shield=true; renderApps();
+  COMMITS.unshift({g:APPS[i].g,n:APPS[i].n,m:'always · $5 · name it later'});
+  renderCommits(); toast('Shielded. You can set the price and the reason any time.');
+}
+/* ── resources ── */
+const RES=[
+  {k:'INFINITE SCROLL',t:'The feed never ends',hook:'A page with a bottom asks you a question. A feed never does.',
+   body:'Stopping cues are what let people leave. Infinite scroll removes every one of them, so the decision to stop has to be generated by you, from nothing, over and over.',
+   feels:'You look up and twenty minutes have gone, and you can\'t name a single thing you saw.',
+   we:'The shield is an artificial bottom of the page. The breath pause hands the decision back to you before the feed can absorb it.',
+   tr:'Tonight, when you finish something, close the app before you look for the next thing. Notice how strange that feels.',
+   src:'Stopping cues & consumption research (Wansink); attention capture literature.'},
+  {k:'VARIABLE REWARD',t:'Sometimes it\'s good',hook:'Unpredictable rewards are learned harder than reliable ones.',
+   body:'Dopamine neurons respond to reward *prediction error* — surprise, not pleasure. A feed that is occasionally great and usually mediocre is the most compelling schedule there is. A Meta data scientist put it plainly in an internal note: "intermittent rewards are most effective (think slot machines)."',
+   feels:'One more refresh. Not because it\'s good — because it might be.',
+   we:'Every reward in ScrollJar is fixed and earned: same coin, same celebration, no surprise boxes. We refuse the mechanism we\'re fighting.',
+   tr:'Count the posts before you find one you\'d have missed. Usually it\'s dozens.',
+   src:'Schultz, Dayan & Montague, Science 1997; Schüll, Addiction by Design.'},
+  {k:'SOCIAL COMPARISON',t:'Everyone else is fine',hook:'The feed shows you outcomes and hides the ordinary hours behind them.',
+   body:'Facebook\'s staggered college rollout let researchers measure this causally: severe depression rose about 7% and anxiety about 20%, and the mechanism was unfavourable social comparison — not screen time as such.',
+   feels:'A small flatness afterwards you can\'t quite attribute to anything.',
+   we:'Our feed is finite, shows only your own jars, and reports outcomes without ranking anyone. No follower counts, no leaderboards.',
+   tr:'After ten minutes on any feed, ask: do I feel closer to these people, or further away?',
+   src:'Braghieri, Levy & Makarin, American Economic Review 2022.'},
+  {k:'BEDTIME PROCRASTINATION',t:'Revenge hours',hook:'The scroll at 11pm is often not craving. It\'s the only unclaimed time in the day.',
+   body:'People with little autonomy during the day reclaim it at night by refusing to sleep — documented as bedtime procrastination. The phone isn\'t the cause; it\'s the easiest available way to take the hour back.',
+   feels:'Tired but unwilling. Wanting the day to have had something in it.',
+   we:'We ask what the hour is *for*, and offer it back to you — a walk, a book, three lines in the diary — instead of just closing the door.',
+   tr:'Take the hour deliberately: set a 25-minute session and spend it on something you chose.',
+   src:'Kroese et al., bedtime procrastination literature.'},
+  {k:'CHOSEN VS DRIFTING',t:'A film ends. A feed doesn\'t.',hook:'The problem was never entertainment. It was media with no edges.',
+   body:'Every traditional form of entertainment carries a stopping cue: credits roll, the record finishes, the episode ends. You get a natural moment to decide whether to continue. Feeds deliberately removed that moment — not to entertain you better, but to keep the decision from ever arriving.',
+   feels:'Two hours on a film feels like an evening you had. Two hours scrolling feels like an evening that happened to you.',
+   we:'We never ask you to be productive. We ask you to pick something that ends — and if that\'s a film at 10pm, brilliant, that\'s a choice and we\'ll happily suggest one.',
+   tr:'Tonight, pick something with a running time. Anything. Just let the thing have an ending.',
+   src:'Stopping-cue research; Wansink on consumption without cues.'},
+  {k:'CHECKING HABITS',t:'You didn\'t decide to',hook:'Most phone opens are under 30 seconds and start with no decision at all.',
+   body:'Habits are cue-driven: context triggers the action before deliberation arrives. Roughly 43% of daily behaviour runs this way. Willpower arrives late to a race it didn\'t know had started.',
+   feels:'Finding the app already open in your hand.',
+   we:'We change the cue, not your character — friction at the exact moment of the reach, which cut openings by more than half in the published trial of a similar tool.',
+   tr:'Move the app off your home screen tonight. Cheapest intervention there is.',
+   src:'Wood, Quinn & Kashy 2002; Oulasvirta et al. 2012; Grüning et al., PNAS 2023.'},
+];
+function renderRes(){
+  $('resList').innerHTML=RES.map((r,i)=>`<div class="resCard" onclick="openRes(${i})">
+    <div class="eyebrow" style="color:var(--violet)">${r.k}</div>
+    <div class="display" style="font-size:16px;margin:7px 0 5px">${r.t}</div>
+    <div class="sub">${r.hook}</div>
+    <div class="tiny" style="margin-top:9px;color:var(--violet)">Discover more ›</div></div>`).join('');
+}
+function openRes(i){
+  const r=RES[i];
+  $('rdTitle').textContent=r.t; $('rdKicker').textContent=r.k; $('rdHook').textContent=r.hook;
+  $('rdBody').textContent=r.body; $('rdFeels').textContent=r.feels; $('rdWeDo').textContent=r.we;
+  $('rdTry').textContent=r.tr; $('rdSource').textContent=r.src;
+  go('resdetail');
+}
+/* ── mood ledger: does it actually help? ── */
+let MOODLOG=[{k:'worse'},{k:'worse'},{k:'same'},{k:'worse'},{k:'better'},{k:'worse'},{k:'worse'},{k:'same'},{k:'worse'},{k:'worse'}];
+const MOODC={better:'var(--mint)',same:'var(--ink-3)',worse:'var(--peach)'};
+const MOODH={better:34,same:22,worse:34};
+function renderMoodLedger(){
+  const L=MOODLOG.slice(0,10);
+  $('moodLedger').innerHTML=L.map(m=>`<div style="height:${MOODH[m.k]}px;background:${MOODC[m.k]};opacity:${m.k==='same'?.45:.9}"></div>`).join('');
+  const w=L.filter(m=>m.k==='worse').length;
+  $('ledgerHead').innerHTML=`You've felt <b>${w>=L.length/2?'worse':'mixed'}</b> after ${w} of your last ${L.length} sessions.`;
+}
+/* ── reflections: the questions worth sitting with ── */
+const REFLECTIONS=[
+  {q:"How do you feel when you're in there?",s:'Not afterwards — during. Try to catch it while it\'s happening.'},
+  {q:'Do these apps change your mood?',s:'Up, down, flat? Same every time, or does it depend on the day?'},
+  {q:'How many times have you told yourself you need a detox?',s:'And what happened the last few times you said it?'},
+  {q:'What are you usually looking for when you reach?',s:'News? Company? An off switch? Something to stop the thinking?'},
+  {q:'How often do you pick up the phone for one small thing — and stay?',s:'Checking the weather, then twenty minutes gone. That drift is the habit, not the app.'},
+  {q:'Is something asking for your attention that the scrolling helps you avoid?',s:'A conversation, a decision, a feeling. No need to solve it here — naming it is enough.',heavy:true},
+  {q:'What did the best evening of your last month look like?',s:'Was a screen in it?'},
+  {q:'If tonight went well, what would you have done instead?',s:'Be specific. Specific is what your shield will remind you of.'},
+];
+let reflIdx=0;
+let swapsLeft=2;
+function renderReflection(){
+  const r=REFLECTIONS[reflIdx];
+  $('reflQ').textContent=r.q; $('reflSub').textContent=r.s;
+  $('reflCount').textContent='one a day';
+  $('reflHeavy').style.display = r.heavy ? 'block' : 'none';
+  $('reflSwap').textContent = swapsLeft>0 ? 'Another' : 'That\'s today\'s';
+  $('reflSwap').style.opacity = swapsLeft>0 ? 1 : .5;
+}
+function nextReflection(){
+  if(swapsLeft<=0){ toast('One a day. Tomorrow brings the next one.'); return; }
+  swapsLeft--; reflIdx=(reflIdx+1)%REFLECTIONS.length; renderReflection();
+}
+function answerReflection(){
+  openEntry('feeling');
+  setTimeout(()=>{ $('entryText').value=REFLECTIONS[reflIdx].q+'\n\n'; $('entryText').focus(); },120);
+}
+/* ── the detox counter ── */
+let detoxCount=4;
+function addDetox(){ detoxCount++; $('detoxN').textContent=detoxCount;
+  toast(detoxCount>=5?'Five times now. The difference is you did something about it.':'Counted. No shame in saying it.'); }
+/* ── diary ── */
+const GOALS=[
+  {t:'Finish the novel',c:'var(--mint)',n:'4 evenings this week'},
+  {t:'Be present at dinner',c:'var(--peach)',n:'6 of 7 nights'},
+  {t:'Sleep before midnight',c:'var(--violet)',n:'holding'},
+];
+const ENTRIES=[
+  {tag:'impulse',t:'Wednesday, 10:12pm',b:"Reached for it without deciding to. Wasn't even bored — just tired and looking for an off switch.",at:'written at a shield moment'},
+  {tag:'feeling',t:'Tuesday, 8:40pm',b:'Read for forty minutes and felt oddly proud. Small thing, but it was mine.'},
+  {tag:'goal',t:'Monday, 7:15am',b:'Want this week to have two real evenings in it. Not productive — just mine.'},
+];
+const PROMPTS=['What am I actually looking for?','What would make this evening good?','Is this tiredness or wanting?','What happened today?'];
+const INSTEAD_WORTH=[
+  {i:'i-book',t:'Twenty pages',s:'you left off at chapter three'},
+  {i:'i-sprout',t:'Walk to the end of the street',s:'it\'s 18° and not raining'},
+  {i:'i-pen',t:'Write three lines here',s:'you said tonight felt heavy'},
+];
+const INSTEAD_FUN=[
+  {i:'i-camera',t:'The film you saved in March',s:'1h 52m · you\'d still be in bed by 11:40'},
+  {i:'i-wave',t:'One episode — the good one',s:'42 minutes, and then it stops on its own'},
+  {i:'i-heart',t:'A record, start to finish',s:'nothing to look at, which is the point'},
+];
+let insteadMode='worth';
+function setInsteadMode(m,el){
+  insteadMode=m;
+  el.parentElement.querySelectorAll('div').forEach(d=>d.classList.remove('on')); el.classList.add('on');
+  $('insteadSub').textContent = m==='fun'
+    ? "Fair enough — not every evening needs to mean something. Pick something that ends by itself."
+    : 'Three things that fit the twenty minutes you have and the mood you logged.';
+  paintInstead();
+}
+function paintInstead(){
+  const L = insteadMode==='fun' ? INSTEAD_FUN : INSTEAD_WORTH;
+  $('insteadList').innerHTML=L.map(o=>`<div class="insteadCard" onclick="chooseInstead('${o.t}')">
+    <div class="ic" style="background:rgba(255,255,255,.08);color:var(--calm)"><svg width="17" height="17"><use href="#${o.i}"/></svg></div>
+    <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">${o.t}</b><div class="tiny">${o.s}</div></div>
+    <span style="color:var(--calm-soft)">›</span></div>`).join('')
+    + (insteadMode==='fun' ? `<div class="tiny" style="text-align:center;margin:2px 0 12px;line-height:1.55">A film ends. An episode ends. A record ends.<br>That's the whole difference — not whether it's worthy.</div>` : '');
+}
+function renderGoals(){
+  $('goalList').innerHTML=GOALS.map(g=>`<div class="goalRow"><span class="goalDot" style="background:${g.c}"></span>
+    <div style="flex:1"><b style="font-size:12.5px">${g.t}</b><div class="tiny">${g.n}</div></div></div>`).join('');
+}
+function addGoal(){ const t=prompt('What is this time for?'); if(t&&t.trim()){ GOALS.unshift({t:t.trim(),c:'var(--blue)',n:'just set'}); renderGoals(); toast('Named. That\'s what the shield will remind you of.'); } }
+function renderEntries(){
+  $('entryList').innerHTML=ENTRIES.map(e=>`<div class="entryCard">
+    <div class="entryMeta"><span class="entryTag tag-${e.tag}">${e.tag.toUpperCase()}</span><span class="tiny">${e.t}</span></div>
+    <div style="font-size:13px;font-weight:600;line-height:1.5">${e.b}</div>
+    ${e.at?`<div class="tiny" style="margin-top:6px">${e.at}</div>`:''}</div>`).join('');
+}
+let pullState=null;
+function logPull(el,k,label){
+  document.querySelectorAll('.pullChip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); pullState=k;
+  toast(k==='strong'?'Logged. Want to write a line about it?':'Logged. The app will remember the weather.');
+}
+let entryKind='free';
+let diaryMode='both';
+function setDiaryMode(m,el){
+  diaryMode=m;
+  el.parentElement.querySelectorAll('div').forEach(d=>d.classList.remove('on')); el.classList.add('on');
+  const notes={both:'Prompts when you want them, an empty page when you don\'t.',
+    blank:'No questions, no tags, no structure. Just the page.',
+    guided:'A question every time — and the app follows what you write.'};
+  $('diaryModeNote').textContent=notes[m];
+  document.querySelectorAll('#s-diary .card')[2].style.display = m==='blank' ? 'none' : '';
+  toast(m==='blank'?'Blank page it is.':m==='guided'?'Guided. We\'ll always open with a question.':'Both — you choose in the moment.');
+}
+function openEntry(kind){
+  entryKind=kind;
+  const guided = diaryMode==='guided' || (diaryMode==='both' && kind!=='free');
+  $('entryTitle').textContent = kind==='impulse' ? 'What is the pull about?' : (guided? 'Something to answer' : 'A blank page');
+  $('entryTags').style.display = diaryMode==='blank' ? 'none' : 'flex';
+  $('entryTags').innerHTML=['impulse','feeling','goal','free'].map(t=>`<div class="promptChip ${t===kind?'on':''}" onclick="entryKind='${t}';document.querySelectorAll('#entryTags .promptChip').forEach(c=>c.style.borderColor='');this.style.borderColor='var(--mint)'">${t}</div>`).join('');
+  if(diaryMode==='blank'){
+    $('entryPrompts').style.display='none';
+    $('entryText').placeholder='';
+  } else {
+    $('entryPrompts').style.display='flex';
+    $('entryPrompts').innerHTML=PROMPTS.map(p=>`<div class="promptChip" onclick="document.getElementById('entryText').value='${p} '">${p}</div>`).join('');
+    $('entryText').placeholder = guided ? REFLECTIONS[reflIdx].q : 'tired, not really wanting the phone — wanting to switch off';
+  }
+  if(diaryMode==='guided') setTimeout(()=>{ $('entryText').value=REFLECTIONS[reflIdx].q+'\n\n'; },80);
+  $('ov-entry').classList.add('on');
+}
+let entriesThisSitting=0;
+function saveEntry(){
+  const b=$('entryText').value.trim(); if(!b){ closeOv('ov-entry'); return; }
+  ENTRIES.unshift({tag:entryKind,t:'just now',b,at:entryKind==='impulse'?'written at a shield moment':''});
+  renderEntries(); closeOv('ov-entry'); $('entryText').value=''; go('diary');
+  entriesThisSitting++;
+  if(entriesThisSitting>=2){
+    setTimeout(()=>showExit('That\'s enough for tonight.','The diary did its job. It\'s not somewhere to spend an evening either.'),650);
+    entriesThisSitting=0;
+  } else { toast('Kept. Only you can read it.'); }
+}
+/* ── instead-of screen ── */
+function showInstead(){
+  closeOv('ov-breath');
+  paintInstead();
+  $('promptChips').innerHTML=PROMPTS.slice(0,3).map(p=>`<div class="promptChip">${p}</div>`).join('');
+  $('ov-instead').classList.add('on');
+}
+function chooseInstead(t){ closeOv('ov-instead'); resist(); setTimeout(()=>toast('"'+t+'" — go on then.'),700); }
+/* ── pronouns ── */
+const PRONOUNS=[['she/her','herself'],['he/him','himself'],['they/them','themselves'],['just my name','Luca']];
+let pronounIdx=2;
+function renderPronouns(){
+  $('pronounChips').innerHTML=PRONOUNS.map((p,i)=>`<div class="promptChip" style="${i===pronounIdx?'border-color:var(--mint);color:var(--mint)':''}" onclick="setProfPronoun(${i})">${p[0]}</div>`).join('');
+  $('profPronoun').textContent=PRONOUNS[pronounIdx][0]+' · shown as "'+PRONOUNS[pronounIdx][1]+'" in quiet posts';
+}
+function setProfPronoun(i){ pronounIdx=i; renderPronouns(); toast('Saved. The app will speak about you correctly.'); }
+function toggleWork(el){
+  el.classList.toggle('on');
+  const on=el.classList.contains('on');
+  $('workBody').style.display = on ? 'block' : 'none';
+  toast(on ? 'Work mode on. The shield steps aside when you\'re working — and only then.' : 'Work mode off.');
+}
+function restart(){location.reload()}
+renderCommits();renderCoins($('coinStack'),S.coins);renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
+$('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
+$('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');
+$('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i];
+  return `<div style="position:relative;flex:1;display:flex;align-items:flex-end;gap:2px">
+    <div class="ghost" style="height:${Math.round(last/mx*32)}px;flex:1;border-radius:4px 4px 0 0"></div>
+    <div class="${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*32)}px;flex:1;border-radius:4px 4px 0 0"></div></div>`}).join('');
+$('recapBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
+$('challengeBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
+setInterval(()=>{const svg=$('homeJarSvg');if(!document.hidden&&Math.random()<.4&&!svg.classList.contains('hop')){svg.classList.add('hop');setTimeout(()=>svg.classList.remove('hop'),800)}},11000);
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+# ScrollJar: handoff to Claude Code
+
+**Date:** 2026-10-13. Read this first. Anything not marked OPEN is decided.
+
+This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
+
+---
+
+## 1. The product in 5 lines
+
+1. The user picks the apps that drink their time. iOS blocks them through Apple's Screen Time API, a real system-level block.
+2. Opening one anyway is always allowed, after a short breath pause, at a price the user set ($2–25, default $5).
+3. The price drops as a coin into the user's jar. On the 1st of each month the jar empties: **100% goes to a charity the user chose**, with a receipt.
+4. ScrollJar earns money only from memberships: Ghost Jar (free), Jar Hero ($5.99/mo or $49.99/yr) and Jar Legend ($9.99/mo or $79.99/yr, of which we give away half).
+5. Positioning: every other stakes app keeps your penalty money; we never touch it. "Either you win the night, or a charity does."
+
+## 2. What exists
+
+| Asset | State | Where |
+|---|---|---|
+| **App prototype v2** | Complete and clickable: about 15 screens and 15 overlays, all flows working, day and night modes. **The most valuable asset.** | `prototype/` |
+| **Landing page** | Built, clean white layout with a teal accent. **Not live** (see §4). | `landing/index.html` |
+| Product spec v1.2 | Canonical | `docs/scrolljar-spec.md` |
+| Platform research | Re-verified 2026-07-30 | `docs/research-findings.md` |
+| Design system (Aurora Chrome) | Locked for the app | `docs/design-brief.md` |
+| Psychology, evidence, science | Complete, with citations | `docs/psychology-playbook.md`, `docs/evidence-dossier.md`, `docs/science-dossier-bibliography.md` |
+| Teams (B2B) mini-spec | v0.1, parked | `docs/scrolljar-teams-spec.md` |
+| Ideas, Wobble design, open questions | Living doc | `docs/sketchpad.md` |
+| **iOS build plan** | New in this handoff | `docs/IOS-BUILD-SPEC.md` |
+
+### Prototype map: what each screen and overlay is for
+
+- **Tabs:** TODAY (`s-home`), DIARY (`s-diary`), JARS (`s-friends`), YOU (`s-you`).
+- **Core loop:** `ov-shield` → `ov-breath` (6-second pause) → `ov-instead` (what else this hour could be) → `ov-override` (pay $5) → `ov-window` (access countdown) → `ov-mood` (how do you feel now?).
+- **Resisting:** `resist()` makes the jar hop; the first time, it opens `ov-firstwin` ("That's the whole product. You just didn't scroll."), followed by `ov-exit`, where the app invites you to leave.
+- **Money:** `s-jar`, then `ov-tipout`, the monthly ceremony that shows visible settlement steps.
+- **Social:**
+  - `s-friends` (feed), `s-jardetail`, `s-challenge`, `s-invite`.
+  - **Wobble** (`ov-wobble`) follows the "Ladder of Who Speaks": the friend live, then the friend's standby note, then your own words.
+  - `ov-standby` is the composer for the standby note, with an AI-assisted draft and a "cold read" check.
+- **Self-knowledge:** `s-diary`, `s-recap`, `s-resources` and `s-resdetail` ("Why it's hard"), and `s-usage`.
+- **Setup and paywall:** `ov-onb` (4 slides), `s-new` (new promise), `s-paywall`.
+- **Support register (calm teal):** breath, instead, rough day (`ov-rough`), exit.
+
+⚠️ **The prototype's shield screen is aspirational.** The real iOS shield allows only a title, a subtitle, an icon and 2 buttons, and no payment UI. Everything after the shield happens in our own app. See `IOS-BUILD-SPEC.md` §3.
+
+## 3. Lost in a cloud-workspace reset (regenerate only if needed)
+
+These files are referenced in the docs but no longer exist:
+
+- `og.png`: the 1200×630 social share image for the landing page. **Needed before launch.**
+- `scrolljar-financial-study.xlsx`: unit economics and 24-month scenarios. The key numbers survive in `sketchpad.md` → Monetization (Hero year nets $42.49, LTV ~$91, break-even ~356 subscribers).
+- `scrolljar-aurora-chrome.html`: the living design-system page. The tokens survive in `prototype/styles.css` and `design-brief.md`.
+- The identity-direction explorations (14 directions), the mission-control HTML page and a `scrolljar.skill` file. These are history only and need no action.
+
+## 4. OPEN: what's blocking what
+
+### 🔴 1. Apple Family Controls distribution entitlement
+
+This gates TestFlight and the App Store, and approval takes weeks.
+
+- **Check whether it has been filed.** If not, file it today.
+- The steps are in `IOS-BUILD-SPEC.md` §2.
+- Development builds on your own iPhone do **not** need approval, so coding can start now.
+
+### 🟠 2. Landing page: three things before it goes live
+
+1. **`YOURFORMID`**: create a free form at formspree.io and paste its ID into the script. Until then the form runs in demo mode and captures nothing.
+2. **TARGET**: the waitlist number that means "keep going" (e.g. 300 signups in 3 weeks). It goes in the comment at the top of the file. Without it the page tests nothing.
+3. **"This fall" launch claim**: it appears in the hero pill, the FAQ and the final CTA. It is October 2026 and the app isn't built, so **change it to something true** (e.g. "Join the waitlist — iPhone first").
+
+Then buy the domain (`scrolljar.app` is assumed throughout), regenerate `og.png`, and deploy the folder to Netlify, Vercel or Cloudflare Pages.
+
+### 🟡 3. Product questions still open
+
+The live list is in `sketchpad.md` → "Open questions":
+
+- Q4 Ghost Jar limits
+- Q5 group jar settlement (per member or pooled)
+- Q8 hour-posts in v1
+- Q12 Big Counter methodology
+- Q15 widget scope
+- **Q16 US legal entity** (needs an advisor; it gates the Stripe and App Store contracts)
+- Q21 Wobble × Teams
+
+### 🟡 4. Idea L hasn't approved yet
+
+Embed the working prototype in the landing page's hero phone, so visitors can tap the shield and watch the coin drop. **Ask L first.**
+
+## 5. Where the docs disagree (later decisions win)
+
+- **Currency:** `psychology-playbook.md` and the brief use € in places. **USD/US-first is decided** (spec v1.2).
+- **Tier names:** `board-reactions-2026-07-27.md` lists them as pending. **Ghost Jar / Jar Hero / Jar Legend is decided** (spec v1.2).
+- **Buttons:** `design-session-briefing.md` says pill buttons and suggests Sora or Outfit. **Locked: 16px square-rounded buttons, Bricolage Grotesque with Inter** (`design-brief.md`).
+- **Day-mode colours:** `design-brief.md` lists a cool day ground (#F3F5FC). The prototype uses a warmer dawn palette. **The prototype's `styles.css` is the source of truth.**
+- **App vs website:** they are deliberately different registers. The app is vivid (Aurora Chrome, night-first); the website is calm (white, a teal accent, the colourful app screens as the only saturated element).
+
+## 6. Settled website copy: do not churn
+
+- Headline: **"Your time belongs to you. Let's go get it back."**
+- Whisper line: *"You opened it to check one thing. That was 40 minutes ago."*
+- Punch line: *"Every other app like this keeps that money. We never touch it."*
+- Win-win: *"Either you win the night, or a charity does."* / *"The only one who never wins is the app that wanted your night."*
+- L's reference site is **freedom.to**: professional, credible, structured. We can't produce its people videos, so we use real app screens instead.
+
+## 7. Suggested order of work
+
+1. Entitlement status (§4.1). It costs L 30 minutes and saves weeks.
+2. Make the landing page live (§4.2): small and cheap, and it starts measuring demand.
+3. **Blocking spike on a real iPhone** (`IOS-BUILD-SPEC.md` Phase 1). This is the riskiest technical step, so prove it first.
+4. Build the iOS app in the phases of `IOS-BUILD-SPEC.md`, using the prototype as the visual and behavioural reference.

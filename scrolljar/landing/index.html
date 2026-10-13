@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScrollJar — Block Distracting Apps. Every Slip Funds a Charity.</title>
+<meta name="description" content="ScrollJar blocks the apps that drink your time using Apple's own Screen Time engine. Open one anyway and it costs a price you set — 100% of it goes to a charity you choose. We keep none of it.">
+<link rel="canonical" href="https://scrolljar.app/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ScrollJar">
+<meta property="og:title" content="Your time belongs to you. Let's go get it back.">
+<meta property="og:description" content="A swear jar, for scrolling. Even your weak moments do some good in this world.">
+<meta property="og:url" content="https://scrolljar.app/">
+<meta property="og:image" content="https://scrolljar.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ScrollJar — your time belongs to you">
+<meta name="twitter:description" content="Real iOS blocking, a price you set, 100% to charity. Even your weak moments do some good.">
+<meta name="twitter:image" content="https://scrolljar.app/og.png">
+<meta name="theme-color" content="#FFFFFF">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"ScrollJar",
+"operatingSystem":"iOS","applicationCategory":"LifestyleApplication",
+"description":"Blocks distracting apps at the OS level. Overriding a block costs a self-set price donated 100% to charity.",
+"url":"https://scrolljar.app/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Does ScrollJar really block apps?","acceptedAnswer":{"@type":"Answer","text":"Yes. ScrollJar uses Apple's Screen Time framework — the same system-level engine Apple built for parental controls — so the block is enforced by iOS itself, not by a reminder you can swipe away."}},
+{"@type":"Question","name":"What if I really need to get in?","acceptedAnswer":{"@type":"Answer","text":"You always can. Opening a blocked app costs the price you set in advance, and it opens for a window you chose. No lecture, no lockout."}},
+{"@type":"Question","name":"Where does the money actually go?","acceptedAnswer":{"@type":"Answer","text":"100% of every coin goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts. ScrollJar keeps none of it."}},
+{"@type":"Question","name":"Then how does ScrollJar make money?","acceptedAnswer":{"@type":"Answer","text":"Memberships, and nothing else. No ads, no data sales, and no cut of your slips — so we never profit when you struggle."}},
+{"@type":"Question","name":"Can you see what I do on my phone?","acceptedAnswer":{"@type":"Answer","text":"No. Apple's design hands us anonymous tokens instead of app names, so we never learn which apps you blocked or what you do inside them."}},
+{"@type":"Question","name":"Is there an Android version?","acceptedAnswer":{"@type":"Answer","text":"iPhone first. Android has no official blocking API and recent Android releases restrict the workarounds, so we would rather ship one honest version than two weak ones."}}]}
+</script>
+<!-- ═══════════════════════════════════════════════════════
+  TO GO LIVE, TWO EDITS:
+  1. FORM — free form at formspree.io, replace YOURFORMID (in the script).
+  2. THE NUMBER — waitlist target that means "keep going".
+     TARGET = ______ signups by ______ . Unpicked = untested.
+═══════════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg-tint:#F6F8FA; --bg-warm:#FBF7F2;
+  --ink:#16182B; --ink-2:#555A70; --ink-3:#8B90A5;
+  --line:rgba(22,24,43,.10); --line-2:rgba(22,24,43,.06);
+  --teal:#00A184; --teal-lt:#5EEBD1; --violet:#6A2CF0; --gold:#C77E00; --gold-lt:#FFC94D; --coral:#FF5C2B;
+  --shadow-s:0 1px 2px rgba(22,24,43,.05), 0 6px 18px -10px rgba(22,24,43,.18);
+  --shadow-m:0 2px 4px rgba(22,24,43,.05), 0 18px 40px -18px rgba(22,24,43,.25);
+  --r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',-apple-system,sans-serif;font-size:16.5px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.display{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.03em;font-weight:800}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;font-weight:800;color:var(--teal);text-transform:uppercase}
+a{color:inherit}
+.tint{background:var(--bg-tint)}
+.warm{background:var(--bg-warm)}
+
+.rev{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.rev.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rev{opacity:1;transform:none;transition:none}.pcoin,.pjarbox,.sat{animation:none!important}}
+
+/* nav */
+nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-2)}
+.navin{display:flex;align-items:center;gap:8px;padding:14px 0}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-.03em;text-decoration:none}
+.navin .sp{flex:1}
+.navlink{color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:10px}
+.navlink:hover{color:var(--ink);background:var(--bg-tint)}
+@media(max-width:760px){.navlink{display:none}}
+
+/* buttons */
+.btn{border:none;border-radius:14px;padding:15px 28px;font-family:'Inter';font-size:15px;font-weight:700;cursor:pointer;
+  color:#04241E;background:linear-gradient(168deg,var(--teal-lt),#00B899);text-decoration:none;display:inline-block;text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 2px 5px rgba(0,161,132,.18), 0 12px 26px -12px rgba(0,161,132,.6);
+  transition:transform .16s, box-shadow .16s}
+.btn:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 4px 10px rgba(0,161,132,.2), 0 18px 34px -14px rgba(0,161,132,.7)}
+.btn:active{transform:translateY(0)}
+.btn.small{padding:11px 20px;font-size:14px;border-radius:12px}
+
+/* hero */
+.hero{text-align:center;padding:78px 0 0}
+.pill{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);background:#fff;
+  border-radius:999px;padding:7px 16px 7px 12px;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:26px;box-shadow:var(--shadow-s)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(0,161,132,.15)}
+.whisper{font-size:16px;color:var(--ink-3);margin:0 auto 16px;max-width:460px}
+.hero h1{font-size:clamp(42px,6.2vw,76px);line-height:1.02;letter-spacing:-.042em;font-weight:800;max-width:900px;margin:0 auto}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero .sub{color:var(--ink-2);font-size:18.5px;max-width:560px;margin:22px auto 28px}
+.hero .sub b{color:var(--ink);font-weight:700}
+
+.sig{display:flex;gap:10px;max-width:470px;margin:0 auto}
+.sig input{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 18px;
+  color:var(--ink);font:15px 'Inter';outline:none;box-shadow:var(--shadow-s);transition:.16s}
+.sig input::placeholder{color:var(--ink-3)}
+.sig input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(0,161,132,.13)}
+.formnote{font-size:13.5px;color:var(--ink-3);margin-top:14px}
+.formnote b{color:var(--ink-2);font-weight:600}
+.ok{display:none;margin:0 auto;align-items:center;justify-content:center;gap:10px;background:#E8F7F2;border:1px solid rgba(0,161,132,.35);
+  border-radius:14px;padding:15px 18px;max-width:470px;font-weight:600;font-size:15px;color:#04564A}
+
+/* hero product */
+.heroViz{position:relative;display:flex;justify-content:center;margin-top:56px;padding-bottom:0;overflow:hidden}
+.heroGlow{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:min(760px,100%);height:520px;
+  background:radial-gradient(closest-side,rgba(94,235,209,.35),rgba(106,44,240,.14) 55%,transparent 78%);filter:blur(20px);z-index:0}
+.sat{position:absolute;width:224px;z-index:5;border-radius:18px;box-shadow:var(--shadow-m);overflow:hidden;border:1px solid var(--line)}
+.sat.l{left:calc(50% - 430px);top:56px;transform:rotate(-5deg);animation:satFloat 6.5s ease-in-out infinite}
+.sat.r{right:calc(50% - 430px);top:212px;transform:rotate(4deg);animation:satFloat 7.5s ease-in-out infinite reverse}
+@keyframes satFloat{0%,100%{margin-top:0}50%{margin-top:-12px}}
+@media(max-width:1080px){.sat{display:none}}
+.phone{position:relative;z-index:3;width:300px;border-radius:48px;background:linear-gradient(165deg,#2A2D45,#16182B);
+  padding:11px;box-shadow:0 50px 90px -30px rgba(22,24,43,.5), inset 0 1px 0 rgba(255,255,255,.2)}
+.pscr{position:relative;border-radius:38px;overflow:hidden;padding:52px 18px 24px;min-height:548px;background:
+  radial-gradient(90% 44% at 6% -6%, rgba(255,138,74,.24), transparent 62%),
+  radial-gradient(84% 40% at 100% 4%, rgba(120,60,240,.2), transparent 60%),
+  linear-gradient(176deg,#F9EFE5 0%,#EBE1F5 52%,#DDEFE7 100%)}
+.pscr::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
+  background:linear-gradient(112deg,transparent 32%,rgba(255,255,255,.3) 44%,rgba(255,255,255,.05) 51%,transparent 60%)}
+.pnotch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:104px;height:26px;border-radius:14px;background:#16182B;z-index:5}
+.peyebrow{font-size:9.5px;letter-spacing:.16em;font-weight:800;color:#7C8193;text-transform:uppercase}
+.pbig{font-family:'Bricolage Grotesque';font-weight:800;font-size:41px;letter-spacing:-.045em;line-height:1;margin-top:6px;color:#16182B}
+.psub{font-size:11.5px;color:#555A70;margin-top:4px}
+.pjarwrap{position:relative;display:flex;justify-content:center;margin:16px 0 4px;height:150px}
+@keyframes pjarsquash{0%,78%,100%{transform:scaleX(1) scaleY(1)}84%{transform:scaleX(1.1) scaleY(.9)}92%{transform:scaleX(.96) scaleY(1.04)}}
+.pjarbox{transform-origin:50% 95%;animation:pjarsquash 5.2s ease-in-out infinite}
+@keyframes pcoinfall{0%,64%{transform:translate(-50%,-46px) rotateY(0);opacity:0}70%{opacity:1}
+  80%{transform:translate(-50%,52px) rotateY(540deg);opacity:1}83%,100%{transform:translate(-50%,58px);opacity:0}}
+.pcoin{position:absolute;left:50%;top:0;width:30px;height:30px;z-index:2;animation:pcoinfall 5.2s cubic-bezier(.4,.05,.6,1) infinite}
+.pcard{background:rgba(255,255,255,.8);border:1px solid rgba(22,24,43,.08);border-radius:15px;padding:11px 13px;margin-top:9px;box-shadow:0 2px 8px rgba(22,24,43,.05)}
+.pcard b{font-size:12px;display:block;color:#16182B}
+.pcard span{font-size:10.5px;color:#7C8193;line-height:1.45;display:block}
+.prow{display:flex;align-items:center;gap:10px}
+.pdot{width:31px;height:31px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid rgba(22,24,43,.08)}
+.pbtn{margin-top:12px;text-align:center;background:linear-gradient(168deg,#5EEBD1,#00B899);color:#04241E;font-weight:800;
+  font-size:12.5px;border-radius:14px;padding:12px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 6px 14px -6px rgba(0,184,153,.6)}
+.phoneTag{position:absolute;right:-14px;top:44px;z-index:6;background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:9px 13px;font-size:12px;font-weight:700;color:var(--ink-2);box-shadow:var(--shadow-m)}
+
+/* evidence strip */
+.strip{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:34px 0}
+.striplab{text-align:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:24px}
+.stripgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.si{text-align:center;padding:0 6px}
+.si b{display:block;font-family:'Bricolage Grotesque';font-size:30px;font-weight:800;letter-spacing:-.035em;line-height:1;color:var(--ink)}
+.si p{font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.45}
+.si cite{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);margin-top:6px}
+
+/* sections */
+section{padding:92px 0}
+.sechead{max-width:660px;margin:0 auto 52px;text-align:center}
+.sechead h2{font-size:clamp(30px,4.1vw,46px);line-height:1.06;letter-spacing:-.035em;margin-top:12px}
+.sechead p{color:var(--ink-2);margin-top:14px;font-size:17.5px}
+.sechead.left{margin-left:0;text-align:left}
+
+/* hero punch line */
+.punch{display:inline-block;margin-top:10px;font-weight:700;color:var(--ink);
+  background:linear-gradient(to top,rgba(94,235,209,.42) 42%,transparent 42%);padding:0 3px}
+
+/* the difference */
+.diffsec{padding-top:84px}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:0 auto 22px}
+.dcard{border-radius:24px;padding:30px 28px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-s)}
+.dcard.them{background:var(--bg-tint);border-style:dashed}
+.dcard.us{border-color:rgba(0,161,132,.35);box-shadow:0 2px 4px rgba(0,161,132,.08),0 22px 44px -22px rgba(0,161,132,.5)}
+.dlab2{font-size:11.5px;letter-spacing:.13em;font-weight:800;text-transform:uppercase;color:var(--ink-3)}
+.flow{display:flex;align-items:center;gap:10px;margin:20px 0 18px}
+.node{flex:none;border-radius:13px;padding:12px 14px;background:#fff;border:1px solid var(--line);
+  font-family:'Bricolage Grotesque';font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap}
+.node.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.node.teal{background:linear-gradient(168deg,var(--teal-lt),#00B899);color:#04241E;border-color:transparent;
+  box-shadow:0 8px 20px -10px rgba(0,161,132,.8)}
+.arrow{flex:1;position:relative;height:2px;background:var(--ink-3);opacity:.5}
+.arrow::after{content:"";position:absolute;right:-1px;top:-4px;border-left:9px solid var(--ink-3);
+  border-top:5px solid transparent;border-bottom:5px solid transparent}
+.arrow.good{background:var(--teal);opacity:1}
+.arrow.good::after{border-left-color:var(--teal)}
+.arrow em{position:absolute;left:50%;top:-26px;transform:translateX(-50%);font-style:normal;
+  font-size:11.5px;font-weight:800;color:var(--teal);letter-spacing:.06em}
+.dline{color:var(--ink-2);font-size:15px}
+.dline b{color:var(--ink)}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:34px auto 0}
+.dg{padding:0 4px}
+.dg b{display:block;font-size:16px;margin-bottom:5px}
+.dg p{color:var(--ink-2);font-size:14.5px}
+@media(max-width:860px){.diff,.dgrid{grid-template-columns:1fr}}
+
+/* bubbles */
+.bubbles{display:flex;flex-wrap:wrap;gap:12px 14px;justify-content:center;max-width:860px;margin:0 auto 26px}
+.bub{background:#fff;border:1px solid var(--line);border-radius:20px 20px 20px 6px;padding:12px 22px;font-size:15.5px;
+  color:var(--ink-2);box-shadow:var(--shadow-s);transform:rotate(var(--r,0deg));transition:transform .22s}
+.bub:hover{transform:rotate(0deg) translateY(-2px)}
+.bub.alt{border-radius:20px 20px 6px 20px}
+.bub.b1{background:#E8F7F2;border-color:rgba(0,161,132,.28);color:#04564A}
+.bub.b2{background:#F0EBFC;border-color:rgba(106,44,240,.22);color:#40208F}
+.bub.b3{background:#FFF1E9;border-color:rgba(255,92,43,.24);color:#8F3714}
+.famline{text-align:center;font-size:19px;font-weight:700;max-width:560px;margin:0 auto}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px 24px 24px;box-shadow:var(--shadow-s);
+  transition:transform .22s,box-shadow .22s}
+.step:hover{transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  font-family:'Bricolage Grotesque';font-weight:800;font-size:14px;color:#fff;background:var(--ink)}
+.step h3{font-family:'Bricolage Grotesque';font-size:21px;letter-spacing:-.028em;margin:16px 0 8px;font-weight:800}
+.step>p{color:var(--ink-2);font-size:15px}
+.mini{border-radius:16px;padding:17px 15px;margin-top:20px;position:relative;overflow:hidden;min-height:132px;border:1px solid var(--line)}
+.mini.night{background:radial-gradient(120% 100% at 18% 0%,#241F58 0%,#15142F 52%,#0C0D1E 100%);color:#EFEDFF}
+.mini.dayish{background:linear-gradient(176deg,#F9EFE5,#E9E0F5 60%,#E0F0E8)}
+.mtitle{font-family:'Bricolage Grotesque';font-weight:800;font-size:15px;letter-spacing:-.022em}
+.msub{font-size:11px;opacity:.72;margin-top:4px;line-height:1.5}
+.mbtn{border-radius:11px;text-align:center;font-weight:800;font-size:11px;padding:9px;margin-top:9px}
+.mbtn.mint{background:linear-gradient(168deg,#5EEBD1,#00B899);color:#04241E}
+.mbtn.gh{background:rgba(255,255,255,.11);color:#EFEDFF}
+.mcost{display:flex;justify-content:space-between;align-items:center;background:rgba(22,24,43,.05);border:1px solid rgba(22,24,43,.09);
+  border-radius:12px;padding:10px 12px;margin-top:11px}
+.mcost b{font-size:11.5px;color:#16182B}.mcost span{font-size:10px;color:#7C8193;display:block}
+.mcost .amt{font-family:'Bricolage Grotesque';font-weight:800;font-size:20px;color:var(--gold)}
+.mrec{border-left:2.5px solid var(--teal);padding-left:12px;margin-top:11px}
+.mrec b{font-size:12px;display:block;color:#16182B}.mrec span{font-size:10.5px;color:#7C8193}
+
+/* two doors */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;position:relative;max-width:980px;margin:0 auto}
+.door{border-radius:24px;padding:32px 30px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-s)}
+.door.keep{background:linear-gradient(168deg,#EAF9F4,#fff 70%);border-color:rgba(0,161,132,.28)}
+.door.slip{background:linear-gradient(168deg,#FFF6E6,#fff 70%);border-color:rgba(199,126,0,.28)}
+.dlab{font-size:11.5px;letter-spacing:.12em;font-weight:800;text-transform:uppercase}
+.dtitle{font-family:'Bricolage Grotesque';font-size:25px;letter-spacing:-.03em;margin:10px 0 9px;font-weight:800}
+.door p{color:var(--ink-2);font-size:15px}
+.orb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;
+  background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--ink-3);box-shadow:var(--shadow-m);z-index:2}
+.duoline{text-align:center;margin:32px auto 0;font-size:19px;font-weight:700;max-width:600px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}.orb{position:static;transform:none;margin:-11px auto}}
+
+/* science */
+.sci{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:940px;margin:0 auto}
+.sc{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow-s)}
+.sc b.n{display:block;font-family:'Bricolage Grotesque';font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--violet)}
+.sc h4{font-size:16px;font-weight:700;margin:10px 0 6px}
+.sc p{color:var(--ink-2);font-size:14.5px}
+.sc cite{display:block;font-style:normal;font-size:12px;color:var(--ink-3);margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2)}
+.scnote{text-align:center;color:var(--ink-3);font-size:14px;margin-top:28px;max-width:640px;margin-left:auto;margin-right:auto}
+
+/* scenes */
+.scenes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.scene{border-radius:22px;overflow:hidden;position:relative;margin:0;box-shadow:var(--shadow-m);transition:transform .25s}
+.scene:hover{transform:translateY(-5px)}
+.scene svg{display:block;width:100%;height:250px}
+.scene figcaption{position:absolute;left:18px;bottom:15px;color:#fff;font-size:15px;font-weight:600;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+
+/* refuse */
+.refuse{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ref{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow-s)}
+.refx{display:inline-flex;width:28px;height:28px;border-radius:9px;align-items:center;justify-content:center;margin-bottom:12px;
+  background:#FFF1E9;color:var(--coral);font-weight:800;font-size:13px}
+.ref b{font-size:16px;display:block;margin-bottom:4px}
+.ref p{color:var(--ink-2);font-size:14px}
+
+/* faq */
+.faq{max-width:780px;margin:0 auto}
+.q{border-bottom:1px solid var(--line);padding:4px 0}
+.q summary{cursor:pointer;list-style:none;padding:20px 40px 20px 0;font-size:17.5px;font-weight:700;position:relative}
+.q summary::-webkit-details-marker{display:none}
+.q summary::after{content:"+";position:absolute;right:6px;top:18px;font-size:24px;font-weight:400;color:var(--ink-3);transition:transform .2s}
+.q[open] summary::after{transform:rotate(45deg)}
+.q p{color:var(--ink-2);font-size:16px;padding:0 40px 22px 0}
+
+/* final */
+.final{position:relative;overflow:hidden;background:#16182B;border-radius:30px;padding:64px 48px;text-align:center;color:#fff}
+.final::before{content:"";position:absolute;inset:0;opacity:.9;pointer-events:none;
+  background:radial-gradient(70% 62% at 16% 4%,rgba(106,44,240,.7),transparent 62%),
+    radial-gradient(66% 58% at 88% 20%,rgba(0,194,163,.55),transparent 60%),
+    radial-gradient(72% 60% at 50% 108%,rgba(30,99,255,.5),transparent 62%)}
+.final>*{position:relative}
+.final h2{font-size:clamp(30px,4.2vw,46px);letter-spacing:-.035em;line-height:1.05}
+.final p{color:rgba(255,255,255,.78);max-width:460px;margin:14px auto 0;font-size:17px}
+.final .sig{margin:30px auto 0}
+.final .sig input{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff;box-shadow:none}
+.final .sig input::placeholder{color:rgba(255,255,255,.5)}
+.final .ok{background:rgba(255,255,255,.1);border-color:rgba(94,235,209,.5);color:#D6FBF2;margin:30px auto 0}
+
+/* footer */
+footer{border-top:1px solid var(--line-2);padding:56px 0 46px;font-size:14.5px;color:var(--ink-2)}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
+.fgrid h5{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px}
+.fgrid a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0}
+.fgrid a:hover{color:var(--ink)}
+.fbot{border-top:1px solid var(--line-2);padding-top:24px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:var(--ink-3);font-size:13.5px}
+.fbot .sp{flex:1}
+
+/* sticky */
+.stick{position:fixed;left:12px;right:12px;bottom:12px;z-index:70;display:none;align-items:center;gap:12px;
+  background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 -2px 30px rgba(22,24,43,.16);
+  padding:10px 10px 10px 16px;transform:translateY(140%);transition:transform .35s ease}
+.stick.on{transform:none}
+.stick .stxt{flex:1;font-size:13px;line-height:1.35;color:var(--ink-2)}
+.stick .stxt b{color:var(--ink)}
+
+@media(max-width:900px){
+  .stick{display:flex}
+  .hero{padding:52px 0 0}
+  .phone{width:280px}
+  .phoneTag{right:-6px}
+  .stripgrid{grid-template-columns:1fr 1fr;gap:24px 16px}
+  .steps,.scenes,.refuse,.sci{grid-template-columns:1fr}
+  section{padding:64px 0}
+  .sig{flex-direction:column}
+  .final{padding:44px 24px;border-radius:24px}
+  .fgrid{grid-template-columns:1fr 1fr;gap:26px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F2F7FA"/><stop offset=".45" stop-color="#8798A8"/><stop offset=".75" stop-color="#5F6E80"/><stop offset="1" stop-color="#C7D4E0"/></linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="rgba(0,194,163,.30)"/><stop offset=".4" stop-color="rgba(30,99,255,.24)"/>
+    <stop offset=".75" stop-color="rgba(120,60,240,.28)"/><stop offset="1" stop-color="rgba(255,92,43,.18)"/></linearGradient>
+  <linearGradient id="rimlight" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="rgba(255,255,255,.5)"/><stop offset=".5" stop-color="rgba(255,255,255,.06)"/><stop offset="1" stop-color="rgba(255,255,255,.35)"/></linearGradient>
+  <linearGradient id="innerdepth" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="rgba(255,255,255,.28)"/><stop offset=".35" stop-color="rgba(255,255,255,0)"/>
+    <stop offset=".82" stop-color="rgba(13,15,31,.12)"/><stop offset="1" stop-color="rgba(13,15,31,.24)"/></linearGradient>
+  <radialGradient id="caustic" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="rgba(0,194,163,.5)"/><stop offset=".55" stop-color="rgba(120,60,240,.28)"/><stop offset="1" stop-color="rgba(120,60,240,0)"/></radialGradient>
+  <radialGradient id="cBody" cx=".38" cy=".3" r=".95">
+    <stop offset="0" stop-color="#FFE9A8"/><stop offset=".55" stop-color="#FFC94D"/><stop offset="1" stop-color="#D8951A"/></radialGradient>
+  <symbol id="coin" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="18" fill="url(#cBody)"/><circle cx="20" cy="20" r="18" fill="none" stroke="#B97E12" stroke-width="1.6"/>
+    <circle cx="20" cy="20" r="13.5" fill="none" stroke="#B97E12" stroke-width="1" opacity=".55"/>
+    <path d="M8 12 a18 18 0 0 1 18 -7" stroke="#FFF6D8" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+    <text x="20" y="26" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="15" fill="#8A5B07">$</text></symbol>
+  <symbol id="jarMark" viewBox="0 0 200 226">
+    <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+    <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="3.4"/>
+    <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="none" stroke="url(#rimlight)" stroke-width="1.4"/>
+    <rect x="58" y="52" width="13" height="140" rx="6.5" fill="#fff" opacity=".3"/>
+    <circle cx="84" cy="104" r="4.6" fill="#141733"/><circle cx="116" cy="104" r="4.6" fill="#141733"/>
+    <path d="M86 116 q14 11 28 0" stroke="#141733" stroke-width="3.4" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="jarOpen" viewBox="0 0 200 226">
+    <ellipse cx="100" cy="212" rx="60" ry="9" fill="url(#caustic)" opacity=".8"/>
+    <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="3.4"/>
+    <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#innerdepth)" opacity=".5"/>
+    <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="none" stroke="url(#rimlight)" stroke-width="1.6"/>
+    <ellipse cx="100" cy="36" rx="49" ry="9" fill="#141733" opacity=".28"/>
+    <ellipse cx="100" cy="34" rx="49" ry="9" fill="none" stroke="url(#rim)" stroke-width="2.4"/>
+    <rect x="58" y="52" width="13" height="140" rx="6.5" fill="#fff" opacity=".38"/>
+    <circle cx="84" cy="110" r="4.6" fill="#141733"/><circle cx="116" cy="110" r="4.6" fill="#141733"/>
+    <path d="M86 122 q14 11 28 0" stroke="#141733" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="86" cy="182" rx="13" ry="4.5" fill="#D8951A" opacity=".85"/><ellipse cx="112" cy="176" rx="13" ry="4.5" fill="#FFC94D" opacity=".9"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20s-7-4.6-9-9c-1.2-2.8.6-6 3.8-6 2 0 3.4 1.1 4.2 2.6C11.8 6.1 13.2 5 15.2 5c3.2 0 5 3.2 3.8 6-2 4.4-9 9-7 9z"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 13.5A8 8 0 0 1 10.5 4 7 7 0 1 0 20 13.5z"/></symbol>
+</defs></svg>
+
+<nav aria-label="Main"><div class="wrap navin">
+  <a class="logo" href="#top"><svg width="22" height="25" viewBox="0 0 200 226" aria-hidden="true"><use href="#jarMark"/></svg><span class="display">ScrollJar</span></a>
+  <div class="sp"></div>
+  <a class="navlink" href="#how">How it works</a>
+  <a class="navlink" href="#science">The science</a>
+  <a class="navlink" href="#faq">FAQ</a>
+  <a class="btn small" href="#join">Join the waitlist</a>
+</div></nav>
+
+<header class="wrap hero" id="top">
+  <div class="pill"><i></i>A swear jar, for scrolling · iPhone · this fall</div>
+  <p class="whisper">You opened it to check one thing. That was 40 minutes ago.</p>
+  <h1 class="display">Your time belongs to you.<br><em>Let's go get it back.</em></h1>
+  <p class="sub">ScrollJar blocks the apps that drink your evenings, using Apple's own Screen Time engine. Open one anyway and it costs a price you set — given <b>100% to a charity you love.</b><br><span class="punch">Every other app like this keeps that money. We never touch it.</span></p>
+  <form class="sig" data-wl aria-label="Join the waitlist">
+    <input type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
+    <button class="btn" type="submit">Join the waitlist</button>
+  </form>
+  <div class="ok" data-ok role="status">
+    <svg width="18" height="18" style="color:var(--teal)" aria-hidden="true"><use href="#i-heart"/></svg>
+    You're in. One email when we launch — that's all.
+  </div>
+  <p class="formnote">Free · no spam · one email at launch. <b>We're not here for your attention.</b></p>
+
+  <div class="heroViz rev">
+    <div class="heroGlow" aria-hidden="true"></div>
+    <div class="sat l" aria-hidden="true">
+      <div class="mini night" style="margin:0;border:0;border-radius:0">
+        <svg width="18" height="18" style="color:#A8B8C8"><use href="#i-shield"/></svg>
+        <div class="mtitle" style="margin-top:8px;font-size:14px">You made a jar promise</div>
+        <div class="msub">You said this hour was for your novel.</div>
+        <div class="mbtn mint">I'll stay committed</div>
+      </div>
+    </div>
+    <div class="sat r" aria-hidden="true">
+      <div class="mini dayish" style="margin:0;border:0;border-radius:0">
+        <div class="mtitle" style="font-size:14px">July · the tip-out</div>
+        <div class="mrec"><b>$47 → Doctors Without Borders</b><span>≈ 94 meals · receipt sent</span></div>
+        <div class="mrec" style="border-color:var(--violet)"><b>9h 40m returned</b><span>your best month yet</span></div>
+      </div>
+    </div>
+    <div class="phone" role="img" aria-label="The ScrollJar app showing time returned this month, a protected evening, and the jar balance heading to charity">
+      <div class="pnotch"></div>
+      <div class="pscr">
+        <div class="peyebrow">Today</div>
+        <div class="pbig">3h 42m</div>
+        <div class="psub">returned to you this month</div>
+        <div class="pjarwrap">
+          <svg class="pcoin" viewBox="0 0 40 40" aria-hidden="true"><use href="#coin"/></svg>
+          <div class="pjarbox"><svg width="118" height="134" viewBox="0 0 200 226"><use href="#jarOpen"/></svg></div>
+        </div>
+        <div class="pcard prow">
+          <div class="pdot"><svg width="15" height="15" style="color:var(--violet)"><use href="#i-moon"/></svg></div>
+          <div><b>Evenings for the novel</b><span>protected 9pm – 7am · 12 clean nights</span></div>
+        </div>
+        <div class="pcard prow">
+          <div class="pdot"><svg width="15" height="15" style="color:var(--teal)"><use href="#i-heart"/></svg></div>
+          <div><b>$15 waiting in the jar</b><span>tips out Aug 1 → Doctors Without Borders</span></div>
+        </div>
+        <div class="pbtn">Make a new promise</div>
+      </div>
+      <div class="phoneTag">the actual app</div>
+    </div>
+  </div>
+</header>
+
+<div class="strip"><div class="wrap">
+  <p class="striplab">Why this works — and why now</p>
+  <div class="stripgrid">
+    <div class="si rev"><b>31%</b><p>of social media use is driven by self-control problems, not real preference</p><cite>American Economic Review, 2022</cite></div>
+    <div class="si rev"><b>36%</b><p>of app openings are abandoned when a moment of friction appears first</p><cite>PNAS, 2023</cite></div>
+    <div class="si rev"><b>2 weeks</b><p>of blocking measurably improved attention, mood and wellbeing in a randomised trial</p><cite>PNAS Nexus, 2025</cite></div>
+    <div class="si rev"><b>2026</b><p>a Los Angeles jury found social platforms addictive by design; 20+ countries are acting</p><cite>Court record &amp; press reports</cite></div>
+  </div>
+</div></div>
+
+<main>
+
+<section class="diffsec"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The difference</span>
+    <h2 class="display">Follow the money.<br>That's the whole story.</h2>
+    <p>Apps that charge you for slipping keep what you pay. Which means the worse your week goes, the better theirs does.</p>
+  </div>
+
+  <div class="diff rev">
+    <div class="dcard them">
+      <span class="dlab2">Every other stakes app</span>
+      <div class="flow">
+        <div class="node"><b>your&nbsp;$5</b></div>
+        <div class="arrow"><span></span></div>
+        <div class="node dark"><b>their revenue</b></div>
+      </div>
+      <p class="dline">They keep your forfeit. Your worst nights are their best ones — and you're paying a subscription on top.</p>
+    </div>
+
+    <div class="dcard us">
+      <span class="dlab2" style="color:var(--teal)">ScrollJar</span>
+      <div class="flow">
+        <div class="node"><b>your&nbsp;$5</b></div>
+        <div class="arrow good"><span></span><em>100%</em></div>
+        <div class="node teal"><b>your charity</b></div>
+      </div>
+      <p class="dline">Every cent goes where you chose, with a receipt. We're paid by membership, and by nothing else — so we <b>cannot</b> profit from your bad night.</p>
+    </div>
+  </div>
+
+  <div class="dgrid rev">
+    <div class="dg"><b>We can't win when you lose</b><p>No cut of your jar, ever. It's not a promise — it's how the company is built.</p></div>
+    <div class="dg"><b>One honest price</b><p>A membership, cheaper than the apps that pocket your penalties. No add-ons, no upsells at your weakest moment.</p></div>
+    <div class="dg"><b>Never a punishment</b><p>You're never locked out and never scolded. You choose, in advance, what a slip should cost — and who it should help.</p></div>
+  </div>
+</div></section>
+
+<section class="tint">
+  <div class="wrap">
+    <div class="sechead rev">
+      <span class="eyebrow">Sound familiar</span>
+      <h2 class="display">You've already said the words.</h2>
+    </div>
+    <div class="bubbles rev">
+      <span class="bub" style="--r:-2deg">just five more minutes</span>
+      <span class="bub alt b1" style="--r:1.5deg">why am I still scrolling</span>
+      <span class="bub" style="--r:1deg">I seriously need a detox</span>
+      <span class="bub alt b2" style="--r:-1.5deg">how is it already midnight</span>
+      <span class="bub b3" style="--r:2deg">I'll delete it on Monday</span>
+      <span class="bub alt" style="--r:-1deg">I wasn't even enjoying it</span>
+    </div>
+    <p class="famline rev">ScrollJar is how they finally stick.</p>
+  </div>
+</section>
+
+<section id="how"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">How it works</span>
+    <h2 class="display">Three moving parts.<br>None of them is willpower.</h2>
+    <p>You decide everything in advance, while you're calm. Later, the phone keeps your word for you.</p>
+  </div>
+  <div class="steps">
+    <article class="step rev">
+      <span class="stepn">1</span>
+      <h3>A real block</h3>
+      <p>Pick your apps and your hours. iOS enforces the shield itself — not a reminder you can swipe away. We never even learn which apps you chose.</p>
+      <div class="mini night" aria-hidden="true">
+        <svg width="19" height="19" style="color:#A8B8C8"><use href="#i-shield"/></svg>
+        <div class="mtitle" style="margin-top:8px">You made a jar promise</div>
+        <div class="msub">You said this hour was for your novel.</div>
+        <div class="mbtn mint">I'll stay committed</div>
+        <div class="mbtn gh">Open anyway · $5</div>
+      </div>
+    </article>
+    <article class="step rev">
+      <span class="stepn">2</span>
+      <h3>A slip becomes a gift</h3>
+      <p>Opening anyway is always allowed — it just costs the price you set. The coin drops in the jar, the app opens for your window. No lecture, no guilt.</p>
+      <div class="mini dayish" aria-hidden="true">
+        <div class="mtitle">Still want in?</div>
+        <div class="msub">Totally allowed. It just isn't free — you decided that.</div>
+        <div class="mcost"><div><b>Drops into your jar</b><span>→ Doctors Without Borders</span></div><div class="amt">$5</div></div>
+        <div class="mbtn mint">Drop a coin &amp; open</div>
+      </div>
+    </article>
+    <article class="step rev">
+      <span class="stepn">3</span>
+      <h3>The jar tips out</h3>
+      <p>Every month the jar empties to the cause you picked, with a receipt. We keep none of it — our revenue is memberships, never your slips.</p>
+      <div class="mini dayish" aria-hidden="true">
+        <div class="mtitle">July · the tip-out</div>
+        <div class="mrec"><b>$47 → Doctors Without Borders</b><span>≈ 94 meals · receipt in your email</span></div>
+        <div class="mrec" style="border-color:var(--violet)"><b>9h 40m returned</b><span>your best month yet</span></div>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<section class="warm"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The win-win</span>
+    <h2 class="display">Either you win the night,<br>or a charity does.</h2>
+    <p>Money is the strongest friction there is. We just point it somewhere kind — with no shame behind either door.</p>
+  </div>
+  <div class="duo rev">
+    <div class="door keep">
+      <span class="dlab" style="color:var(--teal)">Door one · you stay</span>
+      <div class="dtitle">The evening is yours.</div>
+      <p>The hour goes where you promised it — the book, the run, the people in the room. Nothing to pay, nothing to prove.</p>
+    </div>
+    <div class="orb">or</div>
+    <div class="door slip">
+      <span class="dlab" style="color:var(--gold)">Door two · you open it anyway</span>
+      <div class="dtitle">Your $5 becomes 10 meals.</div>
+      <p>Every cent reaches the cause you chose, and you keep your evening either way. The jar smiles at both.</p>
+    </div>
+  </div>
+  <p class="duoline rev">The only one who never wins is the app that wanted your night.</p>
+</div></section>
+
+<section id="science"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The science</span>
+    <h2 class="display">Built on evidence, not vibes.</h2>
+    <p>Every mechanism in ScrollJar exists because a peer-reviewed study said it works. Here are the four that shaped it.</p>
+  </div>
+  <div class="sci">
+    <div class="sc rev"><b class="n">31%</b>
+      <h4>You're not choosing freely</h4>
+      <p>A field experiment found self-control problems account for roughly a third of social media use — and that people will willingly pay for tools that bind their future selves.</p>
+      <cite>Allcott, Gentzkow &amp; Song, “Digital Addiction,” <em>American Economic Review</em> (2022)</cite></div>
+    <div class="sc rev"><b class="n">36%</b>
+      <h4>Friction alone changes behaviour</h4>
+      <p>A brief pause screen before opening an app led users to abandon 36% of attempts in the moment — and openings kept falling over six weeks. The dismiss option did the work; lectures did nothing.</p>
+      <cite>Grüning, Riedel &amp; Lorenz-Spreen, <em>PNAS</em> 120(8) (2023)</cite></div>
+    <div class="sc rev"><b class="n">13pp</b>
+      <h4>Your own money beats a reward</h4>
+      <p>In a large smoking-cessation trial, putting your own money at risk was substantially more effective than being paid the same amount to succeed. Loss moves people; bonuses don't.</p>
+      <cite>Halpern et al., <em>New England Journal of Medicine</em> 372 (2015)</cite></div>
+    <div class="sc rev"><b class="n">RCT</b>
+      <h4>Blocking actually helps</h4>
+      <p>Randomised trial participants who blocked mobile internet for two weeks showed measurable gains in sustained attention, mental health and wellbeing — driven by more time offline, socialising and sleeping.</p>
+      <cite>Castelo et al., <em>PNAS Nexus</em> 4(2) (2025)</cite></div>
+  </div>
+  <p class="scnote rev">We also read the studies that disagree with us. No screen-time app has been through a peer-reviewed trial yet — including ours. We intend to be the first.</p>
+</div></section>
+
+<section class="tint"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">What you get back</span>
+    <h2 class="display">Evenings look like this.</h2>
+  </div>
+  <div class="scenes rev">
+    <figure class="scene">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9E7A"/><stop offset=".55" stop-color="#8B7CF6"/><stop offset="1" stop-color="#2B2153"/></linearGradient></defs>
+        <rect width="300" height="200" fill="url(#sk1)"/><circle cx="230" cy="54" r="19" fill="#FFE9A8" opacity=".95"/><circle cx="230" cy="54" r="34" fill="#FFE9A8" opacity=".18"/>
+        <path d="M0 134 L64 100 L118 126 L172 90 L232 120 L300 96 V200 H0z" fill="#241C4A" opacity=".85"/>
+        <path d="M0 158 L70 138 L140 156 L212 132 L300 152 V200 H0z" fill="#150F30"/>
+        <circle cx="96" cy="126" r="4.5" fill="#FFE9A8"/><path d="M96 130 l-3 16 M96 130 l4 15 M96 117 l-7 7 M96 117 l7 6" stroke="#FFE9A8" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <figcaption>the long way home</figcaption>
+    </figure>
+    <figure class="scene">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice"><rect width="300" height="200" fill="#1A1633"/>
+        <circle cx="250" cy="44" r="42" fill="#FFC94D" opacity=".18"/><circle cx="250" cy="44" r="21" fill="#FFC94D" opacity=".3"/>
+        <g transform="rotate(-2 150 104)"><rect x="42" y="50" width="216" height="116" rx="8" fill="#F3EEE2"/><rect x="147" y="48" width="8" height="118" fill="#DCD3C0"/>
+        <rect x="58" y="70" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="58" y="84" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="58" y="98" width="58" height="4.5" rx="2" fill="#C9BFA8"/><rect x="58" y="112" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="58" y="126" width="66" height="4.5" rx="2" fill="#C9BFA8"/>
+        <rect x="170" y="70" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="170" y="84" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="170" y="98" width="62" height="4.5" rx="2" fill="#C9BFA8"/><rect x="170" y="112" width="74" height="4.5" rx="2" fill="#C9BFA8"/><rect x="170" y="126" width="50" height="4.5" rx="2" fill="#C9BFA8"/></g></svg>
+      <figcaption>chapter three, finally</figcaption>
+    </figure>
+    <figure class="scene">
+      <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice"><rect width="300" height="200" fill="#12233A"/>
+        <circle cx="60" cy="48" r="36" fill="#37E2C0" opacity=".16"/><circle cx="60" cy="48" r="17" fill="#37E2C0" opacity=".22"/>
+        <ellipse cx="120" cy="122" rx="58" ry="50" fill="#C9772E"/><ellipse cx="120" cy="122" rx="17" ry="17" fill="#3A2412"/>
+        <ellipse cx="120" cy="111" rx="58" ry="10" fill="#fff" opacity=".08"/>
+        <rect x="164" y="110" width="118" height="15" rx="6" fill="#7A4A1E"/><rect x="270" y="98" width="20" height="40" rx="6" fill="#5C3616"/>
+        <path d="M168 114 h96 M168 118 h96 M168 122 h96" stroke="#E8C89A" stroke-width="1"/></svg>
+      <figcaption>the song you kept postponing</figcaption>
+    </figure>
+  </div>
+</div></section>
+
+<section id="refuse"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">What we refuse</span>
+    <h2 class="display">Built by refusing the tricks we're fighting.</h2>
+    <p>The attention economy runs on a known set of levers. These are the ones we will never pull.</p>
+  </div>
+  <div class="refuse">
+    <div class="ref rev"><span class="refx">✕</span><b>No variable rewards</b><p>The slot-machine mechanic that makes feeds bottomless. Everything here is earned and predictable.</p></div>
+    <div class="ref rev"><span class="refx">✕</span><b>No urgency</b><p>No countdowns, no expiring discounts. A tool for calm shouldn't manufacture panic.</p></div>
+    <div class="ref rev"><span class="refx">✕</span><b>No engagement metrics</b><p>We measure time spent away from screens — including away from ours.</p></div>
+    <div class="ref rev"><span class="refx">✕</span><b>No shame</b><p>No red numbers, no broken-streak funerals, no "you failed." Slips are reported, never judged.</p></div>
+    <div class="ref rev"><span class="refx">✕</span><b>No spying</b><p>Apple's design means we can't see which apps you block or what you do in them. We like it that way.</p></div>
+    <div class="ref rev"><span class="refx">✕</span><b>No keeping your money</b><p>Other stakes apps pocket your forfeits. Every coin here reaches your cause, audited monthly.</p></div>
+  </div>
+</div></section>
+
+<section class="tint" id="faq"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">Questions</span>
+    <h2 class="display">The honest answers.</h2>
+  </div>
+  <div class="faq rev">
+    <details class="q"><summary>Does it really block apps, or just remind me?</summary>
+      <p>It really blocks. ScrollJar is built on Apple's Screen Time framework — the same system-level engine behind parental controls — so the shield is drawn and enforced by iOS itself, above everything else on screen.</p></details>
+    <details class="q"><summary>What if I genuinely need to get in?</summary>
+      <p>You always can. Opening a blocked app costs the price you set in advance and opens for a window you chose. There's no lockout, no permission to ask for, and no way for us to say no.</p></details>
+    <details class="q"><summary>Where does the money actually go?</summary>
+      <p>All of it goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts you can check. ScrollJar keeps none of it — not a processing cut, not a "platform fee."</p></details>
+    <details class="q"><summary>Then how do you make money?</summary>
+      <p>Memberships, and nothing else. No ads, no data sales, no share of your slips. It matters that we never profit when you struggle — that's the conflict of interest we were built to avoid.</p></details>
+    <details class="q"><summary>Can you see what I do on my phone?</summary>
+      <p>No. Apple hands apps like ours anonymous tokens instead of app names, so we never learn which apps you blocked, when you use them, or what you do inside. We couldn't spy on you if we wanted to.</p></details>
+    <details class="q"><summary>Is there an Android version?</summary>
+      <p>iPhone first. Android has no official blocking API, and recent releases restrict the workarounds every blocker relies on. We'd rather ship one honest version than two weak ones — Android comes when we can do it properly.</p></details>
+    <details class="q"><summary>When does it launch?</summary>
+      <p>This fall, on iPhone. Join the waitlist and you'll hear from us exactly once — the day it's ready.</p></details>
+  </div>
+</div></section>
+
+<section id="join"><div class="wrap">
+  <div class="final rev">
+    <h2 class="display">Time, returned.</h2>
+    <p>You can always choose distraction — it just shouldn't be free. Launching on iPhone this fall.</p>
+    <form class="sig" data-wl aria-label="Join the waitlist">
+      <input type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
+      <button class="btn" type="submit">Join the waitlist</button>
+    </form>
+    <div class="ok" data-ok role="status">
+      <svg width="18" height="18" style="color:var(--teal-lt)" aria-hidden="true"><use href="#i-heart"/></svg>
+      You're in. One email when we launch — that's all.
+    </div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div>
+      <div class="logo" style="margin-bottom:12px"><svg width="20" height="23" viewBox="0 0 200 226" aria-hidden="true"><use href="#jarMark"/></svg><span class="display">ScrollJar</span></div>
+      <p style="color:var(--ink-3);max-width:280px;font-size:14px">A swear jar for scrolling. Made in cold blood, kept in warm moments.</p>
+    </div>
+    <div><h5>Product</h5><a href="#how">How it works</a><a href="#refuse">What we refuse</a><a href="#faq">FAQ</a></div>
+    <div><h5>Evidence</h5><a href="#science">The science</a><a href="#science">Our sources</a></div>
+    <div><h5>Contact</h5><a href="mailto:hello@scrolljar.app">hello@scrolljar.app</a><a href="mailto:press@scrolljar.app">Press</a></div>
+  </div>
+  <div class="fbot">
+    <span>© 2026 ScrollJar</span><span class="sp"></span>
+    <span>100% of every coin goes to charity. We keep none of it.</span>
+  </div>
+</div></footer>
+
+<div class="stick" id="stick" role="complementary" aria-label="Join">
+  <span class="stxt">Your time belongs to you. <b>Let's go get it back.</b></span>
+  <a class="btn small" href="#join">Join</a>
+</div>
+
+<script>
+/* Waitlist → Formspree. Replace YOURFORMID. Demo mode until then. */
+const FORM_ID='YOURFORMID';
+let signed=false, joinVis=false;
+document.querySelectorAll('form[data-wl]').forEach(f=>{
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=f.querySelector('input').value.trim();
+    if(!email)return;
+    const btn=f.querySelector('button');btn.disabled=true;btn.textContent='One second…';
+    let sent=false;
+    if(FORM_ID!=='YOURFORMID'){
+      try{
+        const r=await fetch('https://formspree.io/f/'+FORM_ID,{method:'POST',
+          headers:{'Accept':'application/json','Content-Type':'application/json'},
+          body:JSON.stringify({email})});
+        sent=r.ok;
+      }catch(_){sent=false}
+    }else{sent=true;console.warn('ScrollJar: demo mode — set FORM_ID to capture real emails.')}
+    if(sent){f.style.display='none';f.parentElement.querySelector('[data-ok]').style.display='flex';signed=true;stickCheck()}
+    else{btn.disabled=false;btn.textContent='Try again'}
+  });
+});
+const stick=document.getElementById('stick');
+new IntersectionObserver(es=>{joinVis=es[0].isIntersecting;stickCheck()},{threshold:.2}).observe(document.getElementById('join'));
+addEventListener('scroll',stickCheck,{passive:true});
+function stickCheck(){stick.classList.toggle('on',scrollY>700&&!joinVis&&!signed)}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
