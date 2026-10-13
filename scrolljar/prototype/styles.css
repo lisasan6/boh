@@ -48,22 +48,18 @@ body[data-mode="day"]{
   --tabbar-bg:#141733; --tabbar-fg:#9AA0BA;
   --card-sh:0 2px 10px rgba(13,15,31,.05); --card-bd:1px solid rgba(13,15,31,.1);
   --jar-rim-1:#FFFFFF; --jar-rim-2:#6E8194; --jar-rim-3:#2E3E4E; --jar-face:#141733;
-  --hero-bg:#111436; --hero-sh:0 20px 44px -20px rgba(13,15,31,.55), inset 0 0 0 1px rgba(255,255,255,.07);
-  --hero-aurora:radial-gradient(70% 60% at 18% 8%, rgba(106,44,240,.75), transparent 62%),
-                radial-gradient(66% 58% at 88% 22%, rgba(0,194,163,.6), transparent 60%),
-                radial-gradient(70% 60% at 50% 108%, rgba(30,99,255,.55), transparent 62%);
-  --hero-aurora-op:.85;
+  /* the hero is a dawn sky in day mode: light, warm, its own look */
+  --hero-bg:linear-gradient(160deg,#FFF3E8 0%,#F4EDFF 55%,#E5F8F0 100%);
+  --hero-sh:0 18px 40px -22px rgba(106,44,240,.35), inset 0 0 0 1px rgba(255,255,255,.85);
+  --hero-aurora:radial-gradient(60% 55% at 10% 0%, rgba(255,138,74,.32), transparent 62%),
+                radial-gradient(60% 55% at 96% 14%, rgba(106,44,240,.2), transparent 60%),
+                radial-gradient(70% 60% at 50% 112%, rgba(0,194,163,.3), transparent 62%);
+  --hero-aurora-op:1;
   --tint-a:linear-gradient(180deg,rgba(255,255,255,.78),rgba(226,247,240,.6)); --tint-b:linear-gradient(180deg,rgba(255,255,255,.78),rgba(233,226,250,.6));
   --glass-a:rgba(55,226,192,.26); --glass-b:rgba(90,169,255,.22); --glass-c:rgba(139,124,246,.26); --glass-d:rgba(255,158,122,.16);
   --jar-stroke:3.4;
 }
-body[data-mode="day"] .heroPanel{
-  color:#F4F2FF;
-  --ink:#F4F2FF; --ink-2:#BFC2E0; --ink-3:#9096BC; --gold-text:#FFC94D;
-  --jar-rim-1:#F2F7FA; --jar-rim-2:#8798A8; --jar-rim-3:#5F6E80; --jar-face:#F2F7FA; --jar-stroke:2.6;
-  --panel-2:rgba(255,255,255,.1);
-}
-body[data-mode="day"] .heroPanel .pill.mint{background:rgba(55,226,192,.18);color:#5EEBD1}
+body[data-mode="day"] .heroPanel::after{opacity:.16}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--ground);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
   min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 14px 40px;transition:background .5s}
@@ -173,7 +169,7 @@ body[data-mode="day"] .app::after{box-shadow:inset 0 0 50px 8px rgba(20,23,51,.0
 .winLine{display:flex;align-items:center;gap:7px;margin-top:12px;padding:8px 11px;border-radius:12px;font-size:12.5px;font-weight:800;
   background:linear-gradient(100deg,rgba(255,201,77,.2),rgba(55,226,192,.14));color:var(--gold-text);
   box-shadow:inset 0 0 0 1px rgba(255,201,77,.25)}
-body[data-mode="day"] .heroPanel .winLine{color:#FFDF95}
+body[data-mode="day"] .heroPanel .winLine{background:linear-gradient(100deg,rgba(255,201,77,.32),rgba(0,194,163,.14));box-shadow:inset 0 0 0 1px rgba(178,107,0,.22)}
 .winStrip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
 .winStrip::-webkit-scrollbar{display:none}
 .winBadge{flex:none;border-radius:14px;padding:10px 12px;min-width:112px;background:var(--panel);border:var(--card-bd);backdrop-filter:blur(10px)}
