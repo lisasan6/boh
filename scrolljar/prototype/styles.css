@@ -339,3 +339,53 @@ body[data-mode="day"] .ov.sheetwrap{background:rgba(20,23,51,.32)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .legend{display:flex;gap:12px;margin-top:9px;font-size:10.5px;font-weight:700;color:var(--ink-3)}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
+
+/* ══ GLASS LAYER — depth + frosted glass, both modes ══
+   One block on purpose: delete it to go back to the flat look. */
+:root{
+  --gl-blur:blur(18px) saturate(160%);
+  --gl-edge:rgba(255,255,255,.14);
+  --gl-sheen:linear-gradient(170deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 38%,rgba(255,255,255,0) 60%);
+  --gl-depth:inset 0 1px 0 rgba(255,255,255,.2), inset 0 -1px 0 rgba(0,0,0,.28),
+             0 2px 6px -2px rgba(0,0,0,.45), 0 14px 30px -14px rgba(0,0,0,.7);
+  --panel:rgba(255,255,255,.06);
+  --hero-bg:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.03) 60%);
+  --hero-sh:inset 0 1px 0 rgba(255,255,255,.26), inset 0 0 0 1px rgba(255,255,255,.08), inset 0 -18px 30px -18px rgba(0,0,0,.5),
+            0 26px 50px -24px rgba(0,0,0,.85);
+  --hero-aurora:radial-gradient(70% 60% at 12% 0%, rgba(139,124,246,.38), transparent 62%),
+                radial-gradient(60% 55% at 95% 30%, rgba(55,226,192,.22), transparent 60%);
+  --hero-aurora-op:1;
+  --tabbar-bg:rgba(18,20,42,.62);
+}
+body[data-mode="day"]{
+  --gl-edge:rgba(255,255,255,.95);
+  --gl-sheen:linear-gradient(170deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,.25) 40%,rgba(255,255,255,0) 62%);
+  --gl-depth:inset 0 1px 0 #fff, inset 0 -1px 0 rgba(13,15,31,.07),
+             0 2px 5px -2px rgba(13,15,31,.12), 0 16px 32px -16px rgba(70,40,140,.38);
+  --panel:rgba(255,255,255,.5);
+  --hero-sh:inset 0 1.5px 0 #fff, inset 0 0 0 1px rgba(255,255,255,.7), inset 0 -20px 34px -22px rgba(106,44,240,.28),
+            0 28px 52px -26px rgba(106,44,240,.55), 0 4px 10px -4px rgba(13,15,31,.12);
+  --tabbar-bg:rgba(20,23,51,.86);
+}
+.card,.resCard,.entryCard,.fcard,.memberRow,.appRow,.winBadge,.jarChip,.tierbox,.insteadCard{
+  position:relative;isolation:isolate;
+  border-color:var(--gl-edge);
+  backdrop-filter:var(--gl-blur);-webkit-backdrop-filter:var(--gl-blur);
+  box-shadow:var(--gl-depth);
+}
+.card::after,.resCard::after,.entryCard::after,.fcard::after,.memberRow::after,.appRow::after,
+.winBadge::after,.jarChip::after,.tierbox::after,.insteadCard::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;background:var(--gl-sheen)}
+.heroPanel{border:1px solid var(--gl-edge);backdrop-filter:var(--gl-blur);-webkit-backdrop-filter:var(--gl-blur)}
+.tabs{backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 -10px 30px -12px rgba(0,0,0,.45)}
+.sheet-card{box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 -18px 40px -16px rgba(0,0,0,.5)}
+body[data-mode="day"] .sheet-card{box-shadow:inset 0 1.5px 0 #fff, 0 -18px 40px -16px rgba(70,40,140,.3)}
+.chip,.pullChip,.promptChip,.pill.chr,.iconBtn,.modeSeg,.timeIn,.kudos{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px -3px rgba(0,0,0,.35)}
+body[data-mode="day"] .chip,body[data-mode="day"] .pullChip,body[data-mode="day"] .promptChip,
+body[data-mode="day"] .pill.chr,body[data-mode="day"] .iconBtn,body[data-mode="day"] .modeSeg,
+body[data-mode="day"] .timeIn,body[data-mode="day"] .kudos{
+  box-shadow:inset 0 1px 0 #fff, 0 3px 8px -4px rgba(70,40,140,.3)}
+.ic.token{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -2px 4px rgba(0,0,0,.18), 0 4px 10px -3px rgba(6,9,24,.45)}
+.heroPanel .eyebrow{color:var(--ink-2)}
