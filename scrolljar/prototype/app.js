@@ -181,7 +181,7 @@ const FEED=[
   {t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'yesterday',
    body:'Finished chapter three. Turns out books still work.',photo:'book',kudos:5},
   {t:'tipout',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'Jul 1',
-   body:'The jar tipped out — $52 to UNICEF.',sub:'≈ 104 meals',kudos:11},
+   body:'The jar tipped out — $52 to UNICEF.',sub:'receipt from Every.org',kudos:11},
   {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:'Jun 28',
    body:'Sofia joined the jar.',sub:'we donated $1 to UNICEF for the invite',kudos:2},
 ];
@@ -590,7 +590,7 @@ function tipAction(){ TIPS[tipIdx].go(); }
 const WINS=[
   {t:'Best week yet',s:'9h 40m returned'},
   {t:'12 clean nights',s:'your longest run'},
-  {t:'First $50 given',s:'≈100 meals'},
+  {t:'First $50 given',s:'to Doctors Without Borders'},
   {t:'Focus Week finished',s:'with Casa Jar'},
 ];
 /* ── usage report ── */
@@ -710,7 +710,7 @@ function answerReflection(){
 /* ── the detox counter ── */
 let detoxCount=4;
 function addDetox(){ detoxCount++; $('detoxN').textContent=detoxCount;
-  toast(detoxCount>=5?'Five times now. The difference is you did something about it.':'Counted. No shame in saying it.'); }
+  toast(detoxCount>=5?'Five times now. The difference is you did something about it.':'Counted. Saying it out loud is a start.'); }
 /* ── diary ── */
 const GOALS=[
   {t:'Finish the novel',c:'var(--mint)',n:'4 evenings this week'},

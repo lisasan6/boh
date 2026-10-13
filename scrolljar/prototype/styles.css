@@ -427,3 +427,4 @@ body[data-mode="day"] .sparkLegend span:last-child,body[data-mode="day"] .pill.m
 body[data-mode="day"] .modeSeg div.on,body[data-mode="day"] .chip.on,body[data-mode="day"] .tag-goal,
 body[data-mode="day"] .kudos.done{color:var(--mint-text)}
 body[data-mode="day"] .tag-impulse{color:#C93D14}
+.sbIcons{display:inline-flex;align-items:center;gap:5px;color:var(--ink)}
