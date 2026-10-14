@@ -1053,6 +1053,10 @@ function toggleWork(el){
   toast(on ? 'Work mode on. The shield steps aside when you\'re working — and only then.' : 'Work mode off.');
 }
 function restart(){location.reload()}
+/* embed mode (landing page phone): no onboarding, no prototype controls */
+const Q=new URLSearchParams(location.search);
+if(Q.has('embed')){ document.documentElement.classList.add('embed'); $('ov-onb').classList.remove('on'); }
+if(Q.get('mode')==='day') setMode('day');
 renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
 $('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
 $('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');

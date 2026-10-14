@@ -140,6 +140,13 @@ nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.88);backdrop-f
   background:#fff;border:1px solid rgba(22,24,43,.08)}
 .pbtn{margin-top:12px;text-align:center;background:linear-gradient(168deg,#5EEBD1,#00B899);color:#04241E;font-weight:800;
   font-size:12.5px;border-radius:14px;padding:12px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 6px 14px -6px rgba(0,184,153,.6)}
+/* live prototype in the phone (needs ../prototype/ deployed alongside) */
+.phone:has(.live){width:332px}
+.pscr.live{padding:0;min-height:0;background:#F7E2D0}
+.pscr.live::after{display:none}
+.pscr.live iframe{display:block;width:100%;height:668px;border:0}
+.phone:has(.live){margin-top:50px}
+.phone:has(.live) .phoneTag{top:-46px;left:50%;right:auto;transform:translateX(-50%);white-space:nowrap}
 .phoneTag{position:absolute;right:-14px;top:44px;z-index:6;background:#fff;border:1px solid var(--line);border-radius:12px;
   padding:9px 13px;font-size:12px;font-weight:700;color:var(--ink-2);box-shadow:var(--shadow-m)}
 
@@ -308,7 +315,9 @@ footer{border-top:1px solid var(--line-2);padding:56px 0 46px;font-size:14.5px;c
   .stick{display:flex}
   .hero{padding:52px 0 0}
   .phone{width:280px}
+  .phone:has(.live){width:332px}
   .phoneTag{right:-6px}
+  .phone:has(.live) .phoneTag{right:auto}
   .stripgrid{grid-template-columns:1fr 1fr;gap:24px 16px}
   .steps,.scenes,.refuse,.sci{grid-template-columns:1fr}
   section{padding:64px 0}
@@ -403,31 +412,16 @@ footer{border-top:1px solid var(--line-2);padding:56px 0 46px;font-size:14.5px;c
     <div class="sat r" aria-hidden="true">
       <div class="mini dayish" style="margin:0;border:0;border-radius:0">
         <div class="mtitle" style="font-size:14px">July · the tip-out</div>
-        <div class="mrec"><b>$47 → Doctors Without Borders</b><span>≈ 94 meals · receipt sent</span></div>
-        <div class="mrec" style="border-color:var(--violet)"><b>9h 40m returned</b><span>your best month yet</span></div>
+        <div class="mrec"><b>$35 → Doctors Without Borders</b><span>receipt from Every.org</span></div>
+        <div class="mrec" style="border-color:var(--violet)"><b>9h 40m returned</b><span>your best week yet</span></div>
       </div>
     </div>
-    <div class="phone" role="img" aria-label="The ScrollJar app showing time returned this month, a protected evening, and the jar balance heading to charity">
+    <div class="phone">
       <div class="pnotch"></div>
-      <div class="pscr">
-        <div class="peyebrow">Today</div>
-        <div class="pbig">3h 42m</div>
-        <div class="psub">returned to you this month</div>
-        <div class="pjarwrap">
-          <svg class="pcoin" viewBox="0 0 40 40" aria-hidden="true"><use href="#coin"/></svg>
-          <div class="pjarbox"><svg width="118" height="134" viewBox="0 0 200 226"><use href="#jarOpen"/></svg></div>
-        </div>
-        <div class="pcard prow">
-          <div class="pdot"><svg width="15" height="15" style="color:var(--violet)"><use href="#i-moon"/></svg></div>
-          <div><b>Evenings for the novel</b><span>protected 9pm – 7am · 12 clean nights</span></div>
-        </div>
-        <div class="pcard prow">
-          <div class="pdot"><svg width="15" height="15" style="color:var(--teal)"><use href="#i-heart"/></svg></div>
-          <div><b>$15 waiting in the jar</b><span>tips out Aug 1 → Doctors Without Borders</span></div>
-        </div>
-        <div class="pbtn">Make a new promise</div>
+      <div class="pscr live">
+        <iframe src="../prototype/index.html?embed=1&amp;mode=day" title="ScrollJar prototype you can tap through: try opening a blocked app and watch a coin drop into the jar"></iframe>
       </div>
-      <div class="phoneTag">the actual app</div>
+      <div class="phoneTag">Try it: tap the green button</div>
     </div>
   </div>
 </header>

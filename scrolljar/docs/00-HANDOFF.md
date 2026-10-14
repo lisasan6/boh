@@ -69,7 +69,9 @@ This gates TestFlight and the App Store, and approval takes weeks.
 2. **TARGET**: the waitlist number that means "keep going" (e.g. 300 signups in 3 weeks). It goes in the comment at the top of the file. Without it the page tests nothing.
 3. ~~"This fall" launch claim~~ **Done 2026-10-13:** now "iPhone first" in the hero pill, FAQ and final CTA. The LA-verdict stat was also reworded to say it's on appeal.
 
-Then buy the domain (`scrolljar.app` is assumed throughout) and deploy the folder to Netlify, Vercel or Cloudflare Pages.
+Then buy the domain (`scrolljar.app` is assumed throughout) and deploy to Netlify, Vercel or Cloudflare Pages.
+
+**The hero phone now runs the live prototype** (an iframe of `../prototype/index.html?embed=1&mode=day`). When deploying, publish `prototype/` alongside `landing/` so that path resolves — e.g. deploy the whole `scrolljar/` folder with `landing/` as the home page, or copy `prototype/` next to `landing/index.html` and change the iframe `src` to `prototype/index.html?embed=1&mode=day`.
 
 ### 🟡 3. Product questions still open
 
