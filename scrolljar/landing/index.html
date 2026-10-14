@@ -44,7 +44,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* Layout: a centred thesis column over a fixed night aurora. Every section is a band of
-   frosted glass on the same sky; the live phone is the stage, orbited by the jar's coins.
+   frosted glass on the same sky; the live phone is the stage.
    Motion: one purposeful moment per section, all off under prefers-reduced-motion. */
 :root{
   color-scheme:dark;
@@ -131,7 +131,7 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;padding-top:12px
 .load{animation:rise .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
 @keyframes rise{from{opacity:0;transform:translateY(18px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 
-/* stage: live phone + orbit */
+/* stage: the live phone */
 .stage{position:relative;display:flex;justify-content:center;margin-top:40px;padding-block:66px 48px;overflow:hidden}
 .tag{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:6;white-space:nowrap;border-radius:12px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
 .tag b{color:var(--mint)}
@@ -144,17 +144,6 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;padding-top:12px
 .screen{border-radius:41px;overflow:hidden;background:#0B0C1A}
 .screen iframe{display:block;width:100%;height:668px;border:0}
 .notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:104px;height:28px;border-radius:16px;background:#0B0C1A;z-index:4}
-/* no transform on .orbit: it would trap the coins in their own layer, behind the phone */
-.orbit{position:absolute;left:calc(50% - 330px);top:calc(56% - 105px);width:660px;height:210px;pointer-events:none}
-.orbit svg{position:absolute;inset:0;overflow:visible}
-.orbit .back{z-index:1}.orbit .front{z-index:4}
-.coin{position:absolute;left:0;top:0;width:26px;height:26px;offset-path:path("M 0 105 A 330 105 0 1 1 660 105 A 330 105 0 1 1 0 105");offset-rotate:0deg;
-  animation:orbit 30s linear infinite;filter:drop-shadow(0 0 6px rgba(255,194,58,.45))}
-.coin:nth-of-type(2){animation-delay:-15s}
-@keyframes orbit{0%{offset-distance:0%;transform:scale(.62);z-index:1;opacity:.75}25%{transform:scale(.5)}49.9%{z-index:1}
-  50%{offset-distance:50%;transform:scale(.62);z-index:5;opacity:.9}75%{transform:scale(1)}100%{offset-distance:100%;transform:scale(.62);z-index:5;opacity:.75}}
-@media(max-width:700px){.orbit{left:calc(50% - 190px);top:calc(56% - 60px);width:380px;height:121px}
-  .coin{width:22px;height:22px;offset-path:path("M 0 60.5 A 190 60.5 0 1 1 380 60.5 A 190 60.5 0 1 1 0 60.5")}.halo{width:420px;height:420px}}
 .sat{position:absolute;z-index:5;width:232px;border-radius:20px;padding:18px 18px 16px;text-align:left;top:150px}
 .sat.l{left:calc(50% - 450px)}.sat.r{right:calc(50% - 450px)}
 @media(max-width:1080px){.sat{display:none}}
@@ -336,7 +325,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .coin,.fcoin{display:none}
+  .fcoin{display:none}
   .js .rev{opacity:1;transform:none}
   .trackline i{transform:none}.refx path{stroke-dashoffset:0}
 }
@@ -349,7 +338,6 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <radialGradient id="cb" cx=".36" cy=".28" r=".9"><stop offset="0" stop-color="#FFFBE6"/><stop offset=".35" stop-color="#FFDD7A"/><stop offset=".7" stop-color="#F2B633"/><stop offset="1" stop-color="#96650A"/></radialGradient>
   <symbol id="coin" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#C98E14"/><circle cx="20" cy="20" r="16.4" fill="url(#cb)"/>
     <path d="M20 11.4 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#FFF3CE" opacity=".6"/></symbol>
-  <linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#B9AFFF" stop-opacity="0"/><stop offset=".5" stop-color="#B9AFFF" stop-opacity=".32"/><stop offset="1" stop-color="#B9AFFF" stop-opacity="0"/></linearGradient>
   <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.8l7 2.8v6c0 4.6-3 8.1-7 9.6-4-1.5-7-5-7-9.6v-6l7-2.8z"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4l-1.5-1.4C5.3 14.3 2.4 11.6 2.4 8.3 2.4 5.6 4.5 3.5 7.2 3.5c1.5 0 3 .7 3.9 1.9l.9 1.1.9-1.1c.9-1.2 2.4-1.9 3.9-1.9 2.7 0 4.8 2.1 4.8 4.8 0 3.3-2.9 6-7.9 10.7L12 20.4z" fill="currentColor"/></symbol>
@@ -388,12 +376,6 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <div class="stage load" style="--d:.75s">
     <div class="tag glass">Try it: <b>tap the green button</b></div>
     <div class="halo" aria-hidden="true"></div>
-    <div class="orbit" aria-hidden="true">
-      <svg class="back" viewBox="0 0 660 210"><path d="M 0 105 A 330 105 0 0 1 660 105" fill="none" stroke="url(#rg)" stroke-width="1.4"/></svg>
-      <svg class="front" viewBox="0 0 660 210"><path d="M 660 105 A 330 105 0 0 1 0 105" fill="none" stroke="url(#rg)" stroke-width="1.4"/></svg>
-      <svg class="coin" viewBox="0 0 40 40"><use href="#coin"/></svg>
-      <svg class="coin" viewBox="0 0 40 40"><use href="#coin"/></svg>
-    </div>
     <div class="sat l glass" aria-hidden="true">
       <div class="k">The shield</div>
       <div class="t">You made a jar promise</div>
