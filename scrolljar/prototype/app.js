@@ -1052,6 +1052,103 @@ function toggleWork(el){
   $('workBody').style.display = on ? 'block' : 'none';
   toast(on ? 'Work mode on. The shield steps aside when you\'re working — and only then.' : 'Work mode off.');
 }
+/* ══ COMPANY JAR (Teams) ══
+   The employer pledges; each clean evening (no slip after your work window) unlocks a fixed
+   amount for a cause the team voted on. Nobody pays for a slip. Unspent pledge rolls over. */
+const CO={pledge:5000,rollover:400,perEvening:5,evenings:436,joined:false,mine:9,from:'09:00',to:'18:00',
+  causes:['Feeding America','Against Malaria Foundation','GiveDirectly'],votes:[41,33,26],vote:-1,
+  squads:[{n:'Design',k:6},{n:'Platform',k:8},{n:'Ops & People',k:5}],squad:0};
+const CO_FEED=[
+  {t:'Design squad reached its weekly goal',s:'30 clean evenings, set by the squad itself'},
+  {t:'The jar passed $2,000',s:'week 3 of 6'},
+  {t:'Ops & People joined the campaign',s:'5 people'},
+  {t:'The vote closed: Feeding America',s:'41% of votes · runner-up gets the autumn campaign'},
+];
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+function renderCompany(animate){
+  const unlocked=CO.evenings*CO.perEvening, total=CO.pledge+CO.rollover, pct=Math.min(1,unlocked/total);
+  $('coAmt').textContent=money(unlocked); $('coEvenings').textContent=CO.evenings.toLocaleString('en-US');
+  $('coCause').textContent=CO.causes[CO.vote>=0?CO.vote:0]; $('coFill').style.width=(pct*100)+'%';
+  $('coInvite').style.display=CO.joined?'none':''; $('coMine').style.display=CO.joined?'':'none';
+  $('coMineN').textContent=CO.mine; $('coWin').textContent=CO.to;
+  $('coSquadName').textContent=CO.squads[CO.squad].n+' squad'; $('coSquadSize').textContent=CO.squads[CO.squad].k+' people';
+  $('coFeed').innerHTML=CO_FEED.map(f=>`<div class="fcard" style="padding:11px 13px"><div class="row" style="gap:10px">
+    <svg width="22" height="22" viewBox="0 0 40 40" style="flex:none"><use href="#moonM"/></svg>
+    <div><div class="fbody" style="font-size:13px">${f.t}</div><div class="tiny" style="margin-top:2px">${f.s}</div></div></div></div>`).join('');
+  $('coCardLine').textContent=CO.joined?`${CO.evenings} clean evenings · ${money(unlocked)} unlocked`:"You're invited to the company jar";
+  $('coCardSub').textContent=CO.joined?`you: ${CO.mine} · for ${CO.causes[CO.vote>=0?CO.vote:0]}`:'every clean evening unlocks $5 for a cause you vote on';
+  drawMoons($('coMoons'),Math.round(pct*POS.length),animate);
+}
+/* moons rise into the jar (the consumer coins fall; this jar fills with something earned) */
+function drawMoons(g,n,animate){
+  g.innerHTML='';
+  for(let i=0;i<n;i++){
+    const [cx,cy]=POS[i], u=document.createElementNS('http://www.w3.org/2000/svg','use');
+    u.setAttribute('href','#moonM'); u.setAttribute('x',cx-15); u.setAttribute('y',cy-15); u.setAttribute('width',30); u.setAttribute('height',30);
+    g.appendChild(u);
+    if(animate) u.animate([{transform:'translateY(70px)',opacity:0},{transform:'translateY(-6px)',opacity:1,offset:.7},{transform:'none',opacity:1}],
+      {duration:900,delay:i*70,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
+  }
+}
+function openCompany(){ go('company'); $('s-company').scrollTop=0; renderCompany(true); }
+
+let cjStep=0;
+function openJoin(){ cjStep=0; renderJoin(); $('ov-cojoin').classList.add('on'); }
+function cjGo(n){ cjStep=n; renderJoin(); }
+function renderJoin(){
+  [...$('cjDots').children].forEach((d,i)=>d.classList.toggle('on',i<=cjStep));
+  const B=$('cjBody');
+  if(cjStep===0){ $('cjKicker').textContent='FERNHILL & CO. INVITED YOU';
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Summer Evenings: your evenings, funded.</div>
+      <div class="sub">Fernhill pledges <b>$5,000</b>. Each evening you don't slip unlocks <b>$5</b> for a cause the team votes on. If you slip, nobody pays. Not you, not anyone.</div>
+      <div class="coRule ok" style="margin-top:12px">Only your own time counts: evenings and weekends</div>
+      <div class="coRule ok">Joining is your choice, and you can leave any time</div>
+      <div class="coRule no">Fernhill never sees you, your evenings or your apps</div>
+      <button class="btn violet" style="margin-top:14px" onclick="cjGo(1)">Join</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-cojoin')">Not now</button>`;
+  } else if(cjStep===1){ $('cjKicker').textContent='YOUR WORK WINDOW';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">When do you work?</div>
+      <div class="sub" style="margin-bottom:12px">So those hours never count. Your evening starts when this ends.</div>
+      <div class="row" style="gap:10px"><div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" id="cjFrom" value="${CO.from}"></div>
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" id="cjTo" value="${CO.to}"></div></div>
+      <div class="tiny" style="margin-top:10px">Fernhill can't see this either. It stays on your phone.</div>
+      <button class="btn violet" style="margin-top:14px" onclick="CO.from=$('cjFrom').value;CO.to=$('cjTo').value;cjGo(2)">Next</button>`;
+  } else if(cjStep===2){ $('cjKicker').textContent='VOTE FOR THE CAUSE';
+    const tot=CO.votes.reduce((a,b)=>a+b,0);
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Where should the jar go?</div>
+      <div class="sub" style="margin-bottom:12px">People chose the shortlist. Your vote is anonymous.</div>
+      ${CO.causes.map((c,i)=>`<div class="tierbox${CO.vote===i?' sel':''}" onclick="CO.vote=${i};renderJoin()">
+        <div class="spread"><b style="font-size:13.5px">${c}</b>${CO.vote>=0?`<span class="tiny">${Math.round(CO.votes[i]/tot*100)}%</span>`:''}</div>
+        <div class="tiny" style="margin-top:4px;line-height:1.45">${(CHARITIES.find(x=>x.n===c)||{l:''}).l}</div></div>`).join('')}
+      <button class="btn violet" style="margin-top:6px" ${CO.vote<0?'disabled':''} onclick="cjGo(3)">Next</button>`;
+  } else if(cjStep===3){ $('cjKicker').textContent='YOUR SQUAD';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Pick a squad</div>
+      <div class="sub" style="margin-bottom:12px">Squads set their own weekly goal. They see squad totals, never who.</div>
+      ${CO.squads.map((q,i)=>`<div class="tierbox${CO.squad===i?' sel':''}" onclick="CO.squad=${i};renderJoin()"><div class="spread"><b style="font-size:13.5px">${q.n}</b><span class="tiny">${q.k} people</span></div></div>`).join('')}
+      <div class="tiny" style="margin:2px 2px 0">Squads need at least 5 people before any number is shown.</div>
+      <button class="btn violet" style="margin-top:12px" onclick="cjGo(4)">Join ${CO.squads[CO.squad].n}</button>`;
+  } else { $('cjKicker').textContent="YOU'RE IN";
+    B.innerHTML=`<div style="text-align:center;padding:6px 0 2px">
+      <svg width="54" height="54" viewBox="0 0 40 40" style="filter:drop-shadow(0 0 16px rgba(185,174,255,.7))"><use href="#moonM"/></svg>
+      <div class="display" style="font-size:21px;margin:10px 0 8px">Your evenings start counting tonight.</div>
+      <div class="sub">After ${CO.to}, every evening without a slip adds a moon to the company jar.</div></div>
+      <div class="card" style="margin-top:12px;background:rgba(60,240,203,.1);border-color:rgba(60,240,203,.3)">
+        <b style="font-size:13px">Plus is on Fernhill</b>
+        <div class="tiny" style="margin-top:4px;line-height:1.5">Your personal jar, stakes and charity stay private and separate. If you leave Fernhill, you keep a discount.</div></div>
+      <button class="btn mint" onclick="CO.joined=true;CO.evenings++;closeOv('ov-cojoin');openCompany()">See the company jar</button>`;
+  }
+}
+function showCoTip(){
+  const final=4620, g=$('ctMoons');
+  $('ctCause').textContent=CO.causes[CO.vote>=0?CO.vote:0]; $('ctAmt').textContent='$0';
+  drawMoons(g,POS.length,false); $('ov-cotip').classList.add('on');
+  setTimeout(()=>{ [...g.children].forEach((m,i)=>m.animate([{transform:'none',opacity:1},{transform:'translateY(-120px)',opacity:0}],
+      {duration:900,delay:i*60,easing:'cubic-bezier(.4,.1,.6,1)',fill:'forwards'}));
+    const t0=performance.now(), dur=1800;
+    (function tick(t){const k=Math.min((t-t0)/dur,1); $('ctAmt').textContent=money(final*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(tick);
+      else { stars($('ctJarBox'),11,true); fanfare($('ctJarBox'),money(final)+' GIVEN'); }})(t0);
+  },700);
+}
 function restart(){location.reload()}
 /* embed mode (landing page phone): no onboarding, no prototype controls */
 const Q=new URLSearchParams(location.search);

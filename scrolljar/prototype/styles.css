@@ -524,3 +524,13 @@ html.embed .topbar,html.embed .sky{display:none}
 html.embed .phone{width:auto;padding:0;border-radius:0;background:none;box-shadow:none}
 html.embed .app{height:100vh;border-radius:0}
 html.embed .app::after{border-radius:0}
+
+/* ══ COMPANY JAR (Teams) ══ */
+.jarChip.co{border-color:rgba(155,140,255,.45);background:rgba(155,140,255,.12)}
+.coCard{background:linear-gradient(150deg,rgba(155,140,255,.16),rgba(60,240,203,.08));border-color:rgba(155,140,255,.3)}
+.coRule{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:var(--ink-2);margin-top:8px}
+.coRule::before{flex:none;width:18px;height:18px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;margin-top:-1px}
+.coRule.ok::before{content:"✓";background:rgba(60,240,203,.16);color:var(--mint-text,var(--mint))}
+.coRule.no::before{content:"✕";background:rgba(255,143,102,.14);color:var(--peach)}
+body[data-mode="day"] .coRule.no::before{color:#C93D14}
+body[data-mode="day"] #coAmt{background:linear-gradient(180deg,#5B21D6,#2A1690)!important;-webkit-background-clip:text!important;background-clip:text!important}

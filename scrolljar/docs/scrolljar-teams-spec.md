@@ -6,6 +6,13 @@
 
 > Your team's reclaimed evenings become charity. A mental-health benefit with zero surveillance, a CSR story with real numbers, and the only workplace wellness product that touches the actual problem — attention — instead of adding a meditation library on top of it.
 
+> **DECISIONS (L, 2026-10-14) — these override older text below where they differ:**
+> - **The jar counts clean evenings, not hours.** One 🌙 per evening with no slip after the person's work window ends. Apple hides usage totals from apps, so "hours vs baseline" can't be measured honestly; clean evenings can (shield and threshold events). The pledge converts at a fixed $ per clean evening.
+> - **Unspent pledge rolls into the next campaign.** The company never "saves" money because people tried less; the next jar starts partly full.
+> - **$4 per employee per month**, billed annually, outside Apple. Free 6-week pilot (up to 50 people). Small teams (5–24): flat ~$99/month.
+> - Every employee gets **Plus** (formerly Jar Hero) free for personal use, invisible to the employer.
+> - **Pilot version (v1):** campaign setup, cause vote, join, squads, moons filling the jar, tip-out ceremony, anonymous dashboard, weekly Slack recap. **Later:** squad rivalries, plus-ones, family extension, boost matching, cross-company leagues.
+
 **Founding non-negotiables (accepted by L):**
 1. **The boss can never see individual data.** Aggregate-only, k-anonymity (no stat shown for groups <5). "Your boss can't see your scrolling" printed next to "we couldn't spy on you."
 2. **Voluntary, always.** No mandated enrollment, ever (coerced commitment devices backfire — SDT).
