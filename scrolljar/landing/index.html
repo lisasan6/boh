@@ -337,6 +337,19 @@ section{padding-block:84px}
 .cogets li span{display:block;color:var(--ink-2);font-size:14.5px;margin-top:2px}
 .tperk{max-width:640px;margin:22px auto 0;text-align:center;color:var(--ink-2);font-size:15px}
 .tperk b{color:var(--ink)}
+.mwrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;max-width:1040px;margin:0 auto;align-items:start}
+.mhead{position:sticky;top:calc(var(--nav-h,72px) + 40px)}
+.mhead h2{font-size:clamp(32px,4.2vw,50px);line-height:1.06;letter-spacing:-.04em;margin-top:12px;text-wrap:balance}
+.mhead p{color:var(--ink-2);font-size:17.5px;margin-top:18px}
+.mlist{list-style:none;margin:0;padding:0}
+.mlist li{display:flex;gap:18px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line)}
+.js .mlist li.rev{transition-delay:var(--d)}
+.mlist li:first-child{padding-top:6px}
+.mlist li:last-child{border-bottom:none}
+.mn{flex:none;font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--mint);letter-spacing:.04em;width:28px}
+.mlist b{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(22px,2.4vw,28px);letter-spacing:-.03em;line-height:1.15}
+.mlist li span:last-child{display:block;color:var(--ink-2);font-size:15.5px;margin-top:6px;text-wrap:pretty}
+@media(max-width:860px){.mwrap{grid-template-columns:1fr;gap:26px}.mhead{position:static}}
 .founder{max-width:760px;margin:0 auto;border-radius:26px;padding:30px 34px;display:flex;gap:26px;align-items:flex-start}
 .fav{flex:none;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 30px var(--font-display);color:#06231D;background:linear-gradient(140deg,var(--mint),var(--lav))}
 .founder blockquote{margin:0}
@@ -737,6 +750,17 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   </div>
 </div></section>
 
+<section id="mission" class="band"><div class="wrap">
+  <div class="mwrap">
+    <div class="mhead rev">
+      <span class="eyebrow">Our mission</span>
+      <h2 class="display">Give people their time back, and let every slip <span class="grad">do some good.</span></h2>
+      <p>That's the whole plan. Here's what we believe.</p>
+    </div>
+    <ol class="mlist"><li class="rev" style="--d:0.00s"><span class="mn">01</span><div><b>Your time belongs to you.</b><span>Not to a feed, and not to us either.</span></div></li><li class="rev" style="--d:0.06s"><span class="mn">02</span><div><b>Nobody needs fixing.</b><span>Feeds are designed to keep you. You deserve a tool that's designed to let you go.</span></div></li><li class="rev" style="--d:0.12s"><span class="mn">03</span><div><b>A slip is just a slip.</b><span>It should cost a little and do some good. No lectures, no shame.</span></div></li><li class="rev" style="--d:0.18s"><span class="mn">04</span><div><b>Money should flow toward good.</b><span>Never toward your hard days. Every coin goes to a cause, and we live on memberships.</span></div></li><li class="rev" style="--d:0.24s"><span class="mn">05</span><div><b>Success is needing us less.</b><span>We count the hours you get back, not the minutes you spend with us.</span></div></li><li class="rev" style="--d:0.30s"><span class="mn">06</span><div><b>Everyone wins, or we don't build it.</b><span>You, a cause you love, and the people around you.</span></div></li></ol>
+  </div>
+</div></section>
+
 <!-- Founder note: DRAFT for L to confirm. Replace the initial with a photo and adjust the words. -->
 <section id="founder" class="band"><div class="wrap">
   <figure class="founder glass rev">
@@ -790,7 +814,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
       <div class="logo" style="margin-bottom:12px"><svg width="20" height="23" aria-hidden="true"><use href="#i-jar"/></svg>ScrollJar</div>
       <p style="color:var(--ink-3);max-width:280px;font-size:14px">A swear jar for scrolling. Made in cold blood, kept in warm moments.</p>
     </div>
-    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For companies</a><a href="#families">For families</a><a href="#refuse">Our promises</a><a href="#faq">FAQ</a></div>
+    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For companies</a><a href="#families">For families</a><a href="#mission">Our mission</a><a href="#refuse">Our promises</a><a href="#faq">FAQ</a></div>
     <div><h2>Evidence</h2><a href="#science">The science</a><a href="#science">Our sources</a></div>
     <div><h2>Contact</h2><a href="mailto:hello@scrolljar.app">hello@scrolljar.app</a><a href="mailto:press@scrolljar.app">Press</a></div>
   </div>
