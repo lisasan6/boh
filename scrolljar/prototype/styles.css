@@ -244,7 +244,7 @@ body[data-mode="day"] .ov.sheetwrap{background:rgba(20,23,51,.32)}
 .shield{background:linear-gradient(170deg,#141733,#0A0B1A);color:#EFEDFF;align-items:center;justify-content:center;text-align:center;padding:34px 26px}
 .cost{display:flex;justify-content:space-between;align-items:center;background:var(--cost-bg);border:1px solid var(--line);border-radius:15px;padding:13px;margin:14px 0}
 .breathorb{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#8FE3D4,#2E7D6E);
-  display:flex;align-items:center;justify-content:center;color:#06231D;font-family:'Bricolage Grotesque';font-size:14px;font-weight:600;animation:orbBreath 10s infinite}
+  display:flex;align-items:center;justify-content:center;color:#06231D;font-family:'Bricolage Grotesque';font-size:14px;font-weight:600;animation:orbBreath 10s infinite} /* 10s = BREATH_MS in app.js */
 /* a calm breath: about 4 seconds in, 6 seconds out (roughly 6 breaths a minute), with a slower,
    longer out-breath and a brief soft pause at the top */
 @keyframes orbBreath{

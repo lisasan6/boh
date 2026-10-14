@@ -231,19 +231,23 @@ function resist(){
   }
 }
 function showExit(title,sub){ $('exitTitle').textContent=title; $('exitSub').textContent=sub; $('ov-exit').classList.add('on'); }
+/* the pause lasts BREATHS full breaths of BREATH_MS each (about 4 s in, 6 s out); the text and the buttons both follow these */
+const BREATH_MS=10000, BREATHS=2;
+const SEC_WORDS={5:'Five',10:'Ten',15:'Fifteen',20:'Twenty',25:'Twenty-five',30:'Thirty'};
 let breathT;
 function showBreath(){
   closeOv('ov-shield');$('ov-breath').classList.add('on');
   $('breathBtns').style.display='none';
   $('breathTitle').textContent='No rush.';
-  $('breathSub').textContent='The scroll will wait. Take a breath, then it\'s your call.';
+  const secs=Math.round(BREATH_MS*BREATHS/1000);
+  $('breathSub').textContent=`The scroll will wait. ${SEC_WORDS[secs]||secs} seconds, ${BREATHS===1?'one breath':BREATHS===2?'two breaths':BREATHS+' breaths'}, then it's your call.`;
   startBreathCue();
   clearTimeout(breathT);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
-  /* the choice appears after two full breaths (each about 4 s in, 6 s out), both buttons fading in softly */
+  /* the choice appears after the breaths are done, both buttons fading in softly */
   breathT=setTimeout(()=>{ const bb=$('breathBtns'); bb.style.display='block';
     bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'});
-    launchContinue(); },20000);
+    launchContinue(); },BREATH_MS*BREATHS);
 }
 /* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
    "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */
