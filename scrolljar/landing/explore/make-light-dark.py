@@ -37,7 +37,7 @@ css='''
 '''
 R('</style>',css+'</style>',1) if s.count('</style>')==1 else None
 
-# ── key-word highlights in the light sections (a highlighter stroke, the light-mode version of the glow) ──
+# ── key words in light-section headings get the same gradient as the dark sections ("do some good.") ──
 def scoped(start_marker, pairs):
     global s
     a=s.index(start_marker); b=s.index('</section>',a)
@@ -45,32 +45,14 @@ def scoped(start_marker, pairs):
     for x,y in pairs:
         assert sec.count(x)==1,(start_marker,x[:50]); sec=sec.replace(x,y)
     s=s[:a]+sec+s[b:]
-scoped('<section class="band light" id="difference">',[
- ('and turns every slip into a gift.</p>','and <mark class="hl">turns every slip into a gift</mark>.</p>'),
- ('<b>Never for us.</b>','<b><mark class="hl">Never for us.</mark></b>')])
 scoped('<span class="eyebrow">The win-win</span>',[
- ('Either you win the hour,<br>or a charity does.','Either you <mark class="hl">win the hour</mark>,<br>or <mark class="hl lav">a charity does.</mark>'),
- ('<p class="duoline rev">Both doors are a win.','<p class="duoline rev"><mark class="hl">Both doors are a win.</mark>')])
+ ('Either you win the hour,<br>or a charity does.','Either you win the hour,<br><span class="grad">or a charity does.</span>')])
 scoped('<section id="refuse" class="band light">',[
- ('<h2 class="display">Kind by design.</h2>','<h2 class="display"><mark class="hl">Kind</mark> by design.</h2>')])
+ ('<h2 class="display">Kind by design.</h2>','<h2 class="display"><span class="grad">Kind</span> by design.</h2>')])
 scoped('<section id="families" class="band light">',[
- ('A family jar,<br>not a family spy.','A family jar,<br><mark class="hl lav">not a family spy.</mark>'),
- ('Kids never pay a cent,','<mark class="hl gold">Kids never pay a cent</mark>,')])
+ ('A family jar,<br>not a family spy.','A family jar,<br><span class="grad">not a family spy.</span>')])
 scoped('<section id="faq" class="band light">',[
- ('The honest answers.','The <mark class="hl">honest</mark> answers.'),
- ('<p>It really blocks.','<p><mark class="hl">It really blocks.</mark>'),
- ('<p>You always can.','<p><mark class="hl">You always can.</mark>'),
- ('ScrollJar keeps none of it.','<mark class="hl">ScrollJar keeps none of it.</mark>'),
- ('<p>Memberships, and nothing else.','<p><mark class="hl">Memberships, and nothing else.</mark>'),
- ('<p>No. Apple hands','<p><mark class="hl">No.</mark> Apple hands')])
-hlcss="""
-.hl{color:inherit;padding:0 .08em;-webkit-box-decoration-break:clone;box-decoration-break:clone;
-  background:linear-gradient(to top,rgba(60,240,203,.42) 0,rgba(60,240,203,.42) 38%,transparent 38%) no-repeat 0 0/0% 100%;
-  transition:background-size .9s cubic-bezier(.3,.7,.2,1) .35s}
-.hl.lav{background-image:linear-gradient(to top,rgba(150,135,255,.38) 0,rgba(150,135,255,.38) 38%,transparent 38%)}
-.hl.gold{background-image:linear-gradient(to top,rgba(255,194,58,.45) 0,rgba(255,194,58,.45) 38%,transparent 38%)}
-.in .hl,.q[open] .hl,html:not(.js) .hl{background-size:100% 100%}
-@media(prefers-reduced-motion:reduce){.hl{transition:none;background-size:100% 100%}}
-"""
-assert s.count('</style>')==1; s=s.replace('</style>',hlcss+'</style>')
+ ('The honest answers.','The <span class="grad">honest answers.</span>')])
+# a touch more colour in the light gradient so it reads as vividly as on dark, while staying readable
+s=s.replace("--head-grad:linear-gradient(95deg,#0B9C80 0%,#6455D6 100%);","--head-grad:linear-gradient(95deg,#0A9A7E 0%,#3F8FD6 50%,#6A55E0 100%);")
 open(dst,'w').write(s)
