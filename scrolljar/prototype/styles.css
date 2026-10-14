@@ -573,3 +573,8 @@ body[data-mode="day"]{--glow-1:#FFE680;--glow-2:#FFC928;--glow-3:#FFB800;--glow-
 
 /* prototype-only notes stay out of the landing page demo */
 html.embed .devNote{display:none}
+
+/* Day 3: the card-fee example rows */
+.feeRow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.feeRow span{color:var(--ink-3);white-space:nowrap}
+.feeRow b{text-align:right}

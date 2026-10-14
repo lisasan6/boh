@@ -11,7 +11,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 1. The user picks the apps that drink their time. iOS blocks them through Apple's Screen Time API, a real system-level block.
 2. Opening one anyway is always allowed, after a short breath pause, at a price the user set ($2–25, default $5).
 3. The price drops as a coin into the user's jar. On the 1st of each month the jar empties: **100% goes to a charity the user chose**, with a receipt.
-4. ScrollJar earns money only from memberships: Ghost Jar (free), Jar Hero ($5.99/mo or $49.99/yr) and Jar Legend ($9.99/mo or $79.99/yr, of which we give away half).
+4. ScrollJar earns money only from memberships. **Updated 2026-10-14:** real coins (the stakes) are free for everyone; free users see the card fee added on top so 100% of the coins arrive. One paid plan, **Plus** ($3.99/mo or $29.99/yr), covers card fees and adds groups and challenges, the danger-hours forecast, deep stats and unlimited promises. Free keeps 3 promises and every kindness feature. (This replaces Ghost Jar / Jar Hero / Jar Legend; see `docs/sketchpad.md`, Monetization.)
 5. Positioning: every other stakes app keeps your penalty money; we never touch it. "Either you win the night, or a charity does."
 
 ## 2. What exists
@@ -77,7 +77,7 @@ Then buy the domain (`scrolljar.app` is assumed throughout) and deploy to Netlif
 
 The live list is in `sketchpad.md` → "Open questions":
 
-- Q4 Ghost Jar limits
+- Q4 Free plan limits (decided: 3 promises)
 - Q5 group jar settlement (per member or pooled)
 - Q8 hour-posts in v1
 - Q12 Big Counter methodology
@@ -92,7 +92,7 @@ Embed the working prototype in the landing page's hero phone, so visitors can ta
 ## 5. Where the docs disagree (later decisions win)
 
 - **Currency:** `psychology-playbook.md` and the brief use € in places. **USD/US-first is decided** (spec v1.2).
-- **Tier names:** `board-reactions-2026-07-27.md` lists them as pending. **Ghost Jar / Jar Hero / Jar Legend is decided** (spec v1.2).
+- **Tier names:** Ghost Jar / Jar Hero / Jar Legend (spec v1.2) were replaced on 2026-10-14 by **Free + Plus**. The prototype's plans screen and Day 3 flow follow the new model.
 - **Buttons:** `design-session-briefing.md` says pill buttons and suggests Sora or Outfit. **Locked: 16px square-rounded buttons, Bricolage Grotesque with Inter** (`design-brief.md`).
 - **Day-mode colours:** `design-brief.md` lists a cool day ground (#F3F5FC). The prototype uses a warmer dawn palette. **The prototype's `styles.css` is the source of truth.**
 - **App vs website (changed 2026-10-14, L's decision):** the website now shares the app's night aurora look: dark sky, frosted glass panels, a mint-to-lavender headline gradient, the live prototype in the hero phone, and restrained motion (one moment per section, all off under reduced motion). The earlier calm white site is in git history; the two hero explorations are in `landing/explore/`.

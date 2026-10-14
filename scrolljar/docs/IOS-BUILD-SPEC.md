@@ -112,7 +112,7 @@ Privacy rules:
   - 48-hour no-questions refund; more than 3 refunds in a month pauses stakes.
 - **The charity rail is Every.org.** Donations go through its 501(c)(3), which issues receipts and handles regranting.
   - Confirm the current partner/API terms and the exact flow (direct-donation structure, to avoid commercial co-venturer registration) **with counsel before launch**.
-- **Memberships use StoreKit 2 IAP:** Ghost Jar (free), Jar Hero and Jar Legend. No dark patterns, and annual is shown honestly next to monthly.
+- **Memberships use StoreKit 2 IAP:** Free and **Plus** ($3.99/mo, $29.99/yr; updated 2026-10-14, replacing Ghost Jar / Jar Hero / Jar Legend). Real coins work on Free; the card fee is added on top for free users and covered for Plus. No dark patterns, "Not now" is the default choice, and annual is shown honestly next to monthly.
 - Cancelling a membership **does not** end active promises (spec §4).
 
 ## 7. Prototype → SwiftUI map

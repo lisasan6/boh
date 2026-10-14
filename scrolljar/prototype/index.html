@@ -459,7 +459,7 @@
       <div class="tiny" style="margin-top:8px">Gold days are coin days. Notice they're the tired ones.</div>
     </div>
     <div class="card aiCard">
-      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Legend</span></div>
+      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Plus</span></div>
       <div class="sub" style="margin-top:9px">Your hardest hour is Sunday 10pm and your entries say it's tiredness, not craving. Moving that shield an hour earlier would meet the real problem. Want me to suggest a wind-down that isn't a screen?</div>
       <div class="row" style="gap:7px;margin-top:12px">
         <button class="btn mint" style="flex:1" onclick="toast('Shield moved to 9pm on Sundays.')">Do it</button>
@@ -709,8 +709,8 @@
       <b style="font-size:13px">If you pull the plug</b>
       <div class="sub" style="margin-top:5px">Turning off Screen Time or deleting ScrollJar mid-promise counts as breaking the jar: <b>5× your override price</b>. You get a warning and one hour to restore first. Ending a promise honestly is always free, with 24h notice.</div>
     </div>
-    <div class="card" style="cursor:pointer" onclick="go('paywall')">
-      <div class="spread"><div><b style="font-size:13px">Ghost Jar</b><div class="tiny">free forever · 1 commitment</div></div><span class="pill mint">Upgrade</span></div>
+    <div class="card" id="planCard" style="cursor:pointer" onclick="go('paywall')">
+      <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 promises · card fee shown on top</div></div><span class="pill mint">See Plus</span></div>
     </div>
     <div class="card" style="background:rgba(55,226,192,.09)">
       <b style="font-size:13px"><svg class="glyph" width="13" height="13" style="color:var(--mint)"><use href="#i-heart"/></svg> Our promise</b>
@@ -755,12 +755,13 @@
 
   <!-- ══ PAYWALL ══ -->
   <div class="screen" id="s-paywall">
-    <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">Make it real</div></div>
-    <div class="sub" style="margin-bottom:14px">Kindness is never paywalled — the pause, the peek valve and rough-day support are yours at every tier.</div>
-    <div class="tierbox" onclick="selTier(this,'Ghost Jar')"><div class="spread"><b style="font-size:14px">Ghost Jar</b><span class="display" style="font-size:15px">Free</span></div><div class="tiny" style="margin-top:4px">Blocking · friction · 1 commitment · buddy jar</div></div>
-    <div class="tierbox sel" onclick="selTier(this,'Jar Hero')"><div class="spread"><b style="font-size:14px">Jar Hero</b><span class="display" style="font-size:15px">$49.99/yr</span></div><div class="tiny" style="margin-top:4px">The stakes engine · unlimited promises · group jars · danger-hours forecast</div></div>
-    <div class="tierbox" onclick="selTier(this,'Jar Legend')"><div class="spread"><b style="font-size:14px">Jar Legend</b><span class="display" style="font-size:15px">$79.99/yr</span></div><div class="tiny" style="margin-top:4px">Everything + deep stats + Year in the Jar</div><div class="pill gold" style="margin-top:7px">We give half of everything we receive</div></div>
-    <button class="btn gold" style="margin-top:6px" onclick="toast('Your membership is what lets us give away 100% of every penalty.')">Continue</button>
+    <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
+    <div class="sub" style="margin-bottom:14px">Real coins are free for everyone, and so is kindness: the pause, the peek valve and rough-day support are in every plan. Plus is how ScrollJar earns money, so we never need a cent of your jar.</div>
+    <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 promises · buddy jar · card fee shown on top</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered · unlimited promises · groups and challenges · danger-hours forecast · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
+    <div class="tierbox" onclick="selTier(this,'mo')"><div class="spread"><b style="font-size:14px">Plus · monthly</b><span class="display" style="font-size:15px">$3.99/mo</span></div><div class="tiny" style="margin-top:4px">Everything in yearly, cancel any time</div></div>
+    <button class="btn mint" style="margin-top:6px" onclick="payContinue()">Continue</button>
+    <div class="tiny" style="text-align:center;margin-top:9px">Billed by Apple. Cancel any time in your Apple account.</div>
   </div>
 
   <!-- ══ TABS ══ -->

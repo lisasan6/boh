@@ -1,4 +1,6 @@
-const S = {cap:50, charity:0, streak:12, tier:'Ghost Jar', firstResist:false};
+const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false};
+/* card fee on the free plan: shown and added on top, so 100% of the coins arrive. Plus covers it. */
+const cardFee=x=>Math.round((x*0.029+0.30)*100)/100;
 /* this month's coins, newest first — the jar total is always their sum */
 const COINS=[
   {p:'The scroll one',amt:5, when:'Today · 9:12pm',    fresh:true},
@@ -164,18 +166,18 @@ function pickDone(){
   toast(parts.join(' and ')+' shielded. Try opening one.');
 }
 
-/* ── day ~3: "want to make it real?" — stakes, charity, membership, card ── */
-let realStep=0, realPrice=5, realCharity=0, realPlan='yr', realAgree=false;
-function openReal(){ realStep=0; realPrice=5; realCharity=S.charity; realPlan='yr'; realAgree=false; renderReal(); $('ov-real').classList.add('on'); }
+/* ── day ~3: "want to make it real?" — stakes, charity, card. Real coins are free; Plus is optional. ── */
+let realStep=0, realPrice=5, realCharity=0, realPlan='free', realAgree=false;
+function openReal(){ realStep=0; realPrice=5; realCharity=S.charity; realPlan=S.plan; realAgree=false; renderReal(); $('ov-real').classList.add('on'); }
 function realGo(n){ realStep=n; renderReal(); }
 function renderReal(){
   [...$('realDots').children].forEach((d,i)=>d.classList.toggle('on',i<=realStep));
   const ch=CHARITIES[realCharity].n, K=$('realKicker'), B=$('realBody');
   if(realStep===0){ K.textContent='DAY 3';
     B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three days. Five temptations.<br>All yours.</div>
-      <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b></div>
+      <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b> Making it real is free too.</div>
       <button class="btn mint" style="margin-top:16px" onclick="realGo(1)">Make it real</button>
-      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying free. Ghost Jar keeps working exactly as it does now.')">Not yet, stay free</button>`;
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying as you are. Everything keeps working exactly as it does now.')">Not yet, stay free</button>`;
   } else if(realStep===1){ K.textContent='YOUR STAKES';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Price it in cold blood</div>
       <div class="card" style="text-align:center"><div class="amount num">$<span id="realP">${realPrice}</span></div>
@@ -185,20 +187,25 @@ function renderReal(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">${CHARITIES.map((c,i)=>`<span class="chip${i===realCharity?' on':''}" onclick="realCharity=${i};renderReal()">${c.n}</span>`).join('')}</div>
       <div class="tiny" style="margin-top:12px;line-height:1.5">Your jar is capped at $${S.cap} a month. When it's full, the shields stay on and nothing more is charged.</div>
       <button class="btn mint" style="margin-top:14px" onclick="realGo(2)">Next</button>`;
-  } else if(realStep===2){ K.textContent='TWO THINGS, IN PLAIN WORDS';
-    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Two separate payments</div>
-      <div class="card"><div class="spread"><b style="font-size:13.5px">1 · Jar Hero membership</b><span class="pill chr">billed by Apple</span></div>
+  } else if(realStep===2){ K.textContent='HOW COINS ARE CHARGED';
+    const f=cardFee(35), plus=realPlan!=='free';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Once a month, by card</div>
+      <div class="sub" style="margin-bottom:12px">On the 1st we charge whatever is in your jar. 100% of it goes to ${ch}. We never keep any of it.</div>
+      <div class="card"><b style="font-size:13.5px">The card fee</b>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Card companies charge a small fee. ${plus?'<b>Plus covers it for you.</b>':'On the free plan it\'s added on top, so your coins arrive in full.'}</div>
+        <div class="feeRow"><span>A $35 jar</span><b>$35, all to charity</b></div>
+        <div class="feeRow"><span>Card fee</span><b>${plus?'covered by Plus':'+ about $'+f.toFixed(2)}</b></div></div>
+      <div class="card"><div class="spread"><b style="font-size:13.5px">ScrollJar Plus</b><span class="pill chr">optional · billed by Apple</span></div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, the danger-hours forecast, deep stats and unlimited promises. It's how ScrollJar earns money.</div>
         <div class="row" style="gap:7px;margin-top:10px">
-          <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$49.99 / year</span>
-          <span class="chip${realPlan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='mo';renderReal()">$5.99 / month</span></div>
-        <div class="tiny" style="margin-top:9px;line-height:1.5">This is how ScrollJar earns money. Cancel any time in your Apple account; promises you've made still run to their honest end.</div></div>
-      <div class="card"><div class="spread"><b style="font-size:13.5px">2 · Your coins</b><span class="pill gold">charged by card</span></div>
-        <div class="tiny" style="margin-top:7px;line-height:1.5">Once a month, on the 1st, for whatever is in your jar. 100% goes to ${ch}. We never keep any of it.</div></div>
+          <span class="chip${realPlan==='free'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='free';renderReal()">Not now</span>
+          <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$29.99 / year</span>
+          <span class="chip${realPlan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='mo';renderReal()">$3.99 / month</span></div></div>
       <button class="btn mint" onclick="realGo(3)">Continue to card</button>`;
   } else if(realStep===3){ K.textContent='YOUR CARD';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Add a card for your coins</div>
       <div class="fakeField"><span style="flex:1">•••• •••• •••• 4242</span><span class="tiny">12/28 · 123</span></div>
-      <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>. We email you before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
+      <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>${realPlan==='free'?', plus the card fee':''}. We email you the amount before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
         Ending a promise honestly is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a promise counts as breaking the jar: <b>$${realPrice*5}</b> (5× your price), after a one-hour grace period to put things back.</div>
       <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
       <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Save card</button>
@@ -207,14 +214,14 @@ function renderReal(){
     B.innerHTML=`<div style="text-align:center;padding:8px 0 4px">
       <svg viewBox="0 0 40 40" width="52" height="52" style="filter:drop-shadow(0 0 16px rgba(255,201,77,.7))"><use href="#coin"/></svg>
       <div class="display" style="font-size:22px;margin:12px 0 8px">It's real now.</div>
-      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On Aug 1 it all goes to ${ch}.</div></div>
+      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On Aug 1 it all goes to ${ch}.${realPlan==='free'?'':' Plus is on, so the card fee is on us.'}</div></div>
       <button class="btn mint" style="margin-top:16px" onclick="closeOv('ov-real')">Got it</button>`;
   }
 }
 function realSave(){
   if(!realAgree) return;
   const b=$('realSave'); b.disabled=true; b.textContent='Confirming with your bank…';
-  setTimeout(()=>{ S.charity=realCharity; renderJar(); renderCharities(); realGo(4); },1200);
+  setTimeout(()=>{ S.charity=realCharity; S.plan=realPlan; renderPlan(); renderJar(); renderCharities(); realGo(4); },1200);
 }
 function resist(){
   ['ov-shield','ov-breath','ov-override'].forEach(closeOv);
@@ -390,7 +397,18 @@ function sealIt(){
   COMMITS.unshift({g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'New promise',m:when+' · $'+$('priceV').textContent+' · for my novel'});
   renderCommits();go('home');toast('Sealed. Your future self says thanks.');
 }
-function selTier(el,name){document.querySelectorAll('.tierbox').forEach(t=>t.classList.remove('sel'));el.classList.add('sel');S.tier=name}
+/* plans: Free (real coins, card fee shown on top) or Plus (fees covered, extras). Kindness is in both. */
+function selTier(el,plan){ document.querySelectorAll('#s-paywall .tierbox').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); payPick=plan; }
+let payPick='yr';
+function payContinue(){
+  if(payPick==='free'){ S.plan='free'; renderPlan(); go('you'); toast('You\'re on Free. Real coins still work; the card fee is shown on top.'); return; }
+  S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now.');
+}
+function renderPlan(){
+  const c=$('planCard'); if(!c) return;
+  const plus=S.plan!=='free';
+  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='yr'?'$29.99 / year':'$3.99 / month')+' · card fees covered':'real coins · 3 promises · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
+}
 /* ── the feed: outcomes only, never announcements ── */
 function scene(kind){
   const S={
