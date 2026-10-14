@@ -238,16 +238,30 @@ function showBreath(){
   $('breathTitle').textContent='No rush.';
   $('breathSub').textContent='The scroll will wait. Six seconds, then it\'s your call.';
   clearTimeout(breathT);
-  placeContinue(); $('breathGo').style.display='none';
-  breathT=setTimeout(()=>{$('breathBtns').style.display='block'; $('breathGo').style.display='';},3200);
+  cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
+  breathT=setTimeout(()=>{$('breathBtns').style.display='block'; launchContinue();},3200);
 }
-/* "Never mind, continue" always sits below "I'll stay committed", but moves between spots there,
-   never the same twice in a row, so the thumb can't learn it. Always visible, always readable. */
-const GO_SPOTS=['l','c','r']; let goLast='';
-function placeContinue(){
-  const b=$('breathGo'), pick=GO_SPOTS.filter(s=>s!==goLast);
-  goLast=pick[Math.floor(Math.random()*pick.length)];
-  b.className='skipBtn at-'+goLast;
+/* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed", slows down
+   and settles in a random spot after about 3 seconds, so the thumb can't learn where it is.
+   It never covers the main button, and it is still with reduced motion. */
+let goRAF=0;
+function launchContinue(){
+  const b=$('breathGo'), ov=$('ov-breath'), stay=$('breathBtns');
+  cancelAnimationFrame(goRAF); b.style.display='';
+  const W=b.offsetWidth, H=b.offsetHeight, minX=16, maxX=ov.clientWidth-16-W,
+        minY=stay.offsetTop+stay.offsetHeight+14, maxY=ov.clientHeight-18-H;
+  let x=minX+Math.random()*(maxX-minX), y=minY+Math.random()*(maxY-minY);
+  const put=()=>{ b.style.left=x+'px'; b.style.top=y+'px'; }; put();
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const a=(20+Math.random()*35)*Math.PI/180, sp=330;
+  let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1), t0=performance.now();
+  const step=t=>{ if(!ov.classList.contains('on')) return;
+    const dt=Math.min(.05,(t-t0)/1000); t0=t; x+=vx*dt; y+=vy*dt;
+    if(x<minX){x=minX;vx=Math.abs(vx)} else if(x>maxX){x=maxX;vx=-Math.abs(vx)}
+    if(y<minY){y=minY;vy=Math.abs(vy)} else if(y>maxY){y=maxY;vy=-Math.abs(vy)}
+    const f=Math.exp(-1.1*dt); vx*=f; vy*=f; put();
+    if(Math.hypot(vx,vy)>10) goRAF=requestAnimationFrame(step); };
+  goRAF=requestAnimationFrame(step);
 }
 function showOverride(){
   closeOv('ov-breath');
