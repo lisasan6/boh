@@ -682,7 +682,7 @@ function publishPost(){
   } else {
     const txt=$('postText').value.trim()||'Did something better with the hour.';
     FEED.unshift({t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'just now',body:txt,photo:pickedPhoto,kudos:0});
-    toast('Posted to Casa Jar. Only your jars can see it.');
+    toast('Posted to Casa Jar. Only the people in it can see it.');
   }
   renderFeed(); closeOv('ov-compose'); $('postText').value='';
 }
@@ -730,7 +730,7 @@ const SCHED_LABEL={always:'always',evenings:'9pm–7am',work:'9am–5pm',weekend
 function cycleSetting(el,opts){
   const i=(opts.indexOf(el.textContent.trim())+1)%opts.length;
   el.textContent=opts[i]; el.classList.toggle('on', i===1);
-  toast(opts[i]==='My jars' ? 'Your jars will see your coins now — your call, always.' : 'Setting saved.');
+  toast(opts[i]==='My people' ? 'The people in your shared jars will see your coins now. Your call, always.' : 'Setting saved.');
 }
 function renameJar(){
   const n=prompt('What do you call this jar?', $('jarName').textContent);

@@ -469,7 +469,7 @@
   <!-- ══ FEED ══ -->
   <div class="screen" id="s-friends">
     <div class="spread" style="margin-bottom:12px">
-      <div class="display h1">Your jars</div>
+      <div class="display h1">Together</div>
       <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
     <div class="jarStrip">
@@ -611,7 +611,7 @@
     <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('jardetail')">‹</span><div class="display h1">Focus Week</div></div>
     <div class="card" style="background:linear-gradient(150deg,rgba(55,226,192,.14),rgba(139,124,246,.12))">
       <div class="eyebrow">DAY 4 OF 7</div>
-      <div class="display" style="font-size:19px;margin:8px 0 6px">9 of 11 jars are holding</div>
+      <div class="display" style="font-size:19px;margin:8px 0 6px">9 of 11 people are holding</div>
       <div class="sub">Not a ranking — just the weather. Nobody is behind anybody here.</div>
     </div>
     <div class="card">
@@ -692,9 +692,10 @@
       </div>
     </div>
     <div class="card">
-      <b style="font-size:13px">What your jars can see</b>
+      <b style="font-size:13px">Who sees what</b>
+      <div class="tiny" style="margin-top:3px">Your people are everyone in your shared jars.</div>
       <div class="spread" style="margin:11px 0"><div><div style="font-size:12.5px;font-weight:700">Your coins</div><div class="tiny">when you pay, and how much</div></div>
-        <span class="chip" onclick="cycleSetting(this,['Nobody','My jars'])">Nobody</span></div>
+        <span class="chip" onclick="cycleSetting(this,['Nobody','My people'])">Nobody</span></div>
       <div class="spread" style="margin-bottom:11px"><div><div style="font-size:12.5px;font-weight:700">Jar totals</div><div class="tiny">the collective number, never who</div></div>
         <span class="chip on" style="cursor:default">Always shared</span></div>
       <div class="spread"><div><div style="font-size:12.5px;font-weight:700">Default post</div><div class="tiny">how your reclaimed hours appear</div></div>
@@ -762,7 +763,7 @@
   <div class="tabs">
     <div class="tab on" data-s="home" onclick="go('home')"><svg class="i"><use href="#i-sprout"/></svg>TODAY</div>
     <div class="tab" data-s="diary" onclick="go('diary')"><svg class="i"><use href="#i-book"/></svg>DIARY</div>
-    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-rings"/></svg>JARS</div>
+    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-rings"/></svg>TOGETHER</div>
     <div class="tab" data-s="you" onclick="go('you')"><svg class="i"><use href="#i-target"/></svg>YOU</div>
   </div>
 
@@ -1015,7 +1016,7 @@
     <div class="sheet-card">
       <div class="spread" style="margin-bottom:10px"><div class="display" style="font-size:18px">What did you do with it?</div>
         <span class="backBtn" onclick="closeOv('ov-compose')">✕</span></div>
-      <div class="sub" style="margin-bottom:12px">Reclaimed time, not screen time. Only your jars see this.</div>
+      <div class="sub" style="margin-bottom:12px">Reclaimed time, not screen time. Only your people see this.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px">
         <div class="chip on" id="visShare" onclick="setVis('share')">Share it</div>
         <div class="chip" id="visQuiet" onclick="setVis('quiet')">Keep it quiet</div>
