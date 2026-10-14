@@ -46,20 +46,91 @@ function closeOnb(){$('ov-onb').classList.remove('on');toast('Both apps are shie
 
 /* ── jar rendering ── */
 /* the pile grows with the money, not the coin count: a full jar = your monthly cap */
-const POS=[];
-[[190,5],[171,4],[152,5],[133,4]].forEach(([y,n])=>{
-  const xs=n===5?[56,78,100,122,144]:[67,89,111,133];
-  [2,1,3,0,4].filter(i=>i<n).forEach(i=>POS.push([xs[i],y]));
+/* ── the jar: one drawing for every jar in the app, a natural coin pile and a face that reacts ── */
+/* where coins settle, in the order they land: worked out once by a small pouring simulation
+   (each coin drops through the neck and slides down the pile until it rests on two others or the glass) */
+const POUR=[[60.8, 206.6, 16.4, 13], [85.7, 206.7, 17.1, -8], [72.8, 185.3, 16.5, -13], [43.9, 189.6, 15.9, -16], [55.3, 168.4, 16.3, -16], [111.2, 206.7, 17.1, -8], [135.8, 207.5, 16.0, 16], [98.5, 185.8, 16.0, -17], [86.1, 164.8, 16.5, 12], [68.1, 147.7, 16.6, -18], [124.8, 186.2, 16.2, -15], [112.0, 166.3, 15.8, -21], [154.6, 192.7, 16.3, -8], [100.7, 144.5, 17.3, -13], [82.2, 126.7, 17.4, -20], [143.4, 171.2, 16.1, -10], [43.3, 148.0, 15.6, -9], [129.9, 151.3, 15.8, -13], [120.8, 129.2, 16.5, -24]];
+const POS=POUR.map(([x,y])=>[x,y]);
+const JAR_BODY='M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z';
+const NS='http://www.w3.org/2000/svg';
+const MOUTH={happy:'M84 114 q16 14 32 0',thanks:'M90 117 q10 7 20 0',rest:'M92 119 q8 3 16 0',wow:'M95 118 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0'};
+function buildJar(svg){
+  if(svg.dataset.built) return; svg.dataset.built='1';
+  const keep=[...svg.querySelectorAll('g[id]')];                       /* coins or lights */
+  const oldMouth=[...svg.querySelectorAll('path')].find(p=>/^M8\d 11\d q/.test(p.getAttribute('d')||''));
+  const mouthId=oldMouth&&oldMouth.id, baseD=oldMouth?oldMouth.getAttribute('d'):'M88 118 q12 8 24 0';
+  svg.innerHTML=`
+    <ellipse cx="100" cy="219" rx="60" ry="9" fill="url(#caustic)" filter="url(#soften)" opacity=".75"/>
+    <path d="${JAR_BODY}" fill="url(#glass)"/>
+    <path d="${JAR_BODY}" fill="url(#innerdark)"/>
+    <g class="jarFill"></g>
+    <g clip-path="url(#body)" pointer-events="none">
+      <rect x="20" y="30" width="160" height="200" fill="url(#cyl)"/>
+      <path d="M44 106 C44 86 50 72 59 63 L64 67 C57 76 53 90 53 108 L53 176 C53 185 55 192 60 198 L55 203 C48 196 44 186 44 176 Z" fill="url(#spec)"/>
+      <rect x="153" y="112" width="4" height="58" rx="2" fill="#fff" opacity=".16"/>
+      <ellipse cx="68" cy="57" rx="7" ry="2.6" fill="#fff" opacity=".5" transform="rotate(-38 68 57)"/>
+      <path d="M62 213 Q100 225 138 213" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+    <path d="${JAR_BODY}" fill="none" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+    <path d="${JAR_BODY}" fill="none" stroke="url(#rimlight)" stroke-width="1.2"/>
+    <rect x="50" y="11" width="100" height="27" rx="7" fill="url(#lidG)" stroke="var(--jar-rim-3)" stroke-opacity=".35" stroke-width="1"/>
+    <path d="M54 19.5 H146 M54 25 H146 M54 30.5 H146" stroke="#0a0f1e" stroke-opacity=".16" stroke-width="1.3"/>
+    <path d="M57 14.5 H143" stroke="#fff" stroke-opacity=".65" stroke-width="1.6" stroke-linecap="round"/>
+    <g class="jarFace">
+      <g class="eyes">
+        <g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path class="eyeArc" d="M79 106 q5 -7 10 0" stroke="var(--jar-face)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          <path class="eyeRest" d="M79 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+        <g class="eyeR blinking"><circle class="eye" cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path class="eyeArc" d="M111 106 q5 -7 10 0" stroke="var(--jar-face)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          <path class="eyeRest" d="M111 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+      </g>
+      <path class="mouth"${mouthId?` id="${mouthId}"`:''} d="${baseD}" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    </g>`;
+  svg.dataset.base=baseD;
+  const fill=svg.querySelector('.jarFill'); keep.forEach(g=>fill.appendChild(g));
+}
+document.querySelectorAll('svg[viewBox="0 0 200 226"]').forEach(buildJar);
+/* moods: idle (dots, smile) · happy (you stayed) · thanks (a coin landed) · rest (a focus session is on) · wow (tip-out).
+   Never sad, never disappointed: a slip is a gift to the jar, not a letdown. */
+function jarMood(svg,mood,ms){
+  if(!svg) return;
+  clearTimeout(svg._moodT);
+  const m=mood||svg.dataset.rest||'idle', mouth=svg.querySelector('.mouth');
+  svg.dataset.mood=m;
+  if(mouth) mouth.setAttribute('d',MOUTH[m]||svg.dataset.base);
+  if(ms) svg._moodT=setTimeout(()=>jarMood(svg),ms);
+}
+function jarRest(on){ ['homeJarSvg','todayJarSvg'].forEach(id=>{ const s=$(id); if(!s) return; s.dataset.rest=on?'rest':''; if(!s._moodT) jarMood(s); }); }
+/* the eyes follow your finger (or pointer) a little, then drift back */
+(function(){
+  let raf=0, px=0, py=0, back=0;
+  function look(){ raf=0;
+    document.querySelectorAll('svg[data-built]').forEach(svg=>{
+      const eyes=svg.querySelector('.eyes'); if(!eyes||svg.dataset.mood==='rest') return;
+      const r=svg.getBoundingClientRect(); if(!r.width||r.bottom<0||r.top>innerHeight) return;
+      const cx=r.left+r.width*.5, cy=r.top+r.height*.46, dx=px-cx, dy=py-cy, d=Math.hypot(dx,dy)||1, k=Math.min(1,d/160)*2.6;
+      eyes.style.transform=`translate(${(dx/d*k).toFixed(2)}px,${(dy/d*k).toFixed(2)}px)`;
+    });
+  }
+  function center(){ document.querySelectorAll('svg[data-built] .eyes').forEach(e=>e.style.transform=''); }
+  const app=document.querySelector('.app')||document;
+  ['pointermove','pointerdown'].forEach(ev=>app.addEventListener(ev,e=>{ px=e.clientX; py=e.clientY; if(!raf) raf=requestAnimationFrame(look); clearTimeout(back); back=setTimeout(center,2600); },{passive:true}));
+})();
+/* tap a big jar and it giggles */
+['homeJar','famJarBox','coJarBox','crJarBox'].forEach(id=>{ const box=$(id); if(!box) return;
+  box.style.cursor='pointer';
+  box.addEventListener('click',()=>{ const svg=box.querySelector('svg'); svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop'); jarMood(svg,'happy',900); });
 });
 function renderCoins(target, amount){
   target.innerHTML='';
-  const n=amount<=0?0:Math.max(1,Math.round(Math.min(amount/S.cap,1)*POS.length));
+  const n=amount<=0?0:Math.max(1,Math.round(Math.min(amount/S.cap,1)*POUR.length));
   for(let i=0;i<n;i++){
-    const [cx,cy]=POS[i];
-    const c=document.createElementNS('http://www.w3.org/2000/svg','use');
-    c.setAttribute('href','#coin');c.setAttribute('x',cx-17);c.setAttribute('y',cy-17);
-    c.setAttribute('width',34);c.setAttribute('height',34);
-    c.setAttribute('transform',`rotate(${(i%3-1)*11} ${cx} ${cy})`);
+    const [cx,cy,r,a]=POUR[i];
+    const c=document.createElementNS(NS,'use');
+    c.setAttribute('href','#coin');c.setAttribute('x',cx-r);c.setAttribute('y',cy-r);
+    c.setAttribute('width',2*r);c.setAttribute('height',2*r);
+    c.setAttribute('transform',`rotate(${a} ${cx} ${cy})`);
     target.appendChild(c);
   }
 }
@@ -228,7 +299,7 @@ function resist(){
   const {box,svg,mouth}=liveJar();
   svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop');
   stars(box,7,true);
-  mouth.setAttribute('d','M84 114 q16 13 32 0');setTimeout(()=>mouth.setAttribute('d','M88 118 q12 8 24 0'),1000);
+  jarMood(svg,'happy',1400);
   if(!S.firstResist){
     S.firstResist=true;
     setTimeout(()=>{ $('ov-firstwin').classList.add('on'); stars($('winJarBox'),11,true); },520);
@@ -338,9 +409,10 @@ function payOverride(){
              {transform:'translateY(6px) scale(.85) rotateY(900deg)',opacity:0}],
             {duration:820,easing:'cubic-bezier(.3,.05,.4,1)'}).onfinish=()=>{
     f.remove();
-    svg.classList.remove('squash');void svg.offsetWidth;svg.classList.add('squash');
+    svg.classList.remove('squash');void svg.getBoundingClientRect();svg.classList.add('squash');
     stars(box,5,false);
     COINS.unshift({p:'The scroll one',amt:5,when:'Just now',fresh:true}); renderJar();
+    jarMood(svg,'thanks',1600);
     $('ov-window').classList.add('on');
     let sec=899;clearInterval(winT);
     winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
@@ -370,13 +442,14 @@ function showTipout(){
   renderJar();
   renderCoins($('tipCoins'),jarTotal());
   const svg=$('tipJar'), box=$('tipJarBox');
+  jarMood(svg,'wow',2300);
   setTimeout(()=>{
     svg.animate([{transform:'rotate(0)'},{transform:'rotate(-11deg)',offset:.2},{transform:'rotate(40deg)',offset:.6},
                  {transform:'rotate(40deg)',offset:.78},{transform:'rotate(0)'}],{duration:1900,easing:'cubic-bezier(.4,.1,.3,1)'});
     setTimeout(()=>{[...$('tipCoins').children].forEach((c,i)=>setTimeout(()=>{
       c.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate(70px,58px) scale(.4)',opacity:0}],
                 {duration:600,easing:'cubic-bezier(.3,.05,.5,1)',fill:'forwards'})},i*90));stars(box,7,false)},620);
-    setTimeout(()=>{$('tipCoins').innerHTML='';stars(box,11,true);fanfare(box,'$'+jarTotal()+' GIVEN!')},1950);
+    setTimeout(()=>{$('tipCoins').innerHTML='';stars(box,11,true);fanfare(box,'$'+jarTotal()+' GIVEN!');jarMood(svg,'happy',2600)},1950);
   },400);
 }
 function showRough(){$('ov-rough').classList.add('on')}
@@ -845,7 +918,7 @@ function startFocus(min){
   focusTotal=min*60; focusLeft=focusTotal;
   $('focusIdle').style.display='none'; $('focusRun').style.display='block';
   $('focusHint').textContent='ends at '+new Date(Date.now()+min*60000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  tickFocus();
+  tickFocus(); jarRest(true);
   clearInterval(focusT); focusT=setInterval(tickFocus,1000);
   toast(min+' minutes shielded. Go be somewhere else.');
 }
@@ -857,7 +930,7 @@ function tickFocus(){
   focusLeft--;
 }
 function endFocus(early){
-  clearInterval(focusT);
+  clearInterval(focusT); jarRest(false);
   $('focusIdle').style.display='flex'; $('focusRun').style.display='none';
   $('focusHint').textContent='shield everything, right now';
   if(early){ toast('Session ended. No coin — you set it, you can end it.'); }

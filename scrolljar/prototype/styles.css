@@ -616,3 +616,17 @@ body[data-mode="day"] #ov-shield .btn.ghost{color:#EFEDFF;border-color:rgba(255,
 body[data-mode="day"] #ov-shield .devNote{color:#A9A4D8}
 /* the invite preview jar icon was nearly invisible on the light card in day mode */
 body[data-mode="day"] .webPrev svg{color:#5A607E!important}
+
+/* the jar's face: moods swap the eyes; the face keeps a soft edge so it reads over coins */
+.eyeArc,.eyeRest{display:none}
+svg[data-mood="happy"] .eye,svg[data-mood="thanks"] .eye,svg[data-mood="rest"] .eye{display:none}
+svg[data-mood="happy"] .eyeArc,svg[data-mood="thanks"] .eyeArc{display:inline}
+svg[data-mood="rest"] .eyeRest{display:inline}
+svg[data-mood="rest"] .blinking{animation:none}
+svg[data-mood="wow"] .eye{transform:scale(1.25)}
+.eyes{transition:transform .25s ease-out}
+.eyeL,.eyeR{transform-box:fill-box;transform-origin:center}
+.eyeR.blinking{animation-delay:.04s}
+.jarFace{filter:drop-shadow(0 0 1.6px rgba(8,10,30,.55))}
+body[data-mode="day"] .jarFace{filter:drop-shadow(0 0 1.6px rgba(255,255,255,.7))}
+@media (prefers-reduced-motion:reduce){.blinking{animation:none}}
