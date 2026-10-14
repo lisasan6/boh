@@ -436,7 +436,7 @@ body[data-mode="day"] .tag-impulse{color:#C93D14}
   box-shadow:0 0 8px rgba(255,194,58,.5);transition:width .6s cubic-bezier(.34,1.3,.64,1)}
 .coinRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
 .coinRow:last-child{border-bottom:none}
-#ov-tipout > *{flex-shrink:0}
+#ov-tipout > *,#ov-cotip > *{flex-shrink:0}
 
 /* ══ VOICE NOTES (passive) ══ */
 .tag-voice{background:rgba(255,158,122,.16);color:var(--peach)}
