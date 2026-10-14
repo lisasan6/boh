@@ -249,8 +249,9 @@ function showBreath(){
     bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'}); },BREATH_MS*BREATHS-1000);
   breathT2=setTimeout(launchContinue,BREATH_MS*BREATHS);
 }
-/* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
-   "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */
+/* the orb's label follows its size for two guided breaths: "breathe in" while it grows (first 4 s of
+   each 10 s cycle), "breathe out" while it shrinks. Then the orb breathes smaller and the label settles
+   on "breathe". The orb restarts from empty each time the pause opens. */
 let cueT=0;
 function startBreathCue(){
   const orb=$('breathOrb'), cue=$('breathCue');
@@ -262,7 +263,9 @@ function startBreathCue(){
   let busy=false;
   cueT=setInterval(()=>{
     if(!$('ov-breath').classList.contains('on')){ clearInterval(cueT); return; }
-    const next=((anim.currentTime+500)%BREATH_MS)<4000?'breathe in':'breathe out';
+    const t=anim.playState==='finished'?2*BREATH_MS:anim.currentTime;
+    const next=t+500>=2*BREATH_MS?'breathe':((t+500)%BREATH_MS)<4000?'breathe in':'breathe out';
+    if(next==='breathe'&&cue.textContent==='breathe'){ clearInterval(cueT); return; }
     if(busy||cue.textContent===next) return;
     busy=true;
     cue.animate([{opacity:1},{opacity:0}],{duration:500,easing:'ease-in',fill:'forwards'}).onfinish=()=>{
