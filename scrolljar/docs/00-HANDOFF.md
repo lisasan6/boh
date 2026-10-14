@@ -31,7 +31,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 ### Prototype map: what each screen and overlay is for
 
 - **Tabs:** TODAY (`s-home`), DIARY (`s-diary`), JARS (`s-friends`), YOU (`s-you`).
-- **Core loop:** `ov-shield` → `ov-breath` (6-second pause) → `ov-instead` (what else this hour could be) → `ov-override` (pay $5) → `ov-window` (access countdown) → `ov-mood` (how do you feel now?).
+- **Core loop:** `ov-shield` → `ov-breath` (breathing pause; the small "continue" button bounces and stops in a new spot each time) → `ov-instead` (what else this hour could be) → `ov-override` (pay $5) → `ov-window` (access countdown) → `ov-mood` (how do you feel now?).
 - **Resisting:** `resist()` makes the jar hop; the first time, it opens `ov-firstwin` ("That's the whole product. You just didn't scroll."), followed by `ov-exit`, where the app invites you to leave.
 - **Money:** `s-jar`, then `ov-tipout`, the monthly ceremony that shows visible settlement steps.
 - **Social:**

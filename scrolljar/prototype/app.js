@@ -236,10 +236,25 @@ function showBreath(){
   closeOv('ov-shield');$('ov-breath').classList.add('on');
   $('breathBtns').style.display='none';
   $('breathTitle').textContent='No rush.';
-  $('breathSub').textContent='The scroll will wait. Six seconds, then it\'s your call.';
+  $('breathSub').textContent='The scroll will wait. Take a breath, then it\'s your call.';
+  startBreathCue();
   clearTimeout(breathT);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
   breathT=setTimeout(()=>{$('breathBtns').style.display='block'; launchContinue();},3200);
+}
+/* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
+   "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */
+let cueT=0;
+function startBreathCue(){
+  const orb=$('breathOrb'), cue=$('breathCue');
+  orb.style.animation='none'; void orb.offsetWidth; orb.style.animation='';
+  clearInterval(cueT); cue.textContent='breathe in';
+  const anim=orb.getAnimations()[0]; if(!anim){ cue.textContent='breathe'; return; }
+  cueT=setInterval(()=>{
+    if(!$('ov-breath').classList.contains('on')){ clearInterval(cueT); return; }
+    const next=(anim.currentTime%10000)<4000?'breathe in':'breathe out';
+    if(cue.textContent!==next){ cue.animate([{opacity:1},{opacity:0},{opacity:1}],{duration:500}); setTimeout(()=>cue.textContent=next,250); }
+  },100);
 }
 /* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed" and stops at
    a random moment (7–9 s), always well away from where it stopped last time, so the thumb can't
