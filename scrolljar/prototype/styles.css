@@ -248,10 +248,10 @@ body[data-mode="day"] .ov.sheetwrap{background:rgba(20,23,51,.32)}
 /* a calm breath: about 4 seconds in, 6 seconds out (roughly 6 breaths a minute), with a slower,
    longer out-breath and a brief soft pause at the top */
 @keyframes orbBreath{
-  0%{transform:scale(.8);box-shadow:0 0 0 0 rgba(143,227,212,0);animation-timing-function:cubic-bezier(.45,0,.55,1)}
-  38%{transform:scale(1.28);box-shadow:0 0 46px 6px rgba(143,227,212,.32);animation-timing-function:ease}
-  44%{transform:scale(1.27);box-shadow:0 0 46px 6px rgba(143,227,212,.32);animation-timing-function:cubic-bezier(.4,0,.5,1)}
-  100%{transform:scale(.8);box-shadow:0 0 0 0 rgba(143,227,212,0)}}
+  0%{transform:scale(.9);box-shadow:0 0 0 0 rgba(143,227,212,0);animation-timing-function:cubic-bezier(.45,0,.55,1)}
+  38%{transform:scale(1.14);box-shadow:0 0 46px 6px rgba(143,227,212,.32);animation-timing-function:ease}
+  44%{transform:scale(1.135);box-shadow:0 0 46px 6px rgba(143,227,212,.32);animation-timing-function:cubic-bezier(.4,0,.5,1)}
+  100%{transform:scale(.9);box-shadow:0 0 0 0 rgba(143,227,212,0)}}
 @media (prefers-reduced-motion:reduce){.breathorb{animation:none}}
 /* stats */
 .bars{display:flex;align-items:flex-end;gap:4px;height:96px;margin-top:12px}

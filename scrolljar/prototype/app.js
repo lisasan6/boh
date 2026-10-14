@@ -232,9 +232,9 @@ function resist(){
 }
 function showExit(title,sub){ $('exitTitle').textContent=title; $('exitSub').textContent=sub; $('ov-exit').classList.add('on'); }
 /* the pause lasts BREATHS full breaths of BREATH_MS each (about 4 s in, 6 s out); the text and the buttons both follow these */
-const BREATH_MS=10000, BREATHS=2;
+const BREATH_MS=10000, BREATHS=1;
 const SEC_WORDS={5:'Five',10:'Ten',15:'Fifteen',20:'Twenty',25:'Twenty-five',30:'Thirty'};
-let breathT;
+let breathT, breathT2;
 function showBreath(){
   closeOv('ov-shield');$('ov-breath').classList.add('on');
   $('breathBtns').style.display='none';
@@ -242,12 +242,12 @@ function showBreath(){
   const secs=Math.round(BREATH_MS*BREATHS/1000);
   $('breathSub').textContent=`The scroll will wait. ${SEC_WORDS[secs]||secs} seconds, ${BREATHS===1?'one breath':BREATHS===2?'two breaths':BREATHS+' breaths'}, then it's your call.`;
   startBreathCue();
-  clearTimeout(breathT);
+  clearTimeout(breathT); clearTimeout(breathT2);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
-  /* the choice appears after the breaths are done, both buttons fading in softly */
+  /* "I'll stay committed" fades in a second before the breath ends; "Never mind, continue" when it ends */
   breathT=setTimeout(()=>{ const bb=$('breathBtns'); bb.style.display='block';
-    bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'});
-    launchContinue(); },BREATH_MS*BREATHS);
+    bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'}); },BREATH_MS*BREATHS-1000);
+  breathT2=setTimeout(launchContinue,BREATH_MS*BREATHS);
 }
 /* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
    "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */
@@ -257,10 +257,18 @@ function startBreathCue(){
   orb.style.animation='none'; void orb.offsetWidth; orb.style.animation='';
   clearInterval(cueT); cue.textContent='breathe in';
   const anim=orb.getAnimations()[0]; if(!anim){ cue.textContent='breathe'; return; }
+  /* a slow crossfade that starts just before the turn of the breath, so the new word is fully
+     there as the ball changes direction: 0.5 s out, swap, 0.7 s in */
+  let busy=false;
   cueT=setInterval(()=>{
     if(!$('ov-breath').classList.contains('on')){ clearInterval(cueT); return; }
-    const next=(anim.currentTime%10000)<4000?'breathe in':'breathe out';
-    if(cue.textContent!==next){ cue.animate([{opacity:1},{opacity:0},{opacity:1}],{duration:500}); setTimeout(()=>cue.textContent=next,250); }
+    const next=((anim.currentTime+500)%BREATH_MS)<4000?'breathe in':'breathe out';
+    if(busy||cue.textContent===next) return;
+    busy=true;
+    cue.animate([{opacity:1},{opacity:0}],{duration:500,easing:'ease-in',fill:'forwards'}).onfinish=()=>{
+      cue.textContent=next;
+      cue.animate([{opacity:0},{opacity:1}],{duration:700,easing:'ease-out',fill:'forwards'}).onfinish=()=>{ busy=false; };
+    };
   },100);
 }
 /* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed" and stops at
@@ -1333,7 +1341,7 @@ function demoCoin(){
 }
 function demoStep(step){
   document.querySelectorAll('.ov.on').forEach(o=>o.classList.remove('on'));
-  clearTimeout(breathT); clearInterval(winT);
+  clearTimeout(breathT); clearTimeout(breathT2); clearInterval(winT);
   const top=id=>{ const el=$(id); if(el) el.scrollTop=0; };
   if(step==='today'){ go('home'); top('s-home'); }
   else if(step==='shield'){ go('home'); showShield(); }
