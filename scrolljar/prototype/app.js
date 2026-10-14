@@ -242,13 +242,15 @@ function showBreath(){
   breathT=setTimeout(()=>{$('breathBtns').style.display='block'; launchContinue();},3200);
 }
 /* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed" and stops at
-   a random moment (2.2–3.8 s), always well away from where it stopped last time, so the thumb can't
+   a random moment (7–9 s), always well away from where it stopped last time, so the thumb can't
    learn it. Hard, not mean: it can be tapped while moving, never covers the main button, and with
    reduced motion it just appears in a new spot. */
 let goRAF=0, goLastStop=null;
 function launchContinue(){
   const b=$('breathGo'), ov=$('ov-breath'), stay=$('breathBtns');
   cancelAnimationFrame(goRAF); b.style.display='';
+  /* a soft entrance: fades and grows in while it starts to move */
+  b.animate([{opacity:0,transform:'scale(.85)',filter:'blur(3px)'},{opacity:1,transform:'none',filter:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'});
   const W=b.offsetWidth, H=b.offsetHeight, minX=16, maxX=ov.clientWidth-16-W,
         minY=stay.offsetTop+stay.offsetHeight+14, maxY=ov.clientHeight-18-H;
   const far=(x,y)=>!goLastStop||Math.hypot(x-goLastStop[0],y-goLastStop[1])>=70;
@@ -260,16 +262,16 @@ function launchContinue(){
     for(let i=0;i<30&&!far(x,y);i++){ x=rnd(minX,maxX); y=rnd(minY,maxY); }
     goLastStop=[x,y]; put(); return; }
   put();
-  const a=rnd(20,55)*Math.PI/180, sp=rnd(480,560);
+  const a=rnd(20,55)*Math.PI/180, sp=rnd(320,370);
   let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1);
-  const start=performance.now(), stopAt=rnd(2200,3800); let t0=start, braking=false;
+  const start=performance.now(), stopAt=rnd(7000,9000); let t0=start, braking=false;
   const step=t=>{ if(!ov.classList.contains('on')) return;
     const dt=Math.min(.05,(t-t0)/1000); t0=t; x+=vx*dt; y+=vy*dt;
     if(x<minX){x=minX;vx=Math.abs(vx)} else if(x>maxX){x=maxX;vx=-Math.abs(vx)}
     if(y<minY){y=minY;vy=Math.abs(vy)} else if(y>maxY){y=maxY;vy=-Math.abs(vy)}
     /* brake once it's time and it will come to rest far from the last stop (or after 1.5 s extra) */
-    if(!braking && t-start>stopAt && (far(clamp(x+vx/9,minX,maxX),clamp(y+vy/9,minY,maxY))||t-start>stopAt+1500)) braking=true;
-    if(braking){ const f=Math.exp(-9*dt); vx*=f; vy*=f; }
+    if(!braking && t-start>stopAt && (far(clamp(x+vx/6,minX,maxX),clamp(y+vy/6,minY,maxY))||t-start>stopAt+1500)) braking=true;
+    if(braking){ const f=Math.exp(-6*dt); vx*=f; vy*=f; }
     put();
     if(!braking||Math.hypot(vx,vy)>8) goRAF=requestAnimationFrame(step); else goLastStop=[x,y]; };
   goRAF=requestAnimationFrame(step);
