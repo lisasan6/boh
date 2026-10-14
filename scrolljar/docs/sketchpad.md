@@ -93,6 +93,14 @@ Good dopamine (earned, fixed, predictable) · intention optional on shield · li
 Big Counter (audited; Q12 methodology) · reclaimed-hours mural · jar = interface AND mascot · tip-out = THE celebration · transparency page = giving ledger (5 streams) · Every.org rail.
 
 ## 💶 Monetization (decided + #12 placed)
+**Update 2026-10-14 (L, decided):**
+- **The stakes engine becomes free.** Free users see the card fee on top ("$35 to charity + $1.32 card fee; 100% of the $35 arrives"); members have fees covered by ScrollJar. Settles the open "who pays card fees" question and keeps "100% to charity" true for everyone.
+- **One personal tier, "Plus"** (~$3.99/mo · $29.99/yr), replaces Hero + Legend: groups and challenges, danger-hours forecast, deep stats, card fees covered, more promises. Legend's "we give half" may survive as an optional pay-more choice. Free keeps 2–3 promises and all kindness features.
+- **Order of markets:** Teams first (the business: $4/seat/mo, billed outside Apple, free 6-week pilot, small-team flat price ~$99/mo for 5–24 people), then **Families and Creators** in parallel.
+  - *Family* (~$6.99/mo · $49.99/yr, up to 6): shared rules that bind parents too, one family jar and tip-out. Under-18s are never charged: a parent pledges, clean evenings unlock it to the kid's chosen cause. No spying. Child-privacy legal check before launch.
+  - *Creators:* "Creator setup" template (shield feed apps, keep Business Suite / Edits / TikTok Studio / YouTube Studio open), timed posting windows, public challenge jars. Free for creators running a public challenge, otherwise Plus. **No creator ever earns from followers' coins.**
+- **Viability (rough, unverified rules of thumb):** a ~€2,000/month founder salary ≈ ~1,300 paying individuals or ~8 companies of 100 seats. Treat as a side project until ~3 paying companies or a real waitlist. Sell Teams pilots before paying for the build.
+
 **Ghost Jar** free (blocking, friction, peek, widget, buddy jar, rough-day support — kindness never paywalled) · **Jar Hero** $5.99/$49.99 (stakes engine, unlimited commitments, groups, success-giving, **danger-hours forecast** — heatmap + proactive prep, brainstorm #12) · **Jar Legend** $9.99/$79.99 (everything + deep stats + AI companion later — which absorbs the *conversational* forecast — + flair/skins + 2× success units + 50% given) · supporter state · strength-point upgrades only · no dark patterns · model: Hero yr nets $42.49, Legend yr $34.00, LTV ~$91, break-even ~356 subs.
 *Wobble stays free at every tier — it's kindness, and kindness is never paywalled.*
 
