@@ -1,4 +1,21 @@
-const S = {jar:47, coins:3, streak:12, tier:'Ghost Jar', firstResist:false};
+const S = {cap:50, charity:0, streak:12, tier:'Ghost Jar', firstResist:false};
+/* this month's coins, newest first — the jar total is always their sum */
+const COINS=[
+  {p:'The scroll one',amt:5, when:'Today · 9:12pm',    fresh:true},
+  {p:'The loud one',  amt:10,when:'Yesterday · 11:40pm',fresh:true},
+  {p:'The scroll one',amt:5, when:'Sun 20 Jul · 10:05pm'},
+  {p:'The scroll one',amt:5, when:'Wed 16 Jul · 9:48pm'},
+  {p:'The loud one',  amt:10,when:'Fri 11 Jul · 11:02pm'},
+];
+const jarTotal=()=>COINS.reduce((t,c)=>t+c.amt,0);
+const CHARITIES=[
+  {n:'Doctors Without Borders',l:'Emergency medical care in conflict zones, epidemics and disasters.'},
+  {n:'GiveDirectly',l:'Sends cash straight to people living in extreme poverty, to spend as they choose.'},
+  {n:'Against Malaria Foundation',l:'Buys and distributes bed nets that protect families from malaria.'},
+  {n:'Feeding America',l:'A nationwide network of US food banks and meal programs.'},
+  {n:'UNICEF USA',l:'Health, nutrition, clean water and education for children worldwide.'},
+];
+const charity=()=>CHARITIES[S.charity];
 const $=id=>document.getElementById(id);
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2600)}
 function setMode(m){
@@ -26,10 +43,16 @@ function onbNext(){
 function closeOnb(){$('ov-onb').classList.remove('on');toast('Both apps are shielded. Try opening one.')}
 
 /* ── jar rendering ── */
-const POS=[[76,182],[112,188],[95,158],[70,152],[118,158],[95,128],[76,104],[112,110]];
-function renderCoins(target, n){
+/* the pile grows with the money, not the coin count: a full jar = your monthly cap */
+const POS=[];
+[[190,5],[171,4],[152,5],[133,4]].forEach(([y,n])=>{
+  const xs=n===5?[56,78,100,122,144]:[67,89,111,133];
+  [2,1,3,0,4].filter(i=>i<n).forEach(i=>POS.push([xs[i],y]));
+});
+function renderCoins(target, amount){
   target.innerHTML='';
-  for(let i=0;i<Math.min(n,8);i++){
+  const n=amount<=0?0:Math.max(1,Math.round(Math.min(amount/S.cap,1)*POS.length));
+  for(let i=0;i<n;i++){
     const [cx,cy]=POS[i];
     const c=document.createElementNS('http://www.w3.org/2000/svg','use');
     c.setAttribute('href','#coin');c.setAttribute('x',cx-17);c.setAttribute('y',cy-17);
@@ -53,13 +76,49 @@ function stars(box,n,big){
 function fanfare(box,txt){const f=document.createElement('div');f.className='fanfare';f.textContent=txt;box.appendChild(f);setTimeout(()=>f.remove(),1400)}
 
 /* ── the moment of choice ── */
+/* whichever jar is on screen right now: the big one on the jar screen, or the small one on Today */
+function liveJar(){
+  return $('s-jar').classList.contains('on')
+    ? {box:$('homeJar'),svg:$('homeJarSvg'),mouth:$('mouth')}
+    : {box:$('todayJar'),svg:$('todayJarSvg'),mouth:$('mouthT')};
+}
+function renderJar(){
+  const t=jarTotal(), pct=Math.min(t/S.cap,1)*100;
+  document.querySelectorAll('[data-bind="jar"]').forEach(e=>e.textContent='$'+t);
+  document.querySelectorAll('[data-bind="capfill"]').forEach(e=>e.style.width=pct+'%');
+  document.querySelectorAll('[data-bind="capText"]').forEach(e=>e.textContent=
+    t>=S.cap?'Full for July · shields stay on':'$'+t+' of your $'+S.cap+' cap');
+  document.querySelectorAll('[data-bind="coinCount"]').forEach(e=>e.textContent=COINS.length+' coin'+(COINS.length===1?'':'s'));
+  document.querySelectorAll('[data-bind="charityLine"]').forEach(e=>e.textContent=charity().l);
+  document.querySelectorAll('.charityName').forEach(e=>e.textContent=charity().n);
+  renderCoins($('coinStack'),t); renderCoins($('todayCoins'),t);
+  $('coinList').innerHTML=COINS.length?COINS.map((c,i)=>`<div class="coinRow">
+      <svg viewBox="0 0 40 40" width="22" height="22" style="flex:none"><use href="#coin"/></svg>
+      <div style="flex:1;min-width:0"><b style="font-size:12.5px">${c.p}</b><div class="tiny">${c.when}</div></div>
+      ${c.fresh?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="refundCoin(${i})">Refund</span>`:''}
+      <span class="display num" style="font-size:15px;color:var(--gold-text);min-width:30px;text-align:right">$${c.amt}</span>
+    </div>`).join(''):'<div class="tiny" style="padding:10px 0">No coins yet this month.</div>';
+}
+function refundCoin(i){
+  const c=COINS.splice(i,1)[0]; renderJar();
+  toast('Refunded. $'+c.amt+' goes back to your card, no questions asked.');
+}
+function renderCharities(){
+  $('charityList').innerHTML=CHARITIES.map((c,i)=>`<div class="tierbox${i===S.charity?' sel':''}" onclick="pickCharity(${i})">
+    <div class="spread"><b style="font-size:14px">${c.n}</b>${i===S.charity?'<span class="pill mint">Your charity</span>':''}</div>
+    <div class="tiny" style="margin-top:5px;line-height:1.5">${c.l}</div></div>`).join('');
+}
+function pickCharity(i){
+  S.charity=i; renderCharities(); renderJar();
+  toast('Your jar now goes to '+charity().n+' on Aug 1.');
+}
 function showShield(){$('ov-shield').classList.add('on')}
 function resist(){
   ['ov-shield','ov-breath','ov-override'].forEach(closeOv);
-  const box=$('homeJar'), svg=$('homeJarSvg');
+  const {box,svg,mouth}=liveJar();
   svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop');
   stars(box,7,true);
-  $('mouth').setAttribute('d','M84 114 q16 13 32 0');setTimeout(()=>$('mouth').setAttribute('d','M88 118 q12 8 24 0'),1000);
+  mouth.setAttribute('d','M84 114 q16 13 32 0');setTimeout(()=>mouth.setAttribute('d','M88 118 q12 8 24 0'),1000);
   if(!S.firstResist){
     S.firstResist=true;
     setTimeout(()=>{ $('ov-firstwin').classList.add('on'); stars($('winJarBox'),11,true); },520);
@@ -78,11 +137,19 @@ function showBreath(){
   clearTimeout(breathT);
   breathT=setTimeout(()=>{$('breathBtns').style.display='block'},3200);
 }
-function showOverride(){closeOv('ov-breath');$('ov-override').classList.add('on')}
+function showOverride(){
+  closeOv('ov-breath');
+  if(jarTotal()+5>S.cap){
+    ['ov-shield','ov-instead'].forEach(closeOv);
+    showExit('Your jar is full for July.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on Aug 1.');
+    return;
+  }
+  $('ov-override').classList.add('on');
+}
 let winT;
 function payOverride(){
   closeOv('ov-override');
-  const box=$('homeJar'), svg=$('homeJarSvg');
+  const {box,svg}=liveJar();
   const f=document.createElement('div');f.className='flyer';
   f.innerHTML='<svg viewBox="0 0 40 40" width="26" height="26"><use href="#coin"/></svg>';
   f.style.left='calc(50% - 12px)';f.style.top='56%';box.appendChild(f);
@@ -94,7 +161,7 @@ function payOverride(){
     f.remove();
     svg.classList.remove('squash');void svg.offsetWidth;svg.classList.add('squash');
     stars(box,5,false);
-    S.jar+=5;S.coins++;renderCoins($('coinStack'),S.coins);$('jarAmt').textContent='$'+S.jar;$('jarAmtMini').textContent='$'+S.jar;
+    COINS.unshift({p:'The scroll one',amt:5,when:'Just now',fresh:true}); renderJar();
     $('ov-window').classList.add('on');
     let sec=899;clearInterval(winT);
     winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
@@ -114,15 +181,15 @@ function logMood(k,label){
 }
 
 /* ── tip-out ceremony ── */
-const SETTLE=['Collecting your coins','Verifying with Every.org','Sending to Doctors Without Borders','Receipt issued to you'];
 function runSettlement(){
+  const SETTLE=['Collecting your coins','Verifying with Every.org','Sending to '+charity().n,'Receipt issued to you'];
   $('settleSteps').innerHTML=SETTLE.map(t=>`<div class="settleRow"><div class="settleDot">✓</div><div class="settleTxt">${t}</div></div>`).join('');
   document.querySelectorAll('#settleSteps .settleRow').forEach((r,i)=>setTimeout(()=>r.classList.add('done'), 1400+i*620));
 }
 function showTipout(){
   $('ov-tipout').classList.add('on'); runSettlement();
-  $('tipAmt').textContent='$'+S.jar;
-  renderCoins($('tipCoins'),S.coins+2);
+  renderJar();
+  renderCoins($('tipCoins'),jarTotal());
   const svg=$('tipJar'), box=$('tipJarBox');
   setTimeout(()=>{
     svg.animate([{transform:'rotate(0)'},{transform:'rotate(-11deg)',offset:.2},{transform:'rotate(40deg)',offset:.6},
@@ -130,7 +197,7 @@ function showTipout(){
     setTimeout(()=>{[...$('tipCoins').children].forEach((c,i)=>setTimeout(()=>{
       c.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate(70px,58px) scale(.4)',opacity:0}],
                 {duration:600,easing:'cubic-bezier(.3,.05,.5,1)',fill:'forwards'})},i*90));stars(box,7,false)},620);
-    setTimeout(()=>{$('tipCoins').innerHTML='';stars(box,11,true);fanfare(box,'$'+S.jar+' GIVEN!')},1950);
+    setTimeout(()=>{$('tipCoins').innerHTML='';stars(box,11,true);fanfare(box,'$'+jarTotal()+' GIVEN!')},1950);
   },400);
 }
 function showRough(){$('ov-rough').classList.add('on')}
@@ -520,7 +587,7 @@ function publishPost(){
 const HRS=[{d:'M',v:1.2},{d:'T',v:1.8},{d:'W',v:.9,coin:1},{d:'T',v:2.1},{d:'F',v:1.4},{d:'S',v:.8,coin:1},{d:'S',v:1.5}];
 const mx=Math.max(...HRS.map(h=>h.v));
 $('hoursChart').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*76)}px"></div><div class="l">${h.d}</div></div>`).join('');
-let cal='';for(let d=1;d<=31;d++){cal+=d>26?`<div class="d-off">${d}</div>`:([3,11,19].includes(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`)}
+let cal='';for(let d=1;d<=31;d++){cal+=d>26?`<div class="d-off">${d}</div>`:([11,16,20,25,26].includes(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`)}
 $('cal').innerHTML=cal;
 /* ── focus session timers ── */
 let focusT, focusTotal=0, focusLeft=0;
@@ -546,7 +613,7 @@ function endFocus(early){
   $('focusIdle').style.display='flex'; $('focusRun').style.display='none';
   $('focusHint').textContent='shield everything, right now';
   if(early){ toast('Session ended. No coin — you set it, you can end it.'); }
-  else { const svg=$('homeJarSvg'); svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop'); stars($('homeJar'),9,true);
+  else { const {box,svg}=liveJar(); svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop'); stars(box,9,true);
     setTimeout(()=>showExit('Session complete.','That hour was yours. Now close this and go spend the next one too.'),600); }
 }
 /* ── schedule picker ── */
@@ -829,7 +896,7 @@ function toggleWork(el){
   toast(on ? 'Work mode on. The shield steps aside when you\'re working — and only then.' : 'Work mode off.');
 }
 function restart(){location.reload()}
-renderCommits();renderCoins($('coinStack'),S.coins);renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
+renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
 $('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
 $('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');
 $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i];
@@ -838,4 +905,4 @@ $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i]
     <div class="${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*32)}px;flex:1;border-radius:4px 4px 0 0"></div></div>`}).join('');
 $('recapBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
 $('challengeBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
-setInterval(()=>{const svg=$('homeJarSvg');if(!document.hidden&&Math.random()<.4&&!svg.classList.contains('hop')){svg.classList.add('hop');setTimeout(()=>svg.classList.remove('hop'),800)}},11000);
+setInterval(()=>{const {svg}=liveJar();if(!document.hidden&&Math.random()<.4&&!svg.classList.contains('hop')){svg.classList.add('hop');setTimeout(()=>svg.classList.remove('hop'),800)}},11000);
