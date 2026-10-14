@@ -71,7 +71,7 @@ This gates TestFlight and the App Store, and approval takes weeks.
 
 Then buy the domain (`scrolljar.app` is assumed throughout) and deploy to Netlify, Vercel or Cloudflare Pages.
 
-**The hero phone now runs the live prototype** (an iframe of `../prototype/index.html?embed=1&mode=day`). When deploying, publish `prototype/` alongside `landing/` so that path resolves — e.g. deploy the whole `scrolljar/` folder with `landing/` as the home page, or copy `prototype/` next to `landing/index.html` and change the iframe `src` to `prototype/index.html?embed=1&mode=day`.
+**The hero phone now runs the live prototype** (an iframe of `../prototype/index.html?embed=1`, night mode). When deploying, publish `prototype/` alongside `landing/` so that path resolves — e.g. deploy the whole `scrolljar/` folder with `landing/` as the home page, or copy `prototype/` next to `landing/index.html` and change the iframe `src` to `prototype/index.html?embed=1`.
 
 ### 🟡 3. Product questions still open
 
@@ -95,7 +95,7 @@ Embed the working prototype in the landing page's hero phone, so visitors can ta
 - **Tier names:** `board-reactions-2026-07-27.md` lists them as pending. **Ghost Jar / Jar Hero / Jar Legend is decided** (spec v1.2).
 - **Buttons:** `design-session-briefing.md` says pill buttons and suggests Sora or Outfit. **Locked: 16px square-rounded buttons, Bricolage Grotesque with Inter** (`design-brief.md`).
 - **Day-mode colours:** `design-brief.md` lists a cool day ground (#F3F5FC). The prototype uses a warmer dawn palette. **The prototype's `styles.css` is the source of truth.**
-- **App vs website:** they are deliberately different registers. The app is vivid (Aurora Chrome, night-first); the website is calm (white, a teal accent, the colourful app screens as the only saturated element).
+- **App vs website (changed 2026-10-14, L's decision):** the website now shares the app's night aurora look: dark sky, frosted glass panels, a mint-to-lavender headline gradient, the live prototype in the hero phone, and restrained motion (one moment per section, all off under reduced motion). The earlier calm white site is in git history; the two hero explorations are in `landing/explore/`.
 
 ## 6. Settled website copy: do not churn
 
