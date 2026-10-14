@@ -59,6 +59,9 @@
   <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 21v-8"/><path d="M12 13c0-3.3-2.7-6-6-6 0 3.3 2.7 6 6 6z"/><path d="M12 13c0-3.9 3.1-7 7-7 0 3.9-3.1 7-7 7z"/>
   </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3.5h6l-1 5.2 3.2 3.1v1.4H6.8v-1.4L10 8.7z"/><path d="M12 13.2v7.3"/>
+  </symbol>
   <symbol id="i-rings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
     <circle cx="8.6" cy="12" r="5.6"/><circle cx="15.4" cy="12" r="5.6"/>
   </symbol>
@@ -469,7 +472,7 @@
   <!-- ══ FEED ══ -->
   <div class="screen" id="s-friends">
     <div class="spread" style="margin-bottom:12px">
-      <div class="display h1">Together</div>
+      <div><div class="eyebrow">BOARD</div><div class="display" style="font-size:21px;line-height:1.2;margin-top:4px">What your people did instead</div></div>
       <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
     <div class="jarStrip">
@@ -763,7 +766,7 @@
   <div class="tabs">
     <div class="tab on" data-s="home" onclick="go('home')"><svg class="i"><use href="#i-sprout"/></svg>TODAY</div>
     <div class="tab" data-s="diary" onclick="go('diary')"><svg class="i"><use href="#i-book"/></svg>DIARY</div>
-    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-rings"/></svg>TOGETHER</div>
+    <div class="tab" data-s="friends" onclick="go('friends')"><svg class="i"><use href="#i-pin"/></svg>BOARD</div>
     <div class="tab" data-s="you" onclick="go('you')"><svg class="i"><use href="#i-target"/></svg>YOU</div>
   </div>
 
