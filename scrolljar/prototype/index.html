@@ -23,6 +23,8 @@
   <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFC94D"/><stop offset="1" stop-color="#D8951A"/>
   </linearGradient>
+  <!-- lid colours people can choose (silver uses the theme's own rim colours) -->
+  <linearGradient id="lid-mint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B8FFF0"/><stop offset=".36" stop-color="#1FB596"/><stop offset=".6" stop-color="#7CF2DA"/><stop offset="1" stop-color="#0C6E5C"/></linearGradient><linearGradient id="lid-lavender" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6E0FF"/><stop offset=".36" stop-color="#7C6BE0"/><stop offset=".6" stop-color="#C7BEFF"/><stop offset="1" stop-color="#4A3CA8"/></linearGradient><linearGradient id="lid-copper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5C6A4"/><stop offset=".36" stop-color="#B0643C"/><stop offset=".6" stop-color="#F0B48E"/><stop offset="1" stop-color="#6E3A1E"/></linearGradient><linearGradient id="lid-cork" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8BE86"/><stop offset=".36" stop-color="#A8743E"/><stop offset=".6" stop-color="#D6A266"/><stop offset="1" stop-color="#7A4E24"/></linearGradient>
   <!-- jar look: the light across a round glass body -->
   <linearGradient id="cyl" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset=".22" stop-color="#fff" stop-opacity="0"/>
@@ -267,6 +269,8 @@
       <div class="tiny" style="margin-top:7px" data-bind="capText">$35 of your $50 cap</div>
       <div class="tiny" style="margin-top:4px">→ <span class="charityName">Doctors Without Borders</span> · tips Aug 1 · <span style="color:var(--violet);cursor:pointer" onclick="go('charity')">change</span></div>
     </div>
+    <div class="card lidCard"><div class="spread"><b style="font-size:13px">Lid colour</b><span class="tiny">yours to pick, any time</span></div>
+      <div class="swatches" id="lidPickMe"></div></div>
     <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
       <div class="eyebrow">IMPACT · JULY</div>
       <div class="sub" style="margin-top:8px">Your July coins are going to <b class="charityName">Doctors Without Borders</b>. <span data-bind="charityLine"></span></div>
@@ -484,10 +488,10 @@
       <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
     <div class="jarStrip">
-      <div class="jarChip co" onclick="openCompany()"><b>Fernhill &amp; Co.</b><span>company</span></div>
-      <div class="jarChip fam" onclick="openFamily()"><b>Rossi family</b><span>family</span></div>
-      <div class="jarChip cr" onclick="openCreator()"><b>Unplugged September</b><span>@maya.makes · challenge</span></div>
-      <div class="jarChip on" onclick="go('jardetail')"><b>Casa Jar</b><span>you + 3</span></div>
+      <div class="jarChip co" onclick="openCompany()"><b><i class="lidDot" data-jar="co"></i>Fernhill &amp; Co.</b><span>company</span></div>
+      <div class="jarChip fam" onclick="openFamily()"><b><i class="lidDot" data-jar="fam"></i>Rossi family</b><span>family</span></div>
+      <div class="jarChip cr" onclick="openCreator()"><b><i class="lidDot" data-jar="cr"></i>Unplugged September</b><span>@maya.makes · challenge</span></div>
+      <div class="jarChip on" onclick="go('jardetail')"><b><i class="lidDot" data-jar="casa"></i>Casa Jar</b><span>you + 3</span></div>
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
       <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
     </div>

@@ -73,7 +73,7 @@ function buildJar(svg){
     </g>
     <path d="${JAR_BODY}" fill="none" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
     <path d="${JAR_BODY}" fill="none" stroke="url(#rimlight)" stroke-width="1.2"/>
-    <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+    <rect class="lid" x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
     <g class="jarFace">
       <g class="eyes">
         <g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
@@ -1533,6 +1533,8 @@ function renderFamily(animate){
       <div class="av" style="background:${m.c}">${m.n[0]}</div>
       <div style="flex:1"><b style="font-size:13px">${m.n}${m.age?` <span class="tiny">· ${m.age}</span>`:''}</b><div class="tiny">${m.role==='kid'?'picked: ':'gives to: '}${m.cause}</div></div>
       <span class="pill ${m.role==='kid'?'chr':'gold'}">${m.role}</span></div>`).join('')}</div>
+    <div class="card lidCard"><b style="font-size:13px">Family lid colour</b><div class="tiny" style="margin-top:2px">anyone in the family can change it</div>
+      <div class="swatches" data-lidpick="fam"></div></div>
     <div class="card"><div class="spread"><div><div style="font-size:12.5px;font-weight:700">My coins in the family jar</div><div class="tiny">only the grown-ups' total shows, never whose</div></div>
       <div class="toggle${FAM.coinsIn?' on':''}" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
     <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What the family sees</b></div>
@@ -1542,6 +1544,7 @@ function renderFamily(animate){
       <div class="coRule no">Anyone's diary or voice notes</div>
       <div class="tiny" style="margin-top:8px">The same for grown-ups and kids. Nobody gets a report on anybody.</div></div>
     <div class="row" style="gap:8px"><button class="btn ghost" style="flex:1" onclick="openFamSetup()">Family settings</button><button class="btn ghost" style="flex:1" onclick="showFamTip()">Preview the tip-out</button></div>`;
+    paintLids();
   } else {
     const k=FAM.members.find(m=>m.n==='Mia');
     $('famEyebrow').textContent='YOUR HOURS · JULY';
@@ -1737,6 +1740,37 @@ function crsFinish(){
   if(S.plan==='free'){ S.plan='creator'; renderPlan(); }
   renderCommits(); closeOv('ov-crsetup'); openCreator(); toast('Creator setup is on. Your link is ready to share.');
 }
+/* ══ LID COLOURS ══
+   Free for everyone and never earned: no colour is unlocked by a streak or sold. Your own jar has
+   your colour; each shared jar has its own, so you can tell them apart on the Board. */
+const LID_NAMES={silver:'Silver',mint:'Mint',lavender:'Lavender',copper:'Copper',cork:'Cork'};
+const LIDS={me:'silver',fam:'cork',co:'lavender',cr:'copper',casa:'mint'};
+const lidFill=k=>k==='silver'?'url(#rim)':`url(#lid-${k})`;
+const lidSwatchBg={mint:'linear-gradient(135deg,#B8FFF0,#1FB596 45%,#0C6E5C)',lavender:'linear-gradient(135deg,#E6E0FF,#7C6BE0 45%,#4A3CA8)',
+  copper:'linear-gradient(135deg,#F5C6A4,#B0643C 45%,#6E3A1E)',cork:'linear-gradient(135deg,#E8BE86,#A8743E 45%,#7A4E24)',silver:'linear-gradient(135deg,#F2F7FA,#8798A8 45%,#5F6E80)'};
+function jarOwner(svg){
+  if(svg.querySelector('#coinStack,#todayCoins,#tipCoins')||svg.id==='winJar') return 'me';
+  if(svg.querySelector('#famJarG,#ftJarG')) return 'fam';
+  if(svg.querySelector('#coLights,#ctLights')) return 'co';
+  if(svg.querySelector('#crJarG')) return 'cr';
+  return 'me';
+}
+function paintLids(){
+  document.querySelectorAll('svg[data-built]').forEach(svg=>{ const l=svg.querySelector('.lid'); if(l) l.setAttribute('fill',lidFill(LIDS[jarOwner(svg)])); });
+  document.querySelectorAll('.lidDot').forEach(d=>d.style.background=lidSwatchBg[LIDS[d.dataset.jar]]);
+  document.querySelectorAll('[data-lidpick]').forEach(renderLidPick);
+  const me=$('lidPickMe'); if(me){ me.dataset.lidpick='me'; renderLidPick(me); }
+}
+function renderLidPick(box){
+  const who=box.dataset.lidpick;
+  box.innerHTML=Object.keys(LID_NAMES).map(k=>`<button class="swatch${LIDS[who]===k?' on':''}" style="background:${lidSwatchBg[k]}" aria-label="${LID_NAMES[k]} lid" aria-pressed="${LIDS[who]===k}" onclick="pickLid('${who}','${k}')"></button>`).join('')
+    +`<span class="tiny swatchName">${LID_NAMES[LIDS[who]]}</span>`;
+}
+function pickLid(who,k){
+  LIDS[who]=k; paintLids();
+  const svg=who==='me'?$('homeJarSvg'):who==='fam'?$('famJarSvg'):null;
+  if(svg){ svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop'); jarMood(svg,'happy',900); }
+}
 function restart(){location.reload()}
 /* embed mode (landing page phone): no onboarding, no prototype controls */
 const Q=new URLSearchParams(location.search);
@@ -1763,7 +1797,7 @@ function demoStep(step){
   else if(step==='tipout'){ go('jar'); top('s-jar'); showTipout(); }
 }
 if(Q.has('embed')) addEventListener('message',e=>{ const d=e.data; if(d&&d.scrolljar==='show') demoStep(d.step); });
-renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
+paintLids();renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
 $('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
 $('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');
 $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i];
