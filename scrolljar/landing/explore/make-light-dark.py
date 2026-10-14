@@ -45,14 +45,7 @@ def scoped(start_marker, pairs):
     for x,y in pairs:
         assert sec.count(x)==1,(start_marker,x[:50]); sec=sec.replace(x,y)
     s=s[:a]+sec+s[b:]
-scoped('<span class="eyebrow">The win-win</span>',[
- ('Either you win the hour,<br>or a charity does.','Either you win the hour,<br><span class="grad">or a charity does.</span>')])
-scoped('<section id="refuse" class="band light">',[
- ('<h2 class="display">Kind by design.</h2>','<h2 class="display"><span class="grad">Kind</span> by design.</h2>')])
-scoped('<section id="families" class="band light">',[
- ('A family jar,<br>not a family spy.','A family jar,<br><span class="grad">not a family spy.</span>')])
-scoped('<section id="faq" class="band light">',[
- ('The honest answers.','The <span class="grad">honest answers.</span>')])
+# (the gradient key words now live in landing/index.html itself)
 # a touch more colour in the light gradient so it reads as vividly as on dark, while staying readable
 s=s.replace("--head-grad:linear-gradient(95deg,#0B9C80 0%,#6455D6 100%);","--head-grad:linear-gradient(95deg,#0A9A7E 0%,#3F8FD6 50%,#6A55E0 100%);")
 open(dst,'w').write(s)
