@@ -367,7 +367,7 @@ function renderFeed(){
      ${f.sub?`<div class="tiny" style="margin-top:3px">${f.sub}</div>`:''}
      ${f.photo?`<div class="fphoto">${scene(f.photo)}</div>`:''}
      <div class="frow">
-       <div class="kudos" onclick="giveKudos(this,${i})"><svg width="13" height="13"><use href="#i-heart"/></svg><span>${f.kudos}</span></div>
+       <div class="kudos" onclick="giveKudos(this,${i})" aria-label="High five"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div>
        <span class="tiny">${f.t==='coin'?'reported, not judged':''}</span>
      </div>
    </div>`).join('');
@@ -1033,7 +1033,7 @@ function saveEntry(){
 /* ── instead-of screen ── */
 function showInstead(){
   closeOv('ov-breath');
-  paintInstead();
+  paintInstead(); paintColleagues();
   $('promptChips').innerHTML=PROMPTS.slice(0,3).map(p=>`<div class="promptChip">${p}</div>`).join('');
   $('ov-instead').classList.add('on');
 }
@@ -1078,6 +1078,7 @@ function renderCompany(animate){
   $('coCardLine').textContent=CO.joined?`${CO.evenings} clean evenings · ${money(unlocked)} unlocked`:"You're invited to the company jar";
   $('coCardSub').textContent=CO.joined?`you: ${CO.mine} · for ${CO.causes[CO.vote>=0?CO.vote:0]}`:'every clean evening unlocks $5 for a cause you vote on';
   drawMoons($('coMoons'),Math.round(pct*POS.length),animate);
+  $('coNotesWrap').style.display=CO.joined?'':'none'; renderNotes();
 }
 /* moons rise into the jar (the consumer coins fall; this jar fills with something earned) */
 function drawMoons(g,n,animate){
@@ -1148,6 +1149,89 @@ function showCoTip(){
     (function tick(t){const k=Math.min((t-t0)/dur,1); $('ctAmt').textContent=money(final*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(tick);
       else { stars($('ctJarBox'),11,true); fanfare($('ctJarBox'),money(final)+' GIVEN'); }})(t0);
   },700);
+}
+/* ══ EVENING NOTES — what people did instead, shared to inspire others ══
+   Anonymous and squad-only by default. High fives carry no count. "I'll try this" saves an idea
+   to a private list; the author only learns how many saved it. The privacy check runs on the phone. */
+const CO_NOTES=[
+  {sq:'Design',t:'Finally went to the theatre. First time since spring.',when:'Tuesday',all:true},
+  {sq:'Design',t:'Finished that series I kept falling asleep to. It has an ending, who knew.',when:'Monday'},
+  {sq:'Design',t:'Cooked a proper dinner. Phones stayed in the other room.',when:'Sunday'},
+  {sq:'Platform',t:'Organised the closet. Weirdly satisfying.',when:'Tuesday',all:true},
+  {sq:'Customer Care',t:'Walked to the end of the pier and back. Forty minutes, no podcast.',when:'Monday',all:true},
+  {sq:'Sales',t:'Called my grandmother. We talked for an hour.',when:'Sunday',all:true},
+];
+const IDEAS=[]; let notesScope='squad';
+const mySquad=()=>CO.squads[CO.squad].n;
+function setNotesScope(sc){ notesScope=sc; $('nsSquad').classList.toggle('on',sc==='squad'); $('nsAll').classList.toggle('on',sc==='all');
+  $('coNotesScope').textContent=sc==='squad'?'from your squad':'shared with everyone'; renderNotes(); }
+function renderNotes(){
+  if(!$('coNotes')) return;
+  const list=CO_NOTES.map((n,i)=>({...n,i})).filter(n=>notesScope==='squad'?(n.mine||n.sq===mySquad()):n.all);
+  $('coNotes').innerHTML=list.length?list.map(n=>{
+    const who=n.mine?`You · shown as ${n.signed?'Luca':'Someone in '+n.sq}`:(n.name||'Someone in '+n.sq);
+    return `<div class="fcard noteCard"><div class="tiny" style="margin-bottom:5px">${who} · ${n.when}</div><div class="fbody" style="font-size:13.5px">${n.t}</div>
+      <div class="row" style="gap:8px;margin-top:10px">
+        ${n.mine?`<span class="tiny"><svg width="12" height="12" style="vertical-align:-2px"><use href="#i-lock"/></svg> only you see this: saved by ${n.saves||0} ${n.saves===1?'person':'people'}</span>`
+        :`<button class="kudos${n.hf?' done':''}" aria-pressed="${!!n.hf}" onclick="highFive(${n.i})"><svg width="14" height="14"><use href="#i-hifive"/></svg>High five</button>
+          <button class="kudos${n.saved?' done':''}" aria-pressed="${!!n.saved}" onclick="tryIdea(${n.i})"><svg width="13" height="13"><use href="#i-save"/></svg>${n.saved?'Saved':"I'll try this"}</button>`}
+      </div></div>`}).join(''):`<div class="tiny" style="padding:6px 2px 12px">No notes here yet.</div>`;
+  $('ideaCount').textContent=IDEAS.length;
+}
+function highFive(i){ const n=CO_NOTES[i]; n.hf=!n.hf; renderNotes(); if(n.hf) toast('High five sent. No counts, no names.'); }
+function tryIdea(i){ const n=CO_NOTES[i]; n.saved=!n.saved;
+  if(n.saved){ IDEAS.unshift(n.t); toast('Saved to Ideas for tonight. Only you can see this list.'); }
+  else { const k=IDEAS.indexOf(n.t); if(k>=0) IDEAS.splice(k,1); }
+  renderNotes(); }
+function openIdeas(){
+  $('ideasList').innerHTML=IDEAS.length?IDEAS.map((t,k)=>`<div class="insteadCard" style="cursor:default"><div class="ic" style="background:rgba(155,140,255,.14);color:var(--violet)"><svg width="16" height="16"><use href="#i-save"/></svg></div>
+      <div style="flex:1;font-size:13px;font-weight:600">${t}</div><span class="tiny" style="cursor:pointer" onclick="IDEAS.splice(${k},1);CO_NOTES.forEach(n=>{if(n.t===${JSON.stringify(t)})n.saved=false});renderNotes();openIdeas()">remove</span></div>`).join('')
+    :`<div class="tiny">Nothing saved yet. Tap "I'll try this" on a colleague's note.</div>`;
+  $('ov-ideas').classList.add('on');
+}
+/* colleague ideas appear when they're most useful: on the "Instead, you could…" screen */
+function paintColleagues(){
+  const box=$('insteadColleagues'); if(!box) return;
+  if(!CO.joined){ box.innerHTML=''; return; }
+  const picks=(IDEAS.length?IDEAS:CO_NOTES.filter(n=>n.all&&!n.mine).map(n=>n.t)).slice(0,2);
+  box.innerHTML=`<div class="eyebrow" style="color:var(--calm-soft);margin:6px 2px 8px">FROM PEOPLE AT FERNHILL</div>`+
+    picks.map(t=>`<div class="insteadCard" onclick="chooseInstead(${JSON.stringify(t).replace(/"/g,'&quot;')})">
+      <div class="ic" style="background:rgba(255,255,255,.08);color:var(--calm)"><svg width="17" height="17" viewBox="0 0 40 40"><use href="#moonM"/></svg></div>
+      <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">${t}</b><div class="tiny">a colleague's evening, shared anonymously</div></div>
+      <span style="color:var(--calm-soft)">›</span></div>`).join('');
+}
+/* writing a note */
+const NOTE_PROMPTS=['Cooked something','Called someone','Went for a walk','Finished something','Went out','Made something','Just rested'];
+function openNote(){
+  $('noteText').value=''; $('noteSign').classList.remove('on'); $('noteAll').classList.remove('on');
+  $('notePrompts').innerHTML=NOTE_PROMPTS.map(pr=>`<span class="promptChip" onclick="$('noteText').value='${pr}: ';$('noteText').focus();checkNote()">${pr}</span>`).join('');
+  checkNote(); $('ov-conote').classList.add('on');
+}
+/* the privacy check: plain rules, on the phone, nothing sent or stored. It nudges; it never blocks. */
+const COLLEAGUES=['Marta','Giulia','Sofia','Marco','Anna','Paolo'];
+const NUDGES=[
+  {k:'Health',re:/\b(therap(y|ist)|doctor|hospital|clinic|pregnan\w*|diagnos\w*|medication|meds|depress\w*|anxiety|panic attack|surgery|chemo|illness|sick|cancer|rehab|sober)\b/i,
+   m:'This mentions health. Colleagues will read it, even without your name. Keep it, say it more generally, or leave that part out.'},
+  {k:'Money',re:/\b(debt|loan|rent|salary|bills|overdraft|afford)\b/i,m:'This mentions money. Fine to keep, but colleagues may read more into it than you mean.'},
+  {k:"A child's name",re:/\bmy (son|daughter|kid|child|baby|boy|girl)\s+[A-Z][a-z]+/,m:'This includes a child\'s name. "My son" or "my daughter" works just as well.'},
+  {k:'An exact place',re:/\b\d+\s+[A-Za-z]+\s+(street|st|road|rd|avenue|ave|lane)\b|\b(my address|i live (at|on))\b/i,m:'This looks like an address or an exact place. Something more general keeps you private.'},
+  {k:'Someone else',re:new RegExp('\\b('+COLLEAGUES.join('|')+')\\b'),m:'This names someone. Notes are about your own evening, so leave the name out or ask them first.'},
+  {k:'Could identify you',re:/\bmy (twins|band|gig|boat|horse|marathon|wedding|bakery)\b|\b\d{2}(st|nd|rd|th) birthday\b/i,anonOnly:true,
+   m:'A detail like this might tell people it\'s you. Fine if you don\'t mind, or keep it more general.'},
+];
+function checkNote(){
+  const t=$('noteText').value, signed=$('noteSign').classList.contains('on');
+  const hits=NUDGES.filter(n=>!(n.anonOnly&&signed)&&n.re.test(t));
+  $('noteNudge').innerHTML=hits.length?`<div class="nudge">${hits.map(h=>`<div class="flagRow"><span class="flagDot warn"></span><span><b>${h.k}.</b> ${h.m}</span></div>`).join('')}
+    <div class="tiny" style="margin-top:6px">It's your call. Sharing it as written is fine.</div></div>`:'';
+}
+function postNote(){
+  const t=$('noteText').value.trim(); if(!t){ toast('Write a line first, even a short one.'); return; }
+  const signed=$('noteSign').classList.contains('on'), all=$('noteAll').classList.contains('on');
+  const n={sq:mySquad(),t,when:'just now',mine:true,signed,all,saves:0}; CO_NOTES.unshift(n);
+  closeOv('ov-conote'); setNotesScope(all?'all':'squad');
+  toast(signed?'Shared with your name.':(all?'Shared anonymously with everyone at Fernhill.':'Shared anonymously with your squad.'));
+  setTimeout(()=>{ n.saves=2; renderNotes(); },5000);
 }
 function restart(){location.reload()}
 /* embed mode (landing page phone): no onboarding, no prototype controls */
