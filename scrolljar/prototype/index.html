@@ -205,7 +205,7 @@
       </div>
     </div>
 
-    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Promises</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ New</span></div>
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Your deals</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ Make a deal</span></div>
     <div id="commitList"></div>
 
     <div class="card spread" style="cursor:pointer" onclick="go('insights')">
@@ -317,7 +317,7 @@
     <div id="appList"></div>
     <div class="card tipCard">
       <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)"><use href="#i-brain"/></svg>
-        <div style="flex:1"><b style="font-size:13px">Two of these are worth a promise</b>
+        <div style="flex:1"><b style="font-size:13px">Two of these are worth a deal</b>
         <div class="tiny" style="margin-top:2px">Not the biggest — the ones you open most often without deciding to. That's the tell.</div></div></div>
     </div>
     <div class="tiny" style="text-align:center;margin-top:4px;line-height:1.5">Apple draws this report inside a sealed window. We can show it to you; we can't store it, read it, or send it anywhere.</div>
@@ -673,7 +673,7 @@
         <div style="padding:16px;text-align:center">
           <svg width="34" height="34" style="color:var(--chrome-1)"><use href="#i-jar"/></svg>
           <div class="display" style="font-size:15px;margin-top:8px">Luca invited you to Casa Jar</div>
-          <div class="tiny" style="margin-top:5px">4 people keeping promises together.<br>This month they've given $38 to UNICEF.</div>
+          <div class="tiny" style="margin-top:5px">4 people keeping their deals together.<br>This month they've given $38 to UNICEF.</div>
           <div class="fakeBtn">Join the jar</div>
         </div>
       </div>
@@ -732,10 +732,10 @@
     </div>
     <div class="card">
       <b style="font-size:13px">If you pull the plug</b>
-      <div class="sub" style="margin-top:5px">Turning off Screen Time or deleting ScrollJar mid-promise counts as breaking the jar: <b>5× your override price</b>. You get a warning and one hour to restore first. Ending a promise honestly is always free, with 24h notice.</div>
+      <div class="sub" style="margin-top:5px">Turning off Screen Time or deleting ScrollJar in the middle of a deal counts as breaking the jar: <b>5× your override price</b>. You get a warning and one hour to restore first. Ending a deal honestly is always free, with 24h notice.</div>
     </div>
     <div class="card" id="planCard" style="cursor:pointer" onclick="go('paywall')">
-      <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 promises · card fee shown on top</div></div><span class="pill mint">See Plus</span></div>
+      <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 deals · card fee shown on top</div></div><span class="pill mint">See Plus</span></div>
     </div>
     <div class="card" style="background:rgba(55,226,192,.09)">
       <b style="font-size:13px"><svg class="glyph" width="13" height="13" style="color:var(--mint)"><use href="#i-heart"/></svg> Our promise</b>
@@ -746,7 +746,7 @@
 
   <!-- ══ NEW COMMITMENT ══ -->
   <div class="screen" id="s-new">
-    <div class="row" style="margin-bottom:14px"><span style="font-size:19px;cursor:pointer" onclick="go('home')">‹</span><div class="display h1">New promise</div></div>
+    <div class="row" style="margin-bottom:14px"><span style="font-size:19px;cursor:pointer" onclick="go('home')">‹</span><div class="display h1">Make a deal</div></div>
     <div class="eyebrow" style="margin-bottom:8px">1 · WHAT ARE WE TAMING?</div>
     <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#FF7AC6,#8B5CF6)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The scroll one</b></div>
     <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The loud one</b></div>
@@ -773,8 +773,8 @@
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
     </div>
     <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR?</div>
-    <div class="card"><input placeholder="my novel · morning runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
-    <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the promise</button>
+    <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the deal</button>
     <div class="tiny" style="text-align:center;margin-top:8px">made in cold blood, kept in warm moments</div>
   </div>
 
@@ -782,8 +782,8 @@
   <div class="screen" id="s-paywall">
     <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
     <div class="sub" style="margin-bottom:14px">Real coins are free for everyone, and so is kindness: the pause, the peek valve and rough-day support are in every plan. Plus is how ScrollJar earns money, so we never need a cent of your jar.</div>
-    <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 promises · buddy jar · card fee shown on top</div></div>
-    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered · unlimited promises · groups and challenges · danger-hours forecast · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
+    <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 deals · buddy jar · card fee shown on top</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered · unlimited deals · groups and challenges · danger-hours forecast · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
     <div class="tierbox" onclick="selTier(this,'mo')"><div class="spread"><b style="font-size:14px">Plus · monthly</b><span class="display" style="font-size:15px">$3.99/mo</span></div><div class="tiny" style="margin-top:4px">Everything in yearly, cancel any time</div></div>
     <button class="btn mint" style="margin-top:6px" onclick="payContinue()">Continue</button>
     <div class="tiny" style="text-align:center;margin-top:9px">Billed by Apple. Cancel any time in your Apple account.</div>
@@ -803,12 +803,12 @@
       <div class="onb" data-i="0">
         <svg width="60" height="60" style="color:var(--peach);filter:drop-shadow(0 0 18px rgba(255,158,122,.5))"><use href="#i-hourglass"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Some apps<br>drink your time.</div>
-        <div class="sub">You already know which ones. ScrollJar helps you keep the promises you make to yourself.</div>
+        <div class="sub">You already know which ones. ScrollJar helps you keep the deals you make with yourself.</div>
       </div>
       <div class="onb" data-i="1" style="display:none">
         <svg width="60" height="60" style="color:var(--chrome-1);filter:drop-shadow(0 0 18px rgba(168,184,200,.45))"><use href="#i-jar"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">A swear jar,<br>for scrolling.</div>
-        <div class="sub">You set the price of breaking your own promise. Open anyway? A coin drops in the jar. Your choice, your price.</div>
+        <div class="sub">You set the price of breaking your own deal. Open anyway? A coin drops in the jar. Your choice, your price.</div>
       </div>
       <div class="onb" data-i="2" style="display:none">
         <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
@@ -829,7 +829,7 @@
   <!-- ══ SHIELD ══ -->
   <div class="ov shield" id="ov-shield">
     <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
-    <div class="display" style="font-size:23px;margin:14px 0 8px">You made a jar promise</div>
+    <div class="display" style="font-size:23px;margin:14px 0 8px">You made a deal with yourself</div>
     <div class="sub" style="color:#A9A4D8;margin-bottom:6px">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
     <div class="tiny" style="margin-bottom:24px">12 clean days and counting</div>
     <button class="btn mint" onclick="resist()">I'll stay committed</button>
@@ -1173,6 +1173,14 @@
       <div class="spread" style="margin-bottom:6px"><div class="display" style="font-size:18px">Saved ideas</div><span class="backBtn" onclick="closeOv('ov-ideas')">✕</span></div>
       <div class="sub" style="margin-bottom:12px">Ideas you saved from colleagues. Only you can see this list.</div>
       <div id="ideasList"></div>
+    </div>
+  </div>
+
+  <!-- ══ EDIT A DEAL — cold blood: stricter now, easier in 24 hours, ending is free with 24 hours' notice ══ -->
+  <div class="ov sheetwrap" id="ov-deal">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:10px"><div class="eyebrow">YOUR DEAL</div><span class="backBtn" onclick="closeOv('ov-deal')">✕</span></div>
+      <div id="dealBody"></div>
     </div>
   </div>
 

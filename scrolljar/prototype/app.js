@@ -196,7 +196,7 @@ function renderReal(){
         <div class="feeRow"><span>A $35 jar</span><b>$35, all to charity</b></div>
         <div class="feeRow"><span>Card fee</span><b>${plus?'covered by Plus':'+ about $'+f.toFixed(2)}</b></div></div>
       <div class="card"><div class="spread"><b style="font-size:13.5px">ScrollJar Plus</b><span class="pill chr">optional · billed by Apple</span></div>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, the danger-hours forecast, deep stats and unlimited promises. It's how ScrollJar earns money.</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, the danger-hours forecast, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
         <div class="row" style="gap:7px;margin-top:10px">
           <span class="chip${realPlan==='free'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='free';renderReal()">Not now</span>
           <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$29.99 / year</span>
@@ -206,7 +206,7 @@ function renderReal(){
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Add a card for your coins</div>
       <div class="fakeField"><span style="flex:1">•••• •••• •••• 4242</span><span class="tiny">12/28 · 123</span></div>
       <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>${realPlan==='free'?', plus the card fee':''}. We email you the amount before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
-        Ending a promise honestly is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a promise counts as breaking the jar: <b>$${realPrice*5}</b> (5× your price), after a one-hour grace period to put things back.</div>
+        Ending a deal honestly is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a deal counts as breaking the jar: <b>$${realPrice*5}</b> (5× your price), after a one-hour grace period to put things back.</div>
       <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
       <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Save card</button>
       <div class="tiny" style="text-align:center;margin-top:9px">Your bank may ask you to confirm. That's normal.</div>`;
@@ -382,20 +382,78 @@ function showTipout(){
 function showRough(){$('ov-rough').classList.add('on')}
 
 /* ── lists ── */
+/* ── deals: the apps you shield, when, at what price, and what the time is for ──
+   Editing follows "cold blood": anything stricter (a higher price, longer shield hours) applies now;
+   anything easier (a lower price, shorter hours) waits 24 hours. Ending a deal is free, with 24 hours' notice.
+   Free includes 3 deals; Plus has unlimited. */
+const SCHED_HOURS={always:168,mornings:28,evenings:70,work:40,weekend:48,custom:56};
 const COMMITS=[
-  {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',m:'always · $5 · for my novel'},
-  {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',m:'9pm–7am · $10 · for sleep'},
+  {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
+  {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
 ];
+const dealLine=c=>`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · for ${c.forWhat}`;
 function renderCommits(){
-  $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}">
+  $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
-    <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${c.m}</div></div></div>
+    <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${dealLine(c)}</div>${c.pending?`<div class="tiny" style="color:var(--gold-text);margin-top:2px">${c.pending}</div>`:''}</div></div>
     <span class="shieldchip"><svg width="15" height="15"><use href="#i-shield"/></svg></span></div>`).join('');
 }
 function sealIt(){
-  const when = sched==='custom' ? ($('schedFrom').value+'–'+$('schedTo').value) : SCHED_LABEL[sched];
-  COMMITS.unshift({g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'New promise',m:when+' · $'+$('priceV').textContent+' · for my novel'});
-  renderCommits();go('home');toast('Sealed. Your future self says thanks.');
+  if(S.plan==='free' && COMMITS.length>=3){ toast('The free plan includes 3 deals. Plus has unlimited.'); go('paywall'); return; }
+  const forWhat=($('newFor')&&$('newFor').value.trim())||'my novel';
+  COMMITS.unshift({g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'New deal',sched,price:+$('priceV').textContent,forWhat});
+  renderCommits();go('home');toast('Deal sealed. Your future self says thanks.');
+}
+/* editing a deal */
+let dealI=0, dealDraft=null;
+function tomorrowAt(){ const d=new Date(Date.now()+864e5); return d.toLocaleString('en-US',{weekday:'long'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }
+function openDeal(i){ dealI=i; dealDraft={...COMMITS[i]}; renderDeal(); $('ov-deal').classList.add('on'); }
+function dealChanges(){
+  const o=COMMITS[dealI], d=dealDraft, now=[], later=[];
+  if(d.n!==o.n) now.push('name'); if(d.forWhat!==o.forWhat) now.push('what it\'s for'); if(d.charity!==o.charity&&d.charity!==undefined) now.push('charity');
+  if(d.price>o.price) now.push('price up to $'+d.price); else if(d.price<o.price) later.push('price down to $'+d.price);
+  if(d.sched!==o.sched){ (SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched]?now:later).push('shield '+(SCHED_LABEL[d.sched]||d.sched)); }
+  return {now,later};
+}
+function renderDeal(){
+  const d=dealDraft, o=COMMITS[dealI], ch=dealChanges();
+  const note=(isStricter,changed)=>!changed?'':`<div class="tiny dealNote ${isStricter?'now':'later'}">${isStricter?'Stricter, so this applies right away.':'Easier, so this applies in 24 hours ('+tomorrowAt()+').'}</div>`;
+  $('dealBody').innerHTML=`
+    <input class="timeIn" style="font-size:16px;font-family:'Bricolage Grotesque';font-weight:700" value="${d.n.replace(/"/g,'&quot;')}" aria-label="Deal name" oninput="dealDraft.n=this.value;dealSummary()">
+    <div class="eyebrow" style="margin:14px 0 8px">WHEN THE SHIELD IS ON</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${['always','mornings','evenings','work','weekend'].map(k=>`<span class="chip${d.sched===k?' on':''}" onclick="dealDraft.sched='${k}';renderDeal()">${{always:'Always',mornings:'Mornings',evenings:'Evenings',work:'Work hours',weekend:'Weekends'}[k]}</span>`).join('')}</div>
+    ${note(SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched],d.sched!==o.sched)}
+    <div class="eyebrow" style="margin:14px 0 8px">YOUR PRICE TO OPEN ANYWAY</div>
+    <div class="card" style="text-align:center;margin-bottom:0"><div class="amount num" style="font-size:38px">$<span id="dealP">${d.price}</span></div>
+      <input type="range" min="2" max="25" value="${d.price}" aria-label="Price" style="width:100%;accent-color:var(--mint);margin-top:8px" oninput="dealDraft.price=+this.value;$('dealP').textContent=this.value" onchange="renderDeal()"></div>
+    ${note(d.price>o.price,d.price!==o.price)}
+    <div class="eyebrow" style="margin:14px 0 8px">WHAT THIS TIME IS FOR</div>
+    <input class="timeIn" value="${d.forWhat.replace(/"/g,'&quot;')}" aria-label="What this time is for" oninput="dealDraft.forWhat=this.value;dealSummary()">
+    <div id="dealSum"></div>
+    <button class="btn mint" style="margin-top:12px" onclick="saveDeal()">Save changes</button>
+    <button class="btn ghost" style="margin-top:9px" onclick="endDeal()">End this deal</button>
+    <div class="tiny" style="text-align:center;margin-top:9px">Ending is always free. It takes 24 hours, so the choice is made in cold blood.</div>`;
+  dealSummary();
+}
+function dealSummary(){
+  const {now,later}=dealChanges(), el=$('dealSum'); if(!el) return;
+  el.innerHTML=(now.length||later.length)?`<div class="card" style="margin:14px 0 0">
+    ${now.length?`<div class="tiny"><b style="color:var(--ink)">Right away:</b> ${now.join(', ')}</div>`:''}
+    ${later.length?`<div class="tiny" style="margin-top:${now.length?6:0}px"><b style="color:var(--ink)">${tomorrowAt()}:</b> ${later.join(', ')}</div>`:''}</div>`:'';
+}
+function saveDeal(){
+  const {now,later}=dealChanges(), o=COMMITS[dealI], d=dealDraft;
+  if(!now.length&&!later.length){ closeOv('ov-deal'); return; }
+  o.n=d.n; o.forWhat=d.forWhat;
+  if(d.price>o.price) o.price=d.price;
+  if(SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched]) o.sched=d.sched;
+  o.pending=later.length?'From '+tomorrowAt()+': '+later.join(', '):'';
+  renderCommits(); closeOv('ov-deal');
+  toast(later.length?(now.length?'Saved. The easier part starts in 24 hours.':'Saved. It starts in 24 hours, cold blood.'):'Saved. It applies right away.');
+}
+function endDeal(){
+  const o=COMMITS[dealI]; o.pending='Ends '+tomorrowAt()+'. You can change your mind until then.';
+  renderCommits(); closeOv('ov-deal'); toast('Ending in 24 hours. Nothing to pay.');
 }
 /* plans: Free (real coins, card fee shown on top) or Plus (fees covered, extras). Kindness is in both. */
 function selTier(el,plan){ document.querySelectorAll('#s-paywall .tierbox').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); payPick=plan; }
@@ -407,7 +465,7 @@ function payContinue(){
 function renderPlan(){
   const c=$('planCard'); if(!c) return;
   const plus=S.plan!=='free';
-  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='yr'?'$29.99 / year':'$3.99 / month')+' · card fees covered':'real coins · 3 promises · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
+  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='yr'?'$29.99 / year':'$3.99 / month')+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
 }
 /* ── the feed: outcomes only, never announcements ── */
 function scene(kind){
@@ -1364,16 +1422,20 @@ function setFamView(v){ FAM.view=v; $('fvParent').classList.toggle('on',v==='par
 /* coins and lights share the jar: gold for grown-ups' coins, glowing lights for hours */
 function drawFamJar(g,coins,lights,animate){
   g.innerHTML='';
-  const kinds=[]; let c=coins,l=lights;
-  while(c>0||l>0){ if(l>0){kinds.push('l');l--;} if(c>0){kinds.push('c');c--;} }
+  /* coins settle at the bottom, hours glow in a layer above them, so the two read as different things */
+  const kinds=[...Array(coins).fill('c'),...Array(lights).fill('l')];
   kinds.slice(0,POS.length).forEach((k,i)=>{
     const [cx,cy]=POS[i], u=document.createElementNS('http://www.w3.org/2000/svg','use');
-    const r=k==='c'?17:15;
+    const r=17;
     u.setAttribute('href',k==='c'?'#coin':'#glowM'); u.setAttribute('x',cx-r); u.setAttribute('y',cy-r); u.setAttribute('width',2*r); u.setAttribute('height',2*r);
     g.appendChild(u);
     if(animate) u.animate(k==='c'?[{transform:'translateY(-70px)',opacity:0},{transform:'none',opacity:1}]:[{transform:'translateY(70px)',opacity:0},{transform:'translateY(-6px)',opacity:1,offset:.7},{transform:'none',opacity:1}],
       {duration:800,delay:i*60,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
   });
+}
+function famKey(coinTxt,lightTxt){
+  return `<div class="famKey">${coinTxt?`<span><svg width="14" height="14" viewBox="0 0 40 40" aria-hidden="true"><use href="#coin"/></svg>${coinTxt}</span>`:''}
+    <span><svg width="15" height="15" viewBox="0 0 40 40" aria-hidden="true"><use href="#glowM"/></svg>${lightTxt}</span></div>`;
 }
 function famTreatCard(){
   if(FAM.treat==='No treat') return '';
@@ -1387,8 +1449,8 @@ function renderFamily(animate){
   if(FAM.view==='parent'){
     $('famEyebrow').textContent='THE FAMILY JAR · JULY';
     $('famAmt').textContent=money(kidsMoney+coins);
-    $('famSub').innerHTML=`for good this month · ${coins?`${money(coins)} from grown-ups' coins · `:''}${money(kidsMoney)} unlocked by the kids' hours`;
-    drawFamJar($('famJarG'),Math.round(coins/4),Math.round(famKidsHours()*0.8),animate);
+    $('famSub').innerHTML=`for good this month`+famKey(coins?`${money(coins)} in grown-ups' coins`:'',`${money(kidsMoney)} from the kids' scroll-free hours`);
+    drawFamJar($('famJarG'),Math.floor(coins/4),Math.round(famKidsHours()*0.8),animate);
     B.innerHTML=famTreatCard()+`
     <div class="card"><div class="spread"><b style="font-size:13.5px">Your pledge for the kids</b><span class="pill gold">${money(FAM.pledge)} a month</span></div>
       <div class="capBar" style="margin-top:10px;height:8px"><i style="width:${Math.round(kidsMoney/FAM.pledge*100)}%;background:linear-gradient(90deg,#EDE9FF,#9B8CFF)"></i></div>
@@ -1412,7 +1474,7 @@ function renderFamily(animate){
     const k=FAM.members.find(m=>m.n==='Mia');
     $('famEyebrow').textContent='YOUR HOURS · JULY';
     $('famAmt').textContent=FAM.mia.hours+' hours';
-    $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`;
+    $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`+famKey('','each light is one scroll-free hour');
     drawFamJar($('famJarG'),0,FAM.mia.hours,animate);
     B.innerHTML=`<div class="card" style="background:linear-gradient(150deg,rgba(60,240,203,.14),rgba(155,140,255,.1))">
       <b style="font-size:14px">You never pay anything</b>
@@ -1436,7 +1498,7 @@ function showFamTip(){
     `<div class="spread" style="margin-top:9px"><span class="tiny">rolls into next month's pledge</span><b class="num" style="color:var(--violet)">${money(left)}</b></div>`;
   $('ftTreat').innerHTML=FAM.treat==='No treat'?'<div class="tiny">No family treat this month.</div>':
     `<div class="eyebrow">THE FAMILY TREAT</div><div class="sub" style="margin-top:6px"><b>${FAM.treat}:</b> ${FAM.hours} of ${FAM.goal} hours together. ${FAM.hours>=FAM.goal?'It\'s on!':`${FAM.goal-FAM.hours} hours to go, and they carry on into next month.`}</div>`;
-  drawFamJar($('ftJarG'),Math.round(coins/4),Math.round(famKidsHours()*0.8),false);
+  drawFamJar($('ftJarG'),Math.floor(coins/4),Math.round(famKidsHours()*0.8),false);
   $('ftAmt').textContent='$0'; $('ov-famtip').classList.add('on');
   const g=$('ftJarG');
   setTimeout(()=>{ [...g.children].forEach((m,i)=>m.animate([{transform:'none',opacity:1},{transform:'translateY(-120px)',opacity:0}],{duration:900,delay:i*60,easing:'cubic-bezier(.4,.1,.6,1)',fill:'forwards'}));
