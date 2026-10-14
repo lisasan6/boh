@@ -138,7 +138,7 @@
 <div class="topbar">
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3 moment</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company invite</button><button class="ms" onclick="go('friends');openFamSetup()">Family jar</button><button class="ms" onclick="restart()">↻ Restart</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -478,6 +478,7 @@
     <div class="jarStrip">
       <div class="jarChip co" onclick="openCompany()"><b>Fernhill &amp; Co.</b><span>company</span></div>
       <div class="jarChip fam" onclick="openFamily()"><b>Rossi family</b><span>family</span></div>
+      <div class="jarChip cr" onclick="openCreator()"><b>Unplugged September</b><span>@maya.makes · challenge</span></div>
       <div class="jarChip on" onclick="go('jardetail')"><b>Casa Jar</b><span>you + 3</span></div>
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
       <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
@@ -500,6 +501,30 @@
   </div>
 
   <!-- ══ COMPANY JAR (Teams) — the employer pays for success, never sees a person ══ -->
+  <!-- ══ CREATOR CHALLENGE — public totals only, no rankings; nobody earns from followers' coins ══ -->
+  <div class="screen" id="s-creator">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Unplugged September</div></div>
+    <div class="modeSeg" style="margin-bottom:12px">
+      <div class="on" id="cvMaker" onclick="setCrView('maker')">Maya's view</div>
+      <div id="cvFan" onclick="setCrView('fan')">A follower's view</div>
+    </div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="spread"><div class="eyebrow" id="crEyebrow">PUBLIC CHALLENGE · DAY 12 OF 30</div><span class="pill gold">Example</span></div>
+      <div class="jarbox" id="crJarBox" style="margin-top:8px">
+        <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g id="crJarG" clip-path="url(#body)"></g>
+          <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="amount num" style="margin-top:6px" id="crAmt">$6,215</div>
+      <div class="tiny" style="margin-top:4px;line-height:1.5" id="crSub"></div>
+    </div>
+    <div id="crBody"></div>
+  </div>
+
   <!-- ══ FAMILY JAR — one jar, kids never pay or get paid, nobody sees anyone's screen ══ -->
   <div class="screen" id="s-family">
     <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Rossi family</div></div>
@@ -1181,6 +1206,15 @@
     <div class="sheet-card" style="max-height:92%;overflow-y:auto">
       <div class="spread" style="margin-bottom:10px"><div class="eyebrow">YOUR DEAL</div><span class="backBtn" onclick="closeOv('ov-deal')">✕</span></div>
       <div id="dealBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ CREATOR SETUP ══ -->
+  <div class="ov sheetwrap" id="ov-crsetup">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="crsKicker">FOR CREATORS</div><span class="backBtn" onclick="closeOv('ov-crsetup')">✕</span></div>
+      <div class="sbDots" id="crsDots"><i></i><i></i><i></i><i></i><i></i></div>
+      <div id="crsBody"></div>
     </div>
   </div>
 

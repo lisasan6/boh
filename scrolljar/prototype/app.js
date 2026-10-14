@@ -391,7 +391,7 @@ const COMMITS=[
   {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
   {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
 ];
-const dealLine=c=>`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · for ${c.forWhat}`;
+const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · for ${c.forWhat}`;
 function renderCommits(){
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
@@ -465,7 +465,7 @@ function payContinue(){
 function renderPlan(){
   const c=$('planCard'); if(!c) return;
   const plus=S.plan!=='free';
-  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='yr'?'$29.99 / year':'$3.99 / month')+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
+  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='creator'?'free while your challenge runs':(S.plan==='yr'?'$29.99 / year':'$3.99 / month'))+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
 }
 /* ── the feed: outcomes only, never announcements ── */
 function scene(kind){
@@ -1553,6 +1553,117 @@ function renderFamSetup(){
       <div class="tiny" style="margin-top:12px;line-height:1.5">Your pledge is separate: up to ${money(FAM.pledge)} a month, charged only for hours the kids actually keep.</div>
       <button class="btn mint" style="margin-top:14px" onclick="closeOv('ov-famsetup');openFamily();toast('The family jar is ready. Invites are on their way.')">Create the family jar</button>`;
   }
+}
+/* ══ CREATORS ══
+   For people who post for a living: the feeds get a shield, the tools they post with stay open, and
+   short posting windows open the feeds with no pause and no coin. A public challenge lets followers
+   join with their own deals; every coin goes 100% to the challenge's cause. The creator never earns
+   from followers' coins (nor do we), and everyone sees totals only: no rankings, nobody singled out.
+   Apple shows us no app names: the "feeds / tools" split is guidance for the user's own picks. */
+const CR={view:'maker',handle:'@maya.makes',name:'Unplugged September',days:30,day:12,cause:'Mental Health America',
+  causes:['Mental Health America','Doctors Without Borders','GiveDirectly','Against Malaria Foundation'],
+  people:1284,hours:9410,given:6215,
+  windows:[{at:'12:00',len:30},{at:'18:00',len:30}],winLen:30,
+  feeds:['Instagram','TikTok','YouTube','X'],tools:['Meta Business Suite','Edits','TikTok Studio','YouTube Studio','CapCut'],
+  fan:{price:3,hours:9,coins:2}};
+const thou=n=>n.toLocaleString('en-US');
+const winLabel=w=>{const [h,m]=w.at.split(':').map(Number), e=new Date(0,0,0,h,m+w.len); return h12(h,m)+'–'+h12(e.getHours(),e.getMinutes())+' '+(e.getHours()<12?'AM':'PM');};
+function openCreator(){ go('creator'); $('s-creator').scrollTop=0; renderCreator(true); }
+function setCrView(v){ CR.view=v; $('cvMaker').classList.toggle('on',v==='maker'); $('cvFan').classList.toggle('on',v==='fan'); $('s-creator').scrollTop=0; renderCreator(true); }
+function renderCreator(animate){
+  const B=$('crBody');
+  drawFamJar($('crJarG'),8,9,animate);
+  if(CR.view==='maker'){
+    $('crEyebrow').textContent=`CHALLENGE · DAY ${CR.day} OF ${CR.days}`;
+    $('crAmt').textContent='$'+thou(CR.given);
+    $('crSub').innerHTML=`to ${CR.cause}, 100% · ${thou(CR.people)} people joined you`+famKey(`followers' coins, all to the cause`,`${thou(CR.hours)} scroll-free hours together`);
+    B.innerHTML=`
+    <div class="card"><div class="spread"><b style="font-size:13.5px">Your posting windows</b><span class="pill mint">open now</span></div>
+      <div class="row" style="gap:7px;margin-top:10px;flex-wrap:wrap">${CR.windows.map((w,i)=>`<span class="chip${i===0?' on':''}">${winLabel(w)}</span>`).join('')}</div>
+      <div class="tiny" style="margin-top:9px;line-height:1.5">Inside a window your feeds open with no pause and no coin: post, reply, check in. Outside it, your deal applies. Your posting tools stay open all day.</div></div>
+    <div class="card crShare">
+      <div class="eyebrow">SHARE CARD</div>
+      <div class="crCard"><b>I'm doing ${CR.name}.</b><span>My feeds are shielded, my posting tools aren't. Every slip goes to ${CR.cause}. Join me.</span><em>scrolljar.app/c/maya</em></div>
+      <button class="btn mint" style="margin-top:10px" onclick="toast('Share card saved to Photos. It shows totals, never a follower.')">Share to your story</button></div>
+    <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-heart"/></svg><b style="font-size:13.5px">Where the money goes</b></div>
+      <div class="sub" style="margin-top:5px">Every coin goes 100% to ${CR.cause}. You don't earn from your followers' coins, and neither does ScrollJar. Plus is free for you while the challenge runs.</div></div>
+    <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What everyone sees</b></div>
+      <div class="coRule ok">How many joined, the hours together and the total given</div>
+      <div class="coRule no">Who slipped, how often, or anyone's apps</div>
+      <div class="coRule no">Rankings or a leaderboard, for you or your followers</div></div>
+    <div class="row" style="gap:8px"><button class="btn ghost" style="flex:1" onclick="openCrSetup()">Creator settings</button><button class="btn ghost" style="flex:1" onclick="toast('On Oct 1 the jar tips out to ${CR.cause}, with a public receipt.')">How it ends</button></div>`;
+  } else {
+    $('crEyebrow').textContent=`${CR.handle.toUpperCase()} · DAY 6`;
+    $('crAmt').textContent=CR.fan.hours+' hours';
+    $('crSub').innerHTML=`scroll-free since you joined`+famKey(`your ${CR.fan.coins} coins, $${CR.fan.price} each`,`your hours, with ${thou(CR.people-1)} others`);
+    B.innerHTML=`
+    <div class="card" style="background:linear-gradient(150deg,rgba(255,143,102,.14),rgba(155,140,255,.1))">
+      <b style="font-size:14px">Your deal, your price</b>
+      <div class="sub" style="margin-top:5px">You set your own price when you joined: $${CR.fan.price} a coin. Every coin goes to ${CR.cause}. ${CR.handle} never sees your coins, and doesn't earn from them.</div></div>
+    <div class="card"><b style="font-size:13.5px">Together so far</b>
+      <div class="spread" style="margin-top:9px"><span class="tiny">people in the challenge</span><b class="num">${thou(CR.people)}</b></div>
+      <div class="spread" style="margin-top:6px"><span class="tiny">scroll-free hours</span><b class="num">${thou(CR.hours)}</b></div>
+      <div class="spread" style="margin-top:6px"><span class="tiny">given to ${CR.cause}</span><b class="num">$${thou(CR.given)}</b></div>
+      <div class="tiny" style="margin-top:9px">No rankings. You'll never be compared with anyone.</div></div>
+    <div class="row" style="gap:8px"><button class="btn ghost" style="flex:1" onclick="toast('You can leave any time. Your coins so far still reach the cause.')">Leave the challenge</button><button class="btn ghost" style="flex:1" onclick="go('home')">My deals</button></div>`;
+  }
+}
+/* setting up as a creator */
+let crsStep=0;
+function openCrSetup(){ crsStep=0; renderCrSetup(); $('ov-crsetup').classList.add('on'); }
+function crsGo(n){ crsStep=n; renderCrSetup(); }
+function renderCrSetup(){
+  [...$('crsDots').children].forEach((d,i)=>d.classList.toggle('on',i<=crsStep));
+  const B=$('crsBody'), K=$('crsKicker');
+  if(crsStep===0){ K.textContent='FOR CREATORS';
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Keep making. Stop scrolling.</div>
+      <div class="sub">Your job lives on these apps, so blocking all of them doesn't work. Creator setup shields the feeds and keeps your tools open.</div>
+      <div class="coRule ok" style="margin-top:12px">The feeds get a shield; your posting tools stay open</div>
+      <div class="coRule ok">Short posting windows to post and reply, with no coin</div>
+      <div class="coRule ok">A public challenge your followers can join</div>
+      <div class="coRule no">Nobody earns from followers' coins: not you, not us</div>
+      <button class="btn mint" style="margin-top:14px" onclick="crsGo(1)">Set it up</button>`;
+  } else if(crsStep===1){ K.textContent='FEEDS AND TOOLS';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Shield the feeds, keep the tools</div>
+      <div class="sub" style="margin-bottom:12px">You'll pick them in Apple's own screen next. ScrollJar never sees which apps you choose.</div>
+      <div class="crSplit">
+        <div class="card"><div class="eyebrow" style="color:var(--peach)">SHIELD · THE FEEDS</div>${CR.feeds.map(a=>`<div class="tiny crApp">${a}</div>`).join('')}</div>
+        <div class="card"><div class="eyebrow">LEAVE OPEN · YOUR TOOLS</div>${CR.tools.map(a=>`<div class="tiny crApp">${a}</div>`).join('')}</div>
+      </div>
+      <div class="tiny" style="margin:2px 2px 0;line-height:1.5">Post from your tools when you can. When you need the app itself, that's what posting windows are for.</div>
+      <button class="btn mint" style="margin-top:12px" onclick="toast('In the real app, Apple\\'s app picker opens here.');crsGo(2)">Pick in Apple's screen</button>`;
+  } else if(crsStep===2){ K.textContent='POSTING WINDOWS';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">When do you post?</div>
+      <div class="sub" style="margin-bottom:12px">Up to two windows a day. Inside them the feeds open with no pause and no coin.</div>
+      ${CR.windows.map((w,i)=>`<div class="row" style="gap:10px;margin-bottom:8px"><div style="flex:1"><div class="tiny" style="margin-bottom:5px">WINDOW ${i+1} STARTS</div><input class="timeIn" type="time" value="${w.at}" aria-label="Window ${i+1} start" onchange="CR.windows[${i}].at=this.value;renderCrSetup()"></div><div style="flex:1"><div class="tiny" style="margin-bottom:5px">OPEN FOR</div><div class="timeIn">${w.len} min · ${winLabel(w)}</div></div></div>`).join('')}
+      <div class="row" style="gap:7px;margin-top:4px">${[15,30,45].map(v=>`<span class="chip${CR.windows[0].len===v?' on':''}" style="flex:1;text-align:center" onclick="CR.windows.forEach(w=>w.len=${v});renderCrSetup()">${v} min</span>`).join('')}</div>
+      <div class="tiny" style="margin-top:10px;line-height:1.5">Like any deal: shorter windows apply now, longer ones in 24 hours.</div>
+      <button class="btn mint" style="margin-top:12px" onclick="crsGo(3)">Next</button>`;
+  } else if(crsStep===3){ K.textContent='A PUBLIC CHALLENGE';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Invite your followers</div>
+      <div class="sub" style="margin-bottom:12px">Optional. Followers join with your link and set their own deal and price. Their coins go 100% to the cause you pick.</div>
+      <input class="timeIn" value="${CR.name}" aria-label="Challenge name" oninput="CR.name=this.value">
+      <div class="eyebrow" style="margin:12px 2px 8px">HOW LONG</div>
+      <div class="row" style="gap:7px">${[7,14,30].map(v=>`<span class="chip${CR.days===v?' on':''}" style="flex:1;text-align:center" onclick="CR.days=${v};renderCrSetup()">${v} days</span>`).join('')}</div>
+      <div class="eyebrow" style="margin:12px 2px 8px">THE CAUSE</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${CR.causes.map(c=>`<span class="chip${CR.cause===c?' on':''}" onclick="CR.cause=${JSON.stringify(c).replace(/"/g,'&quot;')};renderCrSetup()">${c}</span>`).join('')}</div>
+      <div class="tiny" style="margin-top:12px;line-height:1.5">You never earn from your followers' coins, and nobody is ranked. Everyone sees totals only.</div>
+      <button class="btn mint" style="margin-top:12px" onclick="crsGo(4)">Next</button>`;
+  } else { K.textContent='READY';
+    B.innerHTML=`<div style="text-align:center;padding:6px 0 2px">
+      <svg viewBox="0 0 40 40" width="52" height="52" style="filter:drop-shadow(0 0 16px rgba(255,201,77,.7))"><use href="#coin"/></svg>
+      <div class="display" style="font-size:21px;margin:10px 0 8px">Your creator setup is on.</div>
+      <div class="sub">Feeds shielded, tools open, posting at ${CR.windows.map(winLabel).join(' and ')}.</div></div>
+      <div class="card" style="margin-top:12px;background:rgba(60,240,203,.1);border-color:rgba(60,240,203,.3)">
+        <b style="font-size:13px">Plus is free while your challenge runs</b>
+        <div class="tiny" style="margin-top:4px;line-height:1.5">No public challenge? Creator setup works on Free too, as one of your 3 deals.</div></div>
+      <button class="btn mint" onclick="crsFinish()">See your challenge</button>`;
+  }
+}
+function crsFinish(){
+  if(!COMMITS.some(c=>c.creator)) COMMITS.unshift({g:'linear-gradient(150deg,#FF8F66,#8B5CF6)',n:'The feeds',sched:'always',price:5,forWhat:'making, not scrolling',creator:true});
+  if(S.plan==='free'){ S.plan='creator'; renderPlan(); }
+  renderCommits(); closeOv('ov-crsetup'); openCreator(); toast('Creator setup is on. Your link is ready to share.');
 }
 function restart(){location.reload()}
 /* embed mode (landing page phone): no onboarding, no prototype controls */

@@ -583,7 +583,7 @@ html.embed .devNote{display:none}
 .jarChip.fam{border-color:rgba(255,194,58,.45);background:rgba(255,194,58,.1)}
 .famTreat{background:linear-gradient(150deg,rgba(255,194,58,.13),rgba(60,240,203,.07));border-color:rgba(255,194,58,.3)}
 /* in day mode the hour lights are yellow; inside the family jar they sit next to gold coins, so tint them mint to keep the two apart */
-body[data-mode="day"] #famJarG use[href="#glowM"],body[data-mode="day"] #ftJarG use[href="#glowM"]{filter:hue-rotate(115deg) saturate(1.3)}
+body[data-mode="day"] #famJarG use[href="#glowM"],body[data-mode="day"] #ftJarG use[href="#glowM"],body[data-mode="day"] #crJarG use[href="#glowM"]{filter:hue-rotate(115deg) saturate(1.3)}
 
 /* deals: tap to edit; notes say when a change applies */
 .dealCard{cursor:pointer}
@@ -595,3 +595,14 @@ body[data-mode="day"] #famJarG use[href="#glowM"],body[data-mode="day"] #ftJarG 
 body[data-mode="day"] .famKey use[href="#glowM"]{filter:hue-rotate(115deg) saturate(1.3)}
 /* any overlay that scrolls keeps its items at full height (buttons were getting squashed instead of the screen scrolling) */
 .ov[style*="overflow-y:auto"] > *{flex-shrink:0}
+
+/* Creators */
+.jarChip.cr{border-color:rgba(255,143,102,.45);background:rgba(255,143,102,.1)}
+.crSplit{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.crSplit .card{margin-bottom:8px;padding:11px 12px}
+.crApp{padding:5px 0;border-bottom:1px solid var(--line);color:var(--ink-2);font-weight:600}
+.crApp:last-child{border-bottom:none}
+.crCard{margin-top:9px;border-radius:16px;padding:16px;background:linear-gradient(150deg,#2A1E5C,#0E5E57);color:#F4F3FF;display:flex;flex-direction:column;gap:6px}
+.crCard b{font-family:'Bricolage Grotesque';font-size:18px;line-height:1.15}
+.crCard span{font-size:12.5px;line-height:1.45;color:#D9D5FF}
+.crCard em{font-style:normal;font-size:11.5px;font-weight:700;color:#7FF5DD}
