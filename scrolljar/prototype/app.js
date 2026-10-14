@@ -241,9 +241,9 @@ function showBreath(){
   placeContinue(); $('breathGo').style.display='none';
   breathT=setTimeout(()=>{$('breathBtns').style.display='block'; $('breathGo').style.display='';},3200);
 }
-/* "Never mind, continue" moves between a few calm spots, never the same twice in a row and never
-   where "I'll stay committed" sits, so the thumb can't learn it. Always visible, always readable. */
-const GO_SPOTS=['tl','tr','mid','bl','br']; let goLast='';
+/* "Never mind, continue" always sits below "I'll stay committed", but moves between spots there,
+   never the same twice in a row, so the thumb can't learn it. Always visible, always readable. */
+const GO_SPOTS=['l','c','r']; let goLast='';
 function placeContinue(){
   const b=$('breathGo'), pick=GO_SPOTS.filter(s=>s!==goLast);
   goLast=pick[Math.floor(Math.random()*pick.length)];
