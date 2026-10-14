@@ -240,7 +240,10 @@ function showBreath(){
   startBreathCue();
   clearTimeout(breathT);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
-  breathT=setTimeout(()=>{$('breathBtns').style.display='block'; launchContinue();},3200);
+  /* the choice appears after one full breath (about 4 s in, 6 s out), both buttons fading in softly */
+  breathT=setTimeout(()=>{ const bb=$('breathBtns'); bb.style.display='block';
+    bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'});
+    launchContinue(); },10000);
 }
 /* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
    "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */
@@ -277,7 +280,7 @@ function launchContinue(){
     for(let i=0;i<30&&!far(x,y);i++){ x=rnd(minX,maxX); y=rnd(minY,maxY); }
     goLastStop=[x,y]; put(); return; }
   put();
-  const a=rnd(20,55)*Math.PI/180, sp=rnd(320,370);
+  const a=rnd(20,55)*Math.PI/180, sp=rnd(170,200);
   let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1);
   const start=performance.now(), stopAt=rnd(7000,9000); let t0=start, braking=false;
   const step=t=>{ if(!ov.classList.contains('on')) return;
