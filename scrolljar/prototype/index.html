@@ -313,7 +313,7 @@
       <div class="sub" style="margin-top:5px">on screens · <b>4h 30m</b> of it on apps you've shielded</div>
       <div class="sparks" id="usageSpark" style="height:40px"></div>
     </div>
-    <div class="spread" style="margin:2px 2px 9px"><div class="display h2">Biggest draws</div><span class="tiny">iOS renders this — we never read it</span></div>
+    <div style="margin:2px 2px 9px"><div class="display h2">Biggest draws</div><div class="tiny" style="margin-top:2px">iOS renders this — we never read it</div></div>
     <div id="appList"></div>
     <div class="card tipCard">
       <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)"><use href="#i-brain"/></svg>
@@ -969,7 +969,7 @@
     </div>
   </div>
 
-  <button class="cornerSwitch" id="cornerSwitch" onclick="setMode(document.body.dataset.mode==='night'?'day':'night')" title="Day / night">
+  <button class="cornerSwitch" id="cornerSwitch" onclick="setMode(document.body.dataset.mode==='night'?'day':'night')" title="Day / night" aria-label="Switch day or night">
     <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
   </button>
   <!-- ══ FIRST WIN — the real aha moment ══ -->

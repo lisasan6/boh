@@ -606,3 +606,13 @@ body[data-mode="day"] .famKey use[href="#glowM"]{filter:hue-rotate(115deg) satur
 .crCard b{font-family:'Bricolage Grotesque';font-size:18px;line-height:1.15}
 .crCard span{font-size:12.5px;line-height:1.45;color:#D9D5FF}
 .crCard em{font-style:normal;font-size:11.5px;font-weight:700;color:#7FF5DD}
+
+/* polish pass */
+/* the day/night switch sits in the status bar instead of floating over buttons */
+.cornerSwitch{top:8px;bottom:auto;right:88px;width:26px;height:26px;border-radius:9px;z-index:9}
+.cornerSwitch svg{width:14px;height:14px}
+/* Apple's shield is always dark, so its buttons keep night colours in day mode */
+body[data-mode="day"] #ov-shield .btn.ghost{color:#EFEDFF;border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.1)!important}
+body[data-mode="day"] #ov-shield .devNote{color:#A9A4D8}
+/* the invite preview jar icon was nearly invisible on the light card in day mode */
+body[data-mode="day"] .webPrev svg{color:#5A607E!important}

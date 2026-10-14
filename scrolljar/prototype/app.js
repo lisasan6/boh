@@ -177,7 +177,7 @@ function renderReal(){
     B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three days. Five temptations.<br>All yours.</div>
       <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b> Making it real is free too.</div>
       <button class="btn mint" style="margin-top:16px" onclick="realGo(1)">Make it real</button>
-      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying as you are. Everything keeps working exactly as it does now.')">Not yet, stay free</button>`;
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying as you are. Everything keeps working exactly as it does now.')">Not yet</button>`;
   } else if(realStep===1){ K.textContent='YOUR STAKES';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Price it in cold blood</div>
       <div class="card" style="text-align:center"><div class="amount num">$<span id="realP">${realPrice}</span></div>
@@ -391,7 +391,7 @@ const COMMITS=[
   {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
   {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
 ];
-const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · for ${c.forWhat}`;
+const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
 function renderCommits(){
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
@@ -918,17 +918,18 @@ const APPS=[
 function renderApps(){
   $('appList').innerHTML=APPS.map((a,i)=>`<div class="appRow">
     <div class="ic token" style="background:${a.g}"><svg width="16" height="16" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
-    <div style="flex:1"><div class="spread"><b style="font-size:13px">${a.n}</b><span class="tiny">${a.h}</span></div>
+    <div style="flex:1;min-width:0"><b style="font-size:13px">${a.n}</b>
       <div class="appBar"><i style="width:${a.pct}%"></i></div>
-      <div class="tiny" style="margin-top:4px">${a.opens} opens · ${a.opens>40?'mostly without deciding to':'usually on purpose'}</div></div>
+      <div class="tiny" style="margin-top:4px"><b style="color:var(--ink-2)">${a.h}</b> · ${a.opens} opens · ${a.opens>40?'mostly without deciding to':'usually on purpose'}</div></div>
     ${a.shield?'<span class="shieldchip"><svg width="14" height="14"><use href="#i-shield"/></svg></span>'
       :`<button class="btn mint" style="width:auto;padding:8px 12px;font-size:11.5px" onclick="suggestBlock(${i})">Shield it</button>`}
   </div>`).join('');
 }
 function suggestBlock(i){
+  if(S.plan==='free' && COMMITS.length>=3){ toast('The free plan includes 3 deals. Plus has unlimited.'); go('paywall'); return; }
   APPS[i].shield=true; renderApps();
-  COMMITS.unshift({g:APPS[i].g,n:APPS[i].n,m:'always · $5 · name it later'});
-  renderCommits(); toast('Shielded. You can set the price and the reason any time.');
+  COMMITS.unshift({g:APPS[i].g,n:APPS[i].n,sched:'always',price:5,forWhat:''});
+  renderCommits(); toast('Shielded. Tap the deal on Today to set the price and what it\'s for.');
 }
 /* ── resources ── */
 const RES=[
