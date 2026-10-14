@@ -155,7 +155,7 @@
         <span>Your best week yet — 3h 10m more than last</span>
       </div>
       <div class="sparks" id="weekSpark"></div>
-      <div class="sparkLegend"><span>last week</span><span id="goalLine">2 nights to your 15-night mark</span></div>
+      <div class="sparkLegend"><span>last week</span><span id="goalLine">2 days to your 15-day mark</span></div>
       <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
     </div>
 
@@ -234,7 +234,7 @@
       <span style="color:var(--ink-3)">›</span>
     </div>
     <div class="card spread" style="cursor:pointer" onclick="go('story')">
-      <div><b style="font-size:13.5px">Your story</b><div class="tiny">hours, nights, the shape of your weeks</div></div>
+      <div><b style="font-size:13.5px">Your story</b><div class="tiny">hours, days, the shape of your weeks</div></div>
       <span style="color:var(--ink-3)">›</span>
     </div>
   </div>
@@ -351,7 +351,7 @@
       <div class="sub" style="margin-top:5px" id="rdWeDo"></div>
     </div>
     <div class="card">
-      <b style="font-size:13px">Try this tonight</b>
+      <b style="font-size:13px">Try this today</b>
       <div class="sub" style="margin-top:5px" id="rdTry"></div>
       <button class="btn ghost" style="margin-top:11px" onclick="openEntry('feeling')">Write about it</button>
     </div>
@@ -399,7 +399,7 @@
       <div class="display" style="font-size:17px;line-height:1.3;margin-bottom:6px" id="reflQ">How do you feel when you're in there?</div>
       <div class="sub" id="reflSub">Not afterwards — during. Try to catch it while it's happening.</div>
       <div id="reflHeavy" style="display:none;margin-top:11px;padding:11px;border-radius:13px;background:rgba(147,211,198,.1);border:1px solid var(--calm-ghost-border)">
-        <div class="tiny" style="line-height:1.55;color:var(--calm-soft)">If what comes up feels heavier than an evening, that's worth saying out loud to someone who isn't an app. We keep a short list of places to start — no diagnosis, no algorithms.</div>
+        <div class="tiny" style="line-height:1.55;color:var(--calm-soft)">If what comes up feels heavier than a hard day, that's worth saying out loud to someone who isn't an app. We keep a short list of places to start — no diagnosis, no algorithms.</div>
         <div class="tiny" style="margin-top:7px;color:var(--calm);cursor:pointer" onclick="toast('Support directory — real humans, not chatbots.')">Where to look ›</div>
       </div>
       <div class="row" style="gap:7px;margin-top:13px">
@@ -450,7 +450,7 @@
     <div class="card">
       <b style="font-size:13.5px">What showed up</b>
       <div class="themeRow"><span class="themeDot" style="background:var(--peach)"></span><div><b style="font-size:12.5px">Tiredness before 10pm</b><div class="tiny">4 entries · usually right before a coin</div></div></div>
-      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a clean night</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a clean day</div></div></div>
       <div class="themeRow"><span class="themeDot" style="background:var(--violet)"></span><div><b style="font-size:12.5px">Boredom at lunch</b><div class="tiny">2 entries · the pull was mild, you rode it out</div></div></div>
     </div>
     <div class="card">
@@ -689,9 +689,9 @@
           <b style="font-size:12.5px">Clocking in</b>
           <div class="tiny" style="margin-top:4px;line-height:1.55">Opening a shielded app in a work window asks one question — "working?" — and starts a 30-minute work session. No pause, no price. When it ends we ask once more. Drift after that becomes ordinary time again.</div>
         </div>
-        <div class="spread" style="margin-bottom:10px"><div><div style="font-size:12.5px;font-weight:700">Count work time as reclaimed</div><div class="tiny">off by default — it isn't your evening</div></div>
+        <div class="spread" style="margin-bottom:10px"><div><div style="font-size:12.5px;font-weight:700">Count work time as reclaimed</div><div class="tiny">off by default — it isn't your own time</div></div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-        <div class="tiny">Weekends and evenings stay fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
+        <div class="tiny">Your own time stays fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
       </div>
     </div>
     <div class="card">
@@ -728,6 +728,7 @@
     <div class="eyebrow" style="margin:14px 0 8px">2 · WHEN IS THE SHIELD ON?</div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px" id="schedChips">
       <div class="chip on" onclick="pickSched(this,'always')">Always</div>
+      <div class="chip" onclick="pickSched(this,'mornings')">Mornings</div>
       <div class="chip" onclick="pickSched(this,'evenings')">Evenings</div>
       <div class="chip" onclick="pickSched(this,'work')">Work hours</div>
       <div class="chip" onclick="pickSched(this,'weekend')">Weekends</div>
@@ -747,7 +748,7 @@
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
     </div>
     <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR?</div>
-    <div class="card"><input placeholder="my novel · evening runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <div class="card"><input placeholder="my novel · morning runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
     <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the promise</button>
     <div class="tiny" style="text-align:center;margin-top:8px">made in cold blood, kept in warm moments</div>
   </div>
@@ -786,7 +787,7 @@
       <div class="onb" data-i="2" style="display:none">
         <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">We never keep<br>your money.</div>
-        <div class="sub">Every month the jar tips out — 100% to the charity you chose. Even an evening that got away from you does some good.</div>
+        <div class="sub">Every month the jar tips out — 100% to the charity you chose. Even an hour that got away from you does some good.</div>
       </div>
       <div class="onb" data-i="3" style="display:none">
         <svg width="58" height="58" style="color:var(--mint);filter:drop-shadow(0 0 20px rgba(55,226,192,.6))"><use href="#i-bolt"/></svg>
@@ -835,7 +836,7 @@
     <div id="insteadColleagues"></div>
     <div class="card" style="background:rgba(255,255,255,.07);border-color:var(--calm-ghost-border)">
       <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--calm)"><use href="#i-pen"/></svg>
-        <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">Or write a line first</b><div class="tiny">what's the pull actually about tonight?</div></div></div>
+        <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">Or write a line first</b><div class="tiny">what's the pull actually about right now?</div></div></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px" id="promptChips"></div>
       <button class="btn calm" style="margin-top:11px" onclick="closeOv('ov-instead');openEntry('impulse')">Write it</button>
     </div>
@@ -905,15 +906,15 @@
   <!-- ══ ROUGH DAY ══ -->
   <div class="ov" id="ov-rough" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
     <svg width="50" height="50" style="color:var(--calm-soft);filter:drop-shadow(0 0 18px rgba(147,211,198,.5))"><use href="#i-moon"/></svg>
-    <div class="display" style="font-size:21px;margin:14px 0 8px;color:var(--calm-ink)">That was an expensive evening.</div>
+    <div class="display" style="font-size:21px;margin:14px 0 8px;color:var(--calm-ink)">That was an expensive day.</div>
     <div class="sub" style="color:var(--calm-soft);max-width:240px">It happens — and that $15 is going to <span class="charityName">Doctors Without Borders</span>. One thing we noticed: your coins tend to drop after 10pm on Sundays.</div>
     <div class="card" style="margin-top:18px;width:100%;text-align:left;background:rgba(255,255,255,.06)">
       <b style="font-size:13px;color:var(--calm-ink)">Want to try something?</b>
-      <div class="sub" style="color:var(--calm-soft);margin-top:4px">Move Sunday's shield an hour earlier — cold blood, tonight's you will thank you.</div>
+      <div class="sub" style="color:var(--calm-soft);margin-top:4px">Move Sunday's shield an hour earlier — cold blood, future you will thank you.</div>
     </div>
     <div style="position:absolute;left:17px;right:17px;bottom:22px">
       <button class="btn calm" onclick="closeOv('ov-rough');toast('Sunday shield moved to 9pm.')">Yes, shift it earlier</button>
-      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="closeOv('ov-rough')">Not tonight</button>
+      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="closeOv('ov-rough')">Not now</button>
     </div>
   </div>
 

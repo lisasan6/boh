@@ -172,7 +172,7 @@ function renderReal(){
   [...$('realDots').children].forEach((d,i)=>d.classList.toggle('on',i<=realStep));
   const ch=CHARITIES[realCharity].n, K=$('realKicker'), B=$('realBody');
   if(realStep===0){ K.textContent='DAY 3';
-    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three nights. Five temptations.<br>All yours.</div>
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three days. Five temptations.<br>All yours.</div>
       <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b></div>
       <button class="btn mint" style="margin-top:16px" onclick="realGo(1)">Make it real</button>
       <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying free. Ghost Jar keeps working exactly as it does now.')">Not yet, stay free</button>`;
@@ -412,7 +412,7 @@ const FEED=[
   {t:'post',a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',w:'2h ago',
    body:'Ran the long way home instead of scrolling on the sofa.',photo:'run',kudos:4},
   {t:'week',a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',w:'5h ago',
-   body:"Luca's week held — 6 clean nights.",kudos:7},
+   body:"Luca's week held — 6 clean days.",kudos:7},
   {t:'quiet',a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',w:'yesterday',
    body:'Giulia regained an hour for herself.',sub:'kept private — she chose the quiet post',kudos:3,supporter:true},
   {t:'jar',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'this week',
@@ -445,10 +445,10 @@ function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.
 /* members — per-member settlement, amounts hideable */
 let showDollars=true;
 const MEMBERS=[
-  {a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',coins:2,amt:10,note:'9 clean nights'},
+  {a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',coins:2,amt:10,note:'9 clean days'},
   {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true},
-  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 clean nights'},
-  {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 clean nights'},
+  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 clean days'},
+  {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 clean days'},
 ];
 function renderMembers(){
   $('memberList').innerHTML=MEMBERS.map(m=>`
@@ -584,7 +584,7 @@ function wobEnd(id,ok){
   wobOpen=null; wobPull='';
   document.querySelectorAll('#wobPulls .chip').forEach(c=>c.classList.remove('on'));
   closeOv('ov-wobble');
-  if(ok) showExit('Go put the kettle on.','Nothing else is being asked of you tonight.');
+  if(ok) showExit('Go put the kettle on.','Nothing else is being asked of you right now.');
 }
 /* ══ STANDBY NOTE COMPOSER ══
    The one place we let a model near this feature — and only *before* the moment,
@@ -598,7 +598,7 @@ const SB_Q=[
 const SB_EX=[
   "It's late, not urgent. Put the kettle on and text me in the morning — I'll ask.",
   "You're tired. Tired wants an off switch, not content. Go find a better one.",
-  "Nothing in there tonight is worth the twenty minutes. I'd know.",
+  "Nothing in there right now is worth the twenty minutes. I'd know.",
   "I'm not around, but I'm on your side. Go outside for four minutes — it usually does it.",
   "Do the boring thing. The boring thing always works and I hate that too.",
   "If it still feels like this tomorrow, call me. It usually doesn't.",
@@ -795,7 +795,7 @@ function pickSched(el,kind){
   el.classList.add('on'); sched=kind;
   $('customWindow').style.display = kind==='custom' ? 'block' : 'none';
 }
-const SCHED_LABEL={always:'always',evenings:'9pm–7am',work:'9am–5pm',weekend:'weekends',custom:'custom window'};
+const SCHED_LABEL={always:'always',mornings:'6–10am',evenings:'9pm–7am',work:'9am–5pm',weekend:'weekends',custom:'custom window'};
 function cycleSetting(el,opts){
   const i=(opts.indexOf(el.textContent.trim())+1)%opts.length;
   el.textContent=opts[i]; el.classList.toggle('on', i===1);
@@ -807,12 +807,12 @@ function renameJar(){
 }
 function updateGoal(){
   const marks=[15,30,60,100], next=marks.find(m=>m>S.streak)||S.streak+30;
-  const g=$('goalLine'); if(g) g.textContent=(next-S.streak)+' night'+((next-S.streak)===1?'':'s')+' to your '+next+'-night mark';
+  const g=$('goalLine'); if(g) g.textContent=(next-S.streak)+' day'+((next-S.streak)===1?'':'s')+' to your '+next+'-day mark';
 }
 /* ── tips: some are science, some are permission ── */
 const TIPS=[
   {i:'i-brain',t:"Why it's so hard at 10pm",b:'Tiredness lowers the effort your brain will spend on deciding. The feed never asks you to decide.',cta:'Discover more ›',go:()=>openRes(3)},
-  {i:'i-camera',t:"Some nights you just want to be entertained",b:"I get it — we don't always want to optimise the evening or do something meaningful. That's completely fine. What about a good film, or the series you keep meaning to start? It ends by itself, which is more than the feed will ever do for you.",cta:'Find something that ends ›',go:()=>{ showInstead(); setInsteadMode('fun',document.getElementById('segFun')); }},
+  {i:'i-camera',t:"Sometimes you just want to be entertained",b:"I get it — we don't always want to optimise every hour or do something meaningful. That's completely fine. What about a good film, or the series you keep meaning to start? It ends by itself, which is more than the feed will ever do for you.",cta:'Find something that ends ›',go:()=>{ showInstead(); setInsteadMode('fun',document.getElementById('segFun')); }},
   {i:'i-wave',t:'The pull is usually tiredness, not craving',b:"Your own entries say so four times this month. Tired wants an off switch, not content — and a film is a much better off switch than a feed.",cta:'Read your recap ›',go:()=>go('recap')},
   {i:'i-brain',t:"You didn't decide to open it",b:'Most phone opens last under 30 seconds and begin with no decision at all. The habit is the reach, not the app.',cta:'Discover more ›',go:()=>openRes(4)},
   {i:'i-heart',t:'Boredom is where ideas live',b:"Nothing has gone wrong when you're bored. It's the state most people's best thinking arrives in — the feed just gets there first.",cta:'Sit with it ›',go:()=>openEntry('feeling')},
@@ -828,7 +828,7 @@ function tipAction(){ TIPS[tipIdx].go(); }
 /* ── celebrations ── */
 const WINS=[
   {t:'Best week yet',s:'9h 40m returned'},
-  {t:'12 clean nights',s:'your longest run'},
+  {t:'12 clean days',s:'your longest run'},
   {t:'First $50 given',s:'to Doctors Without Borders'},
   {t:'Focus Week finished',s:'with Casa Jar'},
 ];
@@ -860,7 +860,7 @@ const RES=[
    body:'Stopping cues are what let people leave. Infinite scroll removes every one of them, so the decision to stop has to be generated by you, from nothing, over and over.',
    feels:'You look up and twenty minutes have gone, and you can\'t name a single thing you saw.',
    we:'The shield is an artificial bottom of the page. The breath pause hands the decision back to you before the feed can absorb it.',
-   tr:'Tonight, when you finish something, close the app before you look for the next thing. Notice how strange that feels.',
+   tr:'Next time you finish something, close the app before you look for the next thing. Notice how strange that feels.',
    src:'Stopping cues & consumption research (Wansink); attention capture literature.'},
   {k:'VARIABLE REWARD',t:'Sometimes it\'s good',hook:'Unpredictable rewards are learned harder than reliable ones.',
    body:'Dopamine neurons respond to reward *prediction error* — surprise, not pleasure. A feed that is occasionally great and usually mediocre is the most compelling schedule there is. A Meta data scientist put it plainly in an internal note: "intermittent rewards are most effective (think slot machines)."',
@@ -882,15 +882,15 @@ const RES=[
    src:'Kroese et al., bedtime procrastination literature.'},
   {k:'CHOSEN VS DRIFTING',t:'A film ends. A feed doesn\'t.',hook:'The problem was never entertainment. It was media with no edges.',
    body:'Every traditional form of entertainment carries a stopping cue: credits roll, the record finishes, the episode ends. You get a natural moment to decide whether to continue. Feeds deliberately removed that moment — not to entertain you better, but to keep the decision from ever arriving.',
-   feels:'Two hours on a film feels like an evening you had. Two hours scrolling feels like an evening that happened to you.',
+   feels:'Two hours on a film feels like time you had. Two hours scrolling feels like time that happened to you.',
    we:'We never ask you to be productive. We ask you to pick something that ends — and if that\'s a film at 10pm, brilliant, that\'s a choice and we\'ll happily suggest one.',
-   tr:'Tonight, pick something with a running time. Anything. Just let the thing have an ending.',
+   tr:'Next time, pick something with a running time. Anything. Just let the thing have an ending.',
    src:'Stopping-cue research; Wansink on consumption without cues.'},
   {k:'CHECKING HABITS',t:'You didn\'t decide to',hook:'Most phone opens are under 30 seconds and start with no decision at all.',
    body:'Habits are cue-driven: context triggers the action before deliberation arrives. Roughly 43% of daily behaviour runs this way. Willpower arrives late to a race it didn\'t know had started.',
    feels:'Finding the app already open in your hand.',
    we:'We change the cue, not your character — friction at the exact moment of the reach, which cut openings by more than half in the published trial of a similar tool.',
-   tr:'Move the app off your home screen tonight. Cheapest intervention there is.',
+   tr:'Move the app off your home screen today. Cheapest intervention there is.',
    src:'Wood, Quinn & Kashy 2002; Oulasvirta et al. 2012; Grüning et al., PNAS 2023.'},
 ];
 function renderRes(){
@@ -925,8 +925,8 @@ const REFLECTIONS=[
   {q:'What are you usually looking for when you reach?',s:'News? Company? An off switch? Something to stop the thinking?'},
   {q:'How often do you pick up the phone for one small thing — and stay?',s:'Checking the weather, then twenty minutes gone. That drift is the habit, not the app.'},
   {q:'Is something asking for your attention that the scrolling helps you avoid?',s:'A conversation, a decision, a feeling. No need to solve it here — naming it is enough.',heavy:true},
-  {q:'What did the best evening of your last month look like?',s:'Was a screen in it?'},
-  {q:'If tonight went well, what would you have done instead?',s:'Be specific. Specific is what your shield will remind you of.'},
+  {q:'What did the best day of your last month look like?',s:'Was a screen in it?'},
+  {q:'If today went well, what would you have done instead?',s:'Be specific. Specific is what your shield will remind you of.'},
 ];
 let reflIdx=0;
 let swapsLeft=2;
@@ -952,21 +952,21 @@ function addDetox(){ detoxCount++; $('detoxN').textContent=detoxCount;
   toast(detoxCount>=5?'Five times now. The difference is you did something about it.':'Counted. Saying it out loud is a start.'); }
 /* ── diary ── */
 const GOALS=[
-  {t:'Finish the novel',c:'var(--mint)',n:'4 evenings this week'},
-  {t:'Be present at dinner',c:'var(--peach)',n:'6 of 7 nights'},
+  {t:'Finish the novel',c:'var(--mint)',n:'4 times this week'},
+  {t:'Be present at dinner',c:'var(--peach)',n:'6 of 7 days'},
   {t:'Sleep before midnight',c:'var(--violet)',n:'holding'},
 ];
 const ENTRIES=[
   {tag:'voice',t:'Thursday, 11:05pm',voice:true,dur:48},
   {tag:'impulse',t:'Wednesday, 10:12pm',b:"Reached for it without deciding to. Wasn't even bored — just tired and looking for an off switch.",at:'written at a shield moment'},
   {tag:'feeling',t:'Tuesday, 8:40pm',b:'Read for forty minutes and felt oddly proud. Small thing, but it was mine.'},
-  {tag:'goal',t:'Monday, 7:15am',b:'Want this week to have two real evenings in it. Not productive — just mine.'},
+  {tag:'goal',t:'Monday, 7:15am',b:'Want this week to have two slow mornings in it. Not productive — just mine.'},
 ];
-const PROMPTS=['What am I actually looking for?','What would make this evening good?','Is this tiredness or wanting?','What happened today?'];
+const PROMPTS=['What am I actually looking for?','What would make the next hour good?','Is this tiredness or wanting?','What happened today?'];
 const INSTEAD_WORTH=[
   {i:'i-book',t:'Twenty pages',s:'you left off at chapter three'},
   {i:'i-sprout',t:'Walk to the end of the street',s:'it\'s 18° and not raining'},
-  {i:'i-pen',t:'Write three lines here',s:'you said tonight felt heavy'},
+  {i:'i-pen',t:'Write three lines here',s:'you said today felt heavy'},
 ];
 const INSTEAD_FUN=[
   {i:'i-camera',t:'The film you saved in March',s:'1h 52m · you\'d still be in bed by 11:40'},
@@ -978,7 +978,7 @@ function setInsteadMode(m,el){
   insteadMode=m;
   el.parentElement.querySelectorAll('div').forEach(d=>d.classList.remove('on')); el.classList.add('on');
   $('insteadSub').textContent = m==='fun'
-    ? "Fair enough — not every evening needs to mean something. Pick something that ends by itself."
+    ? "Fair enough — not every hour needs to mean something. Pick something that ends by itself."
     : 'Three things that fit the twenty minutes you have and the mood you logged.';
   paintInstead();
 }
@@ -1095,7 +1095,7 @@ function saveEntry(){
   renderEntries(); closeOv('ov-entry'); $('entryText').value=''; go('diary');
   entriesThisSitting++;
   if(entriesThisSitting>=2){
-    setTimeout(()=>showExit('That\'s enough for tonight.','The diary did its job. It\'s not somewhere to spend an evening either.'),650);
+    setTimeout(()=>showExit('That\'s enough for now.','The diary did its job. It\'s not somewhere to spend an hour either.'),650);
     entriesThisSitting=0;
   } else { toast('Kept. Only you can read it.'); }
 }
