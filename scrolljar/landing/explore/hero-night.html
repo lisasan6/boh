@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" class="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ScrollJar Night Aurora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centred thesis column over a full-bleed aurora; the live phone is the stage,
+   orbited by gold coins (the jar's own currency); two glass satellites flank it on desktop. */
+:root{
+  --font-display:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;
+  --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mint:#3CF0CB; --violet:#9B8CFF; --peach:#FF8F66; --blue:#5AA9FF; --gold:#FFC23A;
+}
+/* NIGHT — the app's own night sky */
+html.night{
+  color-scheme:dark;
+  --bg:#0A0B1C; --ink:#F2F0FF; --ink-2:#B9B4E6; --ink-3:#8F8ABF;
+  --glass:rgba(255,255,255,.06); --glass-edge:rgba(255,255,255,.14); --glass-hi:rgba(255,255,255,.22);
+  --sheen:linear-gradient(170deg,rgba(255,255,255,.14),rgba(255,255,255,.02) 45%,transparent 60%);
+  --head-grad:linear-gradient(100deg,#3CF0CB 0%,#9B8CFF 33%,#FF8F66 55%,#9B8CFF 78%,#3CF0CB 100%);
+  --btn-fg:#04241E; --btn-bg:linear-gradient(165deg,#8BFBE6,#1FD9B5); --btn-glow:rgba(31,217,181,.55);
+  --blob-a:rgba(139,124,246,.55); --blob-b:rgba(60,240,203,.32); --blob-c:rgba(90,169,255,.38); --blob-d:rgba(255,143,102,.26);
+  --dot:rgba(185,180,230,.16); --ring:rgba(155,140,255,.5); --phone-glow:rgba(60,240,203,.35);
+  --frame:linear-gradient(160deg,#3A3E5E,#141629 60%,#262A45); --shadow:0 60px 120px -40px rgba(0,0,0,.9);
+  --punch:rgba(60,240,203,.28); --cite:#8F8ABF; --strip-line:rgba(255,255,255,.08);
+}
+/* LIGHT — bolder daylight: a dawn aurora band on white */
+html.light{
+  color-scheme:light;
+  --bg:#FBFAFF; --ink:#0F1124; --ink-2:#454A66; --ink-3:#5F6480;
+  --glass:rgba(255,255,255,.55); --glass-edge:rgba(255,255,255,.95); --glass-hi:#fff;
+  --sheen:linear-gradient(170deg,rgba(255,255,255,.9),rgba(255,255,255,.2) 45%,transparent 62%);
+  --head-grad:linear-gradient(100deg,#00806C 0%,#5B21D6 33%,#E0531F 55%,#5B21D6 78%,#00806C 100%);
+  --btn-fg:#04241E; --btn-bg:linear-gradient(165deg,#6FF2DA,#00B899); --btn-glow:rgba(0,184,153,.45);
+  --blob-a:rgba(120,60,240,.42); --blob-b:rgba(0,194,163,.42); --blob-c:rgba(30,99,255,.3); --blob-d:rgba(255,128,64,.45);
+  --dot:rgba(15,17,36,.09); --ring:rgba(91,33,214,.35); --phone-glow:rgba(120,60,240,.3);
+  --frame:linear-gradient(160deg,#30344F,#0F1124 60%,#262A45); --shadow:0 60px 110px -40px rgba(60,30,140,.45);
+  --punch:rgba(0,194,163,.3); --cite:#5F6480; --strip-line:rgba(15,17,36,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16.5px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* atmosphere: aurora blobs + dotted field + grain (fixed behind everything) */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(100px)}
+.b1{width:62vw;height:52vw;max-width:820px;max-height:680px;left:-12vw;top:-18vw;background:var(--blob-a);animation:drift1 28s ease-in-out infinite}
+.b2{width:52vw;height:46vw;max-width:700px;max-height:600px;right:-14vw;top:4vw;background:var(--blob-b);animation:drift2 34s ease-in-out infinite}
+.b3{width:50vw;height:40vw;max-width:680px;max-height:540px;left:22vw;top:48vw;background:var(--blob-c);animation:drift3 40s ease-in-out infinite}
+.b4{width:34vw;height:30vw;max-width:460px;max-height:400px;right:6vw;top:58vw;background:var(--blob-d);animation:drift1 36s ease-in-out infinite reverse}
+@media(max-width:700px){.b1{width:130vw;height:110vw;left:-40vw;top:-20vw}.b2{width:110vw;height:90vw;right:-50vw;top:40vw}
+  .b3{width:120vw;height:90vw;left:-30vw;top:150vw}.b4{width:90vw;height:80vw;right:-30vw;top:210vw}}
+@keyframes drift1{50%{transform:translate(6vw,4vw) scale(1.12)}}
+@keyframes drift2{50%{transform:translate(-6vw,5vw) scale(1.1)}}
+@keyframes drift3{50%{transform:translate(4vw,-5vw) scale(1.08)}}
+.dots{position:absolute;inset:0;background-image:radial-gradient(var(--dot) 1px,transparent 1.4px);background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(70% 55% at 50% 30%,#000 20%,transparent 75%);mask-image:radial-gradient(70% 55% at 50% 30%,#000 20%,transparent 75%)}
+.grain{position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* glass, shared by nav, pill, input, satellites */
+.glass{background:var(--glass);border:1px solid var(--glass-edge);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:inset 0 1px 0 var(--glass-hi), 0 18px 40px -22px rgba(0,0,0,.45);position:relative;isolation:isolate}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--sheen);z-index:-1;pointer-events:none}
+
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:12px auto 0;max-width:1120px;border-radius:18px}
+.navin{display:flex;align-items:center;gap:6px;padding:10px 10px 10px 16px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.sp{flex:1}
+.navlink{color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:600;padding:8px 12px;border-radius:10px}
+.navlink:hover,.navlink:focus-visible{color:var(--ink);background:var(--glass)}
+@media(max-width:760px){.navlink{display:none}}
+.btn{border:none;border-radius:14px;padding:15px 26px;font:700 15px/1.2 var(--font-body);cursor:pointer;color:var(--btn-fg);background:var(--btn-bg);text-decoration:none;
+  display:inline-block;text-align:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 2px 6px var(--btn-glow),0 16px 34px -12px var(--btn-glow);transition:transform .16s,box-shadow .16s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible,.navlink:focus-visible,input:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+.btn.small{padding:10px 18px;font-size:14px;border-radius:12px}
+
+.hero{position:relative;z-index:2;text-align:center;padding-block:76px 0}
+.pill{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:7px 16px 7px 12px;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:24px}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(60,240,203,.18),0 0 12px var(--mint)}
+.whisper{font-size:16px;color:var(--ink-3);margin:0 auto 14px;max-width:470px}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(46px,8vw,104px);line-height:.96;letter-spacing:-.05em;max-width:980px;margin:0 auto;text-wrap:balance}
+h1 em{font-style:normal;display:block;background:var(--head-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 12s ease-in-out infinite;padding-bottom:.06em}
+@keyframes shimmer{50%{background-position:100% 0}}
+.sub{color:var(--ink-2);font-size:clamp(17px,1.6vw,19px);max-width:580px;margin:26px auto 28px;text-wrap:pretty}
+.sub b{color:var(--ink);font-weight:700}
+.punch{display:inline;-webkit-box-decoration-break:clone;box-decoration-break:clone;font-weight:700;color:var(--ink);background:linear-gradient(to top,var(--punch) 40%,transparent 40%);padding:0 3px}
+.sig{display:flex;gap:10px;max-width:480px;margin:0 auto;padding:6px;border-radius:18px}
+.sig input{flex:1;min-width:0;background:transparent;border:0;border-radius:12px;padding:12px 14px;color:var(--ink);font:15px var(--font-body);outline:none}
+.sig input::placeholder{color:var(--ink-3)}
+.formnote{font-size:13.5px;color:var(--ink-3);margin-top:14px}
+.formnote b{color:var(--ink-2);font-weight:600}
+@media(max-width:560px){.sig{flex-direction:column}.sig .btn{width:100%}}
+
+/* the stage */
+.stage{position:relative;display:flex;justify-content:center;margin-top:44px;padding-block:66px 40px;overflow:hidden}
+.tag{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:6;white-space:nowrap;border-radius:12px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.tag b{color:var(--mint)}
+html.light .tag b{color:#00806C}
+.halo{position:absolute;left:50%;top:52%;width:560px;height:560px;transform:translate(-50%,-50%);border-radius:50%;z-index:0;
+  background:radial-gradient(closest-side,var(--phone-glow),transparent 72%);filter:blur(10px)}
+.phone{position:relative;z-index:3;width:332px;border-radius:52px;padding:11px;background:var(--frame);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 0 1px rgba(255,255,255,.08)}
+.phone::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.12) 42%,transparent 52%)}
+.screen{border-radius:41px;overflow:hidden;background:#0B0C1A}
+.screen iframe{display:block;width:100%;height:668px;border:0}
+.notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:104px;height:28px;border-radius:16px;background:#0B0C1A;z-index:4}
+
+/* coin orbit: back half behind the phone, front half in front */
+/* no transform here: it would trap the coins in their own stacking layer, behind the phone */
+.orbit{position:absolute;left:calc(50% - 330px);top:calc(56% - 105px);width:660px;height:210px;pointer-events:none}
+.orbit svg{position:absolute;inset:0;overflow:visible}
+.orbit .back{z-index:1}.orbit .front{z-index:4}
+.coin{position:absolute;left:0;top:0;width:34px;height:34px;offset-path:path("M 0 105 A 330 105 0 1 1 660 105 A 330 105 0 1 1 0 105");offset-rotate:0deg;
+  animation:orbit 16s linear infinite;filter:drop-shadow(0 0 10px rgba(255,194,58,.7))}
+.coin:nth-of-type(2){animation-delay:-5.33s}.coin:nth-of-type(3){animation-delay:-10.66s}
+@keyframes orbit{0%{offset-distance:0%;transform:scale(.62);z-index:1;opacity:.75}
+  25%{transform:scale(.5)}49.9%{z-index:1}50%{offset-distance:50%;transform:scale(.62);z-index:5;opacity:.9}
+  75%{transform:scale(1)}100%{offset-distance:100%;transform:scale(.62);z-index:5;opacity:.75}}
+@media(max-width:700px){.orbit{left:calc(50% - 190px);top:calc(56% - 60px);width:380px;height:121px}
+  .coin{width:26px;height:26px;offset-path:path("M 0 60.5 A 190 60.5 0 1 1 380 60.5 A 190 60.5 0 1 1 0 60.5")}.halo{width:420px;height:420px}}
+
+.sat{position:absolute;z-index:5;width:232px;border-radius:20px;padding:18px 18px 16px;text-align:left}
+.sat.l{left:calc(50% - 470px);top:120px;transform:rotate(-5deg)}
+.sat.r{right:calc(50% - 470px);top:330px;transform:rotate(4deg)}
+@media(max-width:1080px){.sat{display:none}}
+.sat .k{font-size:10.5px;letter-spacing:.16em;font-weight:800;text-transform:uppercase;color:var(--ink-3)}
+.sat .t{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-.02em;margin:6px 0 4px}
+.sat .d{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.sat .mbtn{margin-top:12px;border-radius:11px;text-align:center;font-weight:800;font-size:12px;padding:9px;color:var(--btn-fg);background:var(--btn-bg)}
+.sat .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+.sat .amt{font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--gold);font-variant-numeric:tabular-nums}
+html.light .sat .amt{color:#9A5C00}
+
+/* next section, so the transition can be judged */
+.strip{position:relative;z-index:2;border-top:1px solid var(--strip-line);padding-block:36px 56px}
+.striplab{text-align:center;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:24px}
+.stripgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.si{text-align:left;border-radius:18px;padding:18px}
+.si b{display:block;font-family:var(--font-display);font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1;
+  background:var(--head-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.si p{font-size:13.5px;color:var(--ink-2);margin-top:10px;line-height:1.45}
+.si cite{display:block;font-style:normal;font-size:11.5px;color:var(--cite);margin-top:8px}
+@media(max-width:900px){.stripgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.stripgrid{grid-template-columns:1fr}}
+
+@media(prefers-reduced-motion:reduce){.blob,h1 em{animation:none}.coin{display:none}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="dots"></div><div class="grain"></div></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="cb" cx=".36" cy=".28" r=".9"><stop offset="0" stop-color="#FFFBE6"/><stop offset=".35" stop-color="#FFDD7A"/><stop offset=".7" stop-color="#F2B633"/><stop offset="1" stop-color="#96650A"/></radialGradient>
+  <symbol id="coin" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#C98E14"/><circle cx="20" cy="20" r="16.4" fill="url(#cb)"/>
+    <path d="M20 11.4 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#FFF3CE" opacity=".6"/></symbol>
+  <linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="var(--ring)" stop-opacity="0"/><stop offset=".5" stop-color="var(--ring)"/><stop offset="1" stop-color="var(--ring)" stop-opacity="0"/></linearGradient>
+</defs></svg>
+
+<nav class="glass" aria-label="Main"><div class="navin">
+  <a class="logo" href="#top"><svg width="20" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/></svg>ScrollJar</a>
+  <div class="sp"></div>
+  <a class="navlink" href="#how">How it works</a><a class="navlink" href="#science">The science</a><a class="navlink" href="#faq">FAQ</a>
+  <a class="btn small" href="#join">Join the waitlist</a>
+</div></nav>
+
+<header class="wrap hero" id="top">
+  <div class="pill glass"><i></i>A swear jar, for scrolling · iPhone first</div>
+  <p class="whisper">You opened it to check one thing. That was 40 minutes ago.</p>
+  <h1>Your time belongs to you. <em>Let's go get it back.</em></h1>
+  <p class="sub">ScrollJar blocks the apps that drink your evenings, using Apple's own Screen Time engine. Open one anyway and it costs a price you set — given <b>100% to a charity you love.</b><br><span style="display:block;height:12px"></span><span class="punch">Every other app like this keeps that money. We never touch it.</span></p>
+  <form class="sig glass" aria-label="Join the waitlist" onsubmit="event.preventDefault()">
+    <input id="email" type="email" required placeholder="your@email.com" aria-label="Email address">
+    <button class="btn" type="submit">Join the waitlist</button>
+  </form>
+  <p class="formnote">Free · no spam · one email at launch. <b>We're not here for your attention.</b></p>
+
+  <div class="stage">
+    <div class="tag glass">Try it: <b>tap the green button</b></div>
+    <div class="halo" aria-hidden="true"></div>
+    <div class="orbit" aria-hidden="true">
+      <svg class="back" viewBox="0 0 660 210"><path d="M 0 105 A 330 105 0 0 1 660 105" fill="none" stroke="url(#rg)" stroke-width="1.4"/></svg>
+      <svg class="front" viewBox="0 0 660 210"><path d="M 660 105 A 330 105 0 0 1 0 105" fill="none" stroke="url(#rg)" stroke-width="1.4"/></svg>
+      <svg class="coin" viewBox="0 0 40 40"><use href="#coin"/></svg>
+      <svg class="coin" viewBox="0 0 40 40"><use href="#coin"/></svg>
+      <svg class="coin" viewBox="0 0 40 40"><use href="#coin"/></svg>
+    </div>
+    <div class="sat l glass" aria-hidden="true">
+      <div class="k">The shield</div>
+      <div class="t">You made a jar promise</div>
+      <div class="d">You said this hour was for your novel.</div>
+      <div class="mbtn">I'll stay committed</div>
+    </div>
+    <div class="sat r glass" aria-hidden="true">
+      <div class="k">July · the tip-out</div>
+      <div class="row"><span>→ Doctors Without Borders</span><span class="amt">$35</span></div>
+      <div class="d" style="margin-top:6px">receipt from Every.org</div>
+      <div class="row"><span>returned to you</span><b style="color:var(--ink)">9h 40m</b></div>
+    </div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen"><iframe src="../../prototype/index.html?embed=1&amp;mode=night" title="ScrollJar prototype you can tap through: try opening a blocked app and watch a coin drop into the jar"></iframe></div>
+    </div>
+  </div>
+</header>
+
+<div class="strip"><div class="wrap">
+  <p class="striplab">Why this works — and why now</p>
+  <div class="stripgrid">
+    <div class="si glass"><b>31%</b><p>of social media use is driven by self-control problems, not real preference</p><cite>American Economic Review, 2022</cite></div>
+    <div class="si glass"><b>36%</b><p>of app openings are abandoned when a moment of friction appears first</p><cite>PNAS, 2023</cite></div>
+    <div class="si glass"><b>2 weeks</b><p>of blocking measurably improved attention, mood and wellbeing in a randomised trial</p><cite>PNAS Nexus, 2025</cite></div>
+    <div class="si glass"><b>2026</b><p>a Los Angeles jury found platforms liable for addictive design (now on appeal); 20+ countries are acting</p><cite>Court record &amp; press reports</cite></div>
+  </div>
+</div></div>
+</body>
+</html>
