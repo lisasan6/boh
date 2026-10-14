@@ -217,6 +217,11 @@ section{padding-block:84px}
 @keyframes receive{0%,66%{box-shadow:0 8px 22px -10px rgba(60,240,203,.8),0 0 0 0 rgba(60,240,203,.5)}86%{box-shadow:0 8px 22px -10px rgba(60,240,203,.8),0 0 0 14px rgba(60,240,203,0)}}
 .play .node.dark{animation:swallow 3.6s ease-out infinite}
 @keyframes swallow{0%,66%{color:var(--ink-3)}76%{color:var(--ink)}100%{color:var(--ink-3)}}
+.drows{margin:4px 0 18px;border-top:1px solid var(--line)}
+.drows>div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}
+.drows dt{color:var(--ink-3);font-size:14px}
+.drows dd{margin:0;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--ink-2);text-align:right}
+.drows.good dd{color:var(--mint)}
 .dline{color:var(--ink-2);font-size:15px}
 .dline b{color:var(--ink)}
 @media(max-width:860px){.diff{grid-template-columns:1fr}}
@@ -267,6 +272,15 @@ section{padding-block:84px}
 .tcta{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:30px;text-align:center}
 .tcta span{color:var(--ink-3);font-size:14px}
 @media(max-width:900px){.tgrid{grid-template-columns:1fr}}
+.tsteps{list-style:none;margin:0 auto 26px;padding:0;max-width:1040px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative}
+.tsteps::before{content:"";position:absolute;left:12%;right:12%;top:17px;height:1px;background:linear-gradient(90deg,transparent,rgba(60,240,203,.45),transparent)}
+.tsteps li{position:relative;text-align:center;padding:0 6px;min-width:0}
+.tsteps .tn{display:flex;width:34px;height:34px;margin:0 auto 10px;border-radius:50%;align-items:center;justify-content:center;font:800 15px var(--font-display);color:#06231D;background:var(--btn-bg);box-shadow:0 6px 18px -8px rgba(60,240,203,.8)}
+.tsteps b{display:block;font-size:15.5px}
+.tsteps li>span:last-child{display:block;color:var(--ink-3);font-size:13.5px;margin-top:3px;text-wrap:balance}
+@media(max-width:760px){.tsteps{grid-template-columns:1fr 1fr;row-gap:22px}.tsteps::before{display:none}}
+.tperk{max-width:640px;margin:22px auto 0;text-align:center;color:var(--ink-2);font-size:15px}
+.tperk b{color:var(--ink)}
 .founder{max-width:760px;margin:0 auto;border-radius:26px;padding:30px 34px;display:flex;gap:26px;align-items:flex-start}
 .fav{flex:none;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 30px var(--font-display);color:#06231D;background:linear-gradient(140deg,var(--mint),var(--lav))}
 .founder blockquote{margin:0}
@@ -357,6 +371,8 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <symbol id="i-no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M6 6l12 12"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
   <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12s3-6 8.5-6c1.6 0 3 .5 4.2 1.2M20.5 12s-3 6-8.5 6c-1.6 0-3-.5-4.2-1.2"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/><path d="M4 4l16 16"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M3.5 9h17M12 9v11"/><path d="M12 9c-1.5-3.5-5-4-5-1.6C7 9 12 9 12 9zM12 9c1.5-3.5 5-4 5-1.6C17 9 12 9 12 9z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.6V19.5h12V9.6"/><path d="M10 19.5v-5h4v5"/></symbol>
   <symbol id="i-loop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 8.5A6.5 6.5 0 006 9.5"/><path d="M6 5.5v4h4"/><path d="M6.5 15.5A6.5 6.5 0 0018 14.5"/><path d="M18 18.5v-4h-4"/></symbol>
   <symbol id="i-x" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></symbol>
 </defs></svg>
@@ -378,7 +394,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
     <div class="pill glass load" style="--d:.05s"><i></i>A swear jar, for scrolling · iPhone first</div>
     <p class="whisper load" style="--d:.15s">You opened it to check one thing. That was 40 minutes ago.</p>
     <h1 class="display load" style="--d:.25s">Your time belongs to you. <em class="grad">Let's go get it back.</em></h1>
-    <p class="sub load" style="--d:.45s">ScrollJar blocks the apps that quietly eat your hours, using Apple's own Screen Time engine. Open one anyway and it costs a price you set — given <b>100% to a charity you love.</b><br><span style="display:block;height:12px"></span><span class="punch">Every other app like this keeps that money. We never touch it.</span></p>
+    <p class="sub load" style="--d:.45s">ScrollJar blocks the apps that quietly eat your hours, using Apple's own Screen Time engine. Open one anyway and it costs a price you set — given <b>100% to a charity you love.</b><br><span style="display:block;height:12px"></span><span class="punch">Most apps like this keep that money. We never touch it.</span></p>
     <div class="load" style="--d:.6s">
       <form class="sig glass" data-wl aria-label="Join the waitlist">
         <input id="email-top" type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
@@ -413,7 +429,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
     <article class="chapter" data-step="pause"><div class="cardin">
       <span class="k">How it works · 2</span>
       <h2 class="display">A breath before you choose</h2>
-      <p>Opening anyway is always allowed. First comes a short pause, with a warm way out. In a peer-reviewed study, a pause like this led people to drop <b>36%</b> of app openings.</p>
+      <p>Opening anyway is always allowed. First comes one slow breath. Then staying is one easy tap, while going on takes a deliberate one. In a peer-reviewed study, a short pause before opening led people to drop <b>36%</b> of app openings.</p>
       <cite>Grüning, Riedel &amp; Lorenz-Spreen, PNAS (2023)</cite>
     </div></article>
     <article class="chapter" data-step="jar"><div class="cardin">
@@ -430,30 +446,40 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   </div>
 </div>
 
-<section class="band"><div class="wrap">
+<section class="band" id="difference"><div class="wrap">
   <div class="sechead rev">
     <span class="eyebrow">The difference</span>
     <h2 class="display">Follow the money.<br>That's the whole story.</h2>
-    <p>Apps that charge you for slipping keep what you pay. Which means the worse your week goes, the better theirs does.</p>
+    <p>Say you open a blocked app 7 times this month, at $5 each. Here's where that $35 goes.</p>
   </div>
   <div class="diff rev" data-play>
     <div class="dcard them glass">
-      <span class="dlab">Every other stakes app</span>
+      <span class="dlab">Apps that keep your stake</span>
       <div class="flow" aria-hidden="true">
-        <div class="node">your&nbsp;$5</div>
+        <div class="node">your&nbsp;$35</div>
         <div class="arrow"><svg class="fcoin" viewBox="0 0 40 40"><use href="#coin"/></svg></div>
         <div class="node dark">their revenue</div>
       </div>
-      <p class="dline">They keep your forfeit. Your worst days are their best ones — and you're paying a subscription on top.</p>
+      <dl class="drows">
+        <div><dt>Your $35 goes to</dt><dd>the app</dd></div>
+        <div><dt>If you slip more, they earn</dt><dd>more</dd></div>
+        <div><dt>What comes back to you</dt><dd>nothing</dd></div>
+      </dl>
+      <p class="dline">Your worst week is their best one.</p>
     </div>
     <div class="dcard us glass spot">
       <span class="dlab" style="color:var(--mint)">ScrollJar</span>
       <div class="flow" aria-hidden="true">
-        <div class="node">your&nbsp;$5</div>
+        <div class="node">your&nbsp;$35</div>
         <div class="arrow good"><em>100%</em><svg class="fcoin" viewBox="0 0 40 40"><use href="#coin"/></svg></div>
         <div class="node mint">your charity</div>
       </div>
-      <p class="dline">Every cent goes where you chose, with a receipt. We're paid by membership, and by nothing else — so we <b>cannot</b> profit from your bad day.</p>
+      <dl class="drows good">
+        <div><dt>Your $35 goes to</dt><dd>your charity, all of it</dd></div>
+        <div><dt>If you slip more, we earn</dt><dd>not a cent more</dd></div>
+        <div><dt>What comes back to you</dt><dd>a receipt, every month</dd></div>
+      </dl>
+      <p class="dline">We're paid by membership only, so we <b>cannot</b> profit from your bad day.</p>
     </div>
   </div>
 </div></section>
@@ -545,6 +571,12 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
     <h2 class="display">Your company pays<br>when people win.</h2>
     <p>Your company pledges a budget to a cause your people vote for. Each person picks one hour a day that's theirs, and every hour they keep scroll-free unlocks part of the pledge. If someone slips, nobody pays.</p>
   </div>
+  <ol class="tsteps rev">
+    <li><span class="tn">1</span><b>You pledge</b><span>a budget and a shortlist of causes</span></li>
+    <li><span class="tn">2</span><b>People join</b><span>if they want to, vote, and pick their hour</span></li>
+    <li><span class="tn">3</span><b>Hours fill the jar</b><span>each scroll-free hour unlocks a fixed amount</span></li>
+    <li><span class="tn">4</span><b>The jar tips out</b><span>to the cause, with receipts and a team card</span></li>
+  </ol>
   <div class="tgrid">
     <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-clock"/></svg></span>
       <h3>Any hour counts</h3>
@@ -556,9 +588,33 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
       <h3>Nothing comes back as savings</h3>
       <p>Whatever isn't unlocked rolls into your next campaign, so the next jar starts partly full. Every unlocked dollar reaches the cause, with receipts.</p></div>
   </div>
+  <p class="tperk rev">Everyone who joins also gets <b>ScrollJar Plus free</b> for their own life. Their personal jar stays private from work.</p>
   <div class="tcta rev">
     <a class="btn" href="mailto:hello@scrolljar.app?subject=ScrollJar%20for%20Teams%20pilot">Ask about a free pilot</a>
     <span>Six weeks, up to 50 people, free during the pilot.</span>
+  </div>
+</div></section>
+
+<section id="families" class="band"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">For families · coming after launch</span>
+    <h2 class="display">A family jar,<br>not a family spy.</h2>
+    <p>Up to six people share one jar and one cause. Grown-ups can put their own price on their apps. Kids never pay a cent.</p>
+  </div>
+  <div class="tgrid">
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-gift"/></svg></span>
+      <h3>Kids never pay</h3>
+      <p>A parent pledges instead. Every scroll-free hour your kid keeps unlocks part of it for the family's cause. Their good hours become their gift.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-home"/></svg></span>
+      <h3>One jar, one cause</h3>
+      <p>Everyone's coins and hours land in the same jar, and the family picks where it goes together. It tips out once a month, with a receipt for the fridge.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-eye-off"/></svg></span>
+      <h3>Private where it matters</h3>
+      <p>The family sees the jar, not each other's screens. Diaries stay personal, and nobody gets a report on anybody.</p></div>
+  </div>
+  <div class="tcta rev">
+    <a class="btn" href="#join">Join the waitlist</a>
+    <span>We'll tell you when Families opens.</span>
   </div>
 </div></section>
 
@@ -615,7 +671,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
       <div class="logo" style="margin-bottom:12px"><svg width="20" height="23" aria-hidden="true"><use href="#i-jar"/></svg>ScrollJar</div>
       <p style="color:var(--ink-3);max-width:280px;font-size:14px">A swear jar for scrolling. Made in cold blood, kept in warm moments.</p>
     </div>
-    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For teams</a><a href="#refuse">What we refuse</a><a href="#faq">FAQ</a></div>
+    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For teams</a><a href="#families">For families</a><a href="#refuse">What we refuse</a><a href="#faq">FAQ</a></div>
     <div><h2>Evidence</h2><a href="#science">The science</a><a href="#science">Our sources</a></div>
     <div><h2>Contact</h2><a href="mailto:hello@scrolljar.app">hello@scrolljar.app</a><a href="mailto:press@scrolljar.app">Press</a></div>
   </div>

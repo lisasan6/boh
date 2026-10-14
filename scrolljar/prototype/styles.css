@@ -570,3 +570,6 @@ body[data-mode="day"]{--glow-1:#FFE680;--glow-2:#FFC928;--glow-3:#FFB800;--glow-
 /* breath pause: the small "continue" button that bounces into a new place */
 .skipBtn{position:absolute;min-height:44px;padding:0 15px;border-radius:999px;background:transparent;border:1px solid var(--calm-soft);
   color:var(--calm);font:700 12.5px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
+
+/* prototype-only notes stay out of the landing page demo */
+html.embed .devNote{display:none}
