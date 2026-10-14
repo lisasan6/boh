@@ -138,7 +138,7 @@
 <div class="topbar">
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3 moment</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company invite</button><button class="ms" onclick="restart()">↻ Restart</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3 moment</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company invite</button><button class="ms" onclick="go('friends');openFamSetup()">Family jar</button><button class="ms" onclick="restart()">↻ Restart</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -477,6 +477,7 @@
     </div>
     <div class="jarStrip">
       <div class="jarChip co" onclick="openCompany()"><b>Fernhill &amp; Co.</b><span>company</span></div>
+      <div class="jarChip fam" onclick="openFamily()"><b>Rossi family</b><span>family</span></div>
       <div class="jarChip on" onclick="go('jardetail')"><b>Casa Jar</b><span>you + 3</span></div>
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
       <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
@@ -499,6 +500,30 @@
   </div>
 
   <!-- ══ COMPANY JAR (Teams) — the employer pays for success, never sees a person ══ -->
+  <!-- ══ FAMILY JAR — one jar, kids never pay or get paid, nobody sees anyone's screen ══ -->
+  <div class="screen" id="s-family">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Rossi family</div></div>
+    <div class="modeSeg" style="margin-bottom:12px">
+      <div class="on" id="fvParent" onclick="setFamView('parent')">Grown-up view</div>
+      <div id="fvKid" onclick="setFamView('kid')">Mia's view (12)</div>
+    </div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="eyebrow" id="famEyebrow">THE FAMILY JAR · JULY</div>
+      <div class="jarbox" id="famJarBox" style="margin-top:8px">
+        <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="famJarSvg">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g id="famJarG" clip-path="url(#body)"></g>
+          <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="amount num" style="margin-top:6px" id="famAmt">$36</div>
+      <div class="tiny" style="margin-top:4px;line-height:1.5" id="famSub"></div>
+    </div>
+    <div id="famBody"></div>
+  </div>
+
   <div class="screen" id="s-company">
     <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1">Fernhill &amp; Co.</div></div>
     <div class="heroPanel" style="text-align:center">
@@ -1149,6 +1174,35 @@
       <div class="sub" style="margin-bottom:12px">Ideas you saved from colleagues. Only you can see this list.</div>
       <div id="ideasList"></div>
     </div>
+  </div>
+
+  <!-- ══ FAMILY SETUP ══ -->
+  <div class="ov sheetwrap" id="ov-famsetup">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="fsKicker">A FAMILY JAR</div><span class="backBtn" onclick="closeOv('ov-famsetup')">✕</span></div>
+      <div class="sbDots" id="fsDots"><i></i><i></i><i></i><i></i><i></i></div>
+      <div id="fsBody"></div>
+    </div>
+  </div>
+
+  <!-- ══ FAMILY TIP-OUT: each kid's gift carries their name; the treat is never cash ══ -->
+  <div class="ov" id="ov-famtip" style="background:var(--scr-bg);align-items:center;justify-content:flex-start;text-align:center;padding:34px 24px 28px;overflow-y:auto">
+    <div class="pill chr">AUGUST 1 · THE FAMILY JAR TIPS OUT</div>
+    <div class="jarbox" style="margin-top:16px" id="ftJarBox">
+      <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="ftJarSvg">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g id="ftJarG" clip-path="url(#body)"></g>
+          <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+    </div>
+    <div class="amount num" style="margin-top:12px" id="ftAmt">$0</div>
+    <div class="sub" style="margin-top:6px">given by the Rossi family this month</div>
+    <div class="card" style="margin-top:14px;width:100%;text-align:left" id="ftList"></div>
+    <div class="card" style="width:100%;text-align:left;background:linear-gradient(150deg,rgba(255,194,58,.14),rgba(60,240,203,.08))" id="ftTreat"></div>
+    <button class="btn mint" style="margin-top:6px" onclick="closeOv('ov-famtip');toast('Receipts sent. Each kid gets their own, with their name on it.')">Send everyone their receipt</button>
+    <div class="tiny" style="margin-top:10px;cursor:pointer" onclick="closeOv('ov-famtip')">Close</div>
   </div>
 
   <!-- ══ COMPANY TIP-OUT: lights become money ══ -->

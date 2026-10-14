@@ -578,3 +578,9 @@ html.embed .devNote{display:none}
 .feeRow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
 .feeRow span{color:var(--ink-3);white-space:nowrap}
 .feeRow b{text-align:right}
+
+/* Families */
+.jarChip.fam{border-color:rgba(255,194,58,.45);background:rgba(255,194,58,.1)}
+.famTreat{background:linear-gradient(150deg,rgba(255,194,58,.13),rgba(60,240,203,.07));border-color:rgba(255,194,58,.3)}
+/* in day mode the hour lights are yellow; inside the family jar they sit next to gold coins, so tint them mint to keep the two apart */
+body[data-mode="day"] #famJarG use[href="#glowM"],body[data-mode="day"] #ftJarG use[href="#glowM"]{filter:hue-rotate(115deg) saturate(1.3)}

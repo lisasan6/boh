@@ -1345,6 +1345,153 @@ function postNote(){
   toast(signed?'Shared with your name.':(all?'Shared anonymously with everyone at Fernhill.':'Shared anonymously with your squad.'));
   setTimeout(()=>{ n.saves=2; renderNotes(); },5000);
 }
+/* ══ FAMILY JAR ══
+   One jar for the family. Grown-ups' coins (if they choose) and everyone's scroll-free hours fill it.
+   Kids are never charged and never paid: a grown-up pledges, and each scroll-free hour a kid keeps
+   unlocks part of the pledge for a cause that kid chose, with their name on the receipt. An optional
+   family treat is shared and non-cash; everyone's hours count, grown-ups' too. The family sees the jar
+   and the totals, never anyone's apps, screens, diary or personal counts. */
+const FAM={view:'parent',pledge:20,perHour:1,unlocked:14,coins:22,coinsIn:true,hours:41,treat:'Cinema night',goal:60,
+  members:[{n:'You',role:'grown-up',cause:'Doctors Without Borders',c:'linear-gradient(150deg,#FFE9A8,#E0A422)'},
+           {n:'Marco',role:'grown-up',cause:'GiveDirectly',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)'},
+           {n:'Mia',role:'kid',age:12,cause:'Ocean cleanup',c:'linear-gradient(150deg,#37E2C0,#1E63FF)'},
+           {n:'Leo',role:'kid',age:9,cause:'Local animal shelter',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)'}],
+  kidCauses:['Ocean cleanup','Local animal shelter','Trees for the park','Children\'s hospital'],
+  mia:{hours:8,at:'16:00'}, treats:['Cinema night','Pizza and a board game','A day out','No treat'], plan:'yr'};
+const famKidsHours=()=>FAM.unlocked/FAM.perHour;
+function openFamily(){ go('family'); $('s-family').scrollTop=0; renderFamily(true); }
+function setFamView(v){ FAM.view=v; $('fvParent').classList.toggle('on',v==='parent'); $('fvKid').classList.toggle('on',v==='kid'); $('s-family').scrollTop=0; renderFamily(true); }
+/* coins and lights share the jar: gold for grown-ups' coins, glowing lights for hours */
+function drawFamJar(g,coins,lights,animate){
+  g.innerHTML='';
+  const kinds=[]; let c=coins,l=lights;
+  while(c>0||l>0){ if(l>0){kinds.push('l');l--;} if(c>0){kinds.push('c');c--;} }
+  kinds.slice(0,POS.length).forEach((k,i)=>{
+    const [cx,cy]=POS[i], u=document.createElementNS('http://www.w3.org/2000/svg','use');
+    const r=k==='c'?17:15;
+    u.setAttribute('href',k==='c'?'#coin':'#glowM'); u.setAttribute('x',cx-r); u.setAttribute('y',cy-r); u.setAttribute('width',2*r); u.setAttribute('height',2*r);
+    g.appendChild(u);
+    if(animate) u.animate(k==='c'?[{transform:'translateY(-70px)',opacity:0},{transform:'none',opacity:1}]:[{transform:'translateY(70px)',opacity:0},{transform:'translateY(-6px)',opacity:1,offset:.7},{transform:'none',opacity:1}],
+      {duration:800,delay:i*60,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
+  });
+}
+function famTreatCard(){
+  if(FAM.treat==='No treat') return '';
+  const pct=Math.min(100,Math.round(FAM.hours/FAM.goal*100));
+  return `<div class="card famTreat"><div class="eyebrow" style="color:var(--gold-text)">FAMILY TREAT</div><div class="spread" style="margin-top:5px"><b style="font-size:14px">${FAM.treat}</b><span class="tiny" style="white-space:nowrap">${FAM.hours} of ${FAM.goal} hours</span></div>
+    <div class="capBar" style="margin-top:10px;height:8px"><i style="width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--mint))"></i></div>
+    <div class="tiny" style="margin-top:8px;line-height:1.5">Everyone's scroll-free hours count, grown-ups' too. Only the family total shows, never who did how many.</div></div>`;
+}
+function renderFamily(animate){
+  const B=$('famBody'), kidsMoney=FAM.unlocked, coins=FAM.coinsIn?FAM.coins:0;
+  if(FAM.view==='parent'){
+    $('famEyebrow').textContent='THE FAMILY JAR · JULY';
+    $('famAmt').textContent=money(kidsMoney+coins);
+    $('famSub').innerHTML=`for good this month · ${coins?`${money(coins)} from grown-ups' coins · `:''}${money(kidsMoney)} unlocked by the kids' hours`;
+    drawFamJar($('famJarG'),Math.round(coins/4),Math.round(famKidsHours()*0.8),animate);
+    B.innerHTML=famTreatCard()+`
+    <div class="card"><div class="spread"><b style="font-size:13.5px">Your pledge for the kids</b><span class="pill gold">${money(FAM.pledge)} a month</span></div>
+      <div class="capBar" style="margin-top:10px;height:8px"><i style="width:${Math.round(kidsMoney/FAM.pledge*100)}%;background:linear-gradient(90deg,#EDE9FF,#9B8CFF)"></i></div>
+      <div class="spread" style="margin-top:6px"><span class="tiny"><b style="color:var(--ink)">${money(kidsMoney)}</b> unlocked so far</span><span class="tiny">$${FAM.perHour} per scroll-free hour</span></div>
+      <div class="tiny" style="margin-top:8px;line-height:1.5">Each kid's hours unlock your pledge for the cause they chose. Kids never pay, and nobody is paid for scrolling less. Whatever isn't unlocked rolls into next month.</div></div>
+    <div class="spread" style="margin:4px 2px 8px"><div class="display h2">The family</div><span class="tiny">causes, never counts</span></div>
+    <div>${FAM.members.map(m=>`<div class="memberRow">
+      <div class="av" style="background:${m.c}">${m.n[0]}</div>
+      <div style="flex:1"><b style="font-size:13px">${m.n}${m.age?` <span class="tiny">· ${m.age}</span>`:''}</b><div class="tiny">${m.role==='kid'?'picked: ':'gives to: '}${m.cause}</div></div>
+      <span class="pill ${m.role==='kid'?'chr':'gold'}">${m.role}</span></div>`).join('')}</div>
+    <div class="card"><div class="spread"><div><div style="font-size:12.5px;font-weight:700">My coins in the family jar</div><div class="tiny">only the grown-ups' total shows, never whose</div></div>
+      <div class="toggle${FAM.coinsIn?' on':''}" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
+    <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What the family sees</b></div>
+      <div class="coRule ok">The jar, the treat and everyone's cause</div>
+      <div class="coRule ok">Each kid's gift on the tip-out receipt, with their name</div>
+      <div class="coRule no">Anyone's apps, screen time or slips</div>
+      <div class="coRule no">Anyone's diary or voice notes</div>
+      <div class="tiny" style="margin-top:8px">The same for grown-ups and kids. Nobody gets a report on anybody.</div></div>
+    <div class="row" style="gap:8px"><button class="btn ghost" style="flex:1" onclick="openFamSetup()">Family settings</button><button class="btn ghost" style="flex:1" onclick="showFamTip()">Preview the tip-out</button></div>`;
+  } else {
+    const k=FAM.members.find(m=>m.n==='Mia');
+    $('famEyebrow').textContent='YOUR HOURS · JULY';
+    $('famAmt').textContent=FAM.mia.hours+' hours';
+    $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`;
+    drawFamJar($('famJarG'),0,FAM.mia.hours,animate);
+    B.innerHTML=`<div class="card" style="background:linear-gradient(150deg,rgba(60,240,203,.14),rgba(155,140,255,.1))">
+      <b style="font-size:14px">You never pay anything</b>
+      <div class="sub" style="margin-top:5px">Every hour you keep scroll-free unlocks $${FAM.perHour} from your family's pledge for the cause you picked. When the jar tips out, the receipt has your name on it.</div></div>
+    <div class="card"><div class="spread"><b style="font-size:13.5px">Your hour</b><span class="tiny">you choose it</span></div>
+      <div class="sub" style="margin-top:5px">${hourLabel(FAM.mia.at)}, after school</div>
+      <div class="row" style="gap:7px;margin-top:10px;flex-wrap:wrap">${['07:00','16:00','19:00'].map(t=>`<span class="chip${FAM.mia.at===t?' on':''}" onclick="FAM.mia.at='${t}';renderFamily(false)">${hourLabel(t)}</span>`).join('')}</div></div>
+    <div class="card"><b style="font-size:13.5px">Your cause</b>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${FAM.kidCauses.map(c=>`<span class="chip${k.cause===c?' on':''}" onclick="FAM.members.find(m=>m.n==='Mia').cause=${JSON.stringify(c).replace(/"/g,'&quot;')};renderFamily(false)">${c}</span>`).join('')}</div></div>
+    ${famTreatCard()}
+    <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">Private to you</b></div>
+      <div class="coRule ok">Your family sees the jar and your cause</div>
+      <div class="coRule no">Nobody sees your apps, your hours each day or your diary</div></div>`;
+  }
+}
+function showFamTip(){
+  const kids=FAM.members.filter(m=>m.role==='kid'), grown=FAM.members.filter(m=>m.role==='grown-up');
+  const split=[8,6], coins=FAM.coinsIn?FAM.coins:0, total=FAM.unlocked+coins, left=FAM.pledge-FAM.unlocked;
+  $('ftList').innerHTML=`<div class="eyebrow">WHERE IT WENT</div>`+kids.map((k,i)=>`<div class="spread" style="margin-top:9px"><span class="tiny"><b style="color:var(--ink)">${k.n}</b> → ${k.cause}</span><b class="num">${money(split[i]||0)}</b></div>`).join('')+
+    (coins?`<div class="spread" style="margin-top:9px"><span class="tiny"><b style="color:var(--ink)">Grown-ups' coins</b> → ${grown.map(g=>g.cause).join(' and ')}</span><b class="num">${money(coins)}</b></div>`:'')+
+    `<div class="spread" style="margin-top:9px"><span class="tiny">rolls into next month's pledge</span><b class="num" style="color:var(--violet)">${money(left)}</b></div>`;
+  $('ftTreat').innerHTML=FAM.treat==='No treat'?'<div class="tiny">No family treat this month.</div>':
+    `<div class="eyebrow">THE FAMILY TREAT</div><div class="sub" style="margin-top:6px"><b>${FAM.treat}:</b> ${FAM.hours} of ${FAM.goal} hours together. ${FAM.hours>=FAM.goal?'It\'s on!':`${FAM.goal-FAM.hours} hours to go, and they carry on into next month.`}</div>`;
+  drawFamJar($('ftJarG'),Math.round(coins/4),Math.round(famKidsHours()*0.8),false);
+  $('ftAmt').textContent='$0'; $('ov-famtip').classList.add('on');
+  const g=$('ftJarG');
+  setTimeout(()=>{ [...g.children].forEach((m,i)=>m.animate([{transform:'none',opacity:1},{transform:'translateY(-120px)',opacity:0}],{duration:900,delay:i*60,easing:'cubic-bezier(.4,.1,.6,1)',fill:'forwards'}));
+    const t0=performance.now(), dur=1600;
+    (function tick(t){const k=Math.min((t-t0)/dur,1); $('ftAmt').textContent=money(total*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(tick);
+      else { stars($('ftJarBox'),11,true); fanfare($('ftJarBox'),money(total)+' GIVEN'); }})(t0);
+  },700);
+}
+/* setting up a family jar */
+let fsStep=0;
+function openFamSetup(){ fsStep=0; renderFamSetup(); $('ov-famsetup').classList.add('on'); }
+function fsGo(n){ fsStep=n; renderFamSetup(); }
+function renderFamSetup(){
+  [...$('fsDots').children].forEach((d,i)=>d.classList.toggle('on',i<=fsStep));
+  const B=$('fsBody'), K=$('fsKicker');
+  if(fsStep===0){ K.textContent='A FAMILY JAR';
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">A family jar, not a family spy.</div>
+      <div class="sub">One jar for the whole family. Everyone's scroll-free hours fill it, and a treat you choose together waits at the top.</div>
+      <div class="coRule ok" style="margin-top:12px">Kids never pay a cent. A grown-up pledges instead</div>
+      <div class="coRule ok">Each kid picks the cause their hours unlock</div>
+      <div class="coRule no">No cash rewards for kids. Their hours become a gift</div>
+      <div class="coRule no">Nobody sees anyone's apps, screen or diary</div>
+      <button class="btn mint" style="margin-top:14px" onclick="fsGo(1)">Start a family jar</button>`;
+  } else if(fsStep===1){ K.textContent="WHO'S IN";
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Who's in the family?</div>
+      <div class="sub" style="margin-bottom:10px">Invites go through Apple Family Sharing. Tap to switch someone between grown-up and kid.</div>
+      ${FAM.members.map((m,i)=>`<div class="memberRow"><div class="av" style="background:${m.c}">${m.n[0]}</div><div style="flex:1"><b style="font-size:13px">${m.n}</b></div>
+        <span class="chip${m.role==='kid'?' on':''}" onclick="${i===0?"toast('That\\'s you: a grown-up.')":`FAM.members[${i}].role=FAM.members[${i}].role==='kid'?'grown-up':'kid';renderFamSetup()`}">${m.role}</span></div>`).join('')}
+      <div class="tiny" style="margin:8px 2px 0">Grown-ups can set their own price on their own apps. Kids only ever have scroll-free hours.</div>
+      <button class="btn mint" style="margin-top:12px" onclick="fsGo(2)">Next</button>`;
+  } else if(fsStep===2){ K.textContent='THE KIDS\' PLEDGE';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Your pledge for the kids</div>
+      <div class="card" style="text-align:center"><div class="amount num">$<span id="fsP">${FAM.pledge}</span></div><div class="tiny">a month, at most</div>
+        <input type="range" min="5" max="50" step="5" value="${FAM.pledge}" aria-label="Monthly pledge" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="FAM.pledge=+this.value;$('fsP').textContent=this.value"></div>
+      <div class="eyebrow" style="margin:12px 2px 8px">EACH SCROLL-FREE HOUR UNLOCKS</div>
+      <div class="row" style="gap:7px">${[0.5,1,2].map(v=>`<span class="chip${FAM.perHour===v?' on':''}" style="flex:1;text-align:center" onclick="FAM.perHour=${v};renderFamSetup()">$${v<1?v.toFixed(2):v}</span>`).join('')}</div>
+      <div class="tiny" style="margin-top:12px;line-height:1.5">It goes to the cause each kid picks, never to the kid. Whatever isn't unlocked rolls into next month.</div>
+      <button class="btn mint" style="margin-top:12px" onclick="fsGo(3)">Next</button>`;
+  } else if(fsStep===3){ K.textContent='A FAMILY TREAT';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Something to look forward to</div>
+      <div class="sub" style="margin-bottom:10px">Optional. When the family's hours reach the goal, you do it together. Never cash, never just for one person.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${FAM.treats.map(t=>`<span class="chip${FAM.treat===t?' on':''}" onclick="FAM.treat=${JSON.stringify(t).replace(/"/g,'&quot;')};renderFamSetup()">${t}</span>`).join('')}</div>
+      ${FAM.treat==='No treat'?'':`<div class="card" style="text-align:center;margin-top:12px"><div class="display num" style="font-size:28px"><span id="fsG">${FAM.goal}</span> hours</div><div class="tiny">together, grown-ups' hours included</div>
+        <input type="range" min="20" max="120" step="10" value="${FAM.goal}" aria-label="Hours goal" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="FAM.goal=+this.value;$('fsG').textContent=this.value"></div>`}
+      <button class="btn mint" style="margin-top:12px" onclick="fsGo(4)">Next</button>`;
+  } else { K.textContent='THE FAMILY PLAN';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Plus for everyone</div>
+      <div class="sub" style="margin-bottom:12px">The Family plan covers Plus for everyone in the family, including card fees. Billed by Apple to one grown-up.</div>
+      <div class="row" style="gap:7px">
+        <span class="chip${FAM.plan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="FAM.plan='yr';renderFamSetup()">$49.99 / year</span>
+        <span class="chip${FAM.plan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="FAM.plan='mo';renderFamSetup()">$6.99 / month</span></div>
+      <div class="tiny" style="margin-top:12px;line-height:1.5">Your pledge is separate: up to ${money(FAM.pledge)} a month, charged only for hours the kids actually keep.</div>
+      <button class="btn mint" style="margin-top:14px" onclick="closeOv('ov-famsetup');openFamily();toast('The family jar is ready. Invites are on their way.')">Create the family jar</button>`;
+  }
+}
 function restart(){location.reload()}
 /* embed mode (landing page phone): no onboarding, no prototype controls */
 const Q=new URLSearchParams(location.search);
