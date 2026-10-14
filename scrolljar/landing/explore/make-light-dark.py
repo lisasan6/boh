@@ -1,15 +1,14 @@
 import sys,re
 src,dst,iframe=sys.argv[1],sys.argv[2],sys.argv[3]
+prefix=sys.argv[4] if len(sys.argv)>4 else ''
 s=open(src).read()
 def R(a,b,n=1):
     global s
     assert s.count(a)==n,(s.count(a),a[:70]); s=s.replace(a,b)
-# which sections go light
+# which sections go light (dark: hero and demo, neon jar, science, mission and founder note, FAQ, sign-up)
 R('<section class="band" id="difference">','<section class="band light" id="difference">')
-R('<section class="band"><div class="wrap">\n  <div class="sechead rev">\n    <span class="eyebrow">The win-win</span>','<section class="band light"><div class="wrap">\n  <div class="sechead rev">\n    <span class="eyebrow">The win-win</span>')
 R('<section id="refuse" class="band">','<section id="refuse" class="band light">')
-R('<section id="families" class="band">','<section id="families" class="band light">')
-R('<section id="faq" class="band">','<section id="faq" class="band light">')
+R('<section id="more" class="band">','<section id="more" class="band light">')
 R('src="../prototype/index.html?embed=1"',f'src="{iframe}"')
 css='''
 /* ── Light bands: every other section on a soft daylight background, with its own readable colours ── */
@@ -35,7 +34,7 @@ css='''
 /* the menu bar and the bottom join bar keep a solid dark backing so they stay readable over light bands */
 .navbar.glass,.stick{background:rgba(12,12,32,.82)}
 '''
-R('</style>',css+'</style>',1) if s.count('</style>')==1 else None
+R('</head>','<style>'+css+'</style>\n</head>')
 
 # ── key words in light-section headings get the same gradient as the dark sections ("do some good.") ──
 def scoped(start_marker, pairs):
@@ -48,4 +47,6 @@ def scoped(start_marker, pairs):
 # (the gradient key words now live in landing/index.html itself)
 # a touch more colour in the light gradient so it reads as vividly as on dark, while staying readable
 s=s.replace("--head-grad:linear-gradient(95deg,#0B9C80 0%,#6455D6 100%);","--head-grad:linear-gradient(95deg,#0A9A7E 0%,#3F8FD6 50%,#6A55E0 100%);")
+for x in ('site.css','site.js','teams.html','families.html'):
+    s=s.replace('href="'+x,'href="'+prefix+x).replace('src="'+x,'src="'+prefix+x)
 open(dst,'w').write(s)

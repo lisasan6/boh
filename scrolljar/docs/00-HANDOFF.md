@@ -111,3 +111,9 @@ Embed the working prototype in the landing page's hero phone, so visitors can ta
 2. Make the landing page live (§4.2): small and cheap, and it starts measuring demand.
 3. **Blocking spike on a real iPhone** (`IOS-BUILD-SPEC.md` Phase 1). This is the riskiest technical step, so prove it first.
 4. Build the iOS app in the phases of `IOS-BUILD-SPEC.md`, using the prototype as the visual and behavioural reference.
+
+### Website structure (2026-10-14)
+- `landing/index.html` is the home page; `landing/teams.html` (for companies) and `landing/families.html` are their own pages.
+- Shared styling and behaviour live in `landing/site.css` and `landing/site.js`. Change them once, every page follows. Deploy all five files together (plus `og.png` and `prototype/` for the live demo).
+- `landing/explore/light-dark.html` is an alternative look (alternating light sections). Rebuild it from the home page with `python3 landing/explore/make-light-dark.py landing/index.html landing/explore/light-dark.html "../../prototype/index.html?embed=1" "../"`.
+- The waitlist form is still in demo mode: set `FORM_ID` in `site.js` (Formspree).
