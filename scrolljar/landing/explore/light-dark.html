@@ -447,6 +447,14 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 .light .dcard.us{border-color:rgba(10,138,114,.4);box-shadow:inset 0 1px 0 #fff,0 24px 60px -34px rgba(10,138,114,.45)}
 /* the menu bar and the bottom join bar keep a solid dark backing so they stay readable over light bands */
 .navbar.glass,.stick{background:rgba(12,12,32,.82)}
+
+.hl{color:inherit;padding:0 .08em;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+  background:linear-gradient(to top,rgba(60,240,203,.42) 0,rgba(60,240,203,.42) 38%,transparent 38%) no-repeat 0 0/0% 100%;
+  transition:background-size .9s cubic-bezier(.3,.7,.2,1) .35s}
+.hl.lav{background-image:linear-gradient(to top,rgba(150,135,255,.38) 0,rgba(150,135,255,.38) 38%,transparent 38%)}
+.hl.gold{background-image:linear-gradient(to top,rgba(255,194,58,.45) 0,rgba(255,194,58,.45) 38%,transparent 38%)}
+.in .hl,.q[open] .hl,html:not(.js) .hl{background-size:100% 100%}
+@media(prefers-reduced-motion:reduce){.hl{transition:none;background-size:100% 100%}}
 </style>
 </head>
 <body>
@@ -579,7 +587,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <div class="sechead rev">
     <span class="eyebrow">The difference</span>
     <h2 class="display">Another blocking app?<br><span class="grad">Not quite.</span></h2>
-    <p>A blocker says no. A stakes app keeps your money. ScrollJar says it's your call, and turns every slip into a gift.</p>
+    <p>A blocker says no. A stakes app keeps your money. ScrollJar says it's your call, and <mark class="hl">turns every slip into a gift</mark>.</p>
   </div>
   <p class="dlead rev">Say you open a blocked app 7 times this month, at $5 each. Here's where that $35 goes.</p>
   <div class="diff rev" data-play>
@@ -609,7 +617,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
         <div><dt>If you slip more, we earn</dt><dd>not a cent more</dd></div>
         <div><dt>What comes back to you</dt><dd>a receipt, every month</dd></div>
       </dl>
-      <p class="dline">We're paid by membership only. A good week is a win for you, and a hard week is a win for a cause. <b>Never for us.</b></p>
+      <p class="dline">We're paid by membership only. A good week is a win for you, and a hard week is a win for a cause. <b><mark class="hl">Never for us.</mark></b></p>
     </div>
   </div>
 </div></section>
@@ -633,7 +641,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 <section class="band light"><div class="wrap">
   <div class="sechead rev">
     <span class="eyebrow">The win-win</span>
-    <h2 class="display">Either you win the hour,<br>or a charity does.</h2>
+    <h2 class="display">Either you <mark class="hl">win the hour</mark>,<br>or <mark class="hl lav">a charity does.</mark></h2>
     <p>Money is the strongest friction there is. We just point it somewhere kind — with no shame behind either door.</p>
   </div>
   <div class="duo rev">
@@ -649,7 +657,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
       <p>Every cent reaches the cause you chose, and the choice was still yours. The jar smiles at both.</p>
     </div>
   </div>
-  <p class="duoline rev">Both doors are a win. The only one left out is the app that wanted your time.</p>
+  <p class="duoline rev"><mark class="hl">Both doors are a win.</mark> The only one left out is the app that wanted your time.</p>
 </div></section>
 
 <section id="science" class="band"><div class="wrap">
@@ -683,7 +691,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 <section id="refuse" class="band light"><div class="wrap">
   <div class="sechead rev">
     <span class="eyebrow">Our promises</span>
-    <h2 class="display">Kind by design.</h2>
+    <h2 class="display"><mark class="hl">Kind</mark> by design.</h2>
     <p>A tool for calmer days can't run on the tricks that made them hectic. So here's what you'll never find in ScrollJar.</p>
   </div>
   <div class="refuse glass rev" data-play>
@@ -753,8 +761,8 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 <section id="families" class="band light"><div class="wrap">
   <div class="sechead rev">
     <span class="eyebrow">For families · coming after launch</span>
-    <h2 class="display">A family jar,<br>not a family spy.</h2>
-    <p>One jar for the whole family. Grown-ups can put their own price on their apps. Kids never pay a cent, and nobody gets paid for scrolling less.</p>
+    <h2 class="display">A family jar,<br><mark class="hl lav">not a family spy.</mark></h2>
+    <p>One jar for the whole family. Grown-ups can put their own price on their apps. <mark class="hl gold">Kids never pay a cent</mark>, and nobody gets paid for scrolling less.</p>
   </div>
   <div class="tgrid">
     <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-gift"/></svg></span>
@@ -798,19 +806,19 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 <section id="faq" class="band light"><div class="wrap">
   <div class="sechead rev">
     <span class="eyebrow">Questions</span>
-    <h2 class="display">The honest answers.</h2>
+    <h2 class="display">The <mark class="hl">honest</mark> answers.</h2>
   </div>
   <div class="faq glass rev">
     <details class="q"><summary>Does it really block apps, or just remind me?</summary>
-      <p>It really blocks. ScrollJar is built on Apple's Screen Time framework — the same system-level engine behind parental controls — so the shield is drawn and enforced by iOS itself, above everything else on screen.</p></details>
+      <p><mark class="hl">It really blocks.</mark> ScrollJar is built on Apple's Screen Time framework — the same system-level engine behind parental controls — so the shield is drawn and enforced by iOS itself, above everything else on screen.</p></details>
     <details class="q"><summary>What if I genuinely need to get in?</summary>
-      <p>You always can. Opening a blocked app costs the price you set in advance and opens for a window you chose. There's no lockout, no permission to ask for, and no way for us to say no.</p></details>
+      <p><mark class="hl">You always can.</mark> Opening a blocked app costs the price you set in advance and opens for a window you chose. There's no lockout, no permission to ask for, and no way for us to say no.</p></details>
     <details class="q"><summary>Where does the money actually go?</summary>
-      <p>All of it goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts you can check. ScrollJar keeps none of it. Card payments carry a small processing fee: on the free plan it's shown and added on top, so the full price you set still arrives. Members never see it, because we cover it.</p></details>
+      <p>All of it goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts you can check. <mark class="hl">ScrollJar keeps none of it.</mark> Card payments carry a small processing fee: on the free plan it's shown and added on top, so the full price you set still arrives. Members never see it, because we cover it.</p></details>
     <details class="q"><summary>Then how do you make money?</summary>
-      <p>Memberships, and nothing else. No ads, no data sales, no share of your slips. It matters that we never profit when you struggle — that's the conflict of interest we were built to avoid.</p></details>
+      <p><mark class="hl">Memberships, and nothing else.</mark> No ads, no data sales, no share of your slips. It matters that we never profit when you struggle — that's the conflict of interest we were built to avoid.</p></details>
     <details class="q"><summary>Can you see what I do on my phone?</summary>
-      <p>No. Apple hands apps like ours anonymous tokens instead of app names, so we never learn which apps you blocked, when you use them, or what you do inside. We couldn't spy on you if we wanted to.</p></details>
+      <p><mark class="hl">No.</mark> Apple hands apps like ours anonymous tokens instead of app names, so we never learn which apps you blocked, when you use them, or what you do inside. We couldn't spy on you if we wanted to.</p></details>
     <details class="q"><summary>Is there an Android version?</summary>
       <p>iPhone first. Android has no official blocking API, and recent releases restrict the workarounds every blocker relies on. We'd rather ship one honest version than two weak ones — Android comes when we can do it properly.</p></details>
     <details class="q"><summary>When does it launch?</summary>
