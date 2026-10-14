@@ -38,7 +38,7 @@ The tagline: *"You can always choose distraction. It just shouldn't be free."*
 - No variable rewards, no leaderboards, no urgency or countdown sales, and no engagement metrics for our own app.
 - Tightening a rule takes effect instantly; loosening it takes 24 hours ("cold blood").
 - Kindness features are never paywalled: the breath pause, peek valve, rough-day support and the Wobble.
-- Teams: the employer never sees a person (no names, not even who joined; groups under 5 hidden; weekly totals only). Evening notes are anonymous and squad-only by default, use high fives with no counts, are privacy-checked on the phone only, never reach the employer and are deleted when the campaign ends. Reactions across the product are high fives, not hearts.
+- Teams: the jar counts **scroll-free hours**: one hour a day per person, at a time they choose, so shift workers count the same (never "evenings"). The jar fills with unnamed glowing lights; copy says "hours". The employer never sees a person (no names, not even who joined; groups under 5 hidden; weekly totals only; nobody's chosen hour or pauses). Notes on what people did are anonymous and squad-only by default, use high fives with no counts, are privacy-checked on the phone only, never reach the employer and are deleted when the campaign ends. Reactions across the product are high fives, not hearts.
 - Diary voice notes are passive: recorded, kept on the phone and played back. Nothing transcribes, analyses or answers them, AI included. No streaks or rewards for them either.
 
 ## Where things are

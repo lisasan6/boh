@@ -1053,67 +1053,92 @@ function toggleWork(el){
   toast(on ? 'Work mode on. The shield steps aside when you\'re working — and only then.' : 'Work mode off.');
 }
 /* ══ COMPANY JAR (Teams) ══
-   The employer pledges; each clean evening (no slip after your work window) unlocks a fixed
-   amount for a cause the team voted on. Nobody pays for a slip. Unspent pledge rolls over. */
-const CO={pledge:5000,rollover:400,perEvening:5,evenings:436,joined:false,mine:9,from:'09:00',to:'18:00',
+   The employer pledges; each scroll-free hour unlocks a fixed amount for a cause the team voted on.
+   Everyone picks one hour a day that's theirs, at any time, so shift workers count the same as
+   office staff. At most one per person per day. Nobody pays for a slip. Unspent pledge rolls over. */
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const CO={pledge:5000,rollover:400,perHour:5,hours:436,joined:false,mine:9,at:'20:00',
+  week:null,                  /* null = same time every day; otherwise 7 start times, '' = no hour that day */
+  paused:'',                  /* '', 'day' or 'week': on the phone only, never counts against anyone */
   causes:['Feeding America','Against Malaria Foundation','GiveDirectly'],votes:[41,33,26],vote:-1,
   squads:[{n:'Design',k:6},{n:'Platform',k:8},{n:'Ops & People',k:5}],squad:0};
 const CO_FEED=[
-  {t:'Design squad reached its weekly goal',s:'30 clean evenings, set by the squad itself'},
+  {t:'Design squad reached its weekly goal',s:'30 scroll-free hours, a goal the squad set itself'},
   {t:'The jar passed $2,000',s:'week 3 of 6'},
   {t:'Ops & People joined the campaign',s:'5 people'},
   {t:'The vote closed: Feeding America',s:'41% of votes · runner-up gets the autumn campaign'},
 ];
 const money=n=>'$'+Math.round(n).toLocaleString('en-US');
 function renderCompany(animate){
-  const unlocked=CO.evenings*CO.perEvening, total=CO.pledge+CO.rollover, pct=Math.min(1,unlocked/total);
-  $('coAmt').textContent=money(unlocked); $('coEvenings').textContent=CO.evenings.toLocaleString('en-US');
+  const unlocked=CO.hours*CO.perHour, total=CO.pledge+CO.rollover, pct=Math.min(1,unlocked/total);
+  $('coAmt').textContent=money(unlocked); $('coHours').textContent=CO.hours.toLocaleString('en-US');
   $('coCause').textContent=CO.causes[CO.vote>=0?CO.vote:0]; $('coFill').style.width=(pct*100)+'%';
   $('coInvite').style.display=CO.joined?'none':''; $('coMine').style.display=CO.joined?'':'none';
-  $('coMineN').textContent=CO.mine; $('coWin').textContent=CO.to;
+  $('coMineN').textContent=CO.mine; $('coWin').textContent=hourLabel(CO.at);
+  $('coPattern').textContent=CO.week?'your own weekly pattern':'same time every day'; paintPause();
   $('coSquadName').textContent=CO.squads[CO.squad].n+' squad'; $('coSquadSize').textContent=CO.squads[CO.squad].k+' people';
   $('coFeed').innerHTML=CO_FEED.map(f=>`<div class="fcard" style="padding:11px 13px"><div class="row" style="gap:10px">
-    <svg width="22" height="22" viewBox="0 0 40 40" style="flex:none"><use href="#moonM"/></svg>
+    <svg width="22" height="22" viewBox="0 0 40 40" style="flex:none"><use href="#glowM"/></svg>
     <div><div class="fbody" style="font-size:13px">${f.t}</div><div class="tiny" style="margin-top:2px">${f.s}</div></div></div></div>`).join('');
-  $('coCardLine').textContent=CO.joined?`${CO.evenings} clean evenings · ${money(unlocked)} unlocked`:"You're invited to the company jar";
-  $('coCardSub').textContent=CO.joined?`you: ${CO.mine} · for ${CO.causes[CO.vote>=0?CO.vote:0]}`:'every clean evening unlocks $5 for a cause you vote on';
-  drawMoons($('coMoons'),Math.round(pct*POS.length),animate);
+  $('coCardLine').textContent=CO.joined?`${CO.hours} scroll-free hours · ${money(unlocked)} unlocked`:"You're invited to the company jar";
+  $('coCardSub').textContent=CO.joined?`you: ${CO.mine} · for ${CO.causes[CO.vote>=0?CO.vote:0]}`:'every scroll-free hour unlocks $5 for a cause you vote on';
+  drawLights($('coLights'),Math.round(pct*POS.length),animate);
   $('coNotesWrap').style.display=CO.joined?'':'none'; renderNotes();
 }
-/* moons rise into the jar (the consumer coins fall; this jar fills with something earned) */
-function drawMoons(g,n,animate){
+/* small lights rise into the jar (the consumer coins fall; this jar fills with something earned).
+   No word for them on purpose: the copy only says "hours", so there's nothing to translate. */
+function drawLights(g,n,animate){
   g.innerHTML='';
   for(let i=0;i<n;i++){
     const [cx,cy]=POS[i], u=document.createElementNS('http://www.w3.org/2000/svg','use');
-    u.setAttribute('href','#moonM'); u.setAttribute('x',cx-15); u.setAttribute('y',cy-15); u.setAttribute('width',30); u.setAttribute('height',30);
+    u.setAttribute('href','#glowM'); u.setAttribute('x',cx-15); u.setAttribute('y',cy-15); u.setAttribute('width',30); u.setAttribute('height',30);
     g.appendChild(u);
     if(animate) u.animate([{transform:'translateY(70px)',opacity:0},{transform:'translateY(-6px)',opacity:1,offset:.7},{transform:'none',opacity:1}],
       {duration:900,delay:i*70,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
   }
 }
 function openCompany(){ go('company'); $('s-company').scrollTop=0; renderCompany(true); }
+/* "8–9 PM", "11 PM–12 AM": the same style the time pickers show */
+const h12=(h,m)=>((h%12)||12)+(m?':'+String(m).padStart(2,'0'):'');
+const hourLabel=t=>{ if(!t) return 'no hour'; const [h,m]=t.split(':').map(Number), e=(h+1)%24, ap=x=>x<12?'AM':'PM';
+  return h12(h,m)+(ap(h)===ap(e)?'':' '+ap(h))+'–'+h12(e,m)+' '+ap(e); };
+function coPause(k){ CO.paused=CO.paused===k?'':k; paintPause();
+  if(CO.paused==='day') toast('Today is paused. It doesn\'t count, and nobody sees it.');
+  else if(CO.paused==='week') toast('This week is paused. No gap shows anywhere. Back whenever you like.'); }
+function paintPause(){ [['coOnCall','day'],['coWeekOff','week']].forEach(([id,k])=>{ const b=$(id); if(!b) return;
+  b.classList.toggle('done',CO.paused===k); b.setAttribute('aria-pressed',CO.paused===k); }); }
+function cjPreset(t){ CO.at=t; CO.week=null; renderJoin(); }
+function cjWeek(on){ CO.week=on?DAYS.map(()=>CO.at):null; renderJoin(); }
 
 let cjStep=0;
-function openJoin(){ cjStep=0; renderJoin(); $('ov-cojoin').classList.add('on'); }
+function openJoin(step){ cjStep=step||0; renderJoin(); $('ov-cojoin').classList.add('on'); }
 function cjGo(n){ cjStep=n; renderJoin(); }
 function renderJoin(){
   [...$('cjDots').children].forEach((d,i)=>d.classList.toggle('on',i<=cjStep));
   const B=$('cjBody');
   if(cjStep===0){ $('cjKicker').textContent='FERNHILL & CO. INVITED YOU';
-    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Summer Evenings: your evenings, funded.</div>
-      <div class="sub">Fernhill pledges <b>$5,000</b>. Each evening you don't slip unlocks <b>$5</b> for a cause the team votes on. If you slip, nobody pays. Not you, not anyone.</div>
-      <div class="coRule ok" style="margin-top:12px">Only your own time counts: evenings and weekends</div>
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Summer Hours: an hour a day, funded.</div>
+      <div class="sub">Fernhill pledges <b>$5,000</b>. Pick one hour a day that's yours. Each one that stays scroll-free unlocks <b>$5</b> for a cause the team votes on. If you slip, nobody pays. Not you, not anyone.</div>
+      <div class="coRule ok" style="margin-top:12px">Any hour works: before a shift, between shifts, or after work</div>
       <div class="coRule ok">Joining is your choice, and you can leave any time</div>
-      <div class="coRule no">Fernhill never sees you, your evenings or your apps</div>
+      <div class="coRule no">Fernhill never sees you, your hours or your apps</div>
       <button class="btn violet" style="margin-top:14px" onclick="cjGo(1)">Join</button>
       <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-cojoin')">Not now</button>`;
-  } else if(cjStep===1){ $('cjKicker').textContent='YOUR WORK WINDOW';
-    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">When do you work?</div>
-      <div class="sub" style="margin-bottom:12px">So those hours never count. Your evening starts when this ends.</div>
-      <div class="row" style="gap:10px"><div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" id="cjFrom" value="${CO.from}"></div>
-        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" id="cjTo" value="${CO.to}"></div></div>
-      <div class="tiny" style="margin-top:10px">Fernhill can't see this either. It stays on your phone.</div>
-      <button class="btn violet" style="margin-top:14px" onclick="CO.from=$('cjFrom').value;CO.to=$('cjTo').value;cjGo(2)">Next</button>`;
+  } else if(cjStep===1){ $('cjKicker').textContent='YOUR HOUR';
+    const presets=[['Morning','07:00','7 AM'],['Afternoon','15:00','3 PM'],['Evening','20:00','8 PM'],['Late','23:00','11 PM']];
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Which hour is yours?</div>
+      <div class="sub" style="margin-bottom:12px">Pick a time you're free, whatever your shifts. One hour a day counts, the same for everyone.</div>
+      ${CO.week?`<div class="weekGrid">${DAYS.map((d,k)=>`<div class="wkRow"><b>${d}</b>
+          <input class="timeIn" type="time" aria-label="${d}" value="${CO.week[k]}" onchange="CO.week[${k}]=this.value">
+          <span class="chip${CO.week[k]?'':' on'}" onclick="CO.week[${k}]=CO.week[${k}]?'':CO.at;renderJoin()">${CO.week[k]?'None':'Add'}</span></div>`).join('')}</div>
+        <div class="tiny" style="margin:8px 2px 0">A day with no hour simply isn't counted. Squad goals are a share of the hours people could have, so nobody falls behind for working long days.</div>
+        <div class="tiny" style="margin:8px 2px 0;color:var(--violet);cursor:pointer;font-weight:700" onclick="cjWeek(false)">Same time every day instead</div>`
+      :`<div style="display:flex;gap:6px;flex-wrap:wrap">${presets.map(([l,t,d])=>`<span class="chip${CO.at===t?' on':''}" onclick="cjPreset('${t}')">${l} · ${d}</span>`).join('')}</div>
+        <div class="row" style="gap:10px;margin-top:12px"><div style="flex:1"><div class="tiny" style="margin-bottom:5px">STARTS AT</div><input class="timeIn" type="time" id="cjAt" value="${CO.at}" onchange="CO.at=this.value;$('cjAtEnd').textContent=hourLabel(CO.at)"></div>
+          <div style="flex:1"><div class="tiny" style="margin-bottom:5px">YOUR HOUR</div><div class="timeIn" id="cjAtEnd">${hourLabel(CO.at)}</div></div></div>
+        <div class="tiny" style="margin:10px 2px 0;color:var(--violet);cursor:pointer;font-weight:700" onclick="cjWeek(true)">Shifts change? Set each day</div>`}
+      <div class="tiny" style="margin-top:10px">On call, or a hard week? You can pause any time. Fernhill can't see any of this. It stays on your phone.</div>
+      <button class="btn violet" style="margin-top:14px" onclick="${CO.joined?"closeOv('ov-cojoin');renderCompany(false);toast('Your hour is updated.')":'cjGo(2)'}">${CO.joined?'Save':'Next'}</button>`;
   } else if(cjStep===2){ $('cjKicker').textContent='VOTE FOR THE CAUSE';
     const tot=CO.votes.reduce((a,b)=>a+b,0);
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Where should the jar go?</div>
@@ -1130,19 +1155,19 @@ function renderJoin(){
       <button class="btn violet" style="margin-top:12px" onclick="cjGo(4)">Join ${CO.squads[CO.squad].n}</button>`;
   } else { $('cjKicker').textContent="YOU'RE IN";
     B.innerHTML=`<div style="text-align:center;padding:6px 0 2px">
-      <svg width="54" height="54" viewBox="0 0 40 40" style="filter:drop-shadow(0 0 16px rgba(185,174,255,.7))"><use href="#moonM"/></svg>
-      <div class="display" style="font-size:21px;margin:10px 0 8px">Your evenings start counting tonight.</div>
-      <div class="sub">After ${CO.to}, every evening without a slip adds a moon to the company jar.</div></div>
+      <svg width="54" height="54" viewBox="0 0 40 40" style="filter:drop-shadow(0 0 16px rgba(185,174,255,.7))"><use href="#glowM"/></svg>
+      <div class="display" style="font-size:21px;margin:10px 0 8px">Your hour starts counting today.</div>
+      <div class="sub">Each scroll-free hour adds a light to the company jar${CO.week?'':`, from ${hourLabel(CO.at)} every day`}.</div></div>
       <div class="card" style="margin-top:12px;background:rgba(60,240,203,.1);border-color:rgba(60,240,203,.3)">
         <b style="font-size:13px">Plus is on Fernhill</b>
         <div class="tiny" style="margin-top:4px;line-height:1.5">Your personal jar, stakes and charity stay private and separate. If you leave Fernhill, you keep a discount.</div></div>
-      <button class="btn mint" onclick="CO.joined=true;CO.evenings++;closeOv('ov-cojoin');openCompany()">See the company jar</button>`;
+      <button class="btn mint" onclick="CO.joined=true;CO.hours++;closeOv('ov-cojoin');openCompany()">See the company jar</button>`;
   }
 }
 function showCoTip(){
-  const final=4620, g=$('ctMoons');
+  const final=4620, g=$('ctLights');
   $('ctCause').textContent=CO.causes[CO.vote>=0?CO.vote:0]; $('ctAmt').textContent='$0';
-  drawMoons(g,POS.length,false); $('ov-cotip').classList.add('on');
+  drawLights(g,POS.length,false); $('ov-cotip').classList.add('on');
   setTimeout(()=>{ [...g.children].forEach((m,i)=>m.animate([{transform:'none',opacity:1},{transform:'translateY(-120px)',opacity:0}],
       {duration:900,delay:i*60,easing:'cubic-bezier(.4,.1,.6,1)',fill:'forwards'}));
     const t0=performance.now(), dur=1800;
@@ -1150,7 +1175,7 @@ function showCoTip(){
       else { stars($('ctJarBox'),11,true); fanfare($('ctJarBox'),money(final)+' GIVEN'); }})(t0);
   },700);
 }
-/* ══ EVENING NOTES — what people did instead, shared to inspire others ══
+/* ══ NOTES — what people did instead, shared to inspire others ══
    Anonymous and squad-only by default. High fives carry no count. "I'll try this" saves an idea
    to a private list; the author only learns how many saved it. The privacy check runs on the phone. */
 const CO_NOTES=[
@@ -1180,7 +1205,7 @@ function renderNotes(){
 }
 function highFive(i){ const n=CO_NOTES[i]; n.hf=!n.hf; renderNotes(); if(n.hf) toast('High five sent. No counts, no names.'); }
 function tryIdea(i){ const n=CO_NOTES[i]; n.saved=!n.saved;
-  if(n.saved){ IDEAS.unshift(n.t); toast('Saved to Ideas for tonight. Only you can see this list.'); }
+  if(n.saved){ IDEAS.unshift(n.t); toast('Saved to your ideas. Only you can see this list.'); }
   else { const k=IDEAS.indexOf(n.t); if(k>=0) IDEAS.splice(k,1); }
   renderNotes(); }
 function openIdeas(){
@@ -1196,8 +1221,8 @@ function paintColleagues(){
   const picks=(IDEAS.length?IDEAS:CO_NOTES.filter(n=>n.all&&!n.mine).map(n=>n.t)).slice(0,2);
   box.innerHTML=`<div class="eyebrow" style="color:var(--calm-soft);margin:6px 2px 8px">FROM PEOPLE AT FERNHILL</div>`+
     picks.map(t=>`<div class="insteadCard" onclick="chooseInstead(${JSON.stringify(t).replace(/"/g,'&quot;')})">
-      <div class="ic" style="background:rgba(255,255,255,.08);color:var(--calm)"><svg width="17" height="17" viewBox="0 0 40 40"><use href="#moonM"/></svg></div>
-      <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">${t}</b><div class="tiny">a colleague's evening, shared anonymously</div></div>
+      <div class="ic" style="background:rgba(255,255,255,.08);color:var(--calm)"><svg width="17" height="17" viewBox="0 0 40 40"><use href="#glowM"/></svg></div>
+      <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">${t}</b><div class="tiny">a colleague's idea, shared anonymously</div></div>
       <span style="color:var(--calm-soft)">›</span></div>`).join('');
 }
 /* writing a note */
@@ -1215,7 +1240,7 @@ const NUDGES=[
   {k:'Money',re:/\b(debt|loan|rent|salary|bills|overdraft|afford)\b/i,m:'This mentions money. Fine to keep, but colleagues may read more into it than you mean.'},
   {k:"A child's name",re:/\bmy (son|daughter|kid|child|baby|boy|girl)\s+[A-Z][a-z]+/,m:'This includes a child\'s name. "My son" or "my daughter" works just as well.'},
   {k:'An exact place',re:/\b\d+\s+[A-Za-z]+\s+(street|st|road|rd|avenue|ave|lane)\b|\b(my address|i live (at|on))\b/i,m:'This looks like an address or an exact place. Something more general keeps you private.'},
-  {k:'Someone else',re:new RegExp('\\b('+COLLEAGUES.join('|')+')\\b'),m:'This names someone. Notes are about your own evening, so leave the name out or ask them first.'},
+  {k:'Someone else',re:new RegExp('\\b('+COLLEAGUES.join('|')+')\\b'),m:'This names someone. Notes are about your own time, so leave the name out or ask them first.'},
   {k:'Could identify you',re:/\bmy (twins|band|gig|boat|horse|marathon|wedding|bakery)\b|\b\d{2}(st|nd|rd|th) birthday\b/i,anonOnly:true,
    m:'A detail like this might tell people it\'s you. Fine if you don\'t mind, or keep it more general.'},
 ];

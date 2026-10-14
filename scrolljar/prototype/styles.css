@@ -545,3 +545,8 @@ button.kudos{gap:5px}
 .didGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
 .didGrid b{display:block;font-family:'Bricolage Grotesque';font-size:22px;letter-spacing:-.03em}
 .didGrid span{font-size:11.5px;color:var(--ink-3);font-weight:600}
+/* Teams: your hour, set per day for changing shifts */
+.weekGrid{display:flex;flex-direction:column;gap:6px}
+.wkRow{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center;font-size:12.5px}
+.wkRow .timeIn{padding:7px 9px}
+.wkRow .chip{padding:7px 10px}
