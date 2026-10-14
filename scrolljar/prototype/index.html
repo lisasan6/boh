@@ -194,6 +194,16 @@
     <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Promises</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ New</span></div>
     <div id="commitList"></div>
 
+    <div class="card spread" style="cursor:pointer" onclick="go('insights')">
+      <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-chart"/></svg>
+      <div><b style="font-size:13.5px">More about your week</b><div class="tiny">wins, a tip, where your time goes, your story</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+  </div>
+
+  <!-- ══ MORE ABOUT YOUR WEEK (moved off Today to keep it short) ══ -->
+  <div class="screen" id="s-insights">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">More about your week</div></div>
     <div class="winStrip" id="winStrip"></div>
     <div class="card tipCard" style="cursor:pointer" id="tipCard" onclick="tipAction()">
       <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)" id="tipIcon"><use href="#i-brain"/></svg>
@@ -277,12 +287,12 @@
       <div class="tiny" style="margin-top:2px">both kinds of day count</div>
       <div class="cal" id="cal"></div>
     </div>
-    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="tiny">back to today</div></div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('insights')">‹</span><div class="tiny">back</div></div>
   </div>
 
   <!-- ══ WHERE YOUR TIME GOES ══ -->
   <div class="screen" id="s-usage">
-    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">Where your time goes</div></div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('insights')">‹</span><div class="display h1">Where your time goes</div></div>
     <div class="heroPanel">
       <div class="eyebrow">LAST 7 DAYS · ON THIS PHONE</div>
       <div class="display num" style="font-size:40px;margin-top:6px">21h 12m</div>
