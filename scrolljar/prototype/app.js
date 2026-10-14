@@ -241,26 +241,37 @@ function showBreath(){
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
   breathT=setTimeout(()=>{$('breathBtns').style.display='block'; launchContinue();},3200);
 }
-/* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed", slows down
-   and settles in a random spot after about 3 seconds, so the thumb can't learn where it is.
-   It never covers the main button, and it is still with reduced motion. */
-let goRAF=0;
+/* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed" and stops at
+   a random moment (2.2–3.8 s), always well away from where it stopped last time, so the thumb can't
+   learn it. Hard, not mean: it can be tapped while moving, never covers the main button, and with
+   reduced motion it just appears in a new spot. */
+let goRAF=0, goLastStop=null;
 function launchContinue(){
   const b=$('breathGo'), ov=$('ov-breath'), stay=$('breathBtns');
   cancelAnimationFrame(goRAF); b.style.display='';
   const W=b.offsetWidth, H=b.offsetHeight, minX=16, maxX=ov.clientWidth-16-W,
         minY=stay.offsetTop+stay.offsetHeight+14, maxY=ov.clientHeight-18-H;
-  let x=minX+Math.random()*(maxX-minX), y=minY+Math.random()*(maxY-minY);
-  const put=()=>{ b.style.left=x+'px'; b.style.top=y+'px'; }; put();
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const a=(20+Math.random()*35)*Math.PI/180, sp=330;
-  let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1), t0=performance.now();
+  const far=(x,y)=>!goLastStop||Math.hypot(x-goLastStop[0],y-goLastStop[1])>=70;
+  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const rnd=(lo,hi)=>lo+Math.random()*(hi-lo);
+  let x=rnd(minX,maxX), y=rnd(minY,maxY);
+  const put=()=>{ b.style.left=x+'px'; b.style.top=y+'px'; };
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    for(let i=0;i<30&&!far(x,y);i++){ x=rnd(minX,maxX); y=rnd(minY,maxY); }
+    goLastStop=[x,y]; put(); return; }
+  put();
+  const a=rnd(20,55)*Math.PI/180, sp=rnd(480,560);
+  let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1);
+  const start=performance.now(), stopAt=rnd(2200,3800); let t0=start, braking=false;
   const step=t=>{ if(!ov.classList.contains('on')) return;
     const dt=Math.min(.05,(t-t0)/1000); t0=t; x+=vx*dt; y+=vy*dt;
     if(x<minX){x=minX;vx=Math.abs(vx)} else if(x>maxX){x=maxX;vx=-Math.abs(vx)}
     if(y<minY){y=minY;vy=Math.abs(vy)} else if(y>maxY){y=maxY;vy=-Math.abs(vy)}
-    const f=Math.exp(-1.1*dt); vx*=f; vy*=f; put();
-    if(Math.hypot(vx,vy)>10) goRAF=requestAnimationFrame(step); };
+    /* brake once it's time and it will come to rest far from the last stop (or after 1.5 s extra) */
+    if(!braking && t-start>stopAt && (far(clamp(x+vx/9,minX,maxX),clamp(y+vy/9,minY,maxY))||t-start>stopAt+1500)) braking=true;
+    if(braking){ const f=Math.exp(-9*dt); vx*=f; vy*=f; }
+    put();
+    if(!braking||Math.hypot(vx,vy)>8) goRAF=requestAnimationFrame(step); else goLastStop=[x,y]; };
   goRAF=requestAnimationFrame(step);
 }
 function showOverride(){
