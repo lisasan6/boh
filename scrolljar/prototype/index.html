@@ -814,8 +814,9 @@
     <div class="sub" style="color:var(--calm-soft);max-width:210px;margin-top:8px" id="breathSub">The scroll will wait. Six seconds, then it's your call.</div>
     <div style="position:absolute;left:17px;right:17px;bottom:22px" id="breathBtns" style="display:none">
       <button class="btn calm" onclick="resist()">I'll stay committed</button>
-      <button class="btn ghost" style="margin-top:9px;background:transparent;border-color:var(--calm-soft);color:var(--calm)" onclick="showInstead()">Never mind, continue</button>
     </div>
+    <!-- smaller, and in a different spot each time, so continuing is a choice rather than a reflex -->
+    <button class="skipBtn" id="breathGo" onclick="showInstead()">Never mind, continue</button>
   </div>
 
   <!-- ══ INSTEAD — what else this hour could be ══ -->

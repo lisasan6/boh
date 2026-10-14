@@ -553,3 +553,11 @@ button.kudos{gap:5px}
 /* Teams jar lights: soft white glow at night, warm yellow by day so they read on light glass */
 body{--glow-1:#FFFFFF;--glow-2:#EDE9FF;--glow-3:#9B8CFF;--glow-core:#F7F5FF}
 body[data-mode="day"]{--glow-1:#FFE680;--glow-2:#FFC928;--glow-3:#FFB800;--glow-core:#E6A100}
+/* breath pause: the small "continue" button that changes place */
+.skipBtn{position:absolute;min-height:44px;padding:0 15px;border-radius:999px;background:transparent;border:1px solid var(--calm-soft);
+  color:var(--calm);font:700 12.5px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
+.skipBtn.at-tl{top:58px;left:20px}
+.skipBtn.at-tr{top:58px;right:20px}
+.skipBtn.at-mid{top:calc(50% + 132px);left:50%;transform:translateX(-50%)}
+.skipBtn.at-bl{bottom:96px;left:20px}
+.skipBtn.at-br{bottom:96px;right:20px}
