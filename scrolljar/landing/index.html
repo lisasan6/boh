@@ -280,6 +280,37 @@ section{padding-block:84px}
 .tsteps b{display:block;font-size:15.5px}
 .tsteps li>span:last-child{display:block;color:var(--ink-3);font-size:13.5px;margin-top:3px;text-wrap:balance}
 @media(max-width:760px){.tsteps{grid-template-columns:1fr 1fr;row-gap:22px}.tsteps::before{display:none}}
+.cowrap{display:grid;grid-template-columns:1.12fr .88fr;gap:30px;max-width:1040px;margin:0 auto 40px;align-items:center}
+@media(max-width:900px){.cowrap{grid-template-columns:1fr}}
+.hrmock{margin:0;border-radius:20px;overflow:hidden;min-width:0;box-shadow:0 30px 70px -36px rgba(0,0,0,.8)}
+.hrbar{display:flex;align-items:center;gap:6px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink-3);min-width:0}
+.hrbar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16);flex:none}
+.hrbar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrbar em{margin-left:auto;font-style:normal;font-weight:700;font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,194,58,.14);color:var(--gold-ink);flex:none}
+.hrbody{padding:18px 18px 16px}
+.hrhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.hrhead small,.hrtiles small{display:block;font-size:11.5px;color:var(--ink-3);letter-spacing:.02em}
+.hrhead b{font-family:var(--font-display);font-size:22px;letter-spacing:-.03em}
+.hrchip{font-size:12px;color:var(--ink-2);padding:5px 10px;border-radius:99px;border:1px solid var(--edge);background:var(--glass-2)}
+.hrtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.hrtiles>div{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:rgba(255,255,255,.03);min-width:0}
+.hrtiles b{display:block;font-family:var(--font-display);font-size:24px;letter-spacing:-.03em;margin-top:3px;font-variant-numeric:tabular-nums}
+.hrtiles b span{font-size:14px;color:var(--ink-3)}
+.hrtiles em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);margin-top:4px}
+.hrmeter{display:block;height:5px;border-radius:9px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden}
+.hrmeter i{display:block;height:100%;background:var(--btn-bg);border-radius:9px}
+.hrchart{display:flex;align-items:flex-end;gap:10px;height:74px;margin-top:14px;padding:0 4px;border-bottom:1px solid var(--line)}
+.hrchart i{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--mint),rgba(60,240,203,.35))}
+.hrchart i.todo{height:18%;background:rgba(255,255,255,.06)}
+.hrfoot{display:flex;gap:7px;align-items:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
+.hrfoot svg{color:var(--mint);flex:none}
+@media(max-width:560px){.hrtiles{grid-template-columns:1fr 1fr}.hrtiles>div:first-child{grid-column:1/-1}}
+.cogets h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.cogets ul{list-style:none;margin:0;padding:0}
+.cogets li{padding:12px 0;border-bottom:1px solid var(--line)}
+.cogets li:last-child{border-bottom:none}
+.cogets b{display:block;font-size:15.5px}
+.cogets li span{display:block;color:var(--ink-2);font-size:14.5px;margin-top:2px}
 .tperk{max-width:640px;margin:22px auto 0;text-align:center;color:var(--ink-2);font-size:15px}
 .tperk b{color:var(--ink)}
 .founder{max-width:760px;margin:0 auto;border-radius:26px;padding:30px 34px;display:flex;gap:26px;align-items:flex-start}
@@ -384,7 +415,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <div class="sp"></div>
   <a class="navlink" href="#how">How it works</a>
   <a class="navlink" href="#science">The science</a>
-  <a class="navlink" href="#teams">For teams</a>
+  <a class="navlink" href="#teams">For companies</a>
   <a class="navlink" href="#faq">FAQ</a>
   <a class="btn small" href="#join">Join the waitlist</a>
 </div></div></nav>
@@ -570,9 +601,33 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 
 <section id="teams" class="band"><div class="wrap">
   <div class="sechead rev">
-    <span class="eyebrow">For teams</span>
+    <span class="eyebrow">For companies · ScrollJar for Teams</span>
     <h2 class="display">Your company pays<br>when people win.</h2>
-    <p>Your company pledges a budget to a cause your people vote for. Each person picks one hour a day that's theirs, and every hour they keep scroll-free unlocks part of the pledge. If someone slips, nobody pays.</p>
+    <p>A wellbeing benefit for companies. You pledge a budget to a cause your people vote for. Each person picks one hour a day that's theirs, and every hour they keep scroll-free unlocks part of the pledge. If someone slips, nobody pays.</p>
+  </div>
+  <div class="cowrap">
+    <figure class="hrmock glass rev" aria-label="Example of the company dashboard">
+      <div class="hrbar"><i></i><i></i><i></i><span>ScrollJar for Teams · Fernhill &amp; Co.</span><em>Example</em></div>
+      <div class="hrbody">
+        <div class="hrhead"><div><small>Current campaign · week 3 of 6</small><b>Summer Hours</b></div><span class="hrchip">for Feeding America · chosen by vote</span></div>
+        <div class="hrtiles">
+          <div><small>Unlocked for the cause</small><b>$2,180</b><span class="hrmeter"><i style="width:40%"></i></span><em>of a $5,400 pledge</em></div>
+          <div><small>Scroll-free hours</small><b>436</b><em>across everyone taking part</em></div>
+          <div><small>Taking part</small><b>63<span> of 120</span></b><em>who joined is never shown</em></div>
+        </div>
+        <div class="hrchart" aria-hidden="true"><i style="height:58%"></i><i style="height:72%"></i><i style="height:86%"></i><i class="todo"></i><i class="todo"></i><i class="todo"></i></div>
+        <p class="hrfoot"><svg width="13" height="13" aria-hidden="true"><use href="#i-eye-off"/></svg>Weekly totals only. No names, no daily view, groups under 5 hidden.</p>
+      </div>
+    </figure>
+    <div class="cogets rev">
+      <h3>What your company gets</h3>
+      <ul>
+        <li><b>A benefit people feel</b><span>It works on attention, the thing people actually lose every day, at any hour and on any shift.</span></li>
+        <li><b>Giving you can report</b><span>Real donations to a cause your people chose, with receipts for your impact report.</span></li>
+        <li><b>A story worth sharing</b><span>A team impact card after every campaign. It names the cause, never a person.</span></li>
+        <li><b>Easy to run</b><span>One invite link to share. No employee lists to upload, nobody to monitor.</span></li>
+      </ul>
+    </div>
   </div>
   <ol class="tsteps rev">
     <li><span class="tn">1</span><b>You pledge</b><span>a budget and a shortlist of causes</span></li>
@@ -594,7 +649,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
   <p class="tperk rev"><b>A three-way win:</b> your people get time back, a cause gets funded, and you offer a benefit people actually feel.<br>Everyone who joins also gets <b>ScrollJar Plus free</b> for their own life. Their personal jar stays private from work.</p>
   <div class="tcta rev">
     <a class="btn" href="mailto:hello@scrolljar.app?subject=ScrollJar%20for%20Teams%20pilot">Ask about a free pilot</a>
-    <span>Six weeks, up to 50 people, free during the pilot.</span>
+    <span>For HR and People teams. Six weeks, up to 50 people, free during the pilot.</span>
   </div>
 </div></section>
 
@@ -674,7 +729,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
       <div class="logo" style="margin-bottom:12px"><svg width="20" height="23" aria-hidden="true"><use href="#i-jar"/></svg>ScrollJar</div>
       <p style="color:var(--ink-3);max-width:280px;font-size:14px">A swear jar for scrolling. Made in cold blood, kept in warm moments.</p>
     </div>
-    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For teams</a><a href="#families">For families</a><a href="#refuse">Our promises</a><a href="#faq">FAQ</a></div>
+    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For companies</a><a href="#families">For families</a><a href="#refuse">Our promises</a><a href="#faq">FAQ</a></div>
     <div><h2>Evidence</h2><a href="#science">The science</a><a href="#science">Our sources</a></div>
     <div><h2>Contact</h2><a href="mailto:hello@scrolljar.app">hello@scrolljar.app</a><a href="mailto:press@scrolljar.app">Press</a></div>
   </div>
