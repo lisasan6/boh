@@ -1057,6 +1057,27 @@ function restart(){location.reload()}
 const Q=new URLSearchParams(location.search);
 if(Q.has('embed')){ document.documentElement.classList.add('embed'); $('ov-onb').classList.remove('on'); }
 if(Q.get('mode')==='day') setMode('day');
+/* the landing page can ask the embedded app to show a step of the story, as you scroll */
+function demoCoin(){
+  const box=$('homeJar'), svg=$('homeJarSvg');
+  const f=document.createElement('div'); f.className='flyer';
+  f.innerHTML='<svg viewBox="0 0 40 40" width="26" height="26"><use href="#coin"/></svg>';
+  f.style.left='calc(50% - 12px)'; f.style.top='-30%'; box.appendChild(f);
+  f.animate([{transform:'translateY(0) scale(1.1) rotateY(0)',opacity:0},{transform:'translateY(20px) scale(1.1) rotateY(360deg)',opacity:1,offset:.25},
+             {transform:'translateY(150px) scale(.85) rotateY(900deg)',opacity:0}],{duration:900,easing:'cubic-bezier(.45,.05,.6,1)'}).onfinish=()=>{
+    f.remove(); svg.classList.remove('squash'); void svg.offsetWidth; svg.classList.add('squash'); stars(box,6,false); };
+}
+function demoStep(step){
+  document.querySelectorAll('.ov.on').forEach(o=>o.classList.remove('on'));
+  clearTimeout(breathT); clearInterval(winT);
+  const top=id=>{ const el=$(id); if(el) el.scrollTop=0; };
+  if(step==='today'){ go('home'); top('s-home'); }
+  else if(step==='shield'){ go('home'); showShield(); }
+  else if(step==='pause'){ go('home'); showBreath(); }
+  else if(step==='jar'){ go('jar'); top('s-jar'); setTimeout(demoCoin,450); }
+  else if(step==='tipout'){ go('jar'); top('s-jar'); showTipout(); }
+}
+if(Q.has('embed')) addEventListener('message',e=>{ const d=e.data; if(d&&d.scrolljar==='show') demoStep(d.step); });
 renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
 $('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
 $('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');
