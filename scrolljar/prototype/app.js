@@ -240,10 +240,10 @@ function showBreath(){
   startBreathCue();
   clearTimeout(breathT);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
-  /* the choice appears after one full breath (about 4 s in, 6 s out), both buttons fading in softly */
+  /* the choice appears after two full breaths (each about 4 s in, 6 s out), both buttons fading in softly */
   breathT=setTimeout(()=>{ const bb=$('breathBtns'); bb.style.display='block';
     bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'});
-    launchContinue(); },10000);
+    launchContinue(); },20000);
 }
 /* the orb's label follows its size: "breathe in" while it grows (first 4 s of the 10 s cycle),
    "breathe out" while it shrinks. The orb restarts from empty each time the pause opens. */

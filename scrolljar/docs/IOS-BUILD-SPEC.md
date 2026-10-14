@@ -45,7 +45,7 @@ The shield is drawn by iOS, not by us. **The shield cannot take payment or open 
 3. **Secondary** → ShieldAction posts a **local notification** ("Tap to open your jar"), then `.close` (or `.defer`). Tapping the notification opens our app with a deep link to the override flow.
    - This extra tap is the main UX cost of the whole product, and every competitor pays it too.
    - The research notes an optional Shortcuts "App Opened" automation as an alternative entry.
-4. **In our app** (mirrors the prototype): breath pause (`ov-breath`: an orb breathing about 4 s in and 6 s out, labelled "breathe in" / "breathe out"; after about 3 s, "I'll stay committed" appears in a fixed place and a smaller "Never mind, continue" bounces below it for 7–9 s and stops at a random spot, never near its last one; with reduced motion it just appears in a new spot) → "Instead" (`ov-instead`) → override sheet (`ov-override`) → confirm.
+4. **In our app** (mirrors the prototype): breath pause (`ov-breath`: an orb breathing about 4 s in and 6 s out, labelled "breathe in" / "breathe out"; after two full breaths (about 20 s), "I'll stay committed" appears in a fixed place and a smaller "Never mind, continue" bounces below it for 7–9 s and stops at a random spot, never near its last one; with reduced motion it just appears in a new spot) → "Instead" (`ov-instead`) → override sheet (`ov-override`) → confirm.
 5. **Unlock window**
    - Remove that commitment's shield from its own named `ManagedSettingsStore`.
    - Start a `DeviceActivity` schedule for the window (5, 15 or 30 minutes). `intervalDidEnd` in the monitor re-applies the shield.
