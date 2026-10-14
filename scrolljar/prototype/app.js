@@ -73,9 +73,7 @@ function buildJar(svg){
     </g>
     <path d="${JAR_BODY}" fill="none" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
     <path d="${JAR_BODY}" fill="none" stroke="url(#rimlight)" stroke-width="1.2"/>
-    <rect x="50" y="11" width="100" height="27" rx="7" fill="url(#lidG)" stroke="var(--jar-rim-3)" stroke-opacity=".35" stroke-width="1"/>
-    <path d="M54 19.5 H146 M54 25 H146 M54 30.5 H146" stroke="#0a0f1e" stroke-opacity=".16" stroke-width="1.3"/>
-    <path d="M57 14.5 H143" stroke="#fff" stroke-opacity=".65" stroke-width="1.6" stroke-linecap="round"/>
+    <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
     <g class="jarFace">
       <g class="eyes">
         <g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
