@@ -785,6 +785,7 @@ const GOALS=[
   {t:'Sleep before midnight',c:'var(--violet)',n:'holding'},
 ];
 const ENTRIES=[
+  {tag:'voice',t:'Thursday, 11:05pm',voice:true,dur:48},
   {tag:'impulse',t:'Wednesday, 10:12pm',b:"Reached for it without deciding to. Wasn't even bored — just tired and looking for an off switch.",at:'written at a shield moment'},
   {tag:'feeling',t:'Tuesday, 8:40pm',b:'Read for forty minutes and felt oddly proud. Small thing, but it was mine.'},
   {tag:'goal',t:'Monday, 7:15am',b:'Want this week to have two real evenings in it. Not productive — just mine.'},
@@ -822,8 +823,23 @@ function renderGoals(){
     <div style="flex:1"><b style="font-size:12.5px">${g.t}</b><div class="tiny">${g.n}</div></div></div>`).join('');
 }
 function addGoal(){ const t=prompt('What is this time for?'); if(t&&t.trim()){ GOALS.unshift({t:t.trim(),c:'var(--blue)',n:'just set'}); renderGoals(); toast('Named. That\'s what the shield will remind you of.'); } }
+/* a fixed, gentle waveform per note: it's a picture of the recording, not an analysis of it */
+function waveBars(seed,n){
+  let x=seed*9301+49297; const out=[];
+  for(let i=0;i<n;i++){ x=(x*9301+49297)%233280; out.push(5+Math.round((x/233280)*15*(0.55+0.45*Math.sin(i/2.3)))); }
+  return out;
+}
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 function renderEntries(){
-  $('entryList').innerHTML=ENTRIES.map(e=>`<div class="entryCard">
+  $('entryList').innerHTML=ENTRIES.map((e,i)=>e.voice?`<div class="entryCard">
+    <div class="entryMeta"><span class="entryTag tag-voice">VOICE</span><span class="tiny">${e.t}</span></div>
+    <div class="voiceRow">
+      <button class="playBtn" onclick="playVoice(${i},this)" aria-label="Play"><svg width="14" height="14"><use href="#i-play"/></svg></button>
+      <div class="voiceBars" data-i="${i}">${waveBars(e.dur+i,26).map(v=>`<i style="height:${Math.abs(v)}px"></i>`).join('')}</div>
+      <span class="tiny num" id="vdur${i}">${fmt(e.dur)}</span>
+    </div>
+    <div class="tiny" style="margin-top:6px">only you can hear this</div></div>`
+  :`<div class="entryCard">
     <div class="entryMeta"><span class="entryTag tag-${e.tag}">${e.tag.toUpperCase()}</span><span class="tiny">${e.t}</span></div>
     <div style="font-size:13px;font-weight:600;line-height:1.5">${e.b}</div>
     ${e.at?`<div class="tiny" style="margin-top:6px">${e.at}</div>`:''}</div>`).join('');
@@ -861,6 +877,44 @@ function openEntry(kind){
   }
   if(diaryMode==='guided') setTimeout(()=>{ $('entryText').value=REFLECTIONS[reflIdx].q+'\n\n'; },80);
   $('ov-entry').classList.add('on');
+}
+/* ── voice notes: record, keep, play back. nothing answers. ── */
+let vT, vSec=0, vState='idle', playT=null;
+function openVoice(){
+  vState='idle'; vSec=0; clearInterval(vT);
+  $('voiceTime').textContent='0:00'; $('voiceHint').textContent='tap to start · up to 5 minutes';
+  $('voiceWave').innerHTML=Array.from({length:32},()=>'<i></i>').join('');
+  $('voiceWave').classList.remove('live'); $('recBtn').classList.remove('rec');
+  $('recBtn').style.display=''; $('voiceDone').style.display='none';
+  $('ov-voice').classList.add('on');
+}
+function toggleVoice(){
+  if(vState==='idle'){
+    vState='rec'; $('recBtn').classList.add('rec'); $('voiceWave').classList.add('live');
+    $('voiceHint').textContent='recording · tap to stop';
+    vT=setInterval(()=>{ vSec++; $('voiceTime').textContent=fmt(vSec); if(vSec>=300) toggleVoice(); },1000);
+  } else if(vState==='rec'){
+    vState='done'; clearInterval(vT); $('recBtn').classList.remove('rec'); $('voiceWave').classList.remove('live');
+    $('recBtn').style.display='none'; $('voiceDone').style.display='block';
+    $('voiceHint').textContent='keep it, or let it go';
+  }
+}
+function keepVoice(){
+  ENTRIES.unshift({tag:'voice',t:'just now',voice:true,dur:Math.max(vSec,1)});
+  closeOv('ov-voice'); renderEntries(); go('diary');
+  toast('Kept. Only you will ever hear it.');
+}
+function discardVoice(){ clearInterval(vT); vState='idle'; closeOv('ov-voice'); }
+function playVoice(i,btn){
+  const bars=[...document.querySelectorAll(`.voiceBars[data-i="${i}"] i`)], e=ENTRIES[i];
+  const stop=()=>{ clearInterval(playT); playT=null; document.querySelectorAll('.playBtn use').forEach(u=>u.setAttribute('href','#i-play'));
+    document.querySelectorAll('.voiceBars i').forEach(b=>b.classList.remove('on')); };
+  const wasMine=btn.querySelector('use').getAttribute('href')==='#i-pause';
+  stop(); if(wasMine) return;
+  btn.querySelector('use').setAttribute('href','#i-pause');
+  let t=0; playT=setInterval(()=>{ t++; const k=Math.round(t/e.dur*bars.length);
+    bars.forEach((b,j)=>b.classList.toggle('on',j<k)); $('vdur'+i).textContent=fmt(e.dur-t);
+    if(t>=e.dur){ stop(); $('vdur'+i).textContent=fmt(e.dur); } },1000);
 }
 let entriesThisSitting=0;
 function saveEntry(){

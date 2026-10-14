@@ -437,3 +437,24 @@ body[data-mode="day"] .tag-impulse{color:#C93D14}
 .coinRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
 .coinRow:last-child{border-bottom:none}
 #ov-tipout > *{flex-shrink:0}
+
+/* ══ VOICE NOTES (passive) ══ */
+.tag-voice{background:rgba(255,158,122,.16);color:var(--peach)}
+body[data-mode="day"] .tag-voice{color:#C93D14}
+.voiceWave{display:flex;align-items:center;justify-content:center;gap:3px;height:56px;margin:18px 0 10px}
+.voiceWave i{width:4px;height:6px;border-radius:2px;background:var(--ink-3);opacity:.5;transition:height .25s}
+.voiceWave.live i{background:var(--peach);opacity:.9;animation:vw 1.1s ease-in-out infinite}
+.voiceWave.live i:nth-child(3n){animation-delay:.15s}.voiceWave.live i:nth-child(3n+1){animation-delay:.32s}.voiceWave.live i:nth-child(4n){animation-delay:.5s}
+@keyframes vw{0%,100%{height:6px}50%{height:38px}}
+.recBtn{width:74px;height:74px;border-radius:50%;border:none;margin:18px auto 4px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:linear-gradient(180deg,#FFD2BF,var(--peach));color:#3A1406;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6), inset 0 -3px 6px -2px rgba(0,0,0,.2), 0 10px 26px -10px rgba(255,120,80,.7)}
+.recBtn.rec{animation:recPulse 1.6s ease-in-out infinite}
+@keyframes recPulse{0%,100%{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 0 0 0 rgba(255,143,102,.45)}50%{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 0 0 14px rgba(255,143,102,0)}}
+.voiceRow{display:flex;align-items:center;gap:10px}
+.playBtn{width:34px;height:34px;border-radius:50%;border:none;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:var(--panel-2);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.25), inset 0 0 0 1px var(--line)}
+.voiceBars{flex:1;display:flex;align-items:center;gap:2px;height:26px}
+.voiceBars i{flex:1;border-radius:2px;background:var(--ink-3);opacity:.45}
+.voiceBars i.on{background:var(--peach);opacity:.95}
+@media (prefers-reduced-motion:reduce){.voiceWave.live i,.recBtn.rec{animation:none}}

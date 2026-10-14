@@ -38,6 +38,7 @@ The tagline: *"You can always choose distraction. It just shouldn't be free."*
 - No variable rewards, no leaderboards, no urgency or countdown sales, and no engagement metrics for our own app.
 - Tightening a rule takes effect instantly; loosening it takes 24 hours ("cold blood").
 - Kindness features are never paywalled: the breath pause, peek valve, rough-day support and the Wobble.
+- Diary voice notes are passive: recorded, kept on the phone and played back. Nothing transcribes, analyses or answers them, AI included. No streaks or rewards for them either.
 
 ## Where things are
 
