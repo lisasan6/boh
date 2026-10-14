@@ -34,7 +34,7 @@ function closeOv(id){$(id).classList.remove('on')}
 let oi=0;
 $('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===0?18:7}px;height:7px;border-radius:99px;background:${i===0?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
 function onbNext(){
-  if(oi===3){closeOnb();return}
+  if(oi===3){$('ov-preperm').classList.add('on');return}
   oi++;
   document.querySelectorAll('.onb').forEach(s=>s.style.display=(+s.dataset.i===oi)?'block':'none');
   $('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===oi?18:7}px;height:7px;border-radius:99px;background:${i===oi?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
@@ -113,6 +113,109 @@ function pickCharity(i){
   toast('Your jar now goes to '+charity().n+' on Aug 1.');
 }
 function showShield(){$('ov-shield').classList.add('on')}
+/* ── the real-iOS bridge: shield → notification → our app ── */
+function showBridge(){
+  closeOv('ov-shield');
+  if(!$('iosGrid').children.length) $('iosGrid').innerHTML=Array.from({length:20},()=>'<i></i>').join('');
+  $('iosBanner').classList.remove('in'); $('ov-ios').classList.add('on');
+  setTimeout(()=>$('iosBanner').classList.add('in'),550);
+}
+function tapBridge(){ closeOv('ov-ios'); showBreath(); }
+function ignoreBridge(){ closeOv('ov-ios'); resist(); }
+
+/* ── onboarding: our explainer → Apple's prompt → Face ID → Apple's picker ── */
+function showSysAlert(){
+  $('iosAlertBox').style.display=''; $('iosFaceId').style.display='none';
+  $('ov-sysalert').classList.add('on');
+}
+function allowPerm(){
+  $('iosAlertBox').style.display='none'; $('iosFaceId').style.display='flex';
+  setTimeout(()=>{ closeOv('ov-sysalert'); openPicker(); },1000);
+}
+function denyPerm(){ closeOv('ov-sysalert'); $('ov-noperm').classList.add('on'); }
+const PICK_CATS=['Social','Games','Entertainment','Creativity','Productivity & Finance','Education','Information & Reading','Health & Fitness','Utilities','Shopping & Food','Travel','Other'];
+const pick={apps:new Set(),cats:new Set(),open:new Set(['Social'])};
+function openPicker(){ renderPicker(); $('ov-picker').classList.add('on'); }
+function renderPicker(){
+  const rows=[];
+  PICK_CATS.forEach(c=>{
+    const apps=c==='Social'?APPS:[], n=apps.filter((a,i)=>pick.apps.has(i)).length;
+    const st=pick.cats.has(c)?'on':(n?'part':'');
+    rows.push(`<div class="iosRow" onclick="togglePickCat('${c}')"><span class="iosCheck ${st}">${st==='on'?'✓':st==='part'?'–':''}</span>${c}
+      ${apps.length?`<span class="iosChev ${pick.open.has(c)?'open':''}" onclick="event.stopPropagation();togglePickOpen('${c}')">›</span>`:''}</div>`);
+    if(apps.length&&pick.open.has(c)) apps.forEach((a,i)=>rows.push(`<div class="iosRow sub" onclick="togglePickApp(${i})">
+      <span class="iosCheck ${pick.apps.has(i)||pick.cats.has(c)?'on':''}">${pick.apps.has(i)||pick.cats.has(c)?'✓':''}</span>
+      <span class="iosMiniIcon" style="background:${a.g}"></span>${a.n}</div>`));
+  });
+  rows.push(`<div class="iosRow" onclick="toast('Websites are picked here too, so the same app in Safari stays shielded.')"><span class="iosCheck"></span>Websites<span class="iosChev">›</span></div>`);
+  $('pickList').innerHTML=rows.join('');
+  $('pickDone').disabled=pickCount()===0;
+}
+const pickCount=()=>pick.apps.size+pick.cats.size;
+function togglePickCat(c){ pick.cats.has(c)?pick.cats.delete(c):pick.cats.add(c); if(c==='Social') pick.apps.clear(); renderPicker(); }
+function togglePickApp(i){ if(pick.cats.has('Social')){ pick.cats.delete('Social'); APPS.forEach((a,k)=>pick.apps.add(k)); }
+  pick.apps.has(i)?pick.apps.delete(i):pick.apps.add(i); renderPicker(); }
+function togglePickOpen(c){ pick.open.has(c)?pick.open.delete(c):pick.open.add(c); renderPicker(); }
+function pickDone(){
+  if(!pickCount()) return;
+  const parts=[]; if(pick.apps.size) parts.push(pick.apps.size+' app'+(pick.apps.size>1?'s':''));
+  if(pick.cats.size) parts.push(pick.cats.size+' categor'+(pick.cats.size>1?'ies':'y'));
+  closeOv('ov-picker'); closeOv('ov-preperm'); $('ov-onb').classList.remove('on');
+  toast(parts.join(' and ')+' shielded. Try opening one.');
+}
+
+/* ── day ~3: "want to make it real?" — stakes, charity, membership, card ── */
+let realStep=0, realPrice=5, realCharity=0, realPlan='yr', realAgree=false;
+function openReal(){ realStep=0; realPrice=5; realCharity=S.charity; realPlan='yr'; realAgree=false; renderReal(); $('ov-real').classList.add('on'); }
+function realGo(n){ realStep=n; renderReal(); }
+function renderReal(){
+  [...$('realDots').children].forEach((d,i)=>d.classList.toggle('on',i<=realStep));
+  const ch=CHARITIES[realCharity].n, K=$('realKicker'), B=$('realBody');
+  if(realStep===0){ K.textContent='DAY 3';
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three nights. Five temptations.<br>All yours.</div>
+      <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b></div>
+      <button class="btn mint" style="margin-top:16px" onclick="realGo(1)">Make it real</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying free. Ghost Jar keeps working exactly as it does now.')">Not yet, stay free</button>`;
+  } else if(realStep===1){ K.textContent='YOUR STAKES';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Price it in cold blood</div>
+      <div class="card" style="text-align:center"><div class="amount num">$<span id="realP">${realPrice}</span></div>
+        <input type="range" min="2" max="25" value="${realPrice}" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="realPrice=+this.value;$('realP').textContent=this.value">
+        <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div></div>
+      <div class="eyebrow" style="margin:12px 2px 8px">WHERE IT GOES</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${CHARITIES.map((c,i)=>`<span class="chip${i===realCharity?' on':''}" onclick="realCharity=${i};renderReal()">${c.n}</span>`).join('')}</div>
+      <div class="tiny" style="margin-top:12px;line-height:1.5">Your jar is capped at $${S.cap} a month. When it's full, the shields stay on and nothing more is charged.</div>
+      <button class="btn mint" style="margin-top:14px" onclick="realGo(2)">Next</button>`;
+  } else if(realStep===2){ K.textContent='TWO THINGS, IN PLAIN WORDS';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Two separate payments</div>
+      <div class="card"><div class="spread"><b style="font-size:13.5px">1 · Jar Hero membership</b><span class="pill chr">billed by Apple</span></div>
+        <div class="row" style="gap:7px;margin-top:10px">
+          <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$49.99 / year</span>
+          <span class="chip${realPlan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='mo';renderReal()">$5.99 / month</span></div>
+        <div class="tiny" style="margin-top:9px;line-height:1.5">This is how ScrollJar earns money. Cancel any time in your Apple account; promises you've made still run to their honest end.</div></div>
+      <div class="card"><div class="spread"><b style="font-size:13.5px">2 · Your coins</b><span class="pill gold">charged by card</span></div>
+        <div class="tiny" style="margin-top:7px;line-height:1.5">Once a month, on the 1st, for whatever is in your jar. 100% goes to ${ch}. We never keep any of it.</div></div>
+      <button class="btn mint" onclick="realGo(3)">Continue to card</button>`;
+  } else if(realStep===3){ K.textContent='YOUR CARD';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Add a card for your coins</div>
+      <div class="fakeField"><span style="flex:1">•••• •••• •••• 4242</span><span class="tiny">12/28 · 123</span></div>
+      <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>. We email you before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
+        Ending a promise honestly is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a promise counts as breaking the jar: <b>$${realPrice*5}</b> (5× your price), after a one-hour grace period to put things back.</div>
+      <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
+      <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Save card</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">Your bank may ask you to confirm. That's normal.</div>`;
+  } else { K.textContent='DONE';
+    B.innerHTML=`<div style="text-align:center;padding:8px 0 4px">
+      <svg viewBox="0 0 40 40" width="52" height="52" style="filter:drop-shadow(0 0 16px rgba(255,201,77,.7))"><use href="#coin"/></svg>
+      <div class="display" style="font-size:22px;margin:12px 0 8px">It's real now.</div>
+      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On Aug 1 it all goes to ${ch}.</div></div>
+      <button class="btn mint" style="margin-top:16px" onclick="closeOv('ov-real')">Got it</button>`;
+  }
+}
+function realSave(){
+  if(!realAgree) return;
+  const b=$('realSave'); b.disabled=true; b.textContent='Confirming with your bank…';
+  setTimeout(()=>{ S.charity=realCharity; renderJar(); renderCharities(); realGo(4); },1200);
+}
 function resist(){
   ['ov-shield','ov-breath','ov-override'].forEach(closeOv);
   const {box,svg,mouth}=liveJar();

@@ -124,7 +124,7 @@
 <div class="topbar">
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="restart()">↻ Restart</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3 moment</button><button class="ms" onclick="restart()">↻ Restart</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -695,7 +695,7 @@
     <div class="sub" style="color:#A9A4D8;margin-bottom:6px">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
     <div class="tiny" style="margin-bottom:24px">12 clean days and counting</div>
     <button class="btn mint" onclick="resist()">I'll stay committed</button>
-    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" onclick="showBreath()">Open anyway · $5</button>
+    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" onclick="showBridge()">Open anyway · $5</button>
     <div class="tiny" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
   </div>
 
@@ -932,6 +932,76 @@
       <div class="tiny" style="text-align:center;margin-top:9px">no likes counter, no followers, no algorithm</div>
     </div>
   </div>
+  <!-- ══ REAL-iOS BRIDGE: Apple's shield can't open our app, so a notification does ══ -->
+  <div class="ov iosHome" id="ov-ios" onclick="ignoreBridge(event)">
+    <div class="iosGrid" id="iosGrid"></div>
+    <div class="iosDock"><i></i><i></i><i></i><i></i></div>
+    <div class="iosBanner" id="iosBanner" onclick="event.stopPropagation();tapBridge()">
+      <div class="iosAppIcon"><svg width="22" height="22"><use href="#i-jar"/></svg></div>
+      <div style="flex:1;min-width:0">
+        <div class="spread"><span class="iosBApp">SCROLLJAR</span><span class="iosBApp" style="letter-spacing:0">now</span></div>
+        <div class="iosBTitle">Tap to open your jar</div>
+        <div class="iosBBody">A short pause first, then it's your call.</div>
+      </div>
+    </div>
+    <div class="protoNote">On a real iPhone, Apple's block screen can't open apps or take payment, so this notification is the bridge: one extra tap.<br><b>Tap it, or tap anywhere else to let it go.</b></div>
+  </div>
+
+  <!-- ══ ONBOARDING · why we need Screen Time (our screen, before Apple's) ══ -->
+  <div class="ov" id="ov-preperm" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="54" height="54" style="color:var(--mint);filter:drop-shadow(0 0 18px rgba(55,226,192,.5))"><use href="#i-shield"/></svg>
+    <div class="display" style="font-size:24px;margin:16px 0 10px;line-height:1.15">Next, Apple asks for<br>Screen Time access.</div>
+    <div class="sub">That's what lets ScrollJar shield apps at the system level, the same way parental controls do.</div>
+    <div class="card" style="margin-top:16px;text-align:left;width:100%">
+      <div class="row" style="gap:10px;align-items:flex-start"><svg width="17" height="17" style="color:var(--mint);flex:none;margin-top:2px"><use href="#i-heart"/></svg>
+        <div class="tiny" style="line-height:1.55">Apple only ever gives us anonymous tokens. We never learn which apps you pick, when you use them, or what you do inside.</div></div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn chrome" onclick="showSysAlert()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ Apple's own permission prompt (mock) ══ -->
+  <div class="ov iosDim" id="ov-sysalert">
+    <div class="iosAlert" id="iosAlertBox">
+      <div class="iosATitle">“ScrollJar” Would Like to Access Screen Time</div>
+      <div class="iosABody">Providing “ScrollJar” access to Screen Time may allow it to see your activity data, restrict content, and limit the usage of apps and websites.</div>
+      <div class="iosABtns"><button onclick="denyPerm()">Don't Allow</button><button style="font-weight:600" onclick="allowPerm()">Continue</button></div>
+    </div>
+    <div class="iosFaceId" id="iosFaceId"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 13V8a5 5 0 015-5h5M33 3h5a5 5 0 015 5v5M43 33v5a5 5 0 01-5 5h-5M13 43H8a5 5 0 01-5-5v-5"/><path d="M15 16v3M31 16v3M23 17v8h-2M17 31c3.5 3 8.5 3 12 0"/></svg><span>Face ID</span></div>
+    <div class="protoNote" style="bottom:20px">Apple's own screen. Wording may differ slightly on your iPhone.</div>
+  </div>
+
+  <!-- ══ if they say no: calm, no pressure ══ -->
+  <div class="ov" id="ov-noperm" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="46" height="46" style="color:var(--calm-soft)"><use href="#i-sprout"/></svg>
+    <div class="display" style="font-size:23px;margin-top:16px;color:var(--calm-ink)">No problem.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:250px;margin-top:9px">ScrollJar can't shield anything without Screen Time access. That's Apple's rule, and it's a good one. Turn it on whenever you like.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-noperm');showSysAlert()">Try again</button>
+      <div class="tiny" style="text-align:center;margin-top:11px;cursor:pointer;color:var(--calm-soft)" onclick="closeOv('ov-noperm');closeOv('ov-preperm');$('ov-onb').classList.remove('on');toast('Nothing is shielded yet. You can set it up from Today.')">Look around first</div>
+    </div>
+  </div>
+
+  <!-- ══ Apple's app picker (mock) ══ -->
+  <div class="ov iosDim" id="ov-picker" style="justify-content:flex-end">
+    <div class="iosSheet">
+      <div class="iosSheetHead"><button onclick="closeOv('ov-picker')">Cancel</button><b>Choose Activities</b><button id="pickDone" style="font-weight:600" onclick="pickDone()">Done</button></div>
+      <div class="iosSearch">Search</div>
+      <div class="iosList" id="pickList"></div>
+      <div class="iosFoot">Apple's picker. Real app names show here on your phone, but only you see them: ScrollJar receives anonymous tokens for whatever you tick.</div>
+    </div>
+  </div>
+
+  <!-- ══ DAY ~3 · MAKE IT REAL ══ -->
+  <div class="ov sheetwrap" id="ov-real">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="realKicker">DAY 3</div><span class="backBtn" onclick="closeOv('ov-real')">✕</span></div>
+      <div class="sbDots" id="realDots"><i></i><i></i><i></i><i></i></div>
+      <div id="realBody"></div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div></div>
 

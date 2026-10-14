@@ -458,3 +458,62 @@ body[data-mode="day"] .tag-voice{color:#C93D14}
 .voiceBars i{flex:1;border-radius:2px;background:var(--ink-3);opacity:.45}
 .voiceBars i.on{background:var(--peach);opacity:.95}
 @media (prefers-reduced-motion:reduce){.voiceWave.live i,.recBtn.rec{animation:none}}
+
+/* ══ REAL-iOS MOMENTS: notification bridge, permission, picker ══
+   Apple's own UI is drawn in Apple's look on purpose, so testers can tell
+   which screens are ours and which are the system's. */
+.iosHome{background:linear-gradient(165deg,#3B4A8C 0%,#6B4C9A 45%,#C0607A 100%);padding:70px 22px 0;cursor:pointer}
+body[data-mode="day"] .iosHome{background:linear-gradient(165deg,#9CC3F0 0%,#C9B6F2 50%,#F5C1B0 100%)}
+.iosGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 16px;opacity:.85}
+.iosGrid i{aspect-ratio:1;border-radius:14px;background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.iosDock{position:absolute;left:12px;right:12px;bottom:12px;height:80px;border-radius:30px;background:rgba(255,255,255,.2);backdrop-filter:blur(20px);
+  display:flex;justify-content:space-around;align-items:center;padding:0 12px}
+.iosDock i{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.3)}
+.iosBanner{position:absolute;top:44px;left:10px;right:10px;z-index:3;display:flex;gap:10px;align-items:center;padding:11px 13px;border-radius:22px;cursor:pointer;
+  background:rgba(245,245,247,.86);color:#111;backdrop-filter:blur(24px) saturate(180%);box-shadow:0 10px 30px -10px rgba(0,0,0,.45);
+  font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;transform:translateY(-140%);transition:transform .5s cubic-bezier(.2,1.2,.4,1)}
+body[data-mode="night"] .iosBanner{background:rgba(40,40,46,.84);color:#F2F2F7}
+.iosBanner.in{transform:none}
+.iosAppIcon{width:38px;height:38px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;color:#04241E;
+  background:linear-gradient(165deg,#7BF6E0,#18D2B0)}
+.iosBApp{font-size:11px;font-weight:600;letter-spacing:.04em;opacity:.6}
+.iosBTitle{font-size:14px;font-weight:600;margin-top:1px}
+.iosBBody{font-size:13px;opacity:.85}
+.protoNote{position:absolute;left:16px;right:16px;bottom:108px;z-index:3;text-align:center;font-size:11.5px;line-height:1.5;font-weight:600;
+  color:#fff;background:rgba(10,12,30,.55);backdrop-filter:blur(12px);border-radius:14px;padding:10px 12px;pointer-events:none}
+.iosDim{background:rgba(0,0,0,.42);align-items:center;justify-content:center;font-family:-apple-system,'SF Pro Text',system-ui,sans-serif}
+.iosAlert{width:270px;border-radius:14px;overflow:hidden;text-align:center;background:rgba(242,242,247,.94);color:#000;backdrop-filter:blur(30px)}
+body[data-mode="night"] .iosAlert{background:rgba(44,44,46,.94);color:#fff}
+.iosATitle{font-size:17px;font-weight:600;padding:19px 16px 4px;line-height:1.25}
+.iosABody{font-size:13px;line-height:1.35;padding:0 16px 18px}
+.iosABtns{display:flex;border-top:.5px solid rgba(128,128,128,.4)}
+.iosABtns button{flex:1;border:none;background:none;padding:12px 0;font-size:17px;color:#0A84FF;font-family:inherit;cursor:pointer}
+.iosABtns button+button{border-left:.5px solid rgba(128,128,128,.4)}
+.iosFaceId{display:none;flex-direction:column;align-items:center;gap:10px;width:150px;padding:22px 0;border-radius:22px;
+  background:rgba(242,242,247,.9);color:#111;font-size:14px;font-weight:600;backdrop-filter:blur(30px)}
+body[data-mode="night"] .iosFaceId{background:rgba(44,44,46,.92);color:#fff}
+.iosSheet{width:100%;max-height:88%;display:flex;flex-direction:column;border-radius:14px 14px 41px 41px;background:#F2F2F7;color:#000;overflow:hidden}
+body[data-mode="night"] .iosSheet{background:#1C1C1E;color:#fff}
+.iosSheetHead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px;font-size:16px}
+.iosSheetHead button{border:none;background:none;color:#0A84FF;font-size:16px;font-family:inherit;cursor:pointer}
+.iosSheetHead button:disabled{color:rgba(128,128,128,.6);cursor:default}
+.iosSearch{margin:4px 14px 10px;padding:8px 10px;border-radius:10px;background:rgba(118,118,128,.14);color:rgba(128,128,128,.9);font-size:15px}
+.iosList{overflow-y:auto;margin:0 14px;border-radius:11px;background:#fff}
+body[data-mode="night"] .iosList{background:#2C2C2E}
+.iosRow{display:flex;align-items:center;gap:11px;padding:10px 12px;font-size:15px;cursor:pointer;border-bottom:.5px solid rgba(128,128,128,.28)}
+.iosRow:last-child{border-bottom:none}
+.iosRow.sub{padding-left:22px}
+.iosCheck{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(128,128,128,.6);flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.iosCheck.on{background:#0A84FF;border-color:#0A84FF}
+.iosCheck.part{background:#0A84FF;border-color:#0A84FF}
+.iosChev{margin-left:auto;opacity:.4;font-size:15px;transition:transform .2s}
+.iosChev.open{transform:rotate(90deg)}
+.iosMiniIcon{width:28px;height:28px;border-radius:7px;flex:none}
+.iosFoot{font-size:12px;line-height:1.4;color:rgba(128,128,128,.95);padding:10px 18px 26px}
+.mandate{border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:12px 13px;font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+.mandate b{color:var(--ink)}
+.fakeField{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel-2);border-radius:13px;padding:12px 13px;font-size:14px;font-weight:600;color:var(--ink)}
+.agree{display:flex;gap:10px;align-items:flex-start;margin:12px 0;cursor:pointer;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.agree .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--ink-3);flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#04241E}
+.agree.on .box{background:var(--mint);border-color:var(--mint)}
+.btn:disabled{opacity:.45;cursor:default;filter:saturate(.6)}

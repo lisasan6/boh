@@ -42,7 +42,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 - **Setup and paywall:** `ov-onb` (4 slides), `s-new` (new promise), `s-paywall`.
 - **Support register (calm teal):** breath, instead, rough day (`ov-rough`), exit.
 
-⚠️ **The prototype's shield screen is aspirational.** The real iOS shield allows only a title, a subtitle, an icon and 2 buttons, and no payment UI. Everything after the shield happens in our own app. See `IOS-BUILD-SPEC.md` §3.
+**The prototype now follows real iOS (updated 2026-10-14).** The shield shows only a title, a subtitle, an icon and 2 buttons. "Open anyway" leads to a notification that the user taps to reach our app (ignoring it counts as resisting). Onboarding includes our Screen Time explainer, Apple's permission prompt (and a calm path if they say no) and Apple's app picker. The day-3 "make it real" flow (topbar button "Day 3 moment") shows stakes, charity, the two separate payments (Jar Hero via Apple, coins via card) and the plain-language mandate. See `IOS-BUILD-SPEC.md` §3.
 
 ## 3. Lost in a cloud-workspace reset (regenerate only if needed)
 
