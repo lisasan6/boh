@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScrollJar — Block Distracting Apps. Every Slip Funds a Charity.</title>
+<meta name="description" content="ScrollJar blocks the apps that drink your time using Apple's own Screen Time engine. Open one anyway and it costs a price you set — 100% of it goes to a charity you choose. We keep none of it.">
+<link rel="canonical" href="https://scrolljar.app/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ScrollJar">
+<meta property="og:title" content="Your time belongs to you. Let's go get it back.">
+<meta property="og:description" content="A swear jar, for scrolling. Even an hour that got away from you does some good.">
+<meta property="og:url" content="https://scrolljar.app/">
+<meta property="og:image" content="https://scrolljar.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ScrollJar — your time belongs to you">
+<meta name="twitter:description" content="Real iOS blocking, a price you set, 100% to charity.">
+<meta name="twitter:image" content="https://scrolljar.app/og.png">
+<meta name="theme-color" content="#080918">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"ScrollJar",
+"operatingSystem":"iOS","applicationCategory":"LifestyleApplication",
+"description":"Blocks distracting apps at the OS level. Overriding a block costs a self-set price donated 100% to charity.",
+"url":"https://scrolljar.app/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Does ScrollJar really block apps?","acceptedAnswer":{"@type":"Answer","text":"Yes. ScrollJar uses Apple's Screen Time framework — the same system-level engine Apple built for parental controls — so the block is enforced by iOS itself, not by a reminder you can swipe away."}},
+{"@type":"Question","name":"What if I really need to get in?","acceptedAnswer":{"@type":"Answer","text":"You always can. Opening a blocked app costs the price you set in advance, and it opens for a window you chose. No lecture, no lockout."}},
+{"@type":"Question","name":"Where does the money actually go?","acceptedAnswer":{"@type":"Answer","text":"100% of every coin goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts. ScrollJar keeps none of it. Card payments carry a small processing fee: on the free plan it is shown and added on top, so the full price you set still arrives. Members never see it, because ScrollJar covers it."}},
+{"@type":"Question","name":"Then how does ScrollJar make money?","acceptedAnswer":{"@type":"Answer","text":"Memberships, and nothing else. No ads, no data sales, and no cut of your slips — so we never profit when you struggle."}},
+{"@type":"Question","name":"Can you see what I do on my phone?","acceptedAnswer":{"@type":"Answer","text":"No. Apple's design hands us anonymous tokens instead of app names, so we never learn which apps you blocked or what you do inside them."}},
+{"@type":"Question","name":"Is there an Android version?","acceptedAnswer":{"@type":"Answer","text":"iPhone first. Android has no official blocking API and recent Android releases restrict the workarounds, so we would rather ship one honest version than two weak ones."}}]}
+</script>
+<!-- ═══════════════════════════════════════════════════════
+  TO GO LIVE, TWO EDITS:
+  1. FORM — free form at formspree.io, replace YOURFORMID (in the script).
+  2. THE NUMBER — waitlist target that means "keep going".
+     TARGET = ______ signups by ______ . Unpicked = untested.
+═══════════════════════════════════════════════════════ -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23080918'/%3E%3Cg fill='none' stroke='%233CF0CB' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8.5' y='3.4' width='7' height='2.4' rx='1.1'/%3E%3Cpath d='M7.4 6.4h9.2v1.4c1.5 1.1 2.4 2.7 2.4 4.6v6.2c0 1.6-1.3 2.9-2.9 2.9H7.9C6.3 21.5 5 20.2 5 18.6v-6.2c0-1.9.9-3.5 2.4-4.6V6.4z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Tilt+Neon&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: two columns over a fixed night aurora. The left column carries the thesis, then
+   four story chapters; the right column pins the live app, which shows each chapter's screen
+   as it crosses the middle of the viewport. On phones the phone pins small at the top and the
+   chapters scroll beneath it. Below the story: short glass sections on the same sky.
+   Motion: one purposeful moment per section; all of it stops under prefers-reduced-motion. */
+:root{
+  color-scheme:dark;
+  --font-display:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;
+  --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --bg:#080918; --ink:#F4F3FF; --ink-2:#B9B4E6; --ink-3:#9590C4;
+  --mint:#3CF0CB; --lav:#B9AEFF; --gold:#FFC23A; --gold-ink:#FFD36E; --coral:#FF8F66;
+  --glass:rgba(255,255,255,.055); --glass-2:rgba(255,255,255,.085); --edge:rgba(255,255,255,.13); --hi:rgba(255,255,255,.2);
+  --line:rgba(255,255,255,.08);
+  --sheen:linear-gradient(170deg,rgba(255,255,255,.09),rgba(255,255,255,.015) 45%,transparent 60%);
+  --head-grad:linear-gradient(95deg,#5EF2D3 0%,#B9AEFF 100%);
+  --btn-fg:#04241E; --btn-bg:linear-gradient(165deg,#8BFBE6,#1FD9B5); --btn-glow:rgba(31,217,181,.28);
+  --phone-s:1; --nav-h:76px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth;scroll-padding-top:var(--nav-h);overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16.5px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--mint);color:var(--btn-fg);font-weight:700;padding:10px 14px;border-radius:10px;text-decoration:none}
+.skip:focus{top:12px}
+.display{font-family:var(--font-display);letter-spacing:-.035em;font-weight:800}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;font-weight:800;color:var(--mint);text-transform:uppercase}
+.grad{background:var(--head-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ── sky ── */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(100px)}
+.b1{width:62vw;height:52vw;max-width:820px;max-height:680px;left:-12vw;top:-18vw;background:rgba(110,96,230,.36);animation:drift1 30s ease-in-out infinite}
+.b2{width:52vw;height:46vw;max-width:700px;max-height:600px;right:-14vw;top:6vw;background:rgba(46,200,172,.18);animation:drift2 36s ease-in-out infinite}
+.b3{width:50vw;height:40vw;max-width:680px;max-height:540px;left:22vw;bottom:-22vw;background:rgba(70,130,230,.22);animation:drift3 42s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(6vw,4vw) scale(1.12)}}
+@keyframes drift2{50%{transform:translate(-6vw,5vw) scale(1.1)}}
+@keyframes drift3{50%{transform:translate(4vw,-5vw) scale(1.08)}}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(185,180,230,.08) 1px,transparent 1.4px);background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(70% 55% at 30% 22%,#000 20%,transparent 75%);mask-image:radial-gradient(70% 55% at 30% 22%,#000 20%,transparent 75%)}
+.page{position:relative;z-index:1}
+
+/* ── glass ── */
+.glass{background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);
+  box-shadow:inset 0 1px 0 var(--hi),0 18px 40px -24px rgba(0,0,0,.6);position:relative;isolation:isolate}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--sheen);z-index:-1;pointer-events:none}
+.spot::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;opacity:0;transition:opacity .3s;
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(94,242,211,.12),transparent 70%)}
+.spot:hover::before{opacity:1}
+
+/* ── nav + buttons ── */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;padding-top:12px}
+.navbar{border-radius:18px;display:flex;align-items:center;gap:6px;padding:9px 9px 9px 16px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-.03em;text-decoration:none}
+.sp{flex:1}
+.navlink{color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:600;padding:8px 12px;border-radius:10px;transition:color .2s,background .2s}
+.navlink:hover{color:var(--ink);background:var(--glass-2)}
+@media(max-width:760px){.navlink{display:none}}
+.btn{border:none;border-radius:14px;padding:15px 26px;font:700 15px/1.2 var(--font-body);cursor:pointer;color:var(--btn-fg);background:var(--btn-bg);text-decoration:none;
+  display:inline-block;text-align:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 2px 6px var(--btn-glow),0 16px 34px -12px var(--btn-glow);transition:transform .16s,box-shadow .16s}
+.btn:hover{transform:translateY(-2px);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 4px 10px var(--btn-glow),0 22px 40px -14px rgba(31,217,181,.45)}
+.btn:disabled{opacity:.6;cursor:default;transform:none}
+.btn.small{padding:10px 18px;font-size:14px;border-radius:12px}
+
+/* ── hero + story: text left, the pinned live phone right ── */
+.story{display:grid;grid-template-columns:minmax(0,1fr) 400px;column-gap:56px;align-items:start}
+.hero{grid-column:1;grid-row:1}.chapters{grid-column:1;grid-row:2}
+.phonecol{grid-column:2;grid-row:1 / span 2}
+.hero{padding-block:84px 40px;min-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;justify-content:center}
+.pill{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:7px 16px 7px 12px;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:22px}
+.pill i{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(60,240,203,.16);animation:live 2.4s ease-in-out infinite}
+@keyframes live{50%{box-shadow:0 0 0 6px rgba(60,240,203,0)}}
+.whisper{font-size:16px;color:var(--ink-3);margin-bottom:14px}
+.hero h1{font-size:clamp(44px,5.8vw,78px);line-height:.98;letter-spacing:-.045em;max-width:640px;text-wrap:balance}
+.hero h1 em{font-style:normal;display:block;padding-bottom:.06em}
+.hero .sub{color:var(--ink-2);font-size:clamp(17px,1.5vw,19px);max-width:540px;margin:24px 0 26px;text-wrap:pretty}
+.hero .sub b{color:var(--ink);font-weight:700}
+.punch{display:inline;-webkit-box-decoration-break:clone;box-decoration-break:clone;font-weight:700;color:var(--ink);background:linear-gradient(to top,rgba(60,240,203,.28) 40%,transparent 40%);padding:0 3px}
+.sig{display:flex;gap:10px;max-width:480px;padding:6px;border-radius:18px}
+.sig input{flex:1;min-width:0;background:transparent;border:0;border-radius:12px;padding:12px 14px;color:var(--ink);font:15px var(--font-body);outline:none}
+.sig input::placeholder{color:var(--ink-3)}
+.formnote{font-size:13.5px;color:var(--ink-3);margin-top:14px}
+.formnote b{color:var(--ink-2);font-weight:600}
+.ok{display:none;align-items:center;gap:10px;border-radius:16px;padding:15px 18px;max-width:480px;font-weight:600;font-size:15px;color:#D6FBF2}
+.trust{list-style:none;display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.trust li{display:flex;align-items:center;gap:7px}
+.trust svg{color:var(--mint);flex:none}
+@media(max-width:560px){.sig{flex-direction:column}.sig .btn{width:100%}}
+.load{animation:rise .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(18px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+
+/* chapters, with a progress rail that fills as you scroll */
+.chapters{position:relative;padding-left:34px;padding-bottom:22vh}
+.rail{position:absolute;left:8px;top:0;bottom:22vh;width:2px;background:var(--line);border-radius:2px}
+.rail i{position:absolute;left:0;right:0;top:0;height:calc(var(--p,0)*100%);background:linear-gradient(180deg,var(--mint),var(--lav));border-radius:2px;box-shadow:0 0 12px rgba(60,240,203,.5)}
+.chapter{min-height:52vh;display:flex;flex-direction:column;justify-content:center;position:relative}
+.chapter::before{content:"";position:absolute;left:-31px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--bg);border:2px solid var(--edge);transition:background .4s,border-color .4s,box-shadow .4s}
+.chapter.on::before{background:var(--mint);border-color:var(--mint);box-shadow:0 0 0 5px rgba(60,240,203,.15)}
+.js .chapter:not(.on) h2{color:var(--ink-2)}
+.chapter h2{transition:color .5s}
+.chapter .k{font-size:11.5px;letter-spacing:.16em;font-weight:800;text-transform:uppercase;color:var(--mint)}
+.chapter h2{font-size:clamp(32px,3.8vw,48px);line-height:1.04;letter-spacing:-.04em;margin:10px 0 14px;text-wrap:balance}
+.chapter p{color:var(--ink-2);font-size:17.5px;max-width:500px;text-wrap:pretty}
+.chapter p b{color:var(--ink)}
+.chapter cite{display:block;font-style:normal;font-size:12.5px;color:var(--ink-3);margin-top:10px}
+.chapter .turn{margin-top:18px;font-weight:700;color:var(--ink)}
+
+.phonecol{position:sticky;top:max(calc(var(--nav-h) + 8px),calc(50vh - 345px));padding-top:52px;display:flex;justify-content:center}
+.tag{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:6;white-space:nowrap;border-radius:12px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--ink-2);transition:opacity .4s}
+.tag b{color:var(--mint)}
+.halo{position:absolute;left:50%;top:55%;width:460px;height:460px;transform:translate(-50%,-50%);border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(60,240,203,.18),transparent 72%);filter:blur(10px);transition:background 1s}
+.phonecol[data-step="pause"] .halo{background:radial-gradient(closest-side,rgba(77,182,165,.24),transparent 72%)}
+.phonecol[data-step="jar"] .halo,.phonecol[data-step="tipout"] .halo{background:radial-gradient(closest-side,rgba(255,194,58,.2),transparent 72%)}
+.phonebox{position:relative;z-index:3;width:calc(332px * var(--phone-s));height:calc(690px * var(--phone-s))}
+.phone{position:absolute;left:0;top:0;width:332px;border-radius:52px;padding:11px;transform:scale(var(--phone-s));transform-origin:0 0;
+  background:linear-gradient(160deg,#3A3E5E,#141629 60%,#262A45);box-shadow:0 60px 120px -40px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 0 1px rgba(255,255,255,.08)}
+.phone::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.1) 42%,transparent 52%)}
+.screen{border-radius:41px;overflow:hidden;background:#0B0C1A}
+.screen iframe{display:block;width:100%;height:668px;border:0}
+.notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:104px;height:28px;border-radius:16px;background:#0B0C1A;z-index:4}
+
+/* phones: the phone pins small near the top, chapters scroll beneath it */
+@media(max-width:900px){
+  :root{--phone-s:.52}
+  .story{grid-template-columns:1fr;gap:0}
+  /* phone and chapters share one grid area, so the phone can stay pinned while the chapters pass */
+  .phonecol{grid-column:1;grid-row:2 / span 2;top:calc(var(--nav-h) - 6px);padding-top:0;z-index:5;pointer-events:none}
+  .phonecol .phonebox{pointer-events:auto}
+  .phonecol .tag{display:none}
+  .halo{width:320px;height:320px}
+  .hero{grid-row:1;min-height:0;padding-block:52px 28px}
+  .chapters{grid-column:1;grid-row:2 / span 2;padding-top:calc(690px * var(--phone-s) + 8px)}
+  .chapter{min-height:56vh;justify-content:flex-end;padding-bottom:4vh}
+  .chapter h2{font-size:28px;margin:6px 0 8px}
+  .chapter p{font-size:15.5px}
+  .chapter>*{position:relative;z-index:1}
+  .chapter .cardin{background:rgba(10,11,30,.78);border:1px solid var(--edge);border-radius:20px;padding:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .chapter::before{top:auto;bottom:calc(4vh + 24px)}
+  .js .chapter:not(.on) .cardin{border-color:var(--line)}
+  section{padding-block:64px}
+}
+
+/* ── sections ── */
+section{padding-block:84px}
+.band{border-top:1px solid var(--line)}
+.sechead{max-width:680px;margin:0 auto 40px;text-align:center}
+.sechead h2{font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.04em;margin-top:12px;text-wrap:balance}
+.sechead p{color:var(--ink-2);margin-top:16px;font-size:17.5px;text-wrap:pretty}
+
+/* the difference: animated money flow */
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:980px;margin:0 auto}
+.dcard{border-radius:24px;padding:30px 28px;min-width:0}
+.dcard.them{background:rgba(255,255,255,.03);border-style:dashed}
+.dcard.us{border-color:rgba(60,240,203,.38);box-shadow:inset 0 1px 0 var(--hi),0 24px 60px -30px rgba(60,240,203,.45)}
+.dlab{font-size:11.5px;letter-spacing:.14em;font-weight:800;text-transform:uppercase;color:var(--ink-3)}
+.flow{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.node{flex:none;border-radius:13px;padding:12px 14px;background:var(--glass-2);border:1px solid var(--edge);font-family:var(--font-display);font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap}
+.node.dark{background:#1A1C30;color:var(--ink-3)}
+.node.mint{background:var(--btn-bg);color:var(--btn-fg);border-color:transparent;box-shadow:0 8px 22px -10px rgba(60,240,203,.8)}
+.arrow{flex:1;position:relative;height:2px;background:rgba(185,180,230,.3);min-width:40px}
+.arrow::after{content:"";position:absolute;right:-1px;top:-4px;border-left:9px solid rgba(185,180,230,.45);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.arrow.good{background:linear-gradient(90deg,rgba(60,240,203,.3),var(--mint))}
+.arrow.good::after{border-left-color:var(--mint)}
+.arrow em{position:absolute;left:50%;top:-26px;transform:translateX(-50%);font-style:normal;font-size:11.5px;font-weight:800;color:var(--mint);letter-spacing:.06em}
+.fcoin{position:absolute;top:50%;left:0;width:22px;height:22px;margin:-11px 0 0 -11px;opacity:0}
+.play .fcoin{animation:travel 3.6s cubic-bezier(.45,.05,.4,1) infinite}
+@keyframes travel{0%{left:0;opacity:0}12%{opacity:1}70%{left:100%;opacity:1}82%,100%{left:100%;opacity:0}}
+.play .node.mint{animation:receive 3.6s ease-out infinite}
+@keyframes receive{0%,66%{box-shadow:0 8px 22px -10px rgba(60,240,203,.8),0 0 0 0 rgba(60,240,203,.5)}86%{box-shadow:0 8px 22px -10px rgba(60,240,203,.8),0 0 0 14px rgba(60,240,203,0)}}
+.play .node.dark{animation:swallow 3.6s ease-out infinite}
+@keyframes swallow{0%,66%{color:var(--ink-3)}76%{color:var(--ink)}100%{color:var(--ink-3)}}
+.drows{margin:4px 0 18px;border-top:1px solid var(--line)}
+.drows>div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}
+.drows dt{color:var(--ink-3);font-size:14px}
+.drows dd{margin:0;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--ink-2);text-align:right}
+.drows.good dd{color:var(--mint)}
+.dline{color:var(--ink-2);font-size:15px}
+.swjwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center;max-width:980px;margin:0 auto}
+.swj{margin:0;display:flex;justify-content:center}
+.swjbox{position:relative;width:min(330px,100%);container-type:inline-size}
+.swjbox svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 30px 50px rgba(0,0,0,.5))}
+.swj .c{transform-box:fill-box;transform-origin:center}
+.swj.in .c{animation:coinIn .6s cubic-bezier(.3,1.3,.5,1) both;animation-delay:var(--d)}
+@keyframes coinIn{from{transform:translateY(-230px) rotate(-40deg);opacity:0}25%{opacity:1}to{transform:none;opacity:1}}
+.neon{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%) rotate(-4deg);display:flex;flex-direction:column;align-items:center;font-family:'Tilt Neon',var(--font-display);line-height:.9;pointer-events:none;white-space:nowrap}
+.nw{position:relative;display:block;width:24cqw;height:13cqw;font-size:13.5cqw}
+.nw>span{position:absolute;left:50%;top:0;transform:translateX(-50%)}
+.n-jar{font-size:12cqw;margin-top:1cqw;color:#F4F1FF;text-shadow:0 0 2px #fff,0 0 8px #B9AEFF,0 0 18px #9B8CFF,0 0 36px #7C6BFF}
+.n-swear{color:#FFE3F0;text-shadow:0 0 2px #fff,0 0 8px #FF6FB5,0 0 18px #FF4FA3,0 0 36px #FF2E8A}
+.n-scroll{color:#E9FFF9;text-shadow:0 0 2px #fff,0 0 8px #3CF0CB,0 0 18px #3CF0CB,0 0 38px #12C9A3;opacity:0}
+.swj.in .n-swear{animation:neonOut 1.1s steps(1,end) 1.5s forwards}
+.swj.in .n-scroll{animation:neonOn 1s steps(1,end) 2.5s forwards}
+.swj.in .n-jar{animation:hum 4s ease-in-out 3.6s infinite}
+@keyframes neonOut{0%{opacity:1}12%{opacity:.25}20%{opacity:1}34%{opacity:.15}42%{opacity:.9}55%{opacity:.1}70%,100%{opacity:0}}
+@keyframes neonOn{0%{opacity:0}10%{opacity:.8}18%{opacity:.1}30%{opacity:1}38%{opacity:.3}50%,100%{opacity:1}}
+@keyframes hum{0%,100%{opacity:1}50%{opacity:.86}}
+@media(max-width:820px){.swjwrap{grid-template-columns:1fr;gap:26px;text-align:center}.swjbox{width:min(250px,72vw)}}
+@media(prefers-reduced-motion:reduce){.swj.in .c,.swj.in .n-jar{animation:none}.swj .n-swear{opacity:0;animation:none!important}.swj .n-scroll{opacity:1;animation:none!important}}
+.swjtext h2{font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.04em;margin-top:12px}
+.swjtext p{color:var(--ink-2);font-size:17.5px;margin-top:16px;text-wrap:pretty}
+
+.dlead{max-width:640px;margin:-14px auto 22px;text-align:center;color:var(--ink-3);font-size:15px}
+.dline b{color:var(--ink)}
+@media(max-width:860px){.diff{grid-template-columns:1fr}}
+
+/* sound familiar */
+.bubbles{display:flex;flex-wrap:wrap;gap:14px 16px;justify-content:center;max-width:880px;margin:0 auto 30px}
+.bub{border-radius:20px 20px 20px 6px;padding:12px 22px;font-size:15.5px;color:var(--ink-2);transform:rotate(var(--r,0deg));animation:bob var(--t,7s) ease-in-out infinite;animation-delay:var(--d,0s)}
+.bub.alt{border-radius:20px 20px 6px 20px}
+.bub.c1{border-color:rgba(60,240,203,.35);color:#BFFBEE}
+.bub.c2{border-color:rgba(185,174,255,.4);color:#DDD7FF}
+.bub.c3{border-color:rgba(255,143,102,.38);color:#FFD9C9}
+@keyframes bob{50%{transform:rotate(var(--r,0deg)) translateY(-7px)}}
+.famline{text-align:center;font-size:20px;font-weight:700;max-width:560px;margin:0 auto}
+
+/* two doors */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;max-width:980px;margin:0 auto}
+.door{border-radius:24px;padding:32px 30px;min-width:0}
+.door.keep{animation:glowKeep 8s ease-in-out infinite}
+.door.slip{animation:glowSlip 8s ease-in-out infinite}
+@keyframes glowKeep{0%,100%{box-shadow:inset 0 1px 0 var(--hi),0 0 0 1px rgba(60,240,203,.35),0 30px 70px -30px rgba(60,240,203,.55)}50%{box-shadow:inset 0 1px 0 var(--hi),0 0 0 1px rgba(60,240,203,.08),0 30px 70px -30px rgba(60,240,203,0)}}
+@keyframes glowSlip{0%,100%{box-shadow:inset 0 1px 0 var(--hi),0 0 0 1px rgba(255,194,58,.08),0 30px 70px -30px rgba(255,194,58,0)}50%{box-shadow:inset 0 1px 0 var(--hi),0 0 0 1px rgba(255,194,58,.4),0 30px 70px -30px rgba(255,194,58,.5)}}
+.dlab2{font-size:11.5px;letter-spacing:.13em;font-weight:800;text-transform:uppercase}
+.dtitle{font-family:var(--font-display);font-size:26px;letter-spacing:-.03em;margin:10px 0 9px;font-weight:800}
+.door p{color:var(--ink-2);font-size:15px}
+.orb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:var(--ink-2);z-index:2;background:#14152B;border:1px solid var(--edge)}
+.duoline{text-align:center;margin:34px auto 0;font-size:20px;font-weight:700;max-width:620px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}.orb{position:static;transform:none;margin:-10px auto}}
+
+/* science, with the "why now" line folded in */
+.sci{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:960px;margin:0 auto}
+.sc{border-radius:22px;padding:22px 24px;min-width:0}
+.sc .n{display:block;font-family:var(--font-display);font-size:36px;font-weight:800;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
+.sc h3{font-size:16.5px;font-weight:700;margin:12px 0 6px}
+.sc p{color:var(--ink-2);font-size:14.5px}
+.sc cite{display:block;font-style:normal;font-size:12px;color:var(--ink-3);margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.whynow{max-width:960px;margin:18px auto 0;border-radius:18px;padding:16px 20px;display:flex;gap:14px;align-items:baseline;font-size:14.5px;color:var(--ink-2)}
+.whynow b{font-family:var(--font-display);font-size:22px;color:var(--ink);letter-spacing:-.03em;flex:none}
+.scnote{text-align:center;color:var(--ink-3);font-size:14.5px;margin:26px auto 0;max-width:640px}
+@media(max-width:900px){.sci{grid-template-columns:1fr}.whynow{flex-direction:column;gap:4px}}
+
+/* refuse, as one compact panel */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1040px;margin:0 auto}
+.tc{border-radius:22px;padding:24px;min-width:0}
+.tic{display:inline-flex;width:40px;height:40px;border-radius:12px;align-items:center;justify-content:center;color:var(--mint);background:rgba(60,240,203,.12);border:1px solid rgba(60,240,203,.25)}
+.tc h3{font-size:17px;font-weight:700;margin:14px 0 6px}
+.tc p{color:var(--ink-2);font-size:14.5px}
+.tcta{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:30px;text-align:center}
+.tcta span{color:var(--ink-3);font-size:14px}
+@media(max-width:900px){.tgrid{grid-template-columns:1fr}}
+.tsteps{list-style:none;margin:0 auto 26px;padding:0;max-width:1040px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative}
+.tsteps::before{content:"";position:absolute;left:12%;right:12%;top:17px;height:1px;background:linear-gradient(90deg,transparent,rgba(60,240,203,.45),transparent)}
+.tsteps li{position:relative;text-align:center;padding:0 6px;min-width:0}
+.tsteps .tn{display:flex;width:34px;height:34px;margin:0 auto 10px;border-radius:50%;align-items:center;justify-content:center;font:800 15px var(--font-display);color:#06231D;background:var(--btn-bg);box-shadow:0 6px 18px -8px rgba(60,240,203,.8)}
+.tsteps b{display:block;font-size:15.5px}
+.tsteps li>span:last-child{display:block;color:var(--ink-3);font-size:13.5px;margin-top:3px;text-wrap:balance}
+@media(max-width:760px){.tsteps{grid-template-columns:1fr 1fr;row-gap:22px}.tsteps::before{display:none}}
+.cowrap{display:grid;grid-template-columns:1.12fr .88fr;gap:30px;max-width:1040px;margin:0 auto 40px;align-items:center}
+@media(max-width:900px){.cowrap{grid-template-columns:1fr}}
+.hrmock{margin:0;border-radius:20px;overflow:hidden;min-width:0;box-shadow:0 30px 70px -36px rgba(0,0,0,.8)}
+.hrbar{display:flex;align-items:center;gap:6px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink-3);min-width:0}
+.hrbar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16);flex:none}
+.hrbar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrbar em{margin-left:auto;font-style:normal;font-weight:700;font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,194,58,.14);color:var(--gold-ink);flex:none}
+.hrbody{padding:18px 18px 16px}
+.hrhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.hrhead small,.hrtiles small{display:block;font-size:11.5px;color:var(--ink-3);letter-spacing:.02em}
+.hrhead b{font-family:var(--font-display);font-size:22px;letter-spacing:-.03em}
+.hrchip{font-size:12px;color:var(--ink-2);padding:5px 10px;border-radius:99px;border:1px solid var(--edge);background:var(--glass-2)}
+.hrtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.hrtiles>div{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:rgba(255,255,255,.03);min-width:0}
+.hrtiles b{display:block;font-family:var(--font-display);font-size:24px;letter-spacing:-.03em;margin-top:3px;font-variant-numeric:tabular-nums}
+.hrtiles b span{font-size:14px;color:var(--ink-3)}
+.hrtiles em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);margin-top:4px}
+.hrmeter{display:block;height:5px;border-radius:9px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden}
+.hrmeter i{display:block;height:100%;background:var(--btn-bg);border-radius:9px}
+.hrchart{display:flex;align-items:flex-end;gap:10px;height:74px;margin-top:14px;padding:0 4px;border-bottom:1px solid var(--line)}
+.hrchart i{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--mint),rgba(60,240,203,.35))}
+.hrchart i.todo{height:18%;background:rgba(255,255,255,.06)}
+.hrfoot{display:flex;gap:7px;align-items:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
+.hrfoot svg{color:var(--mint);flex:none}
+@media(max-width:560px){.hrtiles{grid-template-columns:1fr 1fr}.hrtiles>div:first-child{grid-column:1/-1}}
+.cogets h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.cogets ul{list-style:none;margin:0;padding:0}
+.cogets li{padding:12px 0;border-bottom:1px solid var(--line)}
+.cogets li:last-child{border-bottom:none}
+.cogets b{display:block;font-size:15.5px}
+.cogets li span{display:block;color:var(--ink-2);font-size:14.5px;margin-top:2px}
+.tperk{max-width:640px;margin:22px auto 0;text-align:center;color:var(--ink-2);font-size:15px}
+.tperk b{color:var(--ink)}
+.mwrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;max-width:1040px;margin:0 auto;align-items:start}
+.mhead{position:sticky;top:calc(var(--nav-h,72px) + 40px)}
+.mhead h2{font-size:clamp(32px,4.2vw,50px);line-height:1.06;letter-spacing:-.04em;margin-top:12px;text-wrap:balance}
+.mhead p{color:var(--ink-2);font-size:17.5px;margin-top:18px}
+.mlist{list-style:none;margin:0;padding:0}
+.mlist li{display:flex;gap:18px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line)}
+.js .mlist li.rev{transition-delay:var(--d)}
+.mlist li:first-child{padding-top:6px}
+.mlist li:last-child{border-bottom:none}
+.mn{flex:none;font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--mint);letter-spacing:.04em;width:28px}
+.mlist b{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(22px,2.4vw,28px);letter-spacing:-.03em;line-height:1.15}
+.mlist li span:last-child{display:block;color:var(--ink-2);font-size:15.5px;margin-top:6px;text-wrap:pretty}
+@media(max-width:860px){.mwrap{grid-template-columns:1fr;gap:26px}.mhead{position:static}}
+.founder{max-width:760px;margin:0 auto;border-radius:26px;padding:30px 34px;display:flex;gap:26px;align-items:flex-start}
+.fav{flex:none;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 30px var(--font-display);color:#06231D;background:linear-gradient(140deg,var(--mint),var(--lav))}
+.founder blockquote{margin:0}
+.founder blockquote p{font-size:18px;line-height:1.55;color:var(--ink);text-wrap:pretty}
+.founder figcaption{margin-top:14px;color:var(--ink-3);font-size:14px}
+.founder figcaption b{color:var(--ink-2)}
+@media(max-width:620px){.founder{flex-direction:column;gap:16px;padding:24px 22px}}
+.refuse{max-width:980px;margin:0 auto;border-radius:24px;padding:10px 26px;display:grid;grid-template-columns:1fr 1fr;column-gap:40px}
+.ref{display:flex;gap:14px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--line);min-width:0}
+.ref:nth-last-child(-n+2){border-bottom:0}
+.refx{flex:none;display:inline-flex;width:28px;height:28px;border-radius:9px;align-items:center;justify-content:center;background:rgba(255,143,102,.12);color:var(--coral);margin-top:2px}
+.refx path{stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .6s ease-out}
+.refuse.play .refx path{stroke-dashoffset:0}
+.ref b{font-size:15.5px;display:block}
+.ref p{color:var(--ink-2);font-size:14px;margin-top:2px}
+@media(max-width:860px){.refuse{grid-template-columns:1fr}.ref:nth-last-child(2){border-bottom:1px solid var(--line)}}
+
+/* faq */
+.faq{max-width:780px;margin:0 auto;border-radius:24px;padding:6px 26px}
+.q{border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0}
+.q summary{cursor:pointer;list-style:none;padding:20px 40px 20px 0;font-size:17px;font-weight:700;position:relative}
+.q summary::-webkit-details-marker{display:none}
+.q summary::after{content:"+";position:absolute;right:4px;top:16px;font-size:24px;font-weight:400;color:var(--mint);transition:transform .25s}
+.q[open] summary::after{transform:rotate(45deg)}
+.q p{color:var(--ink-2);font-size:15.5px;padding:0 40px 22px 0}
+
+/* final */
+.final{position:relative;border-radius:30px;padding:66px 48px;text-align:center;overflow:hidden;isolation:isolate;box-shadow:0 40px 100px -40px rgba(60,240,203,.35)}
+.final::before{content:"";position:absolute;inset:-60%;z-index:-2;
+  background:conic-gradient(from 0deg,rgba(60,240,203,0),#3CF0CB 12%,#B9AEFF 24%,rgba(185,174,255,0) 38%,rgba(60,240,203,0) 55%,#B9AEFF 68%,#3CF0CB 80%,rgba(60,240,203,0) 92%);
+  animation:spin 14s linear infinite}
+.final::after{content:"";position:absolute;inset:2px;border-radius:28px;z-index:-1;background:radial-gradient(80% 70% at 20% 0%,#2A2563,#0E0F25 70%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.final h2{font-size:clamp(34px,4.6vw,56px);letter-spacing:-.04em;line-height:1.02}
+.final p{color:var(--ink-2);max-width:470px;margin:14px auto 0;font-size:17px}
+.final .sig{margin:30px auto 0}
+.final .ok{margin:30px auto 0;justify-content:center}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px;color:var(--ink-2)}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
+.fgrid h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px}
+.fgrid a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0}
+.fgrid a:hover{color:var(--ink)}
+.fbot{border-top:1px solid var(--line);padding-top:24px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:var(--ink-3);font-size:13.5px}
+.fbot .sp{flex:1}
+@media(max-width:900px){.fgrid{grid-template-columns:1fr 1fr;gap:26px}section{padding-block:72px}.final{padding:46px 22px}}
+
+/* sticky join (phones) */
+.stick{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:70;
+  display:none;align-items:center;gap:12px;border-radius:16px;padding:10px 10px 10px 16px;transform:translateY(160%);transition:transform .35s ease;background:rgba(14,15,34,.88)}
+.stick.on{transform:none}
+.stick .stxt{flex:1;font-size:13px;line-height:1.35;color:var(--ink-2)}
+.stick .stxt b{color:var(--ink)}
+@media(max-width:900px){.stick{display:flex}}
+
+/* lighter effects on phones: static sky, less blur */
+@media(max-width:900px){
+  .blob{animation:none;filter:blur(70px)}
+  .glass{backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%)}
+  .b1{width:130vw;height:110vw;left:-40vw;top:-20vw}.b2{width:110vw;height:90vw;right:-50vw;top:60vh}.b3{width:120vw;height:90vw;left:-30vw;bottom:-40vw}
+}
+
+/* reveal on scroll, only once JS runs, so the page is complete without it */
+.js .rev{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.6,.2,1),transform .8s cubic-bezier(.2,.6,.2,1)}
+.js .rev.in{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .fcoin{display:none}
+  .js .rev{opacity:1;transform:none}
+  .refx path{stroke-dashoffset:0}
+}
+
+/* ── Light bands: every other section on a soft daylight background, with its own readable colours ── */
+.light{color-scheme:light;position:relative;z-index:1;
+  --ink:#16142F; --ink-2:#47436B; --ink-3:#66628A;
+  --mint:#0A8A72; --lav:#6455D6; --gold-ink:#9A6200; --coral:#C8502F;
+  --glass:rgba(255,255,255,.78); --glass-2:rgba(22,20,47,.045); --edge:rgba(22,20,47,.11); --hi:#fff;
+  --line:rgba(22,20,47,.09);
+  --sheen:linear-gradient(170deg,rgba(255,255,255,.7),rgba(255,255,255,0) 55%);
+  --head-grad:linear-gradient(95deg,#0B9C80 0%,#6455D6 100%);
+  background:radial-gradient(1200px 500px at 15% 0%,rgba(185,174,255,.28),transparent 60%),radial-gradient(900px 500px at 90% 100%,rgba(60,240,203,.18),transparent 60%),#F6F5FC;
+  color:var(--ink);border-top:none}
+.light .glass{box-shadow:inset 0 1px 0 #fff,0 22px 46px -30px rgba(40,30,100,.35)}
+.light .node.dark{background:#E9E7F3;color:#5C5880}
+.light .orb{background:#fff;color:var(--ink-2)}
+.light .bub.c1{color:#0A7A64;border-color:rgba(10,138,114,.35)}
+.light .bub.c2{color:#5040C2;border-color:rgba(100,85,214,.35)}
+.light .bub.c3{color:#A8462A;border-color:rgba(200,80,47,.35)}
+.light .tic{background:rgba(10,138,114,.1);border-color:rgba(10,138,114,.25)}
+.light .refx{background:rgba(200,80,47,.1)}
+.light .dcard.them{background:rgba(255,255,255,.5)}
+.light .dcard.us{border-color:rgba(10,138,114,.4);box-shadow:inset 0 1px 0 #fff,0 24px 60px -34px rgba(10,138,114,.45)}
+/* the menu bar and the bottom join bar keep a solid dark backing so they stay readable over light bands */
+.navbar.glass,.stick{background:rgba(12,12,32,.82)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="sky" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="dots"></div></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="cb" cx=".36" cy=".28" r=".9"><stop offset="0" stop-color="#FFFBE6"/><stop offset=".35" stop-color="#FFDD7A"/><stop offset=".7" stop-color="#F2B633"/><stop offset="1" stop-color="#96650A"/></radialGradient>
+  <symbol id="coin" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#C98E14"/><circle cx="20" cy="20" r="16.4" fill="url(#cb)"/>
+    <path d="M20 11.4 l2.3 6.3 6.3 2.3 -6.3 2.3 -2.3 6.3 -2.3 -6.3 -6.3 -2.3 6.3 -2.3 z" fill="#FFF3CE" opacity=".6"/></symbol>
+  <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.8l7 2.8v6c0 4.6-3 8.1-7 9.6-4-1.5-7-5-7-9.6v-6l7-2.8z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4l-1.5-1.4C5.3 14.3 2.4 11.6 2.4 8.3 2.4 5.6 4.5 3.5 7.2 3.5c1.5 0 3 .7 3.9 1.9l.9 1.1.9-1.1c.9-1.2 2.4-1.9 3.9-1.9 2.7 0 4.8 2.1 4.8 4.8 0 3.3-2.9 6-7.9 10.7L12 20.4z" fill="currentColor"/></symbol>
+  <symbol id="i-no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.6"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12s3-6 8.5-6c1.6 0 3 .5 4.2 1.2M20.5 12s-3 6-8.5 6c-1.6 0-3-.5-4.2-1.2"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/><path d="M4 4l16 16"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M3.5 9h17M12 9v11"/><path d="M12 9c-1.5-3.5-5-4-5-1.6C7 9 12 9 12 9zM12 9c1.5-3.5 5-4 5-1.6C17 9 12 9 12 9z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.6V19.5h12V9.6"/><path d="M10 19.5v-5h4v5"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 8.5A6.5 6.5 0 006 9.5"/><path d="M6 5.5v4h4"/><path d="M6.5 15.5A6.5 6.5 0 0018 14.5"/><path d="M18 18.5v-4h-4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></symbol>
+</defs></svg>
+
+<div class="page">
+<nav aria-label="Main"><div class="wrap"><div class="navbar glass">
+  <a class="logo" href="#top" aria-label="ScrollJar, back to top"><svg width="20" height="23" aria-hidden="true"><use href="#i-jar"/></svg>ScrollJar</a>
+  <div class="sp"></div>
+  <a class="navlink" href="#how">How it works</a>
+  <a class="navlink" href="#science">The science</a>
+  <a class="navlink" href="#teams">For companies</a>
+  <a class="navlink" href="#faq">FAQ</a>
+  <a class="btn small" href="#join">Join the waitlist</a>
+</div></div></nav>
+
+<main id="main">
+<div class="wrap story">
+  <header class="hero" id="top" data-step="today">
+    <div class="pill glass load" style="--d:.05s"><i></i>A swear jar, for scrolling · iPhone first</div>
+    <p class="whisper load" style="--d:.15s">You opened it to check one thing. That was 40 minutes ago.</p>
+    <h1 class="display load" style="--d:.25s">Your time belongs to you. <em class="grad">Let's go get it back.</em></h1>
+    <p class="sub load" style="--d:.45s">ScrollJar blocks the apps that quietly eat your hours, using Apple's own Screen Time engine. Open one anyway and it costs a price you set — given <b>100% to a charity you love.</b><br><span style="display:block;height:12px"></span><span class="punch">Stay and you win. Slip&nbsp;and&nbsp;a&nbsp;good&nbsp;cause&nbsp;does.</span></p>
+    <div class="load" style="--d:.6s">
+      <form class="sig glass" data-wl aria-label="Join the waitlist">
+        <input id="email-top" type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
+        <button class="btn" type="submit">Join the waitlist</button>
+      </form>
+      <div class="ok glass" data-ok role="status"><svg width="18" height="18" style="color:var(--mint)" aria-hidden="true"><use href="#i-heart"/></svg>You're in. One email when we launch — that's all.</div>
+      <p class="formnote">Free · no spam · one email at launch. <b>We're not here for your attention.</b></p>
+      <ul class="trust" aria-label="What ScrollJar is built on">
+        <li><svg width="14" height="14" aria-hidden="true"><use href="#i-shield"/></svg>Built on Apple Screen Time</li>
+        <li><svg width="14" height="14" aria-hidden="true"><use href="#i-heart"/></svg>100% to charity</li>
+        <li><svg width="14" height="14" aria-hidden="true"><use href="#i-no"/></svg>No ads, no data sales</li>
+      </ul>
+    </div>
+  </header>
+
+  <aside class="phonecol load" style="--d:.5s" data-step="today" aria-label="Live ScrollJar app">
+    <div class="tag glass" id="tag">Try it: <b>tap the green button</b></div>
+    <div class="halo" aria-hidden="true"></div>
+    <div class="phonebox"><div class="phone">
+      <div class="notch"></div>
+      <div class="screen"><iframe id="app" src="../../prototype/index.html?embed=1" title="The ScrollJar app, live. Tap through it: try opening a blocked app and watch a coin drop into the jar."></iframe></div>
+    </div></div>
+  </aside>
+
+  <div class="chapters" id="how">
+    <div class="rail" aria-hidden="true"><i></i></div>
+    <article class="chapter" data-step="shield"><div class="cardin">
+      <span class="k">How it works · 1</span>
+      <h2 class="display">A real block</h2>
+      <p>Pick your apps and your hours. iOS enforces the shield itself — not a reminder you can swipe away. We never even learn which apps you chose.</p>
+    </div></article>
+    <article class="chapter" data-step="pause"><div class="cardin">
+      <span class="k">How it works · 2</span>
+      <h2 class="display">A breath before you choose</h2>
+      <p>Opening anyway is always allowed. First comes one slow breath. Then staying is one easy tap, while going on takes a deliberate one. In a peer-reviewed study, a short pause before opening led people to drop <b>36%</b> of app openings.</p>
+      <cite>Grüning, Riedel &amp; Lorenz-Spreen, PNAS (2023)</cite>
+    </div></article>
+    <article class="chapter" data-step="jar"><div class="cardin">
+      <span class="k">How it works · 3</span>
+      <h2 class="display">A slip becomes a gift</h2>
+      <p>Opening anyway costs the price you set. The coin drops in the jar and the app opens for the window you chose. No lecture, no judgement, just a little good done.</p>
+    </div></article>
+    <article class="chapter" data-step="tipout"><div class="cardin">
+      <span class="k">How it works · 4</span>
+      <h2 class="display">The jar tips out</h2>
+      <p>Every month the jar empties to the cause you picked, with a receipt. We keep none of it — our revenue is memberships, never your slips.</p>
+      <p class="turn">Your turn: the app on the right is live. Tap around.</p>
+    </div></article>
+  </div>
+</div>
+
+<section class="band" id="why-jar"><div class="wrap">
+  <div class="swjwrap">
+    <figure class="swj rev" role="img" aria-label="A glowing glass jar filling with coins. A neon sign on it reads swear jar, then swear flickers out and scroll lights up: scroll jar.">
+      <div class="swjbox">
+        <svg viewBox="0 0 260 300" aria-hidden="true">
+          <defs>
+            <clipPath id="swjBody"><path d="M70 52h120v14c22 16 34 40 34 66v110c0 30-24 52-52 52H88c-28 0-52-22-52-52V132c0-26 12-50 34-66z"/></clipPath>
+            <linearGradient id="swjLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E7F5"/><stop offset="1" stop-color="#7E83A6"/></linearGradient>
+            <linearGradient id="swjGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgba(160,150,255,.16)"/><stop offset=".55" stop-color="rgba(255,255,255,.04)"/><stop offset="1" stop-color="rgba(60,240,203,.12)"/></linearGradient>
+            <radialGradient id="swjFloor"><stop offset="0" stop-color="rgba(255,194,58,.32)"/><stop offset="1" stop-color="rgba(255,194,58,0)"/></radialGradient>
+            <radialGradient id="swjGold" cx=".5" cy="1" r=".7"><stop offset="0" stop-color="rgba(255,194,58,.45)"/><stop offset="1" stop-color="rgba(255,194,58,0)"/></radialGradient>
+          </defs>
+          <ellipse cx="130" cy="296" rx="110" ry="12" fill="url(#swjFloor)"/>
+          <rect x="80" y="20" width="100" height="28" rx="9" fill="url(#swjLid)"/>
+          <g clip-path="url(#swjBody)">
+            <rect x="30" y="40" width="200" height="270" fill="url(#swjGlass)"/>
+            <rect x="30" y="170" width="200" height="140" fill="url(#swjGold)"/>
+            <g class="c" style="--d:0ms"><use href="#coin" x="86.8" y="263.1" width="32.2" height="32.2" style="filter:brightness(0.83)"/></g><g class="c" style="--d:42ms"><use href="#coin" x="111.3" y="263.8" width="31.5" height="31.5" style="filter:brightness(0.81)"/></g><g class="c" style="--d:84ms"><use href="#coin" x="134.4" y="260.8" width="34.5" height="34.5" style="filter:brightness(0.83)"/></g><g class="c" style="--d:126ms"><use href="#coin" x="159.9" y="259.7" width="35.2" height="35.2" style="filter:brightness(0.80)"/></g><g class="c" style="--d:168ms"><use href="#coin" x="120.4" y="241.0" width="33.3" height="33.3" style="filter:brightness(0.86)"/></g><g class="c" style="--d:210ms"><use href="#coin" x="63.0" y="262.6" width="31.5" height="31.5" style="filter:brightness(0.85)"/></g><g class="c" style="--d:252ms"><use href="#coin" x="94.8" y="239.2" width="34.2" height="34.2" style="filter:brightness(0.83)"/></g><g class="c" style="--d:294ms"><use href="#coin" x="110.5" y="220.7" width="31.3" height="31.3" style="filter:brightness(0.83)"/></g><g class="c" style="--d:336ms"><use href="#coin" x="68.8" y="237.6" width="34.7" height="34.7" style="filter:brightness(0.90)"/></g><g class="c" style="--d:378ms"><use href="#coin" x="146.2" y="237.9" width="34.7" height="34.7" style="filter:brightness(0.92)"/></g><g class="c" style="--d:420ms"><use href="#coin" x="133.1" y="216.6" width="34.1" height="34.1" style="filter:brightness(0.85)"/></g><g class="c" style="--d:462ms"><use href="#coin" x="83.2" y="216.4" width="34.4" height="34.4" style="filter:brightness(0.92)"/></g><g class="c" style="--d:504ms"><use href="#coin" x="183.5" y="249.4" width="33.0" height="33.0" style="filter:brightness(0.90)"/></g><g class="c" style="--d:546ms"><use href="#coin" x="100.4" y="199.1" width="31.6" height="31.6" style="filter:brightness(0.89)"/></g><g class="c" style="--d:588ms"><use href="#coin" x="124.0" y="195.7" width="31.7" height="31.7" style="filter:brightness(0.91)"/></g><g class="c" style="--d:630ms"><use href="#coin" x="170.1" y="229.0" width="32.9" height="32.9" style="filter:brightness(0.95)"/></g><g class="c" style="--d:672ms"><use href="#coin" x="107.7" y="175.4" width="33.7" height="33.7" style="filter:brightness(0.97)"/></g><g class="c" style="--d:714ms"><use href="#coin" x="157.0" y="208.7" width="32.7" height="32.7" style="filter:brightness(0.91)"/></g><g class="c" style="--d:756ms"><use href="#coin" x="42.8" y="248.7" width="32.6" height="32.6" style="filter:brightness(0.97)"/></g><g class="c" style="--d:798ms"><use href="#coin" x="47.2" y="223.2" width="34.8" height="34.8" style="filter:brightness(0.93)"/></g><g class="c" style="--d:840ms"><use href="#coin" x="191.2" y="216.3" width="33.9" height="33.9" style="filter:brightness(0.99)"/></g><g class="c" style="--d:882ms"><use href="#coin" x="61.3" y="201.4" width="35.2" height="35.2" style="filter:brightness(0.97)"/></g><g class="c" style="--d:924ms"><use href="#coin" x="146.0" y="185.7" width="33.9" height="33.9" style="filter:brightness(1.02)"/></g><g class="c" style="--d:966ms"><use href="#coin" x="177.0" y="194.0" width="35.1" height="35.1" style="filter:brightness(1.03)"/></g>
+            <rect x="54" y="80" width="11" height="150" rx="5.5" fill="rgba(255,255,255,.14)"/>
+          </g>
+          <path d="M70 52h120v14c22 16 34 40 34 66v110c0 30-24 52-52 52H88c-28 0-52-22-52-52V132c0-26 12-50 34-66z" fill="none" stroke="rgba(235,232,255,.6)" stroke-width="2.5"/>
+        </svg>
+        <div class="neon" aria-hidden="true">
+          <span class="nw"><span class="n-swear">SWEAR</span><span class="n-scroll">SCROLL</span></span>
+          <span class="n-jar">JAR</span>
+        </div>
+      </div>
+    </figure>
+    <div class="swjtext rev">
+      <span class="eyebrow">Why a jar?</span>
+      <h2 class="display">A swear jar,<br><span class="grad">for scrolling.</span></h2>
+      <p>The old swear jar had it right: a coin for every slip, no lecture, and something good at the end.</p>
+      <p>We pointed it at your phone. Open a blocked app and a coin drops in. Every month the jar tips out to a cause you love.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band light" id="difference"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The difference</span>
+    <h2 class="display">Another blocking app?<br><span class="grad">Not quite.</span></h2>
+    <p>A blocker says no. A stakes app keeps your money. ScrollJar says it's your call, and turns every slip into a gift.</p>
+  </div>
+  <p class="dlead rev">Say you open a blocked app 7 times this month, at $5 each. Here's where that $35 goes.</p>
+  <div class="diff rev" data-play>
+    <div class="dcard them glass">
+      <span class="dlab">Apps that keep your stake</span>
+      <div class="flow" aria-hidden="true">
+        <div class="node">your&nbsp;$35</div>
+        <div class="arrow"><svg class="fcoin" viewBox="0 0 40 40"><use href="#coin"/></svg></div>
+        <div class="node dark">their revenue</div>
+      </div>
+      <dl class="drows">
+        <div><dt>Your $35 goes to</dt><dd>the app</dd></div>
+        <div><dt>If you slip more, they earn</dt><dd>more</dd></div>
+        <div><dt>What comes back to you</dt><dd>nothing</dd></div>
+      </dl>
+      <p class="dline">Your hardest week is their best one.</p>
+    </div>
+    <div class="dcard us glass spot">
+      <span class="dlab" style="color:var(--mint)">ScrollJar</span>
+      <div class="flow" aria-hidden="true">
+        <div class="node">your&nbsp;$35</div>
+        <div class="arrow good"><em>100%</em><svg class="fcoin" viewBox="0 0 40 40"><use href="#coin"/></svg></div>
+        <div class="node mint">your charity</div>
+      </div>
+      <dl class="drows good">
+        <div><dt>Your $35 goes to</dt><dd>your charity, all of it</dd></div>
+        <div><dt>If you slip more, we earn</dt><dd>not a cent more</dd></div>
+        <div><dt>What comes back to you</dt><dd>a receipt, every month</dd></div>
+      </dl>
+      <p class="dline">We're paid by membership only. A good week is a win for you, and a hard week is a win for a cause. <b>Never for us.</b></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">Sound familiar</span>
+    <h2 class="display">You've already said the words.</h2>
+  </div>
+  <div class="bubbles rev">
+    <span class="bub glass" style="--r:-2deg;--t:7s">just five more minutes</span>
+    <span class="bub alt glass c1" style="--r:1.5deg;--t:8s;--d:-2s">why am I still scrolling</span>
+    <span class="bub glass" style="--r:1deg;--t:6.5s;--d:-4s">I seriously need a detox</span>
+    <span class="bub alt glass c2" style="--r:-1.5deg;--t:7.5s;--d:-1s">how is it already eleven</span>
+    <span class="bub glass c3" style="--r:2deg;--t:8.5s;--d:-3s">I'll delete it on Monday</span>
+    <span class="bub alt glass" style="--r:-1deg;--t:7s;--d:-5s">I wasn't even enjoying it</span>
+  </div>
+  <p class="famline rev">You meant every one of them. ScrollJar helps them stick.</p>
+</div></section>
+
+<section class="band light"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The win-win</span>
+    <h2 class="display">Either you win the hour,<br>or a charity does.</h2>
+    <p>Money is the strongest friction there is. We just point it somewhere kind — with no shame behind either door.</p>
+  </div>
+  <div class="duo rev">
+    <div class="door keep glass spot">
+      <span class="dlab2" style="color:var(--mint)">Door one · you stay</span>
+      <div class="dtitle">The hour is yours.</div>
+      <p>The hour goes where you promised it — the book, the run, the people in the room. Nothing to pay, nothing to prove.</p>
+    </div>
+    <div class="orb" aria-hidden="true">or</div>
+    <div class="door slip glass spot">
+      <span class="dlab2" style="color:var(--gold-ink)">Door two · you open it anyway</span>
+      <div class="dtitle">Your $5 does some good.</div>
+      <p>Every cent reaches the cause you chose, and the choice was still yours. The jar smiles at both.</p>
+    </div>
+  </div>
+  <p class="duoline rev">Both doors are a win. The only one left out is the app that wanted your time.</p>
+</div></section>
+
+<section id="science" class="band"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">The science</span>
+    <h2 class="display">Built on evidence, not vibes.</h2>
+    <p>Every mechanism in ScrollJar exists because a peer-reviewed study said it works. Here are the four that shaped it.</p>
+  </div>
+  <div class="sci">
+    <div class="sc glass spot rev"><span class="n grad" data-count="31" data-suffix="%">31%</span>
+      <h3>It isn't just you</h3>
+      <p>Self-control problems drive roughly a third of social media use, and people will gladly pay for tools that help their future selves.</p>
+      <cite>Allcott, Gentzkow &amp; Song, “Digital Addiction,” <em>American Economic Review</em> (2022)</cite></div>
+    <div class="sc glass spot rev"><span class="n grad" data-count="36" data-suffix="%">36%</span>
+      <h3>Friction alone changes behaviour</h3>
+      <p>A brief pause before opening an app led people to abandon 36% of attempts. The way out did the work; lectures did nothing.</p>
+      <cite>Grüning, Riedel &amp; Lorenz-Spreen, <em>PNAS</em> 120(8) (2023)</cite></div>
+    <div class="sc glass spot rev"><span class="n grad" data-count="13" data-suffix="pp">13pp</span>
+      <h3>Your own money beats a reward</h3>
+      <p>Putting your own money at risk beat being paid the same amount to succeed. Loss moves people; bonuses don't.</p>
+      <cite>Halpern et al., <em>New England Journal of Medicine</em> 372 (2015)</cite></div>
+    <div class="sc glass spot rev"><span class="n grad">RCT</span>
+      <h3>Blocking actually helps</h3>
+      <p>Two weeks of blocked mobile internet measurably improved attention, mental health and wellbeing in a randomised trial.</p>
+      <cite>Castelo et al., <em>PNAS Nexus</em> 4(2) (2025)</cite></div>
+  </div>
+  <div class="whynow glass rev"><b>Why now</b><span>In 2026 a Los Angeles jury found platforms liable for addictive design (now on appeal); 20+ countries are acting. <span style="color:var(--ink-3)">Court record &amp; press reports</span></span></div>
+  <p class="scnote rev">We also read the studies that disagree with us. No screen-time app has been through a peer-reviewed trial yet — including ours. We intend to be the first.</p>
+</div></section>
+
+<section id="refuse" class="band light"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">Our promises</span>
+    <h2 class="display">Kind by design.</h2>
+    <p>A tool for calmer days can't run on the tricks that made them hectic. So here's what you'll never find in ScrollJar.</p>
+  </div>
+  <div class="refuse glass rev" data-play>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No variable rewards</b><p>Everything here is earned and predictable. No slot-machine mechanics.</p></div></div>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No urgency</b><p>No countdowns, no expiring discounts. A tool for calm shouldn't manufacture panic.</p></div></div>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No engagement metrics</b><p>We measure time spent away from screens — including away from ours.</p></div></div>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No shame</b><p>No red numbers, no broken-streak funerals. Slips are reported, never judged.</p></div></div>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No spying</b><p>Apple's design means we can't see which apps you block or what you do in them.</p></div></div>
+    <div class="ref"><span class="refx"><svg width="14" height="14" aria-hidden="true"><use href="#i-x"/></svg></span><div><b>No keeping your money</b><p>Every coin reaches your cause, with a receipt you can check.</p></div></div>
+  </div>
+</div></section>
+
+<section id="teams" class="band"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">For companies · ScrollJar for Teams</span>
+    <h2 class="display">Your company pays<br>when people win.</h2>
+    <p>A wellbeing benefit for companies. You pledge a budget to a cause your people vote for. Each person picks one hour a day that's theirs, and every hour they keep scroll-free unlocks part of the pledge. If someone slips, nobody pays.</p>
+  </div>
+  <div class="cowrap">
+    <figure class="hrmock glass rev" aria-label="Example of the company dashboard">
+      <div class="hrbar"><i></i><i></i><i></i><span>ScrollJar for Teams · Fernhill &amp; Co.</span><em>Example</em></div>
+      <div class="hrbody">
+        <div class="hrhead"><div><small>Current campaign · week 3 of 6</small><b>Summer Hours</b></div><span class="hrchip">for Feeding America · chosen by vote</span></div>
+        <div class="hrtiles">
+          <div><small>Unlocked for the cause</small><b>$2,180</b><span class="hrmeter"><i style="width:40%"></i></span><em>of a $5,400 pledge</em></div>
+          <div><small>Scroll-free hours</small><b>436</b><em>across everyone taking part</em></div>
+          <div><small>Taking part</small><b>63<span> of 120</span></b><em>who joined is never shown</em></div>
+        </div>
+        <div class="hrchart" aria-hidden="true"><i style="height:58%"></i><i style="height:72%"></i><i style="height:86%"></i><i class="todo"></i><i class="todo"></i><i class="todo"></i></div>
+        <p class="hrfoot"><svg width="13" height="13" aria-hidden="true"><use href="#i-eye-off"/></svg>Weekly totals only. No names, no daily view, groups under 5 hidden.</p>
+      </div>
+    </figure>
+    <div class="cogets rev">
+      <h3>What your company gets</h3>
+      <ul>
+        <li><b>A benefit people feel</b><span>It works on attention, the thing people actually lose every day, at any hour and on any shift.</span></li>
+        <li><b>Giving you can report</b><span>Real donations to a cause your people chose, with receipts for your impact report.</span></li>
+        <li><b>A story worth sharing</b><span>A team impact card after every campaign. It names the cause, never a person.</span></li>
+        <li><b>Easy to run</b><span>One invite link to share. No employee lists to upload, nobody to monitor.</span></li>
+      </ul>
+    </div>
+  </div>
+  <ol class="tsteps rev">
+    <li><span class="tn">1</span><b>You pledge</b><span>a budget and a shortlist of causes</span></li>
+    <li><span class="tn">2</span><b>People join</b><span>if they want to, vote, and pick their hour</span></li>
+    <li><span class="tn">3</span><b>Hours fill the jar</b><span>each scroll-free hour unlocks a fixed amount</span></li>
+    <li><span class="tn">4</span><b>The jar tips out</b><span>to the cause, with receipts and a team card</span></li>
+  </ol>
+  <div class="tgrid">
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-clock"/></svg></span>
+      <h3>Any hour counts</h3>
+      <p>Before a shift, between shifts or after work. One hour a day, the same chance for everyone, and pauses for on-call days or hard weeks.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-eye-off"/></svg></span>
+      <h3>Nobody is watched</h3>
+      <p>No names, not even who joined. Groups under five stay hidden, totals are weekly, and there's nothing to export. It isn't a setting: the product can't show a person.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-loop"/></svg></span>
+      <h3>Nothing comes back as savings</h3>
+      <p>Whatever isn't unlocked rolls into your next campaign, so the next jar starts partly full. Every unlocked dollar reaches the cause, with receipts.</p></div>
+  </div>
+  <p class="tperk rev"><b>A three-way win:</b> your people get time back, a cause gets funded, and you offer a benefit people actually feel.<br>Everyone who joins also gets <b>ScrollJar Plus free</b> for their own life. Their personal jar stays private from work.</p>
+  <div class="tcta rev">
+    <a class="btn" href="mailto:hello@scrolljar.app?subject=ScrollJar%20for%20Teams%20pilot">Ask about a free pilot</a>
+    <span>For HR and People teams. Six weeks, up to 50 people, free during the pilot.</span>
+  </div>
+</div></section>
+
+<section id="families" class="band light"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">For families · coming after launch</span>
+    <h2 class="display">A family jar,<br>not a family spy.</h2>
+    <p>One jar for the whole family. Grown-ups can put their own price on their apps. Kids never pay a cent, and nobody gets paid for scrolling less.</p>
+  </div>
+  <div class="tgrid">
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-gift"/></svg></span>
+      <h3>Kids never pay</h3>
+      <p>A parent pledges instead. Every scroll-free hour your kid keeps unlocks part of it for a cause they choose, with their name on the receipt. Their good hours become their gift.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-home"/></svg></span>
+      <h3>A treat for everyone</h3>
+      <p>Add a shared goal if you like, such as a cinema trip when the jar fills. Everyone's hours count, grown-ups' too, so nobody is paid and nobody is blamed.</p></div>
+    <div class="tc glass spot rev"><span class="tic" aria-hidden="true"><svg width="20" height="20"><use href="#i-eye-off"/></svg></span>
+      <h3>Private where it matters</h3>
+      <p>The family sees the jar, not each other's screens. Diaries stay personal, and nobody gets a report on anybody.</p></div>
+  </div>
+  <div class="tcta rev">
+    <a class="btn" href="#join">Join the waitlist</a>
+    <span>We'll tell you when Families opens.</span>
+  </div>
+</div></section>
+
+<section id="mission" class="band"><div class="wrap">
+  <div class="mwrap">
+    <div class="mhead rev">
+      <span class="eyebrow">Our mission</span>
+      <h2 class="display">Give people their time back, and let every slip <span class="grad">do some good.</span></h2>
+      <p>That's the whole plan. Here's what we believe.</p>
+    </div>
+    <ol class="mlist"><li class="rev" style="--d:0.00s"><span class="mn">01</span><div><b>Your time belongs to you.</b><span>Not to a feed, and not to us either.</span></div></li><li class="rev" style="--d:0.06s"><span class="mn">02</span><div><b>Nobody needs fixing.</b><span>Feeds are designed to keep you. You deserve a tool that's designed to let you go.</span></div></li><li class="rev" style="--d:0.12s"><span class="mn">03</span><div><b>A slip is just a slip.</b><span>It should cost a little and do some good. No lectures, no shame.</span></div></li><li class="rev" style="--d:0.18s"><span class="mn">04</span><div><b>Money should flow toward good.</b><span>Never toward your hard days. Every coin goes to a cause, and we live on memberships.</span></div></li><li class="rev" style="--d:0.24s"><span class="mn">05</span><div><b>Success is needing us less.</b><span>We count the hours you get back, not the minutes you spend with us.</span></div></li><li class="rev" style="--d:0.30s"><span class="mn">06</span><div><b>Everyone wins, or we don't build it.</b><span>You, a cause you love, and the people around you.</span></div></li></ol>
+  </div>
+</div></section>
+
+<!-- Founder note: DRAFT for L to confirm. Replace the initial with a photo and adjust the words. -->
+<section id="founder" class="band"><div class="wrap">
+  <figure class="founder glass rev">
+    <div class="fav" aria-hidden="true">L</div>
+    <blockquote>
+      <p>I lost my mornings to my phone, a few minutes at a time, and every app that promised to help either nagged me or kept the money when I slipped. So I'm building the one I wanted: a real block, a price I set myself, and every coin going somewhere good. No tricks, no ads, and nothing to profit from a bad day.</p>
+      <figcaption><b>L</b>, founder of ScrollJar</figcaption>
+    </blockquote>
+  </figure>
+</div></section>
+
+<section id="faq" class="band light"><div class="wrap">
+  <div class="sechead rev">
+    <span class="eyebrow">Questions</span>
+    <h2 class="display">The honest answers.</h2>
+  </div>
+  <div class="faq glass rev">
+    <details class="q"><summary>Does it really block apps, or just remind me?</summary>
+      <p>It really blocks. ScrollJar is built on Apple's Screen Time framework — the same system-level engine behind parental controls — so the shield is drawn and enforced by iOS itself, above everything else on screen.</p></details>
+    <details class="q"><summary>What if I genuinely need to get in?</summary>
+      <p>You always can. Opening a blocked app costs the price you set in advance and opens for a window you chose. There's no lockout, no permission to ask for, and no way for us to say no.</p></details>
+    <details class="q"><summary>Where does the money actually go?</summary>
+      <p>All of it goes to the charity you pick, settled monthly through a nonprofit donation platform, with receipts you can check. ScrollJar keeps none of it. Card payments carry a small processing fee: on the free plan it's shown and added on top, so the full price you set still arrives. Members never see it, because we cover it.</p></details>
+    <details class="q"><summary>Then how do you make money?</summary>
+      <p>Memberships, and nothing else. No ads, no data sales, no share of your slips. It matters that we never profit when you struggle — that's the conflict of interest we were built to avoid.</p></details>
+    <details class="q"><summary>Can you see what I do on my phone?</summary>
+      <p>No. Apple hands apps like ours anonymous tokens instead of app names, so we never learn which apps you blocked, when you use them, or what you do inside. We couldn't spy on you if we wanted to.</p></details>
+    <details class="q"><summary>Is there an Android version?</summary>
+      <p>iPhone first. Android has no official blocking API, and recent releases restrict the workarounds every blocker relies on. We'd rather ship one honest version than two weak ones — Android comes when we can do it properly.</p></details>
+    <details class="q"><summary>When does it launch?</summary>
+      <p>We're building it now, iPhone first. Join the waitlist and you'll hear from us exactly once — the day it's ready.</p></details>
+  </div>
+</div></section>
+
+<section id="join"><div class="wrap">
+  <div class="final rev">
+    <h2 class="display">Time, <span class="grad">returned.</span></h2>
+    <p>You can always choose distraction — it just shouldn't be free. Coming to iPhone first.</p>
+    <form class="sig glass" data-wl aria-label="Join the waitlist (end of page)">
+      <input id="email-bottom" type="email" name="email" required placeholder="your@email.com" aria-label="Email address">
+      <button class="btn" type="submit">Join the waitlist</button>
+    </form>
+    <div class="ok glass" data-ok role="status"><svg width="18" height="18" style="color:var(--mint)" aria-hidden="true"><use href="#i-heart"/></svg>You're in. One email when we launch — that's all.</div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div>
+      <div class="logo" style="margin-bottom:12px"><svg width="20" height="23" aria-hidden="true"><use href="#i-jar"/></svg>ScrollJar</div>
+      <p style="color:var(--ink-3);max-width:280px;font-size:14px">A swear jar for scrolling. Made in cold blood, kept in warm moments.</p>
+    </div>
+    <div><h2>Product</h2><a href="#how">How it works</a><a href="#teams">For companies</a><a href="#families">For families</a><a href="#mission">Our mission</a><a href="#refuse">Our promises</a><a href="#faq">FAQ</a></div>
+    <div><h2>Evidence</h2><a href="#science">The science</a><a href="#science">Our sources</a></div>
+    <div><h2>Contact</h2><a href="mailto:hello@scrolljar.app">hello@scrolljar.app</a><a href="mailto:press@scrolljar.app">Press</a></div>
+  </div>
+  <div class="fbot">
+    <span>© 2026 ScrollJar</span><span class="sp"></span>
+    <span>100% of every coin goes to charity. We keep none of it.</span>
+  </div>
+</div></footer>
+</div>
+
+<div class="stick glass" id="stick" role="complementary" aria-label="Join">
+  <span class="stxt">Your time belongs to you. <b>Let's go get it back.</b></span>
+  <a class="btn small" href="#join">Join</a>
+</div>
+
+<script>
+document.documentElement.classList.add('js');
+/* Waitlist → Formspree. Replace YOURFORMID. Demo mode until then. */
+const FORM_ID='YOURFORMID';
+let signed=false, joinVis=false;
+document.querySelectorAll('form[data-wl]').forEach(f=>{
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=f.querySelector('input').value.trim();
+    if(!email)return;
+    const btn=f.querySelector('button');btn.disabled=true;btn.textContent='One second…';
+    let sent=false;
+    if(FORM_ID!=='YOURFORMID'){
+      try{
+        const r=await fetch('https://formspree.io/f/'+FORM_ID,{method:'POST',
+          headers:{'Accept':'application/json','Content-Type':'application/json'},
+          body:JSON.stringify({email})});
+        sent=r.ok;
+      }catch(_){sent=false}
+    }else{sent=true;console.warn('ScrollJar: demo mode — set FORM_ID to capture real emails.')}
+    if(sent){f.style.display='none';f.parentElement.querySelector('[data-ok]').style.display='flex';signed=true;stickCheck()}
+    else{btn.disabled=false;btn.textContent='Try again'}
+  });
+});
+const stick=document.getElementById('stick');
+new IntersectionObserver(es=>{joinVis=es[0].isIntersecting;stickCheck()},{threshold:.2}).observe(document.getElementById('join'));
+addEventListener('scroll',stickCheck,{passive:true});
+function stickCheck(){stick.classList.toggle('on',scrollY>700&&!joinVis&&!signed)}
+
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* the story: as a chapter crosses the middle of the screen, the live app shows its screen */
+const app=document.getElementById('app'), col=document.querySelector('.phonecol'), tag=document.getElementById('tag');
+const steps=[document.querySelector('.hero'),...document.querySelectorAll('.chapter')];
+let current='today';
+function show(step){
+  if(step===current) return; current=step;
+  col.dataset.step=step; tag.style.opacity=step==='today'?1:0;
+  steps.forEach(s=>s.classList&&s.classList.toggle('on',s.dataset.step===step));
+  try{ app.contentWindow.postMessage({scrolljar:'show',step},'*'); }catch(_){}
+}
+const small=matchMedia('(max-width: 900px)').matches;
+const stepOf=el=>(el.closest('[data-step]')||el).dataset.step;
+const mid=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) show(stepOf(e.target)); }),
+  {rootMargin: small ? '-56% 0px -40% 0px' : '-48% 0px -48% 0px'});
+steps.forEach(s=>mid.observe(small && s.querySelector('.cardin') ? s.querySelector('.cardin') : s));
+/* the rail fills with progress through the chapters */
+const chapters=document.querySelector('.chapters'), rail=document.querySelector('.rail');
+function railTick(){
+  const r=chapters.getBoundingClientRect(), vh=innerHeight;
+  const p=Math.min(1,Math.max(0,(vh*.5-r.top)/(r.height-vh*.22-vh*.26)));
+  rail.style.setProperty('--p',p.toFixed(3));
+}
+addEventListener('scroll',()=>requestAnimationFrame(railTick),{passive:true}); railTick();
+
+/* reveal on scroll; a safety net shows everything if the observer never fires */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+setTimeout(()=>document.querySelectorAll('.rev').forEach(el=>el.classList.add('in')),4000);
+const playIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('play');playIO.unobserve(e.target)}}),{threshold:.3});
+document.querySelectorAll('[data-play]').forEach(el=>playIO.observe(el));
+/* science figures count up once */
+const countIO=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return; countIO.unobserve(e.target);
+  const el=e.target, to=+el.dataset.count, suf=el.dataset.suffix||'';
+  if(calm){el.textContent=to+suf;return}
+  const t0=performance.now(), dur=1400;
+  (function tick(t){const k=Math.min((t-t0)/dur,1), v=Math.round(to*(1-Math.pow(1-k,3)));el.textContent=v+suf;if(k<1)requestAnimationFrame(tick)})(t0);
+}),{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>countIO.observe(el));
+/* cursor light on glass cards */
+if(matchMedia('(hover: hover)').matches&&!calm){
+  document.querySelectorAll('.spot').forEach(el=>el.addEventListener('pointermove',e=>{
+    const r=el.getBoundingClientRect(); el.style.setProperty('--mx',(e.clientX-r.left)+'px'); el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  }));
+}
+</script>
+</body>
+</html>
