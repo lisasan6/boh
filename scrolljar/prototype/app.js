@@ -336,41 +336,56 @@ function pickDone(){
    quotes the second one back in the user's own words. ── */
 const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
 const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
-const FIRST={step:0,sched:null,fors:[],own:''};
+const FEEL_CHIPS=['flat','tired','restless','a bit empty','annoyed','like the day slipped away','fine, honestly'];
+const FIRST={step:0,sched:null,feels:[],feelOwn:'',fors:[],own:''};
+/* the feeling is a moment of noticing, not a score: it stays on the phone and is never shown back as a judgement */
+const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
+  if(!f.length&&!own) return 'Take a second. There\'s no wrong answer.';
+  if(f.length===1&&f[0]==='fine, honestly'&&!own) return 'Good to hear. ScrollJar is for the times it isn\'t.';
+  return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
 const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
-function openFirst(){ Object.assign(FIRST,{step:0,sched:null,fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
+function openFirst(){ Object.assign(FIRST,{step:0,sched:null,feels:[],feelOwn:'',fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
   return `<b>${esc(n)}</b> shielded ${SCHED_SAY[FIRST.sched||'always']}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
 }
 function renderFirst(){
   const B=$('firstBody'), F=$('firstFoot'), many=pickedName(pick).many;
-  $('firstKicker').textContent=`YOUR FIRST DEAL · ${FIRST.step+1} OF 2`;
+  $('firstKicker').textContent=`YOUR FIRST DEAL · ${FIRST.step+1} OF 3`;
   $('firstBack').style.visibility=FIRST.step?'visible':'hidden';
   if(FIRST.step===0){
     B.innerHTML=`<div class="display firstQ">When does scrolling<br>get you?</div>
       <div class="sub">${many?'Those apps':'That app'} will be shielded then. You can change it any time.</div>
       <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.sched===k?' on':''}" onclick="FIRST.sched='${k}';renderFirst()"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}</div>`;
     F.innerHTML=`<button class="btn chrome" ${FIRST.sched?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
+  } else if(FIRST.step===1){
+    B.innerHTML=`<div class="display firstQ">When you look up and the time has gone, how do you feel?</div>
+      <div class="sub">Pick as many as you like. It stays on your phone.</div>
+      <div class="firstChips">${FEEL_CHIPS.map(c=>`<span class="chip${FIRST.feels.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.feels.includes(c)}" data-set="feels" data-k="${c}" onclick="firstChip('feels','${c}')">${c}</span>`).join('')}</div>
+      <input class="timeIn" maxlength="40" placeholder="or in your own words" aria-label="How you feel, in your own words" value="${esc(FIRST.feelOwn)}" oninput="FIRST.feelOwn=this.value;firstUpdate()">
+      <div class="firstSay" id="firstFeelSay">${feelSay()}</div>`;
+    F.innerHTML=`<button class="btn chrome" onclick="FIRST.step=2;renderFirst()">Next</button>`;
   } else {
     B.innerHTML=`<div class="display firstQ">What would you rather<br>do with that time?</div>
       <div class="sub">Pick as many as you like. If you reach for a shielded app, ScrollJar will suggest them instead.</div>
-      <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.fors.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.fors.includes(c)}" onclick="firstFor('${c}')">${c}</span>`).join('')}</div>
+      <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.fors.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.fors.includes(c)}" data-set="fors" data-k="${c}" onclick="firstChip('fors','${c}')">${c}</span>`).join('')}</div>
       <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${esc(FIRST.own)}" oninput="FIRST.own=this.value;firstUpdate()">
       <div class="card firstDeal"><div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div id="firstLine">${firstSentence()}</div>
         <div class="tiny" style="margin-top:7px;line-height:1.5">Free for now: opening one gets you a pause, never a charge. Easier changes take 24 hours, stricter ones happen at once.</div></div>`;
     F.innerHTML=`<button class="btn mint" onclick="sealFirst()">Seal the deal</button>`;
   }
 }
-function firstFor(c){ const i=FIRST.fors.indexOf(c); i<0?FIRST.fors.push(c):FIRST.fors.splice(i,1); firstUpdate(); }
+function firstChip(set,c){ const a=FIRST[set], i=a.indexOf(c); i<0?a.push(c):a.splice(i,1); firstUpdate(); }
 function firstUpdate(){
-  document.querySelectorAll('.firstChips .chip').forEach(el=>{ const on=FIRST.fors.includes(el.textContent); el.classList.toggle('on',on); el.setAttribute('aria-checked',on); });
-  $('firstLine').innerHTML=firstSentence();
+  document.querySelectorAll('.firstChips .chip').forEach(el=>{ const on=FIRST[el.dataset.set].includes(el.dataset.k); el.classList.toggle('on',on); el.setAttribute('aria-checked',on); });
+  if($('firstLine')) $('firstLine').innerHTML=firstSentence();
+  if($('firstFeelSay')) $('firstFeelSay').textContent=feelSay();
 }
 function sealFirst(){
   setStage('new');
   Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:FIRST.sched||'always',forWhat:firstFors()});
+  S.feelAfter=[...FIRST.feels,FIRST.feelOwn.trim()].filter(Boolean);
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
   toast('Deal sealed. Try opening one of your apps.');
@@ -2011,7 +2026,7 @@ function renderD1(){
   $('d1Impact').innerHTML = S.stakes
     ? `It's real. Every coin in this jar goes to <b>${charity().n}</b> on the 1st, with a receipt. ${charity().l}`
     : `Nothing given yet, and nothing owed. Opening a shielded app is free for your first days. Make it real, and every coin goes to <b>${charity().n}</b> on the 1st, with a receipt.`;
-  const sc=(COMMITS[0]||{}).sched; $('d1When').textContent = sc&&sc!=='always'&&SCHED_SAY[sc] ? ' '+SCHED_SAY[sc] : '';
+  const sc=(COMMITS[0]||{}).sched, fw=(COMMITS[0]||{}).forWhat; $('d1When').textContent = (sc&&sc!=='always'&&SCHED_SAY[sc] ? ' '+SCHED_SAY[sc] : '')+(fw?`, to make room for ${fw.replace(/\bmy\b/g,'your')}`:'');
   $('d1Title').textContent = sc&&sc!=='always' ? 'Your deal is sealed.' : 'Your shield is on.';
   $('d1RealBtn').style.display = S.stakes ? 'none' : '';
   const real=$('d1Real'), price=(COMMITS[0]||{}).price||5;

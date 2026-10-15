@@ -682,3 +682,4 @@ body[data-stage="new"] .wk3{display:none!important}
 .firstOpt.on span{color:var(--mint)}
 .firstChips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
 .firstDeal{margin-top:14px;font-size:14px;line-height:1.45}
+.firstSay{margin-top:14px;font-size:13.5px;line-height:1.5;color:var(--ink-2);min-height:40px}
