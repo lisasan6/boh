@@ -45,7 +45,8 @@ function onbNext(){
   $('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===oi?18:7}px;height:7px;border-radius:99px;background:${i===oi?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
   $('onbBtn').textContent = oi===3 ? 'Shield my apps' : 'Next';
 }
-function closeOnb(){$('ov-onb').classList.remove('on');toast('Both apps are shielded. Try opening one.')}
+/* Skip only skips the intro: you still pick your apps, because nothing is shielded until you do */
+function skipIntro(){ $('ov-preperm').classList.add('on'); }
 
 /* ── jar rendering ── */
 /* the pile grows with the money, not the coin count: a full jar = your monthly cap */
@@ -267,7 +268,7 @@ function pickCharity(i){
 }
 function showShield(){
   const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/^my /,'your ');
-  $('shieldSub').innerHTML = fw ? `You said this ${S.stage==='new'?'time':'hour'} was for <b style="color:#EFEDFF">${fw}</b>.` : 'Your first deal. The choice is still yours.';
+  $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
   $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
   $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
   $('ov-shield').classList.add('on');
@@ -328,9 +329,49 @@ function togglePickOpen(c){ pick.open.has(c)?pick.open.delete(c):pick.open.add(c
 function pickDone(){
   if(!pickCount()) return;
   if(pickFor==='deal'){ NEW.picked={apps:new Set(pick.apps),cats:new Set(pick.cats)}; restorePick(); closeOv('ov-picker'); renderNew(); return; }
-  closeOv('ov-picker'); closeOv('ov-preperm'); $('ov-onb').classList.remove('on');
+  openFirst();
+}
+/* ── onboarding: your first deal. Two quick questions after the picker: when scrolling gets you,
+   and what you'd rather do with that time. The answers become the first deal, and the shield
+   quotes the second one back in the user's own words. ── */
+const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
+const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
+const FIRST={step:0,sched:null,forWhat:''};
+function openFirst(){ Object.assign(FIRST,{step:0,sched:null,forWhat:''}); renderFirst(); $('ov-first').classList.add('on'); }
+function firstSentence(){
+  const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=FIRST.forWhat.trim();
+  return `<b>${esc(n)}</b> shielded ${SCHED_SAY[FIRST.sched||'always']}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
+}
+function renderFirst(){
+  const B=$('firstBody'), F=$('firstFoot'), many=pickedName(pick).many;
+  $('firstKicker').textContent=`YOUR FIRST DEAL · ${FIRST.step+1} OF 2`;
+  $('firstBack').style.visibility=FIRST.step?'visible':'hidden';
+  if(FIRST.step===0){
+    B.innerHTML=`<div class="display firstQ">When does scrolling<br>get you?</div>
+      <div class="sub">${many?'Those apps':'That app'} will be shielded then. You can change it any time.</div>
+      <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.sched===k?' on':''}" onclick="FIRST.sched='${k}';renderFirst()"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}</div>`;
+    F.innerHTML=`<button class="btn chrome" ${FIRST.sched?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
+  } else {
+    B.innerHTML=`<div class="display firstQ">What would you rather<br>do with that time?</div>
+      <div class="sub">If you reach for a shielded app, ScrollJar will suggest it instead.</div>
+      <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.forWhat===c?' on':''}" onclick="firstFor('${c}')">${c}</span>`).join('')}</div>
+      <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${FOR_CHIPS.includes(FIRST.forWhat)?'':esc(FIRST.forWhat)}" oninput="FIRST.forWhat=this.value;firstUpdate()">
+      <div class="card firstDeal"><div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div id="firstLine">${firstSentence()}</div>
+        <div class="tiny" style="margin-top:7px;line-height:1.5">Free for now: opening one gets you a pause, never a charge. Easier changes take 24 hours, stricter ones happen at once.</div></div>`;
+    F.innerHTML=`<button class="btn mint" onclick="sealFirst()">Seal the deal</button>`;
+  }
+}
+function firstFor(c){ FIRST.forWhat=FIRST.forWhat===c?'':c; $('firstIn').value=''; firstUpdate(); }
+function firstUpdate(){
+  document.querySelectorAll('.firstChips .chip').forEach(el=>el.classList.toggle('on',el.textContent===FIRST.forWhat));
+  $('firstLine').innerHTML=firstSentence();
+}
+function sealFirst(){
   setStage('new');
-  toast($('d1Apps').textContent+' shielded. Try opening one.');
+  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:FIRST.sched||'always',forWhat:FIRST.forWhat.trim()});
+  closeOv('ov-first'); $('ov-onb').classList.remove('on');
+  renderCommits(); renderD1();
+  toast('Deal sealed. Try opening one of your apps.');
 }
 
 function pickedName(sel){
@@ -1968,6 +2009,8 @@ function renderD1(){
   $('d1Impact').innerHTML = S.stakes
     ? `It's real. Every coin in this jar goes to <b>${charity().n}</b> on the 1st, with a receipt. ${charity().l}`
     : `Nothing given yet, and nothing owed. Opening a shielded app is free for your first days. Make it real, and every coin goes to <b>${charity().n}</b> on the 1st, with a receipt.`;
+  const sc=(COMMITS[0]||{}).sched; $('d1When').textContent = sc&&sc!=='always'&&SCHED_SAY[sc] ? ' '+SCHED_SAY[sc] : '';
+  $('d1Title').textContent = sc&&sc!=='always' ? 'Your deal is sealed.' : 'Your shield is on.';
   $('d1RealBtn').style.display = S.stakes ? 'none' : '';
   const real=$('d1Real'), price=(COMMITS[0]||{}).price||5;
   real.classList.toggle('done',S.stakes);

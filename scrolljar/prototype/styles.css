@@ -667,3 +667,18 @@ body[data-stage="new"] .wk3{display:none!important}
 .justSealed{animation:justSealed 1.8s ease-out}
 @keyframes justSealed{0%{box-shadow:0 0 0 0 rgba(55,226,192,0)}25%{box-shadow:0 0 0 3px var(--mint),0 0 26px rgba(55,226,192,.55)}100%{box-shadow:0 0 0 0 rgba(55,226,192,0)}}
 @media (prefers-reduced-motion:reduce){.justSealed{animation:none}}
+
+/* onboarding · your first deal */
+.firstTop{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.firstTop>span{width:34px}
+.firstBack{width:34px;height:34px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.firstBody{margin-top:18px;overflow-y:auto}
+.firstQ{font-size:24px;line-height:1.15;margin-bottom:8px}
+.firstOpts{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.firstOpt{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font:inherit;cursor:pointer}
+.firstOpt b{font-size:14px;white-space:nowrap;flex:none}
+.firstOpt span{font-size:11.5px;color:var(--ink-3);text-align:right;min-width:0}
+.firstOpt.on{border-color:var(--mint);background:rgba(55,226,192,.12)}
+.firstOpt.on span{color:var(--mint)}
+.firstChips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
+.firstDeal{margin-top:14px;font-size:14px;line-height:1.45}

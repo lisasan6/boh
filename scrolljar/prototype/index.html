@@ -171,8 +171,8 @@
     <div class="heroPanel">
       <div class="d1">
         <div class="eyebrow">DAY 1</div>
-        <div class="display" style="font-size:32px;letter-spacing:-.035em;line-height:1.05;margin-top:8px">Your shield is on.</div>
-        <div class="sub" style="margin-top:8px"><span id="d1Apps">Your apps are</span> shielded. The hours you take back will show up here, starting today.</div>
+        <div class="display" style="font-size:32px;letter-spacing:-.035em;line-height:1.05;margin-top:8px" id="d1Title">Your shield is on.</div>
+        <div class="sub" style="margin-top:8px"><span id="d1Apps">Your apps are</span> shielded<span id="d1When"></span>. The hours you take back will show up here, starting today.</div>
         <div class="d1Steps">
           <div class="d1Step done"><span class="d1Tick"></span><div><b>Shield your apps</b><span>done, just now</span></div></div>
           <div class="d1Step" id="d1Pause"><span class="d1Tick"></span><div><b>Meet the pause</b><span>when the pull comes, you get a breath, not a lecture</span></div></div>
@@ -885,14 +885,14 @@
     </div>
     <div style="display:flex;gap:6px;justify-content:center;margin:22px 0" id="onbDots"></div>
     <button class="btn chrome" style="max-width:250px" id="onbBtn" onclick="onbNext()">Next</button>
-    <div class="tiny" style="margin-top:12px;cursor:pointer" onclick="closeOnb()">Skip</div>
+    <div class="tiny" style="margin-top:12px;cursor:pointer" onclick="skipIntro()">Skip</div>
   </div>
 
   <!-- ══ SHIELD ══ -->
   <div class="ov shield" id="ov-shield">
     <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
     <div class="display" style="font-size:23px;margin:14px 0 8px">You made a deal with yourself</div>
-    <div class="sub" style="color:#A9A4D8;margin-bottom:6px" id="shieldSub">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
+    <div class="sub" style="color:#A9A4D8;margin-bottom:6px" id="shieldSub">How about <b style="color:#EFEDFF">your novel</b> instead?</div>
     <div class="tiny" style="margin-bottom:24px" id="shieldStreak">12 clean days and counting</div>
     <button class="btn mint" onclick="resist()">I'll stay committed</button>
     <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" id="shieldOpen" onclick="showBridge()">Open anyway · $5</button>
@@ -1200,6 +1200,13 @@
       <div class="iosList" id="pickList"></div>
       <div class="iosFoot">Apple's picker. Real app names show here on your phone, but only you see them: ScrollJar receives anonymous tokens for whatever you tick.</div>
     </div>
+  </div>
+
+  <!-- ══ ONBOARDING · your first deal: when it gets you, and what the time is for ══ -->
+  <div class="ov" id="ov-first" style="background:var(--scr-bg);padding:22px 18px 92px">
+    <div class="firstTop"><button class="firstBack" id="firstBack" onclick="FIRST.step=0;renderFirst()" aria-label="Back">‹</button><div class="eyebrow" id="firstKicker">YOUR FIRST DEAL · 1 OF 2</div><span></span></div>
+    <div id="firstBody" class="firstBody"></div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px" id="firstFoot"></div>
   </div>
 
   <!-- ══ DAY ~3 · MAKE IT REAL ══ -->
