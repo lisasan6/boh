@@ -1873,3 +1873,5 @@ $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i]
 $('recapBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
 $('challengeBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
 setInterval(()=>{const {svg}=liveJar();if(!document.hidden&&Math.random()<.4&&!svg.classList.contains('hop')){svg.classList.add('hop');setTimeout(()=>svg.classList.remove('hop'),800)}},11000);
+/* a page embedding the app can open it on one screen: ?embed=1&show=family */
+if(Q.get('show')==='family') openFamily();
