@@ -480,6 +480,7 @@ function renderReal(){
   if(realStep===0){ K.textContent='DAY 3';
     B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Three days. Five temptations.<br>All yours.</div>
       <div class="sub">Right now, opening a shielded app is free: you get the pause, then you're in. Make it real, and each time costs a coin you price yourself, <b>100% to a charity you pick.</b> Making it real is free too.</div>
+      <div class="card" style="margin-top:12px;text-align:left"><b style="font-size:13px">Why money?</b><div class="tiny" style="margin-top:4px;line-height:1.55">A price is friction you can feel. It turns "just a quick look" into a real question: is going further worth it right now? Sometimes it is, and that's fine: the coin still does some good.</div></div>
       <button class="btn mint" style="margin-top:16px" onclick="realGo(1)">Make it real</button>
       <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-real');toast('Staying as you are. Everything keeps working exactly as it does now.')">Not yet</button>`;
   } else if(realStep===1){ K.textContent='YOUR STAKES';
