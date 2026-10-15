@@ -267,7 +267,7 @@ function pickCharity(i){
   toast('Your jar now goes to '+charity().n+' on Aug 1.');
 }
 function showShield(){
-  const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/^my /,'your ');
+  const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/\bmy\b/g,'your');
   $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
   $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
   $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
@@ -336,10 +336,12 @@ function pickDone(){
    quotes the second one back in the user's own words. ── */
 const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
 const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
-const FIRST={step:0,sched:null,forWhat:''};
-function openFirst(){ Object.assign(FIRST,{step:0,sched:null,forWhat:''}); renderFirst(); $('ov-first').classList.add('on'); }
+const FIRST={step:0,sched:null,fors:[],own:''};
+/* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
+const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
+function openFirst(){ Object.assign(FIRST,{step:0,sched:null,fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
-  const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=FIRST.forWhat.trim();
+  const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
   return `<b>${esc(n)}</b> shielded ${SCHED_SAY[FIRST.sched||'always']}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
 }
 function renderFirst(){
@@ -353,22 +355,22 @@ function renderFirst(){
     F.innerHTML=`<button class="btn chrome" ${FIRST.sched?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
   } else {
     B.innerHTML=`<div class="display firstQ">What would you rather<br>do with that time?</div>
-      <div class="sub">If you reach for a shielded app, ScrollJar will suggest it instead.</div>
-      <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.forWhat===c?' on':''}" onclick="firstFor('${c}')">${c}</span>`).join('')}</div>
-      <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${FOR_CHIPS.includes(FIRST.forWhat)?'':esc(FIRST.forWhat)}" oninput="FIRST.forWhat=this.value;firstUpdate()">
+      <div class="sub">Pick as many as you like. If you reach for a shielded app, ScrollJar will suggest them instead.</div>
+      <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.fors.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.fors.includes(c)}" onclick="firstFor('${c}')">${c}</span>`).join('')}</div>
+      <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${esc(FIRST.own)}" oninput="FIRST.own=this.value;firstUpdate()">
       <div class="card firstDeal"><div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div id="firstLine">${firstSentence()}</div>
         <div class="tiny" style="margin-top:7px;line-height:1.5">Free for now: opening one gets you a pause, never a charge. Easier changes take 24 hours, stricter ones happen at once.</div></div>`;
     F.innerHTML=`<button class="btn mint" onclick="sealFirst()">Seal the deal</button>`;
   }
 }
-function firstFor(c){ FIRST.forWhat=FIRST.forWhat===c?'':c; $('firstIn').value=''; firstUpdate(); }
+function firstFor(c){ const i=FIRST.fors.indexOf(c); i<0?FIRST.fors.push(c):FIRST.fors.splice(i,1); firstUpdate(); }
 function firstUpdate(){
-  document.querySelectorAll('.firstChips .chip').forEach(el=>el.classList.toggle('on',el.textContent===FIRST.forWhat));
+  document.querySelectorAll('.firstChips .chip').forEach(el=>{ const on=FIRST.fors.includes(el.textContent); el.classList.toggle('on',on); el.setAttribute('aria-checked',on); });
   $('firstLine').innerHTML=firstSentence();
 }
 function sealFirst(){
   setStage('new');
-  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:FIRST.sched||'always',forWhat:FIRST.forWhat.trim()});
+  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:FIRST.sched||'always',forWhat:firstFors()});
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
   toast('Deal sealed. Try opening one of your apps.');
