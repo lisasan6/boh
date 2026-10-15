@@ -506,10 +506,12 @@ function firstUpdate(){
 function sealFirst(){
   setStage('new');
   const wp=whenParts(), one=wp.length===1&&wp[0].k!=='mine';
-  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),forWhat:firstFors(),forList:firstForList()});
+  const wins=wp.map(x=>x.k==='mine'?{from:FIRST.from,to:FIRST.to,days:[...FIRST.days]}:WIN[x.k]);
+  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),wins,forWhat:firstFors(),forList:firstForList()});
   S.feelAfter=[...FIRST.feels,FIRST.feelOwn.trim()].filter(Boolean);
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
+  const seal=$('d1Seal'); seal.classList.remove('stamp'); void seal.offsetWidth; seal.classList.add('stamp');
   toast('Deal sealed. Try opening one of your apps.');
 }
 
@@ -2141,17 +2143,49 @@ function setStage(st){
   renderCommits(); renderFeed(); renderEntries(); renderJar(); renderMoodLedger();
   go('home'); $('s-home').scrollTop=0;
 }
-function d1Done(id){ const el=$(id); if(el&&S.stage==='new') el.classList.add('done'); }
+function d1Done(id){ const el=$(id); if(el&&S.stage==='new'){ el.classList.add('done'); renderD1Deal(); } }
+/* ── day one: the deal at a glance, said in the user's own words, with a live status ──
+   The demo clock is the status bar's: Tuesday, 9:41. */
+const NOW={day:1,min:9*60+41};
+const DAYNAME=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const WIN={mornings:{from:'06:00',to:'10:00',days:[1,1,1,1,1,1,1]},work:{from:'09:00',to:'17:00',days:[1,1,1,1,1,0,0]},
+  evenings:{from:'21:00',to:'07:00',days:[1,1,1,1,1,1,1]},weekend:{from:'00:00',to:'24:00',days:[0,0,0,0,0,1,1]},always:{from:'00:00',to:'24:00',days:[1,1,1,1,1,1,1]}};
+const mins=t=>{ const [h,m]=t.split(':').map(Number); return h*60+m; };
+function shieldStatus(wins){
+  if(!wins.length) return {on:true,txt:'Shield on now'};
+  if(wins.some(w=>w.from==='00:00'&&w.to==='24:00'&&w.days.every(Boolean))) return {on:true,txt:'Shield on · all day, every day'};
+  let best=null;
+  for(const w of wins){
+    const f=mins(w.from), t=mins(w.to), over=f>t, prev=(NOW.day+6)%7;
+    if(!over&&w.days[NOW.day]&&NOW.min>=f&&NOW.min<t) return {on:true,txt:`Shield on now · until ${t===1440?'midnight':hm(w.to)}`};
+    if(over&&((w.days[NOW.day]&&NOW.min>=f)||(w.days[prev]&&NOW.min<t))) return {on:true,txt:`Shield on now · until ${hm(w.to)}`};
+    for(let d=0;d<8;d++){ const day=(NOW.day+d)%7; if(!w.days[day]) continue; if(d===0&&f<=NOW.min) continue;
+      const at=d*1440+f; if(!best||at<best.at) best={at,d,day,f,w}; break; }
+  }
+  if(!best) return {on:false,txt:'Shield off for now'};
+  const time=best.f===0?'':` at ${hm(best.w.from)}`;
+  const when=best.d===0?(best.f>=18*60?'tonight':'today'):best.d===1?'tomorrow':DAYNAME[best.day];
+  return {on:false,txt:`Starts ${when}${best.d===0&&best.f>=18*60?'':time}${best.d===0&&best.f>=18*60?time:''}`.replace('tonight at','tonight at')};
+}
+function renderD1Deal(){
+  const c=COMMITS[0]||{}, fl=c.forList&&c.forList.length?c.forList:(c.forWhat?[c.forWhat]:[]);
+  const yours=x=>x.replace(/\bmy\b/g,'your'), head=fl.length?`Room for ${yours(listAnd(fl))}.`:'Your shield is on.';
+  $('d1Title').textContent=head; $('d1Title').classList.toggle('long',head.length>34);
+  const p=pickedName(pick); $('d1What').textContent=pick.apps.size||pick.cats.size ? p.name.charAt(0).toUpperCase()+p.name.slice(1) : 'Your apps';
+  const sc=c.sched||'always', ws=c.whenSay||SCHED_SAY[sc]||'';
+  $('d1WhenRow').textContent = sc==='custom' ? ws.charAt(0).toUpperCase()+ws.slice(1) : (SCHED_NOTE[sc]||'').replace(/^./,m=>m.toUpperCase());
+  $('d1ForRow').style.display=fl.length?'':'none';
+  $('d1For').innerHTML=fl.map(x=>`<i>${esc(x)}</i>`).join('');
+  const st=shieldStatus(c.wins||[WIN[sc]||WIN.always]);
+  $('d1Live').classList.toggle('on',st.on); $('d1LiveTxt').textContent=st.txt;
+  const done=document.querySelectorAll('.d1Steps .d1Step.done').length; $('d1Count').textContent=`${done} OF 3`;
+}
 function renderD1(){
   if(!SNAP) return;
-  const a=pick.apps.size, cats=[...pick.cats], list=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:x[0];
-  $('d1Apps').textContent = a&&cats.length ? `${a} app${a>1?'s':''} and your ${list(cats)} apps are`
-    : cats.length ? `Your ${list(cats)} apps are` : a ? (a>1?`Your ${a} apps are`:'Your app is') : 'Your apps are';
+  renderD1Deal();
   $('d1Impact').innerHTML = S.stakes
     ? `It's real. Every coin in this jar goes to <b>${charity().n}</b> on the 1st, with a receipt. ${charity().l}`
     : `Nothing given yet, and nothing owed. Opening a shielded app is free for your first days. Make it real, and every coin goes to <b>${charity().n}</b> on the 1st, with a receipt.`;
-  const sc=(COMMITS[0]||{}).sched, fw=(COMMITS[0]||{}).forWhat; $('d1When').textContent = (sc&&sc!=='always' ? ' '+((COMMITS[0]||{}).whenSay||SCHED_SAY[sc]||'') : '')+(fw?`, to make room for ${fw.replace(/\bmy\b/g,'your')}`:'');
-  $('d1Title').textContent = sc&&sc!=='always' ? 'Your deal is sealed.' : 'Your shield is on.';
   $('d1RealBtn').style.display = S.stakes ? 'none' : '';
   const real=$('d1Real'), price=(COMMITS[0]||{}).price||5;
   real.classList.toggle('done',S.stakes);

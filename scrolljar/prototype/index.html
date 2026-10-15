@@ -170,12 +170,21 @@
   <div class="screen on" id="s-home">
     <div class="heroPanel">
       <div class="d1">
-        <div class="eyebrow">DAY 1</div>
-        <div class="display" style="font-size:32px;letter-spacing:-.035em;line-height:1.05;margin-top:8px" id="d1Title">Your shield is on.</div>
-        <div class="sub" style="margin-top:8px"><span id="d1Apps">Your apps are</span> shielded<span id="d1When"></span>. The hours you take back will show up here, starting today.</div>
+        <div class="spread"><div class="eyebrow">DAY 1 · DEAL SEALED</div><span class="d1Seal" id="d1Seal" aria-hidden="true"><svg width="18" height="18"><use href="#i-shield"/></svg></span></div>
+        <div class="display d1Head" id="d1Title">Your shield is on.</div>
+        <div class="d1DealCard" role="button" tabindex="0" aria-label="See or edit your deal" onclick="openDeal(0)" onkeydown="if(event.key==='Enter')openDeal(0)">
+        <div class="d1Live" id="d1Live"><span class="d1Dot"></span><span id="d1LiveTxt">Shield on now</span></div>
+        <div class="d1Deal">
+          <div class="d1Row"><svg width="15" height="15"><use href="#i-app"/></svg><span id="d1What">Your apps</span></div>
+          <div class="d1Row"><svg width="15" height="15"><use href="#i-clock"/></svg><span id="d1WhenRow">All day, every day</span></div>
+          <div class="d1Row" id="d1ForRow"><svg width="15" height="15"><use href="#i-heart"/></svg><span id="d1For"></span></div>
+        </div>
+        <div class="d1Edit">See or change your deal <span aria-hidden="true">›</span></div>
+        </div>
+        <div class="eyebrow" style="margin-top:16px">YOUR FIRST DAY · <span id="d1Count">1 OF 3</span></div>
         <div class="d1Steps">
-          <div class="d1Step done"><span class="d1Tick"></span><div><b>Shield your apps</b><span>done, just now</span></div></div>
-          <div class="d1Step" id="d1Pause"><span class="d1Tick"></span><div><b>Meet the pause</b><span>when the pull comes, you get a breath, not a lecture</span></div></div>
+          <div class="d1Step done" role="button" tabindex="0" onclick="openDeal(0)"><span class="d1Tick"></span><div><b>Shield your apps</b><span>done, just now · tap to see your deal</span></div><span class="d1Go">›</span></div>
+          <div class="d1Step" id="d1Pause" role="button" tabindex="0" onclick="showShield()"><span class="d1Tick"></span><div><b>Meet the pause</b><span>when the pull comes, you get a breath, not a lecture · try it now</span></div><span class="d1Go">›</span></div>
           <div class="d1Step" id="d1Real" role="button" tabindex="0" onclick="openReal()"><span class="d1Tick"></span><div><b id="d1RealTitle">Make it real, from day 3</b><span>if you want: a coin you price yourself, 100% to charity</span></div><span class="d1Go">›</span></div>
         </div>
         <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
