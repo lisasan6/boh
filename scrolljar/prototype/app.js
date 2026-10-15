@@ -36,14 +36,17 @@ function go(s){
 function closeOv(id){$(id).classList.remove('on')}
 
 /* ── onboarding ── */
+/* one counter for the whole setup: 2 intro screens, picking apps, then the 3 questions of the first deal */
+const OB_STEPS=6;
+const obProg=(n,label='')=>`<div class="obProg" role="progressbar" aria-valuemin="1" aria-valuemax="${OB_STEPS}" aria-valuenow="${n}" aria-label="Step ${n} of ${OB_STEPS}"><div class="obSegs">${Array.from({length:OB_STEPS},(_,i)=>`<i${i<n?' class="on"':''}></i>`).join('')}</div><span>${n} of ${OB_STEPS}${label?' · '+label:''}</span></div>`;
 let oi=0;
-$('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===0?18:7}px;height:7px;border-radius:99px;background:${i===0?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
+$('onbProg').innerHTML=obProg(1); $('prepermProg').innerHTML=obProg(3,'your apps');
 function onbNext(){
-  if(oi===3){$('ov-preperm').classList.add('on');return}
+  if(oi===1){$('ov-preperm').classList.add('on');return}
   oi++;
   document.querySelectorAll('.onb').forEach(s=>s.style.display=(+s.dataset.i===oi)?'block':'none');
-  $('onbDots').innerHTML=[0,1,2,3].map(i=>`<span style="width:${i===oi?18:7}px;height:7px;border-radius:99px;background:${i===oi?'var(--mint)':'var(--line)'};display:inline-block"></span>`).join('');
-  $('onbBtn').textContent = oi===3 ? 'Shield my apps' : 'Next';
+  $('onbProg').innerHTML=obProg(oi+1);
+  $('onbBtn').textContent = oi===1 ? 'Shield my apps' : 'Next';
 }
 /* Skip only skips the intro: you still pick your apps, because nothing is shielded until you do */
 function skipIntro(){ $('ov-preperm').classList.add('on'); }
@@ -337,7 +340,32 @@ function pickDone(){
 const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
 const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
 const FEEL_CHIPS=['flat','tired','restless','a bit empty','annoyed','like the day slipped away','fine, honestly'];
-const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:''};
+const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false};
+/* say it instead: on the phone, speech is turned into text and understood on-device, the answers are
+   filled in for the user to confirm, and the recording is deleted at once. Here the voice is simulated. */
+const VOICE_DEMO=[
+  {say:'Mostly in bed when I wake up, and then late at night, like after eleven.',
+   apply(){ FIRST.scheds=['mornings']; FIRST.mine=true; FIRST.from='23:00'; FIRST.to='01:00'; }},
+  {say:'Kind of empty, honestly. And a bit annoyed that the evening just went.',
+   apply(){ FIRST.feels=['a bit empty','annoyed','like the day slipped away']; FIRST.feelOwn=''; }},
+  {say:'I want to read more, and actually get some sleep. And play the guitar again.',
+   apply(){ FIRST.fors=['sleep','reading']; FIRST.own='playing the guitar'; }}];
+let micTimer=null;
+function firstMic(){
+  clearTimeout(micTimer);
+  if(FIRST.rec){ firstHeard(); return; }
+  FIRST.rec=true; renderFirst(); micTimer=setTimeout(firstHeard,3200);
+}
+function firstHeard(){ clearTimeout(micTimer); FIRST.rec=false; const v=VOICE_DEMO[FIRST.step]; v.apply(); FIRST.heard[FIRST.step]=v.say; renderFirst(); }
+function micArea(){
+  if(FIRST.rec) return `<button class="firstMic rec" onclick="firstMic()" aria-label="Stop recording"><span class="micWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Listening… tap when you're done</button>`;
+  const h=FIRST.heard[FIRST.step];
+  if(h) return `<div class="firstHeard"><div class="eyebrow">YOU SAID</div><div class="q">“${esc(h)}”</div>
+      <div class="tiny">We've filled it in below. Change anything that's off.</div>
+      <button class="firstMicAgain" onclick="firstMic()"><svg width="13" height="13"><use href="#i-mic"/></svg>Say it again</button></div>`;
+  return `<button class="firstMic" onclick="firstMic()"><svg width="16" height="16"><use href="#i-mic"/></svg>Say it instead</button>
+    <div class="tiny firstPriv">Understood on your phone. The recording is deleted straight away.</div>`;
+}
 /* when: several windows can be picked; "all day" stands alone */
 const WHEN_SHORT={mornings:'in the morning (6–10am)',work:'during work (9am–5pm, weekdays)',evenings:'at night (9pm–7am)',weekend:'at the weekend'};
 const listAnd=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||'');
@@ -360,18 +388,19 @@ const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
   return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
 const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
-function openFirst(){ Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
+function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
   return `<b>${esc(n)}</b> shielded ${whenSay()||SCHED_SAY.always}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
 }
 function renderFirst(){
   const B=$('firstBody'), F=$('firstFoot'), many=pickedName(pick).many;
-  $('firstKicker').textContent=`YOUR FIRST DEAL · ${FIRST.step+1} OF 3`;
+  $('firstKicker').innerHTML=obProg(FIRST.step+4,'your first deal');
   $('firstBack').style.visibility=FIRST.step?'visible':'hidden';
   if(FIRST.step===0){
     B.innerHTML=`<div class="display firstQ">When does scrolling<br>get you?</div>
       <div class="sub">Pick as many as you like. ${many?'Those apps':'That app'} will be shielded then, and you can change it any time.</div>
+      ${micArea()}
       <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.scheds.includes(k)?' on':''}" aria-pressed="${FIRST.scheds.includes(k)}" onclick="firstWhen('${k}')"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}
         <button class="firstOpt${FIRST.mine?' on':''}" aria-pressed="${FIRST.mine}" onclick="firstWhen('mine')"><b>My own times</b><span>${FIRST.mine?hm(FIRST.from)+'–'+hm(FIRST.to)+', every day':'pick a window'}</span></button>
         ${FIRST.mine?`<div class="firstTimes"><input class="timeIn" type="time" value="${FIRST.from}" aria-label="From" onchange="FIRST.from=this.value;renderFirst()"><span>to</span><input class="timeIn" type="time" value="${FIRST.to}" aria-label="To" onchange="FIRST.to=this.value;renderFirst()"></div>`:''}</div>`;
@@ -379,6 +408,7 @@ function renderFirst(){
   } else if(FIRST.step===1){
     B.innerHTML=`<div class="display firstQ">When you look up and the time has gone, how do you feel?</div>
       <div class="sub">Pick as many as you like. It stays on your phone.</div>
+      ${micArea()}
       <div class="firstChips">${FEEL_CHIPS.map(c=>`<span class="chip${FIRST.feels.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.feels.includes(c)}" data-set="feels" data-k="${c}" onclick="firstChip('feels','${c}')">${c}</span>`).join('')}</div>
       <input class="timeIn" maxlength="40" placeholder="or in your own words" aria-label="How you feel, in your own words" value="${esc(FIRST.feelOwn)}" oninput="FIRST.feelOwn=this.value;firstUpdate()">
       <div class="firstSay" id="firstFeelSay">${feelSay()}</div>`;
@@ -386,6 +416,7 @@ function renderFirst(){
   } else {
     B.innerHTML=`<div class="display firstQ">What would you rather<br>do with that time?</div>
       <div class="sub">Pick as many as you like. If you reach for a shielded app, ScrollJar will suggest them instead.</div>
+      ${micArea()}
       <div class="firstChips">${FOR_CHIPS.map(c=>`<span class="chip${FIRST.fors.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.fors.includes(c)}" data-set="fors" data-k="${c}" onclick="firstChip('fors','${c}')">${c}</span>`).join('')}</div>
       <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${esc(FIRST.own)}" oninput="FIRST.own=this.value;firstUpdate()">
       <div class="card firstDeal"><div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div id="firstLine">${firstSentence()}</div>

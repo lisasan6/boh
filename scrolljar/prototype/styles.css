@@ -685,3 +685,22 @@ body[data-stage="new"] .wk3{display:none!important}
 .firstChips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
 .firstDeal{margin-top:14px;font-size:14px;line-height:1.45}
 .firstSay{margin-top:14px;font-size:13.5px;line-height:1.5;color:var(--ink-2);min-height:40px}
+.firstMic{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:14px;border-radius:14px;border:1px dashed rgba(55,226,192,.55);background:rgba(55,226,192,.07);color:var(--mint);font:700 13.5px/1 'Inter',sans-serif;cursor:pointer}
+.firstMic.rec{border-style:solid;background:rgba(55,226,192,.14)}
+.firstPriv{text-align:center;margin-top:6px}
+.micWave{display:inline-flex;align-items:center;gap:2.5px;height:16px}
+.micWave i{width:3px;height:6px;border-radius:2px;background:var(--mint);animation:micWave .9s ease-in-out infinite}
+.micWave i:nth-child(2){animation-delay:-.2s}.micWave i:nth-child(3){animation-delay:-.45s}.micWave i:nth-child(4){animation-delay:-.1s}.micWave i:nth-child(5){animation-delay:-.6s}
+@keyframes micWave{50%{height:16px}}
+@media(prefers-reduced-motion:reduce){.micWave i{animation:none;height:10px}}
+.firstHeard{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line)}
+.firstHeard .q{font-size:13.5px;line-height:1.45;margin:5px 0 6px;font-style:italic}
+.firstMicAgain{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--mint);font:700 12px/1 'Inter',sans-serif;cursor:pointer}
+/* onboarding progress: the same counter on every screen of ours */
+.obTop{position:absolute;top:24px;left:22px;right:22px}
+.obProg{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%}
+.obSegs{display:flex;gap:4px;width:100%;max-width:240px}
+.obSegs i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.obSegs i.on{background:var(--mint)}
+.obProg span{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.firstProg{flex:1;margin:0 6px}

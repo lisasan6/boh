@@ -861,30 +861,22 @@
 
   <!-- ══ ONBOARDING ══ -->
   <div class="ov on" id="ov-onb" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:40px 26px">
+    <div class="obTop" id="onbProg"></div>
     <div id="onbSlides" style="width:100%">
       <div class="onb" data-i="0">
         <svg width="60" height="60" style="color:var(--peach);filter:drop-shadow(0 0 18px rgba(255,158,122,.5))"><use href="#i-hourglass"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Some apps<br>drink your time.</div>
         <div class="sub">Watching what you love is fine. Autopilot isn't. ScrollJar helps you keep the deals you make with yourself.</div>
+        <div class="tiny" style="margin-top:14px">6 quick steps · about a minute</div>
       </div>
       <div class="onb" data-i="1" style="display:none">
         <svg width="60" height="60" style="color:var(--chrome-1);filter:drop-shadow(0 0 18px rgba(168,184,200,.45))"><use href="#i-jar"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">A swear jar,<br>for scrolling.</div>
-        <div class="sub">When you're ready, you set the price of breaking your own deal. Open anyway, and a coin drops in the jar. Your choice, your price.</div>
-      </div>
-      <div class="onb" data-i="2" style="display:none">
-        <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
-        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">We never keep<br>your money.</div>
-        <div class="sub">Every month the jar tips out — 100% to the charity you chose. Even an hour that got away from you does some good.</div>
-      </div>
-      <div class="onb" data-i="3" style="display:none">
-        <svg width="58" height="58" style="color:var(--mint);filter:drop-shadow(0 0 20px rgba(55,226,192,.6))"><use href="#i-bolt"/></svg>
-        <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">Blocked in<br>two minutes.</div>
-        <div class="sub">Pick your apps, we shield them. No card, no account wall — stakes come later, only if you want them.</div>
+        <div class="sub">When you're ready, you price your own deal. Open a shielded app anyway and a coin drops in the jar. Each month, 100% goes to a charity you choose. <b>We never keep your money.</b></div>
       </div>
     </div>
-    <div style="display:flex;gap:6px;justify-content:center;margin:22px 0" id="onbDots"></div>
-    <button class="btn chrome" style="max-width:250px" id="onbBtn" onclick="onbNext()">Next</button>
+
+    <button class="btn chrome" style="max-width:250px;margin-top:26px" id="onbBtn" onclick="onbNext()">Next</button>
     <div class="tiny" style="margin-top:12px;cursor:pointer" onclick="skipIntro()">Skip</div>
   </div>
 
@@ -1158,6 +1150,7 @@
 
   <!-- ══ ONBOARDING · why we need Screen Time (our screen, before Apple's) ══ -->
   <div class="ov" id="ov-preperm" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <div class="obTop" id="prepermProg"></div>
     <svg width="54" height="54" style="color:var(--mint);filter:drop-shadow(0 0 18px rgba(55,226,192,.5))"><use href="#i-shield"/></svg>
     <div class="display" style="font-size:24px;margin:16px 0 10px;line-height:1.15">Next, Apple asks for<br>Screen Time access.</div>
     <div class="sub">That's what lets ScrollJar shield apps at the system level, the same way parental controls do.</div>
@@ -1204,7 +1197,7 @@
 
   <!-- ══ ONBOARDING · your first deal: when it gets you, and what the time is for ══ -->
   <div class="ov" id="ov-first" style="background:var(--scr-bg);padding:22px 18px 92px">
-    <div class="firstTop"><button class="firstBack" id="firstBack" onclick="FIRST.step--;renderFirst()" aria-label="Back">‹</button><div class="eyebrow" id="firstKicker">YOUR FIRST DEAL · 1 OF 2</div><span></span></div>
+    <div class="firstTop"><button class="firstBack" id="firstBack" onclick="clearTimeout(micTimer);FIRST.rec=false;FIRST.step--;renderFirst()" aria-label="Back">‹</button><div id="firstKicker" class="firstProg"></div><span></span></div>
     <div id="firstBody" class="firstBody"></div>
     <div style="position:absolute;left:17px;right:17px;bottom:22px" id="firstFoot"></div>
   </div>
