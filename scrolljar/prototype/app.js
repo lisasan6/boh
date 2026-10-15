@@ -317,11 +317,9 @@ function togglePickApp(i){ if(pick.cats.has('Social')){ pick.cats.delete('Social
 function togglePickOpen(c){ pick.open.has(c)?pick.open.delete(c):pick.open.add(c); renderPicker(); }
 function pickDone(){
   if(!pickCount()) return;
-  const parts=[]; if(pick.apps.size) parts.push(pick.apps.size+' app'+(pick.apps.size>1?'s':''));
-  if(pick.cats.size) parts.push(pick.cats.size+' categor'+(pick.cats.size>1?'ies':'y'));
   closeOv('ov-picker'); closeOv('ov-preperm'); $('ov-onb').classList.remove('on');
   setStage('new');
-  toast(parts.join(' and ')+' shielded. Try opening one.');
+  toast($('d1Apps').textContent+' shielded. Try opening one.');
 }
 
 /* ── day ~3: "want to make it real?" — stakes, charity, card. Real coins are free; Plus is optional. ── */
@@ -528,12 +526,13 @@ function openWindow(coin){
 }
 function endWindow(){
   clearInterval(winT);closeOv('ov-window');go('home');
-  setTimeout(()=>{ $('moodBefore').textContent = pullState==='strong'?'pulled hard':(pullState==='itchy'?'itchy':'tired'); $('ov-mood').classList.add('on'); }, 500);
+  setTimeout(()=>$('ov-mood').classList.add('on'), 500);
 }
 function logMood(k,label){
   MOODLOG.unshift({k,when:'just now'});
   closeOv('ov-mood'); renderMoodLedger();
-  if(k==='worse') toast('Noted. That\'s the eighth time out of ten — worth knowing.');
+  const L=MOODLOG.slice(0,10), w=L.filter(m=>m.k==='worse').length;
+  if(k==='worse') toast(L.length<5 ? 'Noted. A few more answers and you\'ll see whether it actually helps.' : `Noted. Worse ${w} times out of your last ${L.length} — worth knowing.`);
   else if(k==='better') toast('Noted. Sometimes it genuinely helps — that counts too.');
   else toast('Noted. Fifteen minutes, no change.');
 }
@@ -1164,6 +1163,7 @@ const MOODC={better:'var(--mint)',same:'var(--ink-3)',worse:'var(--peach)'};
 const MOODH={better:34,same:22,worse:34};
 function renderMoodLedger(){
   const L=MOODLOG.slice(0,10);
+  if(!L.length){ $('moodLedger').innerHTML=''; $('ledgerHead').textContent='No answers yet. After you open an app anyway, we ask how it felt.'; return; }
   $('moodLedger').innerHTML=L.map(m=>`<div style="height:${MOODH[m.k]}px;background:${MOODC[m.k]};opacity:${m.k==='same'?.45:.9}"></div>`).join('');
   const w=L.filter(m=>m.k==='worse').length;
   $('ledgerHead').innerHTML=`You've felt <b>${w>=L.length/2?'worse':'mixed'}</b> after ${w} of your last ${L.length} sessions.`;
@@ -1264,7 +1264,6 @@ function renderEntries(){
     <div style="font-size:13px;font-weight:600;line-height:1.5">${e.b}</div>
     ${e.at?`<div class="tiny" style="margin-top:6px">${e.at}</div>`:''}</div>`).join('');
 }
-let pullState=null;
 let entryKind='free';
 function openEntry(kind){
   entryKind=kind;
@@ -1892,7 +1891,7 @@ setInterval(()=>{const {svg}=liveJar();if(!document.hidden&&Math.random()<.4&&!s
 /* ── day one vs three weeks in ──
    After setup the app is honest about being new: no hours yet, an empty jar, free openings until
    "Make it real", nobody on the Board, nothing in the Diary. The demo can switch back to week 3. */
-SNAP={coins:COINS.map(c=>({...c})),feed:FEED.map(f=>({...f})),entries:ENTRIES.map(e=>({...e})),commits:COMMITS.map(c=>({...c}))};
+SNAP={coins:COINS.map(c=>({...c})),feed:FEED.map(f=>({...f})),entries:ENTRIES.map(e=>({...e})),commits:COMMITS.map(c=>({...c})),moods:MOODLOG.map(m=>({...m}))};
 function setStage(st){
   S.stage=st; document.body.dataset.stage=st;
   $('stD1').classList.toggle('on',st==='new'); $('stW3').classList.toggle('on',st==='wk3');
@@ -1900,13 +1899,13 @@ function setStage(st){
   document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
   if(st==='new'){
     S.stakes=false; S.firstResist=false;
-    put(COINS,[]); put(FEED,[]); put(ENTRIES,[]);
+    put(COINS,[]); put(FEED,[]); put(ENTRIES,[]); put(MOODLOG,[]);
     put(COMMITS,[{g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'Your first deal',sched:'always',price:5,forWhat:''}]);
     $('d1Pause').classList.remove('done');
   } else {
-    S.stakes=true; put(COINS,SNAP.coins); put(FEED,SNAP.feed); put(ENTRIES,SNAP.entries); put(COMMITS,SNAP.commits);
+    S.stakes=true; put(COINS,SNAP.coins); put(FEED,SNAP.feed); put(ENTRIES,SNAP.entries); put(COMMITS,SNAP.commits); put(MOODLOG,SNAP.moods);
   }
-  renderCommits(); renderFeed(); renderEntries(); renderJar();
+  renderCommits(); renderFeed(); renderEntries(); renderJar(); renderMoodLedger();
   go('home'); $('s-home').scrollTop=0;
 }
 function d1Done(id){ const el=$(id); if(el&&S.stage==='new') el.classList.add('done'); }

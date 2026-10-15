@@ -859,7 +859,7 @@
       <div class="onb" data-i="1" style="display:none">
         <svg width="60" height="60" style="color:var(--chrome-1);filter:drop-shadow(0 0 18px rgba(168,184,200,.45))"><use href="#i-jar"/></svg>
         <div class="display" style="font-size:27px;margin:16px 0 10px;line-height:1.1">A swear jar,<br>for scrolling.</div>
-        <div class="sub">You set the price of breaking your own deal. Open anyway? A coin drops in the jar. Your choice, your price.</div>
+        <div class="sub">When you're ready, you set the price of breaking your own deal. Open anyway, and a coin drops in the jar. Your choice, your price.</div>
       </div>
       <div class="onb" data-i="2" style="display:none">
         <svg width="58" height="58" style="color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
@@ -918,7 +918,7 @@
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px" id="promptChips"></div>
       <button class="btn calm" style="margin-top:11px" onclick="closeOv('ov-instead');openEntry('impulse')">Write it</button>
     </div>
-    <button class="btn ghost" style="margin-top:6px;border-color:var(--calm-soft);color:var(--calm)" id="wobEntryBtn" onclick="openWobble()">Ask someone to sit with me</button>
+    <button class="btn ghost wk3" style="margin-top:6px;border-color:var(--calm-soft);color:var(--calm)" id="wobEntryBtn" onclick="openWobble()">Ask someone to sit with me</button>
     <button class="btn ghost" style="margin-top:6px" onclick="closeOv('ov-instead');resist()">None of it — I'll stay committed</button>
     <button class="btn ghost" style="margin-top:9px;opacity:.75" onclick="closeOv('ov-instead');showOverride()">Still want in</button>
   </div>
@@ -946,7 +946,7 @@
     <div class="display" style="font-size:22px;margin:14px 0 8px" id="winTitle">Coin dropped. Enjoy it.</div>
     <div class="sub" style="max-width:230px" id="winSub">Your $5 is on its way to <span class="charityName">Doctors Without Borders</span>.</div>
     <div class="display num" style="font-size:40px;margin:20px 0;color:var(--gold-text)" id="winTimer">14:59</div>
-    <button class="btn ghost" style="max-width:230px" onclick="endWindow()">Done early — back to the jar</button>
+    <button class="btn ghost" style="max-width:230px" onclick="endWindow()">I'm done early</button>
   </div>
 
   <!-- ══ TIP-OUT ══ -->
@@ -1059,7 +1059,7 @@
       <button class="ovClose inSheet" aria-label="Close" onclick="closeOv('ov-mood')">✕</button>
       <div class="eyebrow">YOU'RE BACK · 15 MINUTES</div>
       <div class="display" style="font-size:20px;margin:8px 0 6px">How do you feel now?</div>
-      <div class="sub">Before you went in, you said you felt <b id="moodBefore">tired</b>.</div>
+      <div class="sub">Compared with before you went in: better, the same, or worse?</div>
       <div style="display:flex;gap:7px;margin:14px 0">
         <div class="pullChip" onclick="logMood('better','Better')">Better</div>
         <div class="pullChip" onclick="logMood('same','About the same')">The same</div>
