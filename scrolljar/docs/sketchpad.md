@@ -75,6 +75,7 @@
 - The world is turning our way (courts + parliaments; dossier). "A jury said it. Governments are acting on it. Now it's your turn."
 - Vibe pillars: all positive **but smart** · **science-based** · **inspirational** · **good dopamine**.
 - **You can always choose distraction. It just shouldn't be free.** · **We never keep your money.** · Reclamation, not restriction. · **We refuse to steal attention.** · Cold blood, warm moments.
+- **Limit, don't censor (L, 2026-10-15, for creator outreach).** *"We understand that they live thanks to those apps we want to limit. That's the point: we want to limit them, not censor them, to a level of use where the person chooses actively what to put their attention to, so they may still want to watch that influencer's (and others') content because they choose to. What we want to limit is mindless, automatic doom scrolling. It's like watching whatever is on TV versus choosing a film or a series on an on-demand platform. There's nothing wrong with entertainment; there's a lot wrong with zombie scrolling."* Pitch line for creators: *"We're not trying to get people off your content. We're getting them off autopilot, so when they watch you, they chose to."*
 - **We never speak in a friend's voice.** If your people haven't left words, you get your own back — not ours dressed up as theirs. *(2026-07-30, from the Wobble design.)*
 
 ## 🏢 ScrollJar for Teams — PIVOT 3: candidate main revenue stream
