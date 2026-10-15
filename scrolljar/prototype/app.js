@@ -36,17 +36,17 @@ function go(s){
 function closeOv(id){$(id).classList.remove('on')}
 
 /* ── onboarding ── */
-/* one counter for the whole setup: 2 intro screens, picking apps, then the 3 questions of the first deal */
-const OB_STEPS=6;
+/* one counter for the whole setup: 4 intro screens, picking apps, then the 3 questions of the first deal */
+const OB_STEPS=8;
 const obProg=(n,label='')=>`<div class="obProg" role="progressbar" aria-valuemin="1" aria-valuemax="${OB_STEPS}" aria-valuenow="${n}" aria-label="Step ${n} of ${OB_STEPS}"><div class="obSegs">${Array.from({length:OB_STEPS},(_,i)=>`<i${i<n?' class="on"':''}></i>`).join('')}</div><span>${n} of ${OB_STEPS}${label?' · '+label:''}</span></div>`;
 let oi=0;
-$('onbProg').innerHTML=obProg(1); $('prepermProg').innerHTML=obProg(3,'your apps');
+$('onbProg').innerHTML=obProg(1); $('prepermProg').innerHTML=obProg(5,'your apps');
 function onbNext(){
-  if(oi===1){$('ov-preperm').classList.add('on');return}
+  if(oi===3){$('ov-preperm').classList.add('on');return}
   oi++;
   document.querySelectorAll('.onb').forEach(s=>s.style.display=(+s.dataset.i===oi)?'block':'none');
   $('onbProg').innerHTML=obProg(oi+1);
-  $('onbBtn').textContent = oi===1 ? 'Shield my apps' : 'Next';
+  $('onbBtn').textContent = oi===3 ? 'Shield my apps' : 'Next';
 }
 /* Skip only skips the intro: you still pick your apps, because nothing is shielded until you do */
 function skipIntro(){ $('ov-preperm').classList.add('on'); }
@@ -340,7 +340,15 @@ function pickDone(){
 const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
 const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
 const FEEL_CHIPS=['flat','tired','restless','a bit empty','annoyed','like the day slipped away','fine, honestly'];
-const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false};
+const WEEK=[['M','Mon','Monday'],['T','Tue','Tuesday'],['W','Wed','Wednesday'],['T','Thu','Thursday'],['F','Fri','Friday'],['S','Sat','Saturday'],['S','Sun','Sunday']];
+/* the days of "my own times" in plain words: every day, weekdays, weekends, Mon–Thu, or Mon, Wed and Fri */
+function dayWords(d){
+  const on=d.map((x,i)=>x?i:-1).filter(i=>i>=0), k=on.join('');
+  if(on.length===7) return 'every day'; if(k==='01234') return 'weekdays'; if(k==='56') return 'weekends';
+  const runs=[]; on.forEach(i=>{ const r=runs[runs.length-1]; r&&r[1]===i-1?r[1]=i:runs.push([i,i]); });
+  return listAnd(runs.flatMap(([a,b])=>b-a>=2?[WEEK[a][1]+'–'+WEEK[b][1]]:b>a?[WEEK[a][1],WEEK[b][1]]:[WEEK[a][1]]));
+}
+const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false};
 /* say it instead: on the phone, speech is turned into text and understood on-device, the answers are
    filled in for the user to confirm, and the recording is deleted at once. Here the voice is simulated. */
 const VOICE_DEMO=[
@@ -371,10 +379,13 @@ const WHEN_SHORT={mornings:'in the morning (6–10am)',work:'during work (9am–
 const listAnd=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||'');
 function whenParts(){
   const p=WHEN.filter(([k])=>FIRST.scheds.includes(k)).map(([k])=>({k,label:SCHED_LABEL[k],say:SCHED_SAY[k],short:WHEN_SHORT[k]}));
-  if(FIRST.mine){ const w=`${hm(FIRST.from)}–${hm(FIRST.to)}`; p.push({k:'mine',label:w,say:'every day, '+w,short:`from ${hm(FIRST.from)} to ${hm(FIRST.to)}`}); }
+  if(FIRST.mine){ const w=`${hm(FIRST.from)}–${hm(FIRST.to)}`, d=dayWords(FIRST.days), all=d==='every day';
+    p.push({k:'mine',label:all?w:`${w} ${d}`,say:(all?'every day':'on '+d)+', '+w,short:`from ${hm(FIRST.from)} to ${hm(FIRST.to)}${all?'':' on '+d}`}); }
   return p;
 }
 const whenSay=()=>{ const p=whenParts(); return p.length===1?p[0].say:listAnd(p.map(x=>x.short)); };
+/* a window always keeps at least one day */
+function firstDay(i){ if(FIRST.days[i]&&FIRST.days.filter(Boolean).length===1) return; FIRST.days[i]=FIRST.days[i]?0:1; renderFirst(); }
 function firstWhen(k){
   if(k==='always'){ FIRST.scheds=FIRST.scheds.includes('always')?[]:['always']; FIRST.mine=false; }
   else { FIRST.scheds=FIRST.scheds.filter(x=>x!=='always');
@@ -388,22 +399,23 @@ const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
   return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
 const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
-function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false}); renderFirst(); $('ov-first').classList.add('on'); }
+function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
   return `<b>${esc(n)}</b> shielded ${whenSay()||SCHED_SAY.always}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
 }
 function renderFirst(){
   const B=$('firstBody'), F=$('firstFoot'), many=pickedName(pick).many;
-  $('firstKicker').innerHTML=obProg(FIRST.step+4,'your first deal');
+  $('firstKicker').innerHTML=obProg(FIRST.step+6,'your first deal');
   $('firstBack').style.visibility=FIRST.step?'visible':'hidden';
   if(FIRST.step===0){
     B.innerHTML=`<div class="display firstQ">When does scrolling<br>get you?</div>
       <div class="sub">Pick as many as you like. ${many?'Those apps':'That app'} will be shielded then, and you can change it any time.</div>
       ${micArea()}
       <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.scheds.includes(k)?' on':''}" aria-pressed="${FIRST.scheds.includes(k)}" onclick="firstWhen('${k}')"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}
-        <button class="firstOpt${FIRST.mine?' on':''}" aria-pressed="${FIRST.mine}" onclick="firstWhen('mine')"><b>My own times</b><span>${FIRST.mine?hm(FIRST.from)+'–'+hm(FIRST.to)+', every day':'pick a window'}</span></button>
-        ${FIRST.mine?`<div class="firstTimes"><input class="timeIn" type="time" value="${FIRST.from}" aria-label="From" onchange="FIRST.from=this.value;renderFirst()"><span>to</span><input class="timeIn" type="time" value="${FIRST.to}" aria-label="To" onchange="FIRST.to=this.value;renderFirst()"></div>`:''}</div>`;
+        <button class="firstOpt${FIRST.mine?' on':''}" aria-pressed="${FIRST.mine}" onclick="firstWhen('mine')"><b>My own times</b><span>${FIRST.mine?hm(FIRST.from)+'–'+hm(FIRST.to)+', '+dayWords(FIRST.days):'pick a window'}</span></button>
+        ${FIRST.mine?`<div class="firstTimes"><input class="timeIn" type="time" value="${FIRST.from}" aria-label="From" onchange="FIRST.from=this.value;renderFirst()"><span>to</span><input class="timeIn" type="time" value="${FIRST.to}" aria-label="To" onchange="FIRST.to=this.value;renderFirst()"></div>
+          <div class="firstDays" role="group" aria-label="Days">${WEEK.map(([l,,full],i)=>`<button class="${FIRST.days[i]?'on':''}" aria-pressed="${!!FIRST.days[i]}" aria-label="${full}" onclick="firstDay(${i})">${l}</button>`).join('')}</div>`:''}</div>`;
     F.innerHTML=`<button class="btn chrome" ${FIRST.scheds.length||FIRST.mine?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
   } else if(FIRST.step===1){
     B.innerHTML=`<div class="display firstQ">When you look up and the time has gone, how do you feel?</div>

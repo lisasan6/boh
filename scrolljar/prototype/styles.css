@@ -682,6 +682,9 @@ body[data-stage="new"] .wk3{display:none!important}
 .firstOpt.on span{color:var(--mint)}
 .firstTimes{display:flex;align-items:center;gap:8px;padding:2px 2px 4px}
 .firstTimes span{font-size:12px;color:var(--ink-3)}
+.firstDays{display:flex;gap:5px;padding:0 2px 4px}
+.firstDays button{flex:1;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-3);font:800 12px/1 'Inter',sans-serif;cursor:pointer}
+.firstDays button.on{border-color:var(--mint);background:rgba(55,226,192,.14);color:var(--mint)}
 .firstChips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
 .firstDeal{margin-top:14px;font-size:14px;line-height:1.45}
 .firstSay{margin-top:14px;font-size:13.5px;line-height:1.5;color:var(--ink-2);min-height:40px}
