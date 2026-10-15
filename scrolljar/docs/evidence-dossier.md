@@ -3,6 +3,16 @@
 **"Let's dismantle this intrusive and manipulative system." — the receipts.**
 Compiled July 26, 2026. Three parts: the legal record, the global regulatory map, the science. For the manifesto, press kit, investor deck, and in-app "why this works" notes.
 
+> ⚠️ **Re-verify before using Parts 1–2 publicly (October 2026).** A search in October turned up leads that may change several July entries. They come from search snippets only (the sources couldn't be opened from the cloud environment), so treat them as leads, not facts:
+> - **France:** the under-15 ban was reportedly struck down by the Conseil constitutionnel (Decision 2026-911 DC, 14 Aug 2026), so it is not "in force from September".
+> - **29 state AGs vs Meta:** the trial opened 18 Aug 2026 and reportedly ended in a proposed settlement on 26 Aug (sources say between $16.7B and $18B over 10 years, with product changes: default time limits, an overnight block, an independent auditor). Meta denies wrongdoing; check whether the court has approved it.
+> - **Breathitt County (MDL 3047):** reportedly settled in May 2026, not June; ~$27M total came out later via a records request; no admission of liability.
+> - **New Mexico:** the $375M verdict was 24 March 2026, a child-safety deception case under the Unfair Practices Act, not an "addictive design" verdict; Meta said it will appeal.
+> - **Australia counterpoint:** the ">8 in 10 teens still using" figure is reportedly from eSafety (Aug 2026), not Newcastle University; maximum penalty reportedly A$49.5M, not A$99M.
+> - **K.G.M.:** sources disagree on the damages split; both Meta and YouTube appealed in July 2026.
+> - **Florida:** a federal appeals court reportedly let Florida enforce its under-14 law (14 Oct 2026).
+> - The EU findings against TikTok (Feb 2026) and Meta (Jul 2026) are still **preliminary**; the "autopilot mode" quote needs checking against the Commission's release.
+
 **Honest-framing rule (use everywhere):** the LA verdict is on appeal and the EU findings are preliminary. Say: *"a jury found Meta and Google liable for negligently designing addictive platforms, and EU regulators have preliminarily found their design addictive"* — not "courts have settled the question."
 
 ---

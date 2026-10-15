@@ -241,6 +241,10 @@ section{padding-block:84px}
 .sc h3{font-size:16.5px;font-weight:700;margin:12px 0 6px}
 .sc p{color:var(--ink-2);font-size:14.5px}
 .sc cite{display:block;font-style:normal;font-size:12px;color:var(--ink-3);margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.sc cite a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.sc cite a:hover{color:var(--ink-2)}
+.sc .inapp{margin-top:10px;font-size:14px;color:var(--ink)}
+.sc .inapp b{color:var(--mint);font-weight:700}
 .whynow{max-width:960px;margin:18px auto 0;border-radius:18px;padding:16px 20px;display:flex;gap:14px;align-items:baseline;font-size:14.5px;color:var(--ink-2)}
 .whynow b{font-family:var(--font-display);font-size:22px;color:var(--ink);letter-spacing:-.03em;flex:none}
 .scnote{text-align:center;color:var(--ink-3);font-size:14.5px;margin:26px auto 0;max-width:640px}
@@ -440,3 +444,22 @@ footer{border-top:1px solid var(--line);padding-block:56px 46px;font-size:14.5px
 .nf{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:40px 20px;text-align:center}
 .nf .logo{margin-bottom:28px}
 .nf .sechead{margin-bottom:26px}
+
+/* sound familiar: moments of the day, drawn in the site's own colours, lit by the phone */
+.momentsWrap{position:relative;margin-top:6px}
+.moments{list-style:none;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 18px;scrollbar-width:none;overscroll-behavior-x:contain}
+.moments::-webkit-scrollbar{display:none}
+.moment{flex:0 0 min(300px,78vw);scroll-snap-align:start;border-radius:22px;padding:12px 12px 18px;background:var(--glass);border:1px solid var(--edge)}
+.scene{border-radius:14px;overflow:hidden;line-height:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.scene svg{width:100%;height:auto;display:block}
+.momQ{font-family:var(--font-display);font-weight:800;font-size:20px;letter-spacing:-.025em;line-height:1.15;margin:14px 6px 0}
+.momC{color:var(--ink-2);font-size:14.5px;margin:6px 6px 0}
+.momentsNav{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.mnav{width:42px;height:42px;border-radius:14px;border:1px solid var(--edge);background:var(--glass-2);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.mnav:hover{border-color:var(--mint)}
+.momentsLine{text-align:center;margin-top:26px;font-size:18px;font-weight:700}
+.scGlow{animation:scGlow 4.5s ease-in-out infinite}
+@keyframes scGlow{0%,100%{opacity:.85}50%{opacity:1}}
+.scCursor{animation:scCursor 1.1s steps(1,end) infinite}
+@keyframes scCursor{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.scGlow,.scCursor{animation:none}}
