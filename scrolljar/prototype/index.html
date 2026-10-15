@@ -390,32 +390,6 @@
         <button class="iconBtn" onclick="openEntry('free')" aria-label="Write an entry"><svg width="16" height="16"><use href="#i-pen"/></svg></button>
       </div>
     </div>
-    <div class="modeSeg" id="diaryMode">
-      <div class="on" onclick="setDiaryMode('both',this)">Both</div>
-      <div onclick="setDiaryMode('blank',this)">Blank page</div>
-      <div onclick="setDiaryMode('guided',this)">Guided</div>
-    </div>
-    <div class="tiny" id="diaryModeNote" style="margin:-4px 2px 12px">Prompts when you want them, an empty page when you don't.</div>
-
-    <div class="card">
-      <b style="font-size:13.5px">How's the pull right now?</b>
-      <div class="tiny" style="margin-top:3px">one tap — it teaches the app your weather</div>
-      <div style="display:flex;gap:7px;margin-top:11px">
-        <div class="pullChip" onclick="logPull(this,'calm','Calm')">Calm</div>
-        <div class="pullChip" onclick="logPull(this,'itchy','Itchy')">Itchy</div>
-        <div class="pullChip" onclick="logPull(this,'strong','Pulling hard')">Pulling hard</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="spread" style="margin-bottom:4px"><b style="font-size:13.5px">Does it actually help?</b>
-        <span class="tiny">your own answers</span></div>
-      <div class="sub" style="margin-bottom:11px" id="ledgerHead">You've felt <b>worse</b> after 7 of your last 10 sessions.</div>
-      <div class="ledger" id="moodLedger"></div>
-      <div class="ledgerKey"><span><i style="background:var(--mint)"></i>better</span><span><i style="background:var(--ink-3)"></i>same</span><span><i style="background:var(--peach)"></i>worse</span></div>
-      <div class="tiny" style="margin-top:10px">We ask before and after. Nobody's opinion involved — just yours, over time.</div>
-    </div>
-
     <div class="card">
       <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">Something to sit with</b>
         <span class="tiny" id="reflCount">1 of 6</span></div>
@@ -431,21 +405,6 @@
       </div>
     </div>
 
-    <div class="card" style="background:linear-gradient(150deg,rgba(255,158,122,.14),rgba(255,201,77,.1))">
-      <div class="row" style="gap:11px">
-        <div class="display num" style="font-size:30px;color:var(--peach)" id="detoxN">4</div>
-        <div style="flex:1"><b style="font-size:13px">times you've said "I need a detox"</b>
-          <div class="tiny" style="margin-top:3px">since March, by your own count. This is the first time you put a price on it.</div></div>
-      </div>
-      <button class="btn ghost" style="margin-top:11px" onclick="addDetox()">I said it again today</button>
-    </div>
-
-    <div class="card">
-      <div class="spread" style="margin-bottom:9px"><b style="font-size:13.5px">What this time is for</b>
-        <span class="pill chr" style="cursor:pointer" onclick="addGoal()">+ Goal</span></div>
-      <div id="goalList"></div>
-    </div>
-
     <div class="card" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
       <div class="spread"><div class="eyebrow">WEEKLY RECAP · SUNDAY</div><span class="pill mint">ready</span></div>
       <div class="display" style="font-size:16px;margin:9px 0 6px;line-height:1.3">Your week, in your own words</div>
@@ -453,11 +412,6 @@
       <button class="btn ghost" style="margin-top:12px" onclick="go('recap')">Read the recap</button>
     </div>
 
-    <div class="card spread" style="cursor:pointer" onclick="go('resources')">
-      <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-brain"/></svg>
-      <div><b style="font-size:13.5px">Why it's hard</b><div class="tiny">the mechanisms behind the pull, explained</div></div></div>
-      <span style="color:var(--ink-3)">›</span>
-    </div>
     <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Entries</div><span class="tiny">only you can read these</span></div>
     <div id="entryList"></div>
   </div>
@@ -480,6 +434,19 @@
       <b style="font-size:13.5px">Hours, next to feelings</b>
       <div class="bars" id="recapBars" style="height:78px"></div>
       <div class="tiny" style="margin-top:8px">Gold days are coin days. Notice they're the tired ones.</div>
+    </div>
+    <div class="card">
+      <div class="spread" style="margin-bottom:4px"><b style="font-size:13.5px">Does it actually help?</b>
+        <span class="tiny">your own answers</span></div>
+      <div class="sub" style="margin-bottom:11px" id="ledgerHead">You've felt <b>worse</b> after 7 of your last 10 sessions.</div>
+      <div class="ledger" id="moodLedger"></div>
+      <div class="ledgerKey"><span><i style="background:var(--mint)"></i>better</span><span><i style="background:var(--ink-3)"></i>same</span><span><i style="background:var(--peach)"></i>worse</span></div>
+      <div class="tiny" style="margin-top:10px">We ask after you open anyway. Nobody's opinion involved — just yours, over time.</div>
+    </div>
+    <div class="card spread" style="cursor:pointer" onclick="go('resources')">
+      <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-brain"/></svg>
+      <div><b style="font-size:13.5px">Why it's hard</b><div class="tiny">the mechanisms behind the pull, explained</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
     </div>
     <div class="card aiCard">
       <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Plus</span></div>
@@ -739,12 +706,14 @@
     </div>
     <div class="card">
       <div class="row" style="gap:12px">
-        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);width:44px;height:44px;border-radius:14px;font-size:15px">You</div>
-        <div style="flex:1"><b style="font-size:14px" id="profName">Luca</b>
-          <div class="tiny" id="profPronoun">they/them · shown as "themselves" in quiet posts</div></div>
+        <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);width:38px;height:38px;border-radius:12px;font-size:13px">You</div>
+        <div style="flex:1;min-width:0"><b style="font-size:14px" id="profName">Luca</b><div class="tiny">pronouns</div></div>
+        <span class="pill chr" id="profPronoun" role="button" tabindex="0" aria-expanded="false" style="cursor:pointer" onclick="togglePronouns()">they/them ›</span>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px" id="pronounChips"></div>
-      <div class="tiny" style="margin-top:9px">We use this so the app can talk about you correctly — "regained an hour for themselves".</div>
+      <div id="pronounBox" style="display:none">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px" id="pronounChips"></div>
+        <div class="tiny" style="margin-top:9px" id="pronounNote">So the app talks about you correctly: "regained an hour for themselves".</div>
+      </div>
     </div>
     <div class="card" id="workCard">
       <div class="spread">

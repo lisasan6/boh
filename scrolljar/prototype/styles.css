@@ -183,9 +183,6 @@ body[data-mode="day"] .heroPanel .winLine{background:linear-gradient(100deg,rgba
 .tipCard{background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(90,169,255,.1));border-color:rgba(139,124,246,.3)}
 .pullChip{flex:1;text-align:center;border:1px solid var(--line);background:var(--panel-2);border-radius:12px;padding:10px 6px;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:.15s}
 .pullChip.on{background:rgba(55,226,192,.16);border-color:var(--mint);color:var(--mint)}
-.goalRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
-.goalRow:last-child{border-bottom:none}
-.goalDot{width:9px;height:9px;border-radius:50%;flex:none}
 .entryCard{background:var(--panel);border:var(--card-bd);border-radius:16px;padding:13px;margin-bottom:9px;backdrop-filter:blur(10px);box-shadow:var(--card-sh)}
 .entryMeta{display:flex;align-items:center;gap:7px;margin-bottom:6px}
 .entryTag{font-size:9.5px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:3px 6px}

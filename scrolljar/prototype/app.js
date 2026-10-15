@@ -1166,16 +1166,7 @@ function answerReflection(){
   openEntry('feeling');
   setTimeout(()=>{ $('entryText').value=REFLECTIONS[reflIdx].q+'\n\n'; $('entryText').focus(); },120);
 }
-/* ── the detox counter ── */
-let detoxCount=4;
-function addDetox(){ detoxCount++; $('detoxN').textContent=detoxCount;
-  toast(detoxCount>=5?'Five times now. The difference is you did something about it.':'Counted. Saying it out loud is a start.'); }
 /* ── diary ── */
-const GOALS=[
-  {t:'Finish the novel',c:'var(--mint)',n:'4 times this week'},
-  {t:'Be present at dinner',c:'var(--peach)',n:'6 of 7 days'},
-  {t:'Sleep before midnight',c:'var(--violet)',n:'holding'},
-];
 const ENTRIES=[
   {tag:'voice',t:'Thursday, 11:05pm',voice:true,dur:48},
   {tag:'impulse',t:'Wednesday, 10:12pm',b:"Reached for it without deciding to. Wasn't even bored — just tired and looking for an off switch.",at:'written at a shield moment'},
@@ -1210,11 +1201,6 @@ function paintInstead(){
     <span style="color:var(--calm-soft)">›</span></div>`).join('')
     + (insteadMode==='fun' ? `<div class="tiny" style="text-align:center;margin:2px 0 12px;line-height:1.55">A film ends. An episode ends. A record ends.<br>That's the whole difference — not whether it's worthy.</div>` : '');
 }
-function renderGoals(){
-  $('goalList').innerHTML=GOALS.map(g=>`<div class="goalRow"><span class="goalDot" style="background:${g.c}"></span>
-    <div style="flex:1"><b style="font-size:12.5px">${g.t}</b><div class="tiny">${g.n}</div></div></div>`).join('');
-}
-function addGoal(){ const t=prompt('What is this time for?'); if(t&&t.trim()){ GOALS.unshift({t:t.trim(),c:'var(--blue)',n:'just set'}); renderGoals(); toast('Named. That\'s what the shield will remind you of.'); } }
 /* a fixed, gentle waveform per note: it's a picture of the recording, not an analysis of it */
 function waveBars(seed,n){
   let x=seed*9301+49297; const out=[];
@@ -1237,37 +1223,16 @@ function renderEntries(){
     ${e.at?`<div class="tiny" style="margin-top:6px">${e.at}</div>`:''}</div>`).join('');
 }
 let pullState=null;
-function logPull(el,k,label){
-  document.querySelectorAll('.pullChip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); pullState=k;
-  toast(k==='strong'?'Logged. Want to write a line about it?':'Logged. The app will remember the weather.');
-}
 let entryKind='free';
-let diaryMode='both';
-function setDiaryMode(m,el){
-  diaryMode=m;
-  el.parentElement.querySelectorAll('div').forEach(d=>d.classList.remove('on')); el.classList.add('on');
-  const notes={both:'Prompts when you want them, an empty page when you don\'t.',
-    blank:'No questions, no tags, no structure. Just the page.',
-    guided:'A question every time — and the app follows what you write.'};
-  $('diaryModeNote').textContent=notes[m];
-  document.querySelectorAll('#s-diary .card')[2].style.display = m==='blank' ? 'none' : '';
-  toast(m==='blank'?'Blank page it is.':m==='guided'?'Guided. We\'ll always open with a question.':'Both — you choose in the moment.');
-}
 function openEntry(kind){
   entryKind=kind;
-  const guided = diaryMode==='guided' || (diaryMode==='both' && kind!=='free');
+  const guided = kind!=='free';
   $('entryTitle').textContent = kind==='impulse' ? 'What is the pull about?' : (guided? 'Something to answer' : 'A blank page');
-  $('entryTags').style.display = diaryMode==='blank' ? 'none' : 'flex';
+  $('entryTags').style.display = 'flex';
   $('entryTags').innerHTML=['impulse','feeling','goal','free'].map(t=>`<div class="promptChip ${t===kind?'on':''}" onclick="entryKind='${t}';document.querySelectorAll('#entryTags .promptChip').forEach(c=>c.style.borderColor='');this.style.borderColor='var(--mint)'">${t}</div>`).join('');
-  if(diaryMode==='blank'){
-    $('entryPrompts').style.display='none';
-    $('entryText').placeholder='';
-  } else {
-    $('entryPrompts').style.display='flex';
-    $('entryPrompts').innerHTML=PROMPTS.map(p=>`<div class="promptChip" onclick="document.getElementById('entryText').value='${p} '">${p}</div>`).join('');
-    $('entryText').placeholder = guided ? REFLECTIONS[reflIdx].q : 'tired, not really wanting the phone — wanting to switch off';
-  }
-  if(diaryMode==='guided') setTimeout(()=>{ $('entryText').value=REFLECTIONS[reflIdx].q+'\n\n'; },80);
+  $('entryPrompts').style.display='flex';
+  $('entryPrompts').innerHTML=PROMPTS.map(p=>`<div class="promptChip" onclick="document.getElementById('entryText').value='${p} '">${p}</div>`).join('');
+  $('entryText').placeholder = guided ? REFLECTIONS[reflIdx].q : 'tired, not really wanting the phone — wanting to switch off';
   $('ov-entry').classList.add('on');
 }
 /* ── voice notes: record, keep, play back. nothing answers. ── */
@@ -1332,9 +1297,14 @@ const PRONOUNS=[['she/her','herself'],['he/him','himself'],['they/them','themsel
 let pronounIdx=2;
 function renderPronouns(){
   $('pronounChips').innerHTML=PRONOUNS.map((p,i)=>`<div class="promptChip" style="${i===pronounIdx?'border-color:var(--mint);color:var(--mint)':''}" onclick="setProfPronoun(${i})">${p[0]}</div>`).join('');
-  $('profPronoun').textContent=PRONOUNS[pronounIdx][0]+' · shown as "'+PRONOUNS[pronounIdx][1]+'" in quiet posts';
+  $('profPronoun').textContent=PRONOUNS[pronounIdx][0]+' ›';
+  $('pronounNote').textContent='So the app talks about you correctly: "regained an hour for '+PRONOUNS[pronounIdx][1]+'".';
 }
-function setProfPronoun(i){ pronounIdx=i; renderPronouns(); toast('Saved. The app will speak about you correctly.'); }
+function togglePronouns(open){
+  const box=$('pronounBox'), on=open===undefined ? box.style.display==='none' : open;
+  box.style.display=on?'block':'none'; $('profPronoun').setAttribute('aria-expanded',on);
+}
+function setProfPronoun(i){ pronounIdx=i; renderPronouns(); togglePronouns(false); toast('Saved. The app will speak about you correctly.'); }
 function toggleWork(el){
   el.classList.toggle('on');
   const on=el.classList.contains('on');
@@ -1864,7 +1834,7 @@ function demoStep(step){
   else if(step==='tipout'){ go('jar'); top('s-jar'); showTipout(); }
 }
 if(Q.has('embed')) addEventListener('message',e=>{ const d=e.data; if(d&&d.scrolljar==='show') demoStep(d.step); });
-paintLids();renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderGoals();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
+paintLids();renderCommits();renderJar();renderCharities();renderFeed();renderMembers();renderStandby();renderEntries();renderPronouns();renderApps();renderRes();renderMoodLedger();renderReflection();renderTip();
 $('winStrip').innerHTML=WINS.map(w=>`<div class="winBadge"><b>${w.t}</b><span>${w.s}</span></div>`).join('');
 $('usageSpark').innerHTML=[3.1,2.4,3.6,2.9,3.3,2.8,3.1].map(v=>`<div style="height:${Math.round(v/3.6*38)}px;background:var(--peach);opacity:.75"></div>`).join('');
 $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i];
