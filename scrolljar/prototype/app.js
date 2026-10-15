@@ -76,14 +76,14 @@ function buildJar(svg){
     <rect class="lid" x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
     <g class="jarFace">
       <g class="eyes">
-        <g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <g class="fw" data-x="84"><g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
           <path class="eyeArc" d="M79 106 q5 -7 10 0" stroke="var(--jar-face)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-          <path class="eyeRest" d="M79 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g>
-        <g class="eyeR blinking"><circle class="eye" cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path class="eyeRest" d="M79 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g></g>
+        <g class="fw" data-x="116"><g class="eyeR blinking"><circle class="eye" cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
           <path class="eyeArc" d="M111 106 q5 -7 10 0" stroke="var(--jar-face)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-          <path class="eyeRest" d="M111 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+          <path class="eyeRest" d="M111 104 q5 4 10 0" stroke="var(--jar-face)" stroke-width="3" fill="none" stroke-linecap="round"/></g></g>
       </g>
-      <path class="mouth"${mouthId?` id="${mouthId}"`:''} d="${baseD}" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <g class="fw" data-x="100"><path class="mouth"${mouthId?` id="${mouthId}"`:''} d="${baseD}" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/></g>
     </g>`;
   svg.dataset.base=baseD;
   const fill=svg.querySelector('.jarFill'); keep.forEach(g=>fill.appendChild(g));
@@ -105,7 +105,7 @@ function jarRest(on){ ['homeJarSvg','todayJarSvg'].forEach(id=>{ const s=$(id); 
   let raf=0, px=0, py=0, back=0;
   function look(){ raf=0;
     document.querySelectorAll('svg[data-built]').forEach(svg=>{
-      const eyes=svg.querySelector('.eyes'); if(!eyes||svg.dataset.mood==='rest') return;
+      const eyes=svg.querySelector('.eyes'); if(!eyes||svg.dataset.mood==='rest'||svg._spin) return;
       const r=svg.getBoundingClientRect(); if(!r.width||r.bottom<0||r.top>innerHeight) return;
       const cx=r.left+r.width*.5, cy=r.top+r.height*.46, dx=px-cx, dy=py-cy, d=Math.hypot(dx,dy)||1, k=Math.min(1,d/160)*2.6;
       eyes.style.transform=`translate(${(dx/d*k).toFixed(2)}px,${(dy/d*k).toFixed(2)}px)`;
@@ -115,65 +115,83 @@ function jarRest(on){ ['homeJarSvg','todayJarSvg'].forEach(id=>{ const s=$(id); 
   const app=document.querySelector('.app')||document;
   ['pointermove','pointerdown'].forEach(ev=>app.addEventListener(ev,e=>{ px=e.clientX; py=e.clientY; if(!raf) raf=requestAnimationFrame(look); clearTimeout(back); back=setTimeout(center,2600); },{passive:true}));
 })();
-/* the tip-out, as it really happens: the lid lifts off and waits to the side, the jar tips over,
-   the coins slide up through the neck and pour out of its mouth, then the jar stands back up,
-   the lid goes back on, and the jar is happy. onEach(k,n) runs as each coin leaves (for count-ups). */
-function pourOut(svg,box,group,onEach,done){
-  const items=[...group.children].reverse(), n=items.length;      /* the last coin in is the first out */
-  const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(calm||!n){ items.forEach(c=>c.style.opacity=0); onEach&&onEach(n,n); jarMood(svg,'happy',2600); stars(box,9,true); done&&done(); return; }
+/* the tip-out: the lid pops open and floats aside, the coins rise out of the mouth one by one
+   (money going up, to the cause), the lid goes back on, then the jar spins (the face goes round the glass) and shines with joy.
+   onEach(k,n) runs as each coin leaves, for the count-up. */
+function tipOutJar(svg,box,group,onEach,done){
+  const items=[...group.children], n=items.length;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!n){
+    group.innerHTML=''; onEach&&onEach(n,n); jarMood(svg,'happy',2600); stars(box,9,true); done&&done(); return; }
   const br=box.getBoundingClientRect(), r=svg.getBoundingClientRect();
   const s=r.width/200, ox=r.left-br.left, oy=r.top-br.top+(r.height-226*s)/2;
-  const cx=r.left-br.left+r.width/2, cy=r.top-br.top+r.height/2;     /* the jar tips around its middle */
-  const TILT=118, rad=TILT*Math.PI/180, mouthLen=(113-30)*s;
-  const mouth=[cx+mouthLen*Math.sin(rad), cy-mouthLen*Math.cos(rad)], dir=[Math.sin(rad),-Math.cos(rad)];
-  /* the lid becomes a separate piece so it can come off and wait beside the jar */
+  const mouth=[ox+100*s, oy+30*s];
+  /* the lid becomes its own piece so it can pop off, wait to the side, and come back */
   const lid=svg.querySelector('.lid'), lidCopy=document.createElementNS(NS,'svg');
-  lidCopy.setAttribute('viewBox','62 8 76 20'); lidCopy.style.cssText=`position:absolute;left:${ox+62*s}px;top:${oy+8*s}px;width:${76*s}px;height:${20*s}px;z-index:4;overflow:visible;pointer-events:none`;
+  lidCopy.setAttribute('viewBox','62 8 76 20');
+  lidCopy.style.cssText=`position:absolute;left:${ox+62*s}px;top:${oy+8*s}px;width:${76*s}px;height:${20*s}px;z-index:4;overflow:visible;pointer-events:none`;
   lidCopy.innerHTML=`<rect x="62" y="8" width="76" height="20" rx="9" fill="${lid.getAttribute('fill')}"/>`;
   box.appendChild(lidCopy); lid.style.opacity=0;
+  const OPEN='translate(-62px,-18px) rotate(-28deg)';
   jarMood(svg,'wow');
-  lidCopy.animate([{transform:'none'},{transform:'translate(-6px,-26px) rotate(-14deg)',offset:.45},{transform:'translate(-58px,-6px) rotate(-24deg)'}],
-    {duration:620,easing:'cubic-bezier(.3,.9,.4,1)',fill:'forwards'});
-  svg.style.transformOrigin='50% 50%';
-  setTimeout(()=>{
-    svg.animate([{transform:'rotate(0deg)'},{transform:`rotate(${TILT}deg)`}],{duration:720,easing:'cubic-bezier(.45,0,.25,1)',fill:'forwards'});
-    /* as the jar passes level, the coins slide down the glass towards the neck, then leave one by one,
-       the ones nearest the mouth first */
-    const pts=items.map(c=>({c,x:+c.getAttribute('x')+(+c.getAttribute('width'))/2,y:+c.getAttribute('y')+(+c.getAttribute('height'))/2}));
-    const minY=Math.min(...pts.map(p=>p.y)), shiftY=56-minY;
-    pts.sort((a,b)=>a.y-b.y);
-    const slideStart=170, slideEnd=600, start=720, step=80, slide=360;
-    pts.forEach((p,i)=>{
-      const sx=(100+(p.x-100)*.72)-p.x, sy=shiftY, ex=100-p.x, ey=-14-p.y, t0=start+i*step, D=t0+slide;
-      p.c.animate([{transform:'translate(0px,0px)',offset:0},{transform:'translate(0px,0px)',offset:slideStart/D,easing:'cubic-bezier(.5,0,.4,1)'},
-                   {transform:`translate(${sx}px,${sy}px)`,offset:slideEnd/D},{transform:`translate(${sx}px,${sy}px)`,offset:t0/D,easing:'cubic-bezier(.5,0,.9,.7)'},
-                   {transform:`translate(${ex}px,${ey}px)`,offset:1}],{duration:D,fill:'forwards'});
-      const c=p.c;
-      setTimeout(()=>{ /* out of the mouth: a real coin arcs away and falls */
-        const f=document.createElement('div'); f.className='flyer';
-        f.innerHTML=`<svg viewBox="0 0 40 40" width="22" height="22"><use href="${c.getAttribute('href')}"/></svg>`;
-        f.style.left=(mouth[0]-11)+'px'; f.style.top=(mouth[1]-11)+'px'; box.appendChild(f);
-        const out=34+Math.random()*26, drop=110+Math.random()*60, spin=360+Math.random()*540;
-        f.animate([{transform:'translate(0,0) rotateY(0)',opacity:1},
-                   {transform:`translate(${dir[0]*out}px,${dir[1]*out-8}px) rotateY(${spin*.4}deg)`,opacity:1,offset:.32},
-                   {transform:`translate(${dir[0]*out+18}px,${drop}px) rotateY(${spin}deg) scale(.8)`,opacity:0}],
-          {duration:760,easing:'cubic-bezier(.3,.2,.6,1)'}).onfinish=()=>f.remove();
-        onEach&&onEach(i+1,n);
-      },t0+slide*.8);
+  lidCopy.animate([{transform:'none'},{transform:'translate(-4px,-30px) rotate(-8deg)',offset:.4},{transform:OPEN}],
+    {duration:560,easing:'cubic-bezier(.3,1.3,.5,1)',fill:'forwards'});
+  lidCopy.animate([{translate:'0 0'},{translate:'0 -4px'},{translate:'0 0'}],{duration:1400,delay:560,iterations:Infinity,easing:'ease-in-out',composite:'add'});
+  /* coins nearest the top leave first: up through the neck, then out and up into the air */
+  const pts=items.map(c=>({c,x:+c.getAttribute('x')+(+c.getAttribute('width'))/2,y:+c.getAttribute('y')+(+c.getAttribute('height'))/2})).sort((a,b)=>a.y-b.y);
+  const start=520, step=90, rise=420;
+  pts.forEach((p,i)=>{
+    const t0=start+i*step;
+    p.c.animate([{transform:'translate(0px,0px)'},{transform:`translate(${100-p.x}px,${-16-p.y}px)`}],{duration:rise,delay:t0,easing:'cubic-bezier(.55,0,.7,.5)',fill:'forwards'});
+    setTimeout(()=>{
+      const f=document.createElement('div'); f.className='flyer';
+      f.innerHTML=`<svg viewBox="0 0 40 40" width="22" height="22"><use href="${p.c.getAttribute('href')}"/></svg>`;
+      f.style.left=(mouth[0]-11)+'px'; f.style.top=(mouth[1]-11)+'px'; box.appendChild(f);
+      const sway=(Math.random()<.5?-1:1)*(10+Math.random()*22), up=150+Math.random()*60, spin=360+Math.random()*360;
+      f.animate([{transform:'translate(0,0) rotateY(0) scale(1)',opacity:1},
+                 {transform:`translate(${sway}px,${-up*.55}px) rotateY(${spin*.5}deg) scale(.95)`,opacity:1,offset:.5},
+                 {transform:`translate(${-sway*.4}px,${-up}px) rotateY(${spin}deg) scale(.7)`,opacity:0}],
+        {duration:1100,easing:'cubic-bezier(.25,.6,.35,1)'}).onfinish=()=>f.remove();
+      onEach&&onEach(i+1,n);
+    },t0+rise*.75);
+  });
+  const empty=start+(n-1)*step+rise+200;
+  setTimeout(()=>{ /* lid back on */
+    lidCopy.getAnimations().forEach(a=>a.cancel());
+    lidCopy.animate([{transform:OPEN},{transform:'translate(-6px,-24px) rotate(-6deg)',offset:.55},{transform:'none'}],
+      {duration:560,easing:'cubic-bezier(.3,1.2,.5,1)',fill:'forwards'}).onfinish=()=>{
+      lid.style.opacity=''; lidCopy.remove(); group.innerHTML='';
+      /* a joyful spin, a shine across the glass and a warm glow */
+      jarMood(svg,'happy',3200);
+      spinFace(svg,2,1700);
+      svg.animate([{transform:'translateY(0)'},{transform:'translateY(0)',offset:.12},{transform:'translateY(-14px)',offset:.5},{transform:'translateY(0)',offset:.85},{transform:'translateY(0)'}],{duration:1700,easing:'ease-in-out'});
+      svg.animate([{filter:'drop-shadow(0 0 0 rgba(255,214,120,0))'},{filter:'drop-shadow(0 0 22px rgba(255,214,120,.85))',offset:.45},{filter:'drop-shadow(0 0 0 rgba(255,214,120,0))'}],{duration:2200,easing:'ease-out'});
+      const shine=document.createElementNS(NS,'g'); shine.setAttribute('clip-path','url(#body)');
+      shine.innerHTML='<rect x="-70" y="20" width="46" height="230" fill="url(#shineG)" transform="skewX(-18)"/>';
+      svg.insertBefore(shine,svg.querySelector('.jarFace'));
+      shine.firstChild.animate([{transform:'skewX(-18deg) translateX(0px)'},{transform:'skewX(-18deg) translateX(300px)'}],{duration:850,delay:1250,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).onfinish=()=>shine.remove();
+      setTimeout(()=>stars(box,11,true),700);
+      done&&done();
+    };
+  },empty);
+}
+/* the jar turns in place: the glass stays put and the face travels around it, thinning at the edges,
+   faint and mirrored on the far side (you see it through the glass), then back to the front.
+   A little wind-up first and a small overshoot at the end. */
+function spinFace(svg,turns,ms){
+  const R=72, parts=[...svg.querySelectorAll('.fw')].map(g=>{ const x0=+g.dataset.x, phi=Math.asin((x0-100)/R); return {g,x0,phi}; });
+  const eyes=svg.querySelector('.eyes'); if(eyes) eyes.style.transform='';
+  const end=turns*360, inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, out=t=>1-Math.pow(1-t,2);
+  const angle=t=>t<.12?-18*out(t/.12):t<.84?-18+(end+30)*inOut((t-.12)/.72):end+12*(1-out((t-.84)/.16));
+  const t0=performance.now(); svg._spin=1;
+  (function frame(now){
+    const t=Math.min(1,(now-t0)/ms), a=angle(t)*Math.PI/180;
+    parts.forEach(p=>{
+      const th=p.phi+a, c=Math.cos(th), x=100+R*Math.sin(th), k=c/Math.cos(p.phi);
+      p.g.setAttribute('transform',t<1?`translate(${x.toFixed(2)} 0) scale(${k.toFixed(3)} 1) translate(${-p.x0} 0)`:'');
+      p.g.setAttribute('opacity',t<1?(c>0?Math.min(1,.2+c*3.2):.2).toFixed(2):'');
     });
-    const end=start+n*step+slide+120;
-    setTimeout(()=>{ /* empty: stand back up, lid back on, happy */
-      svg.animate([{transform:`rotate(${TILT}deg)`},{transform:'rotate(-6deg)',offset:.75},{transform:'rotate(0deg)'}],{duration:700,easing:'cubic-bezier(.3,.6,.4,1)',fill:'forwards'});
-      lidCopy.animate([{transform:'translate(-58px,-6px) rotate(-24deg)'},{transform:'translate(-4px,-22px) rotate(-6deg)',offset:.55},{transform:'none'}],
-        {duration:700,delay:380,easing:'cubic-bezier(.3,1.2,.5,1)',fill:'forwards'}).onfinish=()=>{
-          lid.style.opacity=''; lidCopy.remove(); items.forEach(c=>c.getAnimations().forEach(a=>a.cancel()));
-          group.innerHTML=''; svg.getAnimations().forEach(a=>a.cancel());
-          svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop');
-          jarMood(svg,'happy',3000); stars(box,11,true); done&&done();
-        };
-    },end);
-  },380);
+    if(t<1) requestAnimationFrame(frame); else svg._spin=0;
+  })(t0);
 }
 /* tap a big jar and it giggles */
 ['homeJar','famJarBox','coJarBox','crJarBox'].forEach(id=>{ const box=$(id); if(!box) return;
@@ -501,7 +519,7 @@ function showTipout(){
   const total=jarTotal(), amt=document.querySelector('#ov-tipout [data-bind="jar"]');
   renderCoins($('tipCoins'),total); amt.textContent='$0';
   const svg=$('tipJar'), box=$('tipJarBox'); paintLids();
-  setTimeout(()=>pourOut(svg,box,$('tipCoins'),(k,n)=>amt.textContent='$'+Math.round(total*k/n),
+  setTimeout(()=>tipOutJar(svg,box,$('tipCoins'),(k,n)=>amt.textContent='$'+Math.round(total*k/n),
     ()=>{ amt.textContent='$'+total; }),350);
 }
 function showRough(){$('ov-rough').classList.add('on')}
@@ -1440,7 +1458,7 @@ function showCoTip(){
   $('ctCause').textContent=CO.causes[CO.vote>=0?CO.vote:0]; $('ctAmt').textContent='$0';
   drawLights(g,POS.length,false); $('ov-cotip').classList.add('on'); paintLids();
   const box=$('ctJarBox');
-  setTimeout(()=>pourOut($('ctJar'),box,g,(k,n)=>$('ctAmt').textContent=money(final*k/n),
+  setTimeout(()=>tipOutJar($('ctJar'),box,g,(k,n)=>$('ctAmt').textContent=money(final*k/n),
     ()=>{ $('ctAmt').textContent=money(final); }),350);
 }
 /* ══ NOTES — what people did instead, shared to inspire others ══
@@ -1545,20 +1563,20 @@ function setFamView(v){ FAM.view=v; $('fvParent').classList.toggle('on',v==='par
 /* coins and lights share the jar: gold for grown-ups' coins, glowing lights for hours */
 function drawFamJar(g,coins,lights,animate){
   g.innerHTML='';
-  /* coins settle at the bottom, hours glow in a layer above them, so the two read as different things */
-  const kinds=[...Array(coins).fill('c'),...Array(lights).fill('l')];
-  kinds.slice(0,POS.length).forEach((k,i)=>{
-    const [cx,cy]=POS[i], u=document.createElementNS('http://www.w3.org/2000/svg','use');
-    const r=17;
-    u.setAttribute('href',k==='c'?'#coin':'#glowM'); u.setAttribute('x',cx-r); u.setAttribute('y',cy-r); u.setAttribute('width',2*r); u.setAttribute('height',2*r);
+  /* it's all money for good, so it's all coins in one natural pile. The kids' coins (unlocked by their
+     scroll-free hours) carry a soft glow; the two kinds are mixed evenly through the pile. */
+  const n=Math.min(POS.length,coins+lights), lit=Math.round(n*lights/Math.max(1,coins+lights));
+  for(let i=0;i<n;i++){
+    const isLit=Math.floor((i+1)*lit/n)>Math.floor(i*lit/n), [cx,cy]=POS[i], r=17;
+    const u=document.createElementNS('http://www.w3.org/2000/svg','use');
+    u.setAttribute('href',isLit?'#coinLit':'#coin'); u.setAttribute('x',cx-r); u.setAttribute('y',cy-r); u.setAttribute('width',2*r); u.setAttribute('height',2*r);
     g.appendChild(u);
-    if(animate) u.animate(k==='c'?[{transform:'translateY(-70px)',opacity:0},{transform:'none',opacity:1}]:[{transform:'translateY(70px)',opacity:0},{transform:'translateY(-6px)',opacity:1,offset:.7},{transform:'none',opacity:1}],
-      {duration:800,delay:i*60,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
-  });
+    if(animate) u.animate([{transform:'translateY(-70px)',opacity:0},{transform:'none',opacity:1}],{duration:800,delay:i*60,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
+  }
 }
-function famKey(coinTxt,lightTxt){
+function famKey(coinTxt,lightTxt,icon='#coinLit'){
   return `<div class="famKey">${coinTxt?`<span><svg width="14" height="14" viewBox="0 0 40 40" aria-hidden="true"><use href="#coin"/></svg>${coinTxt}</span>`:''}
-    <span><svg width="15" height="15" viewBox="0 0 40 40" aria-hidden="true"><use href="#glowM"/></svg>${lightTxt}</span></div>`;
+    <span>${icon?`<svg width="15" height="15" viewBox="0 0 40 40" aria-hidden="true"><use href="${icon}"/></svg>`:''}${lightTxt}</span></div>`;
 }
 function famTreatCard(){
   if(FAM.treat==='No treat') return '';
@@ -1600,7 +1618,7 @@ function renderFamily(animate){
     const k=FAM.members.find(m=>m.n==='Mia');
     $('famEyebrow').textContent='YOUR HOURS · JULY';
     $('famAmt').textContent=FAM.mia.hours+' hours';
-    $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`+famKey('','each light is one scroll-free hour');
+    $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`+famKey('','each glowing coin is one scroll-free hour');
     drawFamJar($('famJarG'),0,FAM.mia.hours,animate);
     B.innerHTML=`<div class="card" style="background:linear-gradient(150deg,rgba(60,240,203,.14),rgba(155,140,255,.1))">
       <b style="font-size:14px">You never pay anything</b>
@@ -1627,7 +1645,7 @@ function showFamTip(){
   drawFamJar($('ftJarG'),Math.floor(coins/4),Math.round(famKidsHours()*0.8),false);
   $('ftAmt').textContent='$0'; $('ov-famtip').classList.add('on'); paintLids();
   const box=$('ftJarBox');
-  setTimeout(()=>pourOut($('ftJarSvg'),box,$('ftJarG'),(k,n)=>$('ftAmt').textContent=money(total*k/n),
+  setTimeout(()=>tipOutJar($('ftJarSvg'),box,$('ftJarG'),(k,n)=>$('ftAmt').textContent=money(total*k/n),
     ()=>{ $('ftAmt').textContent=money(total); }),350);
 }
 /* setting up a family jar */
@@ -1695,11 +1713,11 @@ function openCreator(){ go('creator'); $('s-creator').scrollTop=0; renderCreator
 function setCrView(v){ CR.view=v; $('cvMaker').classList.toggle('on',v==='maker'); $('cvFan').classList.toggle('on',v==='fan'); $('s-creator').scrollTop=0; renderCreator(true); }
 function renderCreator(animate){
   const B=$('crBody');
-  drawFamJar($('crJarG'),8,9,animate);
+  drawFamJar($('crJarG'),17,0,animate);
   if(CR.view==='maker'){
     $('crEyebrow').textContent=`CHALLENGE · DAY ${CR.day} OF ${CR.days}`;
     $('crAmt').textContent='$'+thou(CR.given);
-    $('crSub').innerHTML=`to ${CR.cause}, 100% · ${thou(CR.people)} people joined you`+famKey(`followers' coins, all to the cause`,`${thou(CR.hours)} scroll-free hours together`);
+    $('crSub').innerHTML=`to ${CR.cause}, 100% · ${thou(CR.people)} people joined you`+famKey(`followers' coins, all to the cause`,`${thou(CR.hours)} scroll-free hours together`,'#glowM');
     B.innerHTML=`
     <div class="card"><div class="spread"><b style="font-size:13.5px">Your posting windows</b><span class="pill mint">open now</span></div>
       <div class="row" style="gap:7px;margin-top:10px;flex-wrap:wrap">${CR.windows.map((w,i)=>`<span class="chip${i===0?' on':''}">${winLabel(w)}</span>`).join('')}</div>

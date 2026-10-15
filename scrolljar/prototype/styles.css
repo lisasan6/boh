@@ -637,3 +637,10 @@ body[data-mode="day"] .jarFace{filter:drop-shadow(0 0 1.6px rgba(255,255,255,.7)
 .swatch.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--mint)}
 .swatchName{margin-left:2px}
 .lidDot{display:inline-block;width:10px;height:6px;border-radius:3px;margin-right:6px;vertical-align:2px}
+
+/* a consistent way out of every pop-up: ✕ in the top corner (Apple's shield and the breath pause keep only their own buttons) */
+.ovClose{position:absolute;top:44px;right:16px;z-index:6;width:34px;height:34px;border-radius:12px;border:1px solid var(--line);
+  background:var(--panel-2);backdrop-filter:blur(12px);color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ovClose:hover{color:var(--ink)}
+.ovClose.inSheet{top:14px;right:14px}
+#ov-instead .ovClose,#ov-rough .ovClose{color:var(--calm);border-color:var(--calm-ghost-border,var(--line))}
