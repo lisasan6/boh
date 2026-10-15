@@ -674,12 +674,14 @@ body[data-stage="new"] .wk3{display:none!important}
 .firstBack{width:34px;height:34px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
 .firstBody{margin-top:18px;overflow-y:auto}
 .firstQ{font-size:24px;line-height:1.15;margin-bottom:8px}
-.firstOpts{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.firstOpt{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font:inherit;cursor:pointer}
+.firstOpts{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.firstOpt{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:10px 14px;min-height:44px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font:inherit;cursor:pointer}
 .firstOpt b{font-size:14px;white-space:nowrap;flex:none}
 .firstOpt span{font-size:11.5px;color:var(--ink-3);text-align:right;min-width:0}
 .firstOpt.on{border-color:var(--mint);background:rgba(55,226,192,.12)}
 .firstOpt.on span{color:var(--mint)}
+.firstTimes{display:flex;align-items:center;gap:8px;padding:2px 2px 4px}
+.firstTimes span{font-size:12px;color:var(--ink-3)}
 .firstChips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
 .firstDeal{margin-top:14px;font-size:14px;line-height:1.45}
 .firstSay{margin-top:14px;font-size:13.5px;line-height:1.5;color:var(--ink-2);min-height:40px}

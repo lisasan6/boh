@@ -337,7 +337,22 @@ function pickDone(){
 const WHEN=[['mornings','In bed, first thing'],['work','While I work'],['evenings','At night'],['weekend','At the weekend'],['always','All day, honestly']];
 const FOR_CHIPS=['sleep','reading','my kids','my partner','my project','moving more'];
 const FEEL_CHIPS=['flat','tired','restless','a bit empty','annoyed','like the day slipped away','fine, honestly'];
-const FIRST={step:0,sched:null,feels:[],feelOwn:'',fors:[],own:''};
+const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:''};
+/* when: several windows can be picked; "all day" stands alone */
+const WHEN_SHORT={mornings:'in the morning (6–10am)',work:'during work (9am–5pm, weekdays)',evenings:'at night (9pm–7am)',weekend:'at the weekend'};
+const listAnd=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||'');
+function whenParts(){
+  const p=WHEN.filter(([k])=>FIRST.scheds.includes(k)).map(([k])=>({k,label:SCHED_LABEL[k],say:SCHED_SAY[k],short:WHEN_SHORT[k]}));
+  if(FIRST.mine){ const w=`${hm(FIRST.from)}–${hm(FIRST.to)}`; p.push({k:'mine',label:w,say:'every day, '+w,short:`from ${hm(FIRST.from)} to ${hm(FIRST.to)}`}); }
+  return p;
+}
+const whenSay=()=>{ const p=whenParts(); return p.length===1?p[0].say:listAnd(p.map(x=>x.short)); };
+function firstWhen(k){
+  if(k==='always'){ FIRST.scheds=FIRST.scheds.includes('always')?[]:['always']; FIRST.mine=false; }
+  else { FIRST.scheds=FIRST.scheds.filter(x=>x!=='always');
+    if(k==='mine') FIRST.mine=!FIRST.mine; else { const i=FIRST.scheds.indexOf(k); i<0?FIRST.scheds.push(k):FIRST.scheds.splice(i,1); } }
+  renderFirst();
+}
 /* the feeling is a moment of noticing, not a score: it stays on the phone and is never shown back as a judgement */
 const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
   if(!f.length&&!own) return 'Take a second. There\'s no wrong answer.';
@@ -345,10 +360,10 @@ const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
   return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
 const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
-function openFirst(){ Object.assign(FIRST,{step:0,sched:null,feels:[],feelOwn:'',fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
+function openFirst(){ Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',feels:[],feelOwn:'',fors:[],own:''}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
-  return `<b>${esc(n)}</b> shielded ${SCHED_SAY[FIRST.sched||'always']}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
+  return `<b>${esc(n)}</b> shielded ${whenSay()||SCHED_SAY.always}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
 }
 function renderFirst(){
   const B=$('firstBody'), F=$('firstFoot'), many=pickedName(pick).many;
@@ -356,9 +371,11 @@ function renderFirst(){
   $('firstBack').style.visibility=FIRST.step?'visible':'hidden';
   if(FIRST.step===0){
     B.innerHTML=`<div class="display firstQ">When does scrolling<br>get you?</div>
-      <div class="sub">${many?'Those apps':'That app'} will be shielded then. You can change it any time.</div>
-      <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.sched===k?' on':''}" onclick="FIRST.sched='${k}';renderFirst()"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}</div>`;
-    F.innerHTML=`<button class="btn chrome" ${FIRST.sched?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
+      <div class="sub">Pick as many as you like. ${many?'Those apps':'That app'} will be shielded then, and you can change it any time.</div>
+      <div class="firstOpts">${WHEN.map(([k,l])=>`<button class="firstOpt${FIRST.scheds.includes(k)?' on':''}" aria-pressed="${FIRST.scheds.includes(k)}" onclick="firstWhen('${k}')"><b>${l}</b><span>${SCHED_NOTE[k]}</span></button>`).join('')}
+        <button class="firstOpt${FIRST.mine?' on':''}" aria-pressed="${FIRST.mine}" onclick="firstWhen('mine')"><b>My own times</b><span>${FIRST.mine?hm(FIRST.from)+'–'+hm(FIRST.to)+', every day':'pick a window'}</span></button>
+        ${FIRST.mine?`<div class="firstTimes"><input class="timeIn" type="time" value="${FIRST.from}" aria-label="From" onchange="FIRST.from=this.value;renderFirst()"><span>to</span><input class="timeIn" type="time" value="${FIRST.to}" aria-label="To" onchange="FIRST.to=this.value;renderFirst()"></div>`:''}</div>`;
+    F.innerHTML=`<button class="btn chrome" ${FIRST.scheds.length||FIRST.mine?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
   } else if(FIRST.step===1){
     B.innerHTML=`<div class="display firstQ">When you look up and the time has gone, how do you feel?</div>
       <div class="sub">Pick as many as you like. It stays on your phone.</div>
@@ -384,7 +401,8 @@ function firstUpdate(){
 }
 function sealFirst(){
   setStage('new');
-  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:FIRST.sched||'always',forWhat:firstFors()});
+  const wp=whenParts(), one=wp.length===1&&wp[0].k!=='mine';
+  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),forWhat:firstFors()});
   S.feelAfter=[...FIRST.feels,FIRST.feelOwn.trim()].filter(Boolean);
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
@@ -2026,7 +2044,7 @@ function renderD1(){
   $('d1Impact').innerHTML = S.stakes
     ? `It's real. Every coin in this jar goes to <b>${charity().n}</b> on the 1st, with a receipt. ${charity().l}`
     : `Nothing given yet, and nothing owed. Opening a shielded app is free for your first days. Make it real, and every coin goes to <b>${charity().n}</b> on the 1st, with a receipt.`;
-  const sc=(COMMITS[0]||{}).sched, fw=(COMMITS[0]||{}).forWhat; $('d1When').textContent = (sc&&sc!=='always'&&SCHED_SAY[sc] ? ' '+SCHED_SAY[sc] : '')+(fw?`, to make room for ${fw.replace(/\bmy\b/g,'your')}`:'');
+  const sc=(COMMITS[0]||{}).sched, fw=(COMMITS[0]||{}).forWhat; $('d1When').textContent = (sc&&sc!=='always' ? ' '+((COMMITS[0]||{}).whenSay||SCHED_SAY[sc]||'') : '')+(fw?`, to make room for ${fw.replace(/\bmy\b/g,'your')}`:'');
   $('d1Title').textContent = sc&&sc!=='always' ? 'Your deal is sealed.' : 'Your shield is on.';
   $('d1RealBtn').style.display = S.stakes ? 'none' : '';
   const real=$('d1Real'), price=(COMMITS[0]||{}).price||5;
