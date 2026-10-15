@@ -12,6 +12,8 @@
 ---
 
 ## 📥 Inbox — drop zone (newest first)
+- **2026-10-15 (L):** **Limit, don't censor**: we limit autopilot, not content (Philosophy & soul; CLAUDE.md) · the user's rules are **deals**, never promises or commitments (IT patto, ES trato, FR pacte, DE Abmachung, PT acordo) · deals always editable: stricter now, easier in 24h, ending free with 24h notice · family jar = one coin pile, two-tone coins for kids' hours · the jar's character: face with moods (never sad), stylized lid in a colour the owner picks (silver default), tip-out = lid opens, coins rise, jar spins (face round the glass) and shines · every pop-up has a way out · website ready to publish (privacy page, own fonts, `deploy/`) · "The win-win" back as its own home section · neon SWEAR/SCROLL swaps forever. → *all built; specs updated the same day.*
+- **2026-10-14 (L):** Free + Plus replaces Ghost/Hero/Legend · Teams count **scroll-free hours** (one chosen hour a day, any time; glowing lights) · Families: kids never charged or paid · Creators: feeds shielded, tools open · the social tab is **BOARD** (Together, Shared, Postcards, Piazza all rejected: tone or translation) · breath pause: one slow breath, "Never mind, continue" small and bouncing · time-neutral copy (mornings matter as much as evenings). → *built.*
 - **2026-07-30 (L):** Wobble button availability logic — if the friend is free they talk; if the friend is in their own session, the asker gets a warm message instead → *resolved & designed: the Ladder of Who Speaks, below. Built into prototype v2.*
 - **2026-07-28 (L):** Reactions to Claude's 12-idea round: 1✅ 2✅ 3✅ 4💛 5🤔 6✅ 7🤔("too much gamifying? but I like it") 8✅ 9✅ 10✅ 11🤔 12💛("premium feature in the paid plans") → *resolved & redistributed below; Q20 closed.*
 - **2026-07-28 (Claude):** Brainstorm round of 12 → *reviewed same day.*
@@ -48,9 +50,9 @@
 1. **The Last Scroll** → Usability/onboarding. One final conscious 5-min doomscroll as goodbye ritual; "That was the last unconscious one."
 2. **The Wobble button** → Social. ✅ *Fully designed 2026-07-30 — see the Ladder of Who Speaks above.*
 3. **The 9pm Bell** → Social. Shared daily quiet moment per jar; synchronized stillness as ambient belonging.
-4. **Letters to your future self** (L: "yasss") → Mechanics. Written at commitment creation, delivered at 30-day milestone.
+4. **Letters to your future self** (L: "yasss") → Mechanics. Written when you make a deal, delivered at the 30-day milestone.
 6. **"We noticed."** → Mechanics. Rare clean-danger-hour notification, budgeted within sacred touchpoints.
-8. **Sign your promise** → Usability/onboarding. Finger-drawn signature seals the first commitment.
+8. **Sign your deal** (was "Sign your promise") → Usability/onboarding. Finger-drawn signature seals the first deal.
 9. **Charity spotlights as distribution** → Growth. Monthly featured cause; charities share impact back to their audiences.
 10. **Dinner Jars** → Social. Couple templates: phone-free dinners, screens-out-of-bedroom.
 12. **The danger-hours forecast** (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
@@ -79,15 +81,15 @@
 - **We never speak in a friend's voice.** If your people haven't left words, you get your own back — not ours dressed up as theirs. *(2026-07-30, from the Wobble design.)*
 
 ## 🏢 ScrollJar for Teams — PIVOT 3: candidate main revenue stream
-Full mini-spec v0.1 in project, parked pending L's feature pass. Locked: employer funds everything · working hours don't count (evenings-only) · aggregate-only k≥5 dashboards · voluntary always · Company Jar campaigns + tip-out ceremony · squads + charity-always-wins rivalries · moons 🌙 (rise, earned) vs coins (drop) — "everything that lands in a jar becomes good" · Private Boost + employer matching · seats include personal Hero + launch board (family extension, plus-ones, share moments, alumni) · $4/seat draft · sabotage-proof · sell-before-build in beta.
+Full mini-spec v0.1 in project, parked pending L's feature pass. Locked: employer funds everything · working hours don't count (own time only: one chosen hour a day since 2026-10-14) · aggregate-only k≥5 dashboards · voluntary always · Company Jar campaigns + tip-out ceremony · squads + charity-always-wins rivalries · moons 🌙 (rise, earned) vs coins (drop) — "everything that lands in a jar becomes good" · Private Boost + employer matching · seats include personal Hero + launch board (family extension, plus-ones, share moments, alumni) · $4/seat draft · sabotage-proof · sell-before-build in beta.
 
 ## 🧈 Usability
-2-min first block · ghost-first onboarding (card day ~3) · templates · Home Screen widget (Q15) · peek valve (1/48h, 2–10 min, never breaks a clean day) · **The Last Scroll** (goodbye ritual, brainstorm #1) · **Sign your promise** (signature ceremony, #8) · EN-first, IT natively later · restore ≠ tamper · full accessibility.
+2-min first block · ghost-first onboarding (card day ~3) · templates · Home Screen widget (Q15) · peek valve (1/48h, 2–10 min, never breaks a clean day) · **The Last Scroll** (goodbye ritual, brainstorm #1) · **Sign your deal** (signature ceremony, #8) · EN-first, IT natively later · restore ≠ tamper · full accessibility.
 
 ## 🚪 Invitations (decided architecture)
 Invite to a jar, never an app · buddy jar = atom · link/QR → web preview → deferred deep link · invites that donate ($1 on activation; caps) · group invitees get 30 days Hero · strength-point prompts only · no contact import · web kudos v1.5 · Backing on top (🎁).
 
-## ⚙️ Mechanics (spec v1.2 canonical + round-1 additions)
+## ⚙️ Mechanics (spec v1.3 canonical + round-1 additions)
 Good dopamine (earned, fixed, predictable) · intention optional on shield · licensing-safe override · escalation opt-in 2× cap · success-side giving (user's cause) · rough-day response (free, always) · **Letters to your future self** (#4 — written cold, delivered at day 30) · **"We noticed."** (#6 — rare, budgeted) · **standby notes** (written cold, delivered only when a friend wobbles and you're unavailable) · non-monetary stakes v1.5 · web bypass closed · jar break 5× + grace hour · canceling ≠ escape hatch · monthly settlement, $50 cap, 48h refund, streaks never reset.
 
 ## 🫙 Jar & money
@@ -96,13 +98,13 @@ Big Counter (audited; Q12 methodology) · reclaimed-hours mural · jar = interfa
 ## 💶 Monetization (decided + #12 placed)
 **Update 2026-10-14 (L, decided):**
 - **The stakes engine becomes free.** Free users see the card fee on top ("$35 to charity + $1.32 card fee; 100% of the $35 arrives"); members have fees covered by ScrollJar. Settles the open "who pays card fees" question and keeps "100% to charity" true for everyone.
-- **One personal tier, "Plus"** (~$3.99/mo · $29.99/yr), replaces Hero + Legend: groups and challenges, danger-hours forecast, deep stats, card fees covered, more promises. Legend's "we give half" may survive as an optional pay-more choice. Free keeps 2–3 promises and all kindness features.
+- **One personal tier, "Plus"** (~$3.99/mo · $29.99/yr), replaces Hero + Legend: groups and challenges, danger-hours forecast, deep stats, card fees covered, unlimited deals. Legend's "we give half" may survive as an optional pay-more choice. Free keeps 3 deals and all kindness features.
 - **Order of markets:** Teams first (the business: $4/seat/mo, billed outside Apple, free 6-week pilot, small-team flat price ~$99/mo for 5–24 people), then **Families and Creators** in parallel.
   - *Family* (~$6.99/mo · $49.99/yr, up to 6 people because that's Apple's Family Sharing limit, which kids' Screen Time and shared subscriptions run through; don't print the number publicly, Apple can change it): shared rules that bind parents too, one family jar and tip-out. **Under-18s are never charged and never paid** (L, 2026-10-14): a parent pledges, and the kid's scroll-free hours unlock it for a cause the kid chooses, with their name on the receipt. No cash rewards to kids: paying for less scrolling crowds out their own reasons, pays most to the kids who find it easiest, invites gaming and checking, and would make us a payments-to-minors product. Optional **shared non-cash family treat** ("cinema when the jar fills"); everyone's hours count, parents' too. The family sees the jar, not each other's screens. Child-privacy legal check before launch.
   - *Creators:* "Creator setup" template (shield feed apps, keep Business Suite / Edits / TikTok Studio / YouTube Studio open), timed posting windows, public challenge jars. Free for creators running a public challenge, otherwise Plus. **No creator ever earns from followers' coins.**
 - **Viability (rough, unverified rules of thumb):** a ~€2,000/month founder salary ≈ ~1,300 paying individuals or ~8 companies of 100 seats. Treat as a side project until ~3 paying companies or a real waitlist. Sell Teams pilots before paying for the build.
 
-**Ghost Jar** free (blocking, friction, peek, widget, buddy jar, rough-day support — kindness never paywalled) · **Jar Hero** $5.99/$49.99 (stakes engine, unlimited commitments, groups, success-giving, **danger-hours forecast** — heatmap + proactive prep, brainstorm #12) · **Jar Legend** $9.99/$79.99 (everything + deep stats + AI companion later — which absorbs the *conversational* forecast — + flair/skins + 2× success units + 50% given) · supporter state · strength-point upgrades only · no dark patterns · model: Hero yr nets $42.49, Legend yr $34.00, LTV ~$91, break-even ~356 subs.
+*Superseded 2026-10-14 by Free + Plus (above); kept for history:* **Ghost Jar** free (blocking, friction, peek, widget, buddy jar, rough-day support — kindness never paywalled) · **Jar Hero** $5.99/$49.99 (stakes engine, unlimited commitments, groups, success-giving, **danger-hours forecast** — heatmap + proactive prep, brainstorm #12) · **Jar Legend** $9.99/$79.99 (everything + deep stats + AI companion later — which absorbs the *conversational* forecast — + flair/skins + 2× success units + 50% given) · supporter state · strength-point upgrades only · no dark patterns · model: Hero yr nets $42.49, Legend yr $34.00, LTV ~$91, break-even ~356 subs.
 *Wobble stays free at every tier — it's kindness, and kindness is never paywalled.*
 
 ## 🤝 Social
@@ -124,11 +126,11 @@ Tailwinds + newsjacking calendar (Aug 18 AG trial · Oct JCCP · Feb 2027 bellwe
 iOS shield 2-button constraint · opaque tokens; 6MB monitor; ~50-token cap; entitlement lead time · Stripe 3DS + mandate; monthly MIT; IAP memberships · invitation deep-link claim codes · Backing via rewards API (closed-loop) · grayscale (#11, on hold — verify iOS feasibility) · **Wobble delivery: silent push that renders in-app only; must not be a Time Sensitive / Critical alert, so it can never pierce the receiver's own Focus/shield** · Android phase 3.
 
 ## ❓ Open questions & decisions
-4. Ghost Jar exact limits (1 commitment proposed)
+4. ~~Ghost Jar exact limits~~ → ✅ Free keeps **3 deals** (2026-10-14/15)
 5. Group jar settlement: per-member vs pooled
 8. Hour-posts in v1?
 9. Science notes: inline or Science section?
-10. Family angle (parked)
+10. ~~Family angle~~ → ✅ designed 2026-10-14/15 (Monetization → Family; prototype `s-family`; website `families.html`)
 12. Big Counter methodology (journalist-proof)
 15. Widget scope: Home only or + Lock Screen?
 16. US entity structure — needs advisor

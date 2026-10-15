@@ -31,15 +31,15 @@ Calm register: ground `#EBF7F3`, teal `#199885`, ink `#0C3B33`
 - **Coin drop (Nintendo):** coin arcs up ~96px, spins 900°, falls; jar **squashes** (scaleX 1.13 / scaleY .87) and springs back; 5-star burst. ~820ms + 520ms settle.
 - **Idle charm:** blink every 5.6s; occasional gentle hop (~9s, 50% chance) — Animal-Crossing life, never a nag.
 - **Milestone:** happy hop + 9-star fan + wider smile + chunky fanfare label. No random rewards, ever.
-- **Tip-out (monthly):** anticipation wind-back (-11°) → pour to 40° → coins arc out staggered 90ms → hop + fanfare. The only spectacle.
+- **Tip-out (monthly, updated 2026-10-15):** the lid pops off and waits to the side → coins rise out of the mouth one by one (90ms apart) and float up and away, with a count-up → lid back on → the jar spins in place, its face travelling round the glass (2 turns, 1.7s, small wind-up and overshoot), with a hop, a gold glow, a shine across the glass and stars. The only spectacle. Exact timings: `IOS-BUILD-SPEC.md` §7a.
 - **Aurora field:** 4 blurred fields, 26–38s unsynced loops. **Rests** in the calm register (25% speed, cools to teal, specular stops, 600ms crossfade).
 - **Tilt iridescence:** gyroscope ±14° across glass + chrome rim. Honors reduce-motion everywhere.
 
 ## Preserved identity (non-negotiable)
-Jar keeps its gentle face · gold coins · curved geometry · **amber-never-red** · calm support register native (breath pause, rough day, resources) · Voice Law governs every string · the jar thrives, never suffers, never guilt-trips.
+Jar keeps its gentle face (moods: idle, happy, thanks, rest, wow; **never sad**; eyes follow your finger; tap it and it giggles) · a stylized lid in a colour the owner picks (silver default; mint, lavender, copper, cork) · gold coins in a natural pile · curved geometry · **amber-never-red** · calm support register native (breath pause, rough day, resources) · Voice Law governs every string · the jar thrives, never suffers, never guilt-trips.
 
 ## Teams register
-Celestial counterpart: **moons 🌙 rise** (earned) where consumer **coins drop** (forfeited). Dusk lavender lives here. "Everything that lands in a jar becomes good."
+**Glowing lights rise** (earned, one per scroll-free hour; they were moons until 2026-10-14) where consumer **coins drop** (forfeited). Dusk lavender lives here. Families: one coin pile, gold for grown-ups and two-tone (lavender rim) for the hours kids unlock. "Everything that lands in a jar becomes good."
 
 ## Next
 Apply to: prototype v2 → landing page → SwiftUI constants. Archive of all 14 explored directions retained in `scrolljar-identity-directions.html` (1–3), `scrolljar-identity-batch2.html` (4–12), `scrolljar-vault-chrome.html` (13). Rejected by L's filter: Solar Warmth, Liquid Glass, Terracotta Evening (mom-app / clinical / craft-cozy). Parked idea worth reusing: Receipt's itemized-statement aesthetic for the **share-card system**.

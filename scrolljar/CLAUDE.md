@@ -55,7 +55,7 @@ The tagline: *"You can always choose distraction. It just shouldn't be free."*
 | `deploy/` | How the website goes live: `build.sh` makes `dist/` (website + live app only, fonts self-hosted), `README.md` has L's steps. |
 | `docs/00-HANDOFF.md` | **Start here:** current state, what's open, what was lost. |
 | `docs/IOS-BUILD-SPEC.md` | The technical plan for the real iOS app. |
-| `docs/scrolljar-spec.md` | Product spec v1.2 (canonical). |
+| `docs/scrolljar-spec.md` | Product spec v1.3 (canonical; the v1.3 notes on top override older text). |
 | `docs/research-findings.md` | What iOS and Android actually allow. |
 | `docs/sketchpad.md` | Living ideas, the Wobble design, open questions. |
 | other `docs/*.md` | Design system, psychology, evidence, Teams spec, history. |

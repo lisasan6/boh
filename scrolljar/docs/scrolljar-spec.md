@@ -1,6 +1,28 @@
 # ScrollJar — Product Specification & Roadmap
 
-**v1.2 · July 27, 2026 · US-first launch (USD) · supersedes v1.0 (EUR/EU-first)**
+**v1.3 · October 15, 2026** (v1.2: July 27, 2026) **· US-first launch (USD) · supersedes v1.0 (EUR/EU-first)**
+
+**v1.3 changes (2026-10-14/15, L's decisions; they override older text below):**
+- **Deals.** In the product the user's rules are **deals** ("Make a deal", "Seal the deal", "Your deals"). Where this spec says "commitment", read "deal".
+- **Deals are always editable.** Stricter changes apply now; easier ones apply after 24 hours; ending a deal is free with 24 hours' notice.
+- **Membership is Free + Plus** (replaces §6's Ghost Jar / Jar Hero / Jar Legend):
+  - Real coins (the stakes) work on Free, with the card fee shown and added on top so 100% of the price arrives.
+  - **Plus** ($3.99/mo · $29.99/yr) covers card fees and adds unlimited deals, groups and challenges, the danger-hours forecast and deep stats.
+  - Free keeps **3 deals** and every kindness feature. Details: `sketchpad.md` → Monetization.
+- **Breath pause:** one slow breath of about 10 seconds.
+  - "I'll stay committed" appears first and stays easy to tap.
+  - A small "Never mind, continue" follows and stops somewhere new each time, so going on is always a deliberate tap.
+- **Positioning: we limit autopilot, not content.** Entertainment and creators are fine; mindless, automatic scrolling is the target. Copy is time-neutral (no "evenings" or "nights"; mornings matter as much).
+- **The social tab is BOARD:** shared jars and what people share.
+- **The jar has a character:**
+  - It has a face with moods and is never sad. It has a lid colour the owner picks (silver by default) and a natural coin pile.
+  - The monthly tip-out: the lid pops open, the coins rise out to the cause, the lid goes back on, and the jar spins and shines with joy.
+  - Engineering details: `IOS-BUILD-SPEC.md` §7a.
+- **New audiences** (Teams first, then Families and Creators):
+  - **Teams:** scroll-free hours, glowing lights in the jar, employer funds everything. See `scrolljar-teams-spec.md`.
+  - **Families:** a parent pledges; kids' scroll-free hours unlock it for a cause the kid picks. Kids are never charged or paid; any reward is a shared non-cash family treat.
+  - **Creators:** feeds shielded, posting tools open, posting windows, and optional public challenges where followers set their own deals and every coin goes to the cause.
+  - The rules for all three are in `CLAUDE.md` → Product rules.
 
 **v1.2 seam fixes:** commitments outlive membership (cancellation ≠ escape hatch) · supporter state (no day-31 cliff in group jars) · Legend 50% framed strictly as corporate giving · four-stream giving ledger on the transparency page · escalation × cap collision guard · Legend flair never ranks.
 
@@ -34,8 +56,8 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 
 ## 4. Mechanics (all decided)
 
-- **Commitment:** apps via FamilyActivityPicker (+ web domains — instagram.com in Safari is shielded too) · schedule (always/windows/weekdays) · override price **$2–25, default $5** · charity · optional one-line intention ("what is this hour for?" — shown on the shield; skippable).
-- **Override:** shield → "Open anyway ($5)" → notification → app → ~6s breath pause with a prominent, warm "never mind" (the dismiss button is the science's MVP — PNAS 2023) → confirm → access window (5/15/30 min, Live Activity countdown) → coin drops (warm amber, never red).
+- **Deal** (this spec's "commitment"; editable at any time, see v1.3 notes): apps via FamilyActivityPicker (+ web domains — instagram.com in Safari is shielded too) · schedule (always/windows/weekdays) · override price **$2–25, default $5** · charity · optional one-line intention ("what is this hour for?" — shown on the shield; skippable).
+- **Override:** shield → "Open anyway ($5)" → notification → app → one slow breath (~10s): "I'll stay committed" first and easy, a small "Never mind, continue" after it in a new spot each time (the easy way out is the science's MVP — PNAS 2023) → confirm → access window (5/15/30 min, Live Activity countdown) → coin drops (warm amber, never red).
 - **Peek valve:** one free peek per **48 hours**, length set at commitment creation (2–10 min, default 5). Breath pause + visible countdown; never breaks a clean day; shortening is instant, lengthening takes 24h. For genuine needs (work DMs) — kills the #1 rage-quit without making distraction free-on-demand.
 - **The Jar:** coins accumulate; **monthly settlement** — one charge on the 1st, routed to charity; receipt + tip-out celebration (THE confetti moment). Monthly cap default **$50** (jar full → blocks stay on; raising the cap is deliberate and visible to accountability friends). **48h kindness refund**, no questions (>3/month pauses stakes).
 - **Jar break (anti-cheat), disclosed in plain words at commitment creation:** escaping mid-commitment (revoking Screen Time permission, removing the card, deleting the app) = breaking the jar = **5× your override price**. **Grace hour first:** warning notification + 60 minutes to restore before anything is charged — accidents and iOS glitches forgiven. Quitting honestly is always free with 24h notice. Clarity requirements: plain-words card at creation, reminder before any charge, the rule restated in Terms exactly as in-app.
@@ -43,7 +65,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 - **Price escalation (opt-in, capped 2×):** at commitment creation the user may pre-authorize "if I get comfortable overriding, raise my price" — gradual, automatic, **ceiling 2× the original price**, always visible, cancellable with 24h notice. Never a nag; escalation chosen in cold blood. **Cap-collision guard:** if price × escalation ceiling approaches the monthly cap (e.g., $25 × 2 = the $50 default), setup prompts a cap review at creation time — one escalated coin must never fill the jar and freeze stakes for the month.
 - **Streaks:** lifetime clean days accrue forever; a relapse day is a "coin day" that counts toward impact. Never resets (JCR 2023: broken chains kill motivation).
 - **Success-side giving:** every 10 clean days, ScrollJar donates a fixed visible unit (e.g., 1 tree / 2 meals) from membership revenue — **to a cause the user chooses** (may differ from their penalty charity). Monthly company budget cap; unit economics reviewed quarterly.
-- **Rough-day response:** after an expensive evening — a check-in, not a bill; pattern insight ("your coins drop after 10pm on Sundays") + self-compassionate copy; restart prompts appear only after rough patches (fresh-start science), never as resets for people doing well.
+- **Rough-day response:** after an expensive day — a check-in, not a bill; pattern insight ("your coins drop after 10pm on Sundays") + self-compassionate copy; restart prompts appear only after rough patches (fresh-start science), never as resets for people doing well.
 - **Non-monetary stakes** (v1.5): streak visibility, effort unlocks, social stakes — first-class for students.
 
 ## 5. Onboarding — the 2-minute first block
@@ -56,6 +78,8 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 6. Optional if-then plan ("If I reach for Instagram at night, then I ___" — implementation intentions, d=0.65) and baseline week capture for honest math.
 
 ## 6. Membership — Ghost Jar → Jar Hero → Jar Legend (decided 2026-07-27)
+
+> **Replaced on 2026-10-14 by Free + Plus** (see the v1.3 notes at the top). Kept for history: the configuration rules below (kindness never paywalled, the free tier must genuinely work, no day-31 cliff, strength-point upgrades) still apply to Free + Plus.
 
 | | **Ghost Jar** — free forever | **Jar Hero** — $5.99/mo · $49.99/yr | **Jar Legend** — $9.99/mo · $79.99/yr |
 |---|---|---|---|
