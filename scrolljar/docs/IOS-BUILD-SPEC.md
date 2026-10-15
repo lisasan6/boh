@@ -40,7 +40,7 @@ The shield is drawn by iOS, not by us. **The shield cannot take payment or open 
 1. **Shield** (ShieldConfiguration)
    - Title: "You made a deal with yourself".
    - Subtitle: the user's intention, offered as an invitation, never a reminder of what they said ("How about your novel instead?").
-   - Primary button: **"I'll stay committed"**. Secondary button: **"Open anyway · $5"**.
+   - Primary button: **"Back to {what the deal is for}"** in the user's own words, e.g. "Back to my novel" (several things: all of them if short, else the first; no answer: "I'll stay committed"). Secondary button: **"Open anyway · $5"**.
 2. **Primary** → ShieldAction returns `.close`. Log a "resisted" event to the App Group (the first one triggers the `ov-firstwin` moment the next time the app opens).
 3. **Secondary** → ShieldAction posts a **local notification** ("Tap to open your jar"), then `.close` (or `.defer`). Tapping the notification opens our app with a deep link to the override flow.
    - This extra tap is the main UX cost of the whole product, and every competitor pays it too.

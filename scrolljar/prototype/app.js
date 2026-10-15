@@ -269,11 +269,18 @@ function pickCharity(i){
   S.charity=i; renderCharities(); renderJar();
   toast('Your jar now goes to '+charity().n+' on Aug 1.');
 }
+/* the shield's first button, in the user's own words: "Back to my novel". Several things: all of them if short, else the first */
+function backTo(d){
+  const l=d.forList&&d.forList.length?d.forList:(d.forWhat?[d.forWhat]:[]);
+  if(!l.length) return "I'll stay committed";
+  const all=listAnd(l); return 'Back to '+(all.length<=24?all:l[0]);
+}
 function showShield(){
   const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/\bmy\b/g,'your');
   $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
   $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
   $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
+  $('shieldStay').textContent = backTo(d);
   $('ov-shield').classList.add('on');
 }
 /* ── the real-iOS bridge: shield → notification → our app ── */
@@ -398,7 +405,8 @@ const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
   if(f.length===1&&f[0]==='fine, honestly'&&!own) return 'Good to hear. ScrollJar is for the times it isn\'t.';
   return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
-const firstFors=()=>{ const x=[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
+const firstForList=()=>[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean);
+const firstFors=()=>{ const x=firstForList(); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
 function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
@@ -445,7 +453,7 @@ function firstUpdate(){
 function sealFirst(){
   setStage('new');
   const wp=whenParts(), one=wp.length===1&&wp[0].k!=='mine';
-  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),forWhat:firstFors()});
+  Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),forWhat:firstFors(),forList:firstForList()});
   S.feelAfter=[...FIRST.feels,FIRST.feelOwn.trim()].filter(Boolean);
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
