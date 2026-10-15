@@ -275,12 +275,17 @@ function backTo(d){
   if(!l.length) return "I'll stay committed";
   const all=listAnd(l); return 'Back to '+(all.length<=24?all:l[0]);
 }
+/* every "stay" button after the shield says the same thing: "Back to my novel", "Actually, back to my novel" */
+function setStayButtons(){
+  const t=backTo(COMMITS[0]||{}), own=t.startsWith('Back to');
+  document.querySelectorAll('[data-stay]').forEach(b=>{ const pre=b.dataset.stay; b.textContent = pre ? pre+(own?'b'+t.slice(1):t) : t; });
+}
 function showShield(){
+  setStayButtons();
   const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/\bmy\b/g,'your');
   $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
   $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
   $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
-  $('shieldStay').textContent = backTo(d);
   $('ov-shield').classList.add('on');
 }
 /* ── the real-iOS bridge: shield → notification → our app ── */
@@ -552,7 +557,7 @@ function showBreath(){
   startBreathCue();
   clearTimeout(breathT); clearTimeout(breathT2);
   cancelAnimationFrame(goRAF); $('breathGo').style.display='none';
-  /* "I'll stay committed" fades in a second before the breath ends; "Never mind, continue" when it ends */
+  /* "Back to my novel" (the stay button) fades in a second before the breath ends; "Never mind, continue" when it ends */
   breathT=setTimeout(()=>{ const bb=$('breathBtns'); bb.style.display='block';
     bb.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'}); },BREATH_MS*BREATHS-1000);
   breathT2=setTimeout(launchContinue,BREATH_MS*BREATHS);
@@ -582,7 +587,7 @@ function startBreathCue(){
     };
   },100);
 }
-/* "Never mind, continue" bounces like a pinball in the space below "I'll stay committed" and stops at
+/* "Never mind, continue" bounces like a pinball in the space below the stay button ("Back to my novel") and stops at
    a random moment (7–9 s), always well away from where it stopped last time, so the thumb can't
    learn it. Hard, not mean: it can be tapped while moving, never covers the main button, and with
    reduced motion it just appears in a new spot. */
@@ -709,6 +714,7 @@ const COMMITS=[
 ];
 const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${c.window||SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?'$'+c.price:'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
 function renderCommits(){
+  if(typeof setStayButtons==='function') setStayButtons();
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
     <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${dealLine(c)}</div>${c.pending?`<div class="tiny" style="color:var(--gold-text);margin-top:2px">${c.pending}</div>`:''}</div></div>

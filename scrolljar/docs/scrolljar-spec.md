@@ -10,7 +10,7 @@
   - **Plus** ($3.99/mo · $29.99/yr) covers card fees and adds unlimited deals, groups and challenges, the danger-hours forecast and deep stats.
   - Free keeps **3 deals** and every kindness feature. Details: `sketchpad.md` → Monetization.
 - **Breath pause:** one slow breath of about 10 seconds.
-  - "I'll stay committed" appears first and stays easy to tap.
+  - The stay button appears first and stays easy to tap. It speaks in the user's own words: "Back to my novel" (or "I'll stay committed" when the deal says nothing about what the time is for).
   - A small "Never mind, continue" follows and stops somewhere new each time, so going on is always a deliberate tap.
 - **Positioning: we limit autopilot, not content.** Entertainment and creators are fine; mindless, automatic scrolling is the target. Copy is time-neutral (no "evenings" or "nights"; mornings matter as much).
 - **The social tab is BOARD:** shared jars and what people share.
@@ -57,7 +57,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 ## 4. Mechanics (all decided)
 
 - **Deal** (this spec's "commitment"; editable at any time, see v1.3 notes): apps via FamilyActivityPicker (+ web domains — instagram.com in Safari is shielded too) · schedule (always/windows/weekdays) · override price **$2–25, default $5** · charity · optional one-line intention ("what is this hour for?" — shown on the shield; skippable).
-- **Override:** shield → "Open anyway ($5)" → notification → app → one slow breath (~10s): "I'll stay committed" first and easy, a small "Never mind, continue" after it in a new spot each time (the easy way out is the science's MVP — PNAS 2023) → confirm → access window (5/15/30 min, Live Activity countdown) → coin drops (warm amber, never red).
+- **Override:** shield → "Open anyway ($5)" → notification → app → one slow breath (~10s): "Back to my novel" (the stay button, in the user's words) first and easy, a small "Never mind, continue" after it in a new spot each time (the easy way out is the science's MVP — PNAS 2023) → confirm → access window (5/15/30 min, Live Activity countdown) → coin drops (warm amber, never red).
 - **Peek valve:** one free peek per **48 hours**, length set at commitment creation (2–10 min, default 5). Breath pause + visible countdown; never breaks a clean day; shortening is instant, lengthening takes 24h. For genuine needs (work DMs) — kills the #1 rage-quit without making distraction free-on-demand.
 - **The Jar:** coins accumulate; **monthly settlement** — one charge on the 1st, routed to charity; receipt + tip-out celebration (THE confetti moment). Monthly cap default **$50** (jar full → blocks stay on; raising the cap is deliberate and visible to accountability friends). **48h kindness refund**, no questions (>3/month pauses stakes).
 - **Jar break (anti-cheat), disclosed in plain words at commitment creation:** escaping mid-commitment (revoking Screen Time permission, removing the card, deleting the app) = breaking the jar = **5× your override price**. **Grace hour first:** warning notification + 60 minutes to restore before anything is charged — accidents and iOS glitches forgiven. Quitting honestly is always free with 24h notice. Clarity requirements: plain-words card at creation, reminder before any charge, the rule restated in Terms exactly as in-app.

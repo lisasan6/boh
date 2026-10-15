@@ -894,7 +894,7 @@
     <div class="display" style="font-size:23px;margin:14px 0 8px">You made a deal with yourself</div>
     <div class="sub" style="color:#A9A4D8;margin-bottom:6px" id="shieldSub">How about <b style="color:#EFEDFF">your novel</b> instead?</div>
     <div class="tiny" style="margin-bottom:24px" id="shieldStreak">12 clean days and counting</div>
-    <button class="btn mint" id="shieldStay" onclick="resist()">I'll stay committed</button>
+    <button class="btn mint" id="shieldStay" data-stay="" onclick="resist()">I'll stay committed</button>
     <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" id="shieldOpen" onclick="showBridge()">Open anyway · $5</button>
     <div class="tiny devNote" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
   </div>
@@ -905,7 +905,7 @@
     <div class="display" style="font-size:22px;margin-top:44px;color:var(--calm-ink)" id="breathTitle">No rush.</div>
     <div class="sub" style="color:var(--calm-soft);max-width:210px;margin-top:8px" id="breathSub">The scroll will wait. Ten seconds, one breath, then it's your call.</div>
     <div style="position:absolute;left:17px;right:17px;bottom:200px" id="breathBtns" style="display:none">
-      <button class="btn calm" onclick="resist()">I'll stay committed</button>
+      <button class="btn calm" data-stay="" onclick="resist()">I'll stay committed</button>
     </div>
     <!-- smaller, and it bounces into a new spot each time, so continuing is a choice rather than a reflex -->
     <button class="skipBtn" id="breathGo" onclick="showInstead()">Never mind, continue</button>
@@ -930,7 +930,7 @@
       <button class="btn calm" style="margin-top:11px" onclick="closeOv('ov-instead');openEntry('impulse')">Write it</button>
     </div>
     <button class="btn ghost wk3" style="margin-top:6px;border-color:var(--calm-soft);color:var(--calm)" id="wobEntryBtn" onclick="openWobble()">Ask someone to sit with me</button>
-    <button class="btn ghost" style="margin-top:6px" onclick="closeOv('ov-instead');resist()">None of it — I'll stay committed</button>
+    <button class="btn ghost" style="margin-top:6px" data-stay="None of it — " onclick="closeOv('ov-instead');resist()">None of it — I'll stay committed</button>
     <button class="btn ghost" style="margin-top:9px;opacity:.75" onclick="closeOv('ov-instead');showOverride()">Still want in</button>
   </div>
 
@@ -946,7 +946,7 @@
         <div class="display num" style="font-size:24px;color:var(--gold-text)" id="ovrPrice">$5</div>
       </div>
       <button class="btn gold" id="ovrPay" onclick="payOverride()">Drop a coin &amp; open</button>
-      <button class="btn ghost" style="margin-top:9px" onclick="resist()">Actually, I'll stay committed</button>
+      <button class="btn ghost" style="margin-top:9px" data-stay="Actually, " onclick="resist()">Actually, I'll stay committed</button>
       <div class="tiny" style="text-align:center;margin-top:10px" id="ovrNote">refundable for 48h, no questions</div>
     </div>
   </div>
