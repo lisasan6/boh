@@ -50,7 +50,8 @@ The tagline: *"You can always choose distraction. It just shouldn't be free."*
 | Path | What it is |
 |---|---|
 | `prototype/` | The full clickable app prototype (HTML, split into index.html, styles.css and app.js). It is the reference for every screen and flow. `scrolljar-prototype-v2.html` is the original single-file version. |
-| `landing/index.html` | The waitlist landing page. Single file, no build step. |
+| `landing/` | The website: `index.html` (home), `teams.html`, `families.html`, `privacy.html`, `404.html`, shared `site.css`/`site.js`, self-hosted `fonts/`. No build step to preview. |
+| `deploy/` | How the website goes live: `build.sh` makes `dist/` (website + live app only, fonts self-hosted), `README.md` has L's steps. |
 | `docs/00-HANDOFF.md` | **Start here:** current state, what's open, what was lost. |
 | `docs/IOS-BUILD-SPEC.md` | The technical plan for the real iOS app. |
 | `docs/scrolljar-spec.md` | Product spec v1.2 (canonical). |

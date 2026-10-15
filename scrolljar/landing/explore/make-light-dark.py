@@ -47,6 +47,6 @@ def scoped(start_marker, pairs):
 # (the gradient key words now live in landing/index.html itself)
 # a touch more colour in the light gradient so it reads as vividly as on dark, while staying readable
 s=s.replace("--head-grad:linear-gradient(95deg,#0B9C80 0%,#6455D6 100%);","--head-grad:linear-gradient(95deg,#0A9A7E 0%,#3F8FD6 50%,#6A55E0 100%);")
-for x in ('site.css','site.js','teams.html','families.html'):
+for x in ('site.css','site.js','teams.html','families.html','privacy.html'):
     s=s.replace('href="'+x,'href="'+prefix+x).replace('src="'+x,'src="'+prefix+x)
 open(dst,'w').write(s)

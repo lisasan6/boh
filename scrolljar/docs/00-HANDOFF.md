@@ -63,31 +63,26 @@ This gates TestFlight and the App Store, and approval takes weeks.
 - The steps are in `IOS-BUILD-SPEC.md` §2.
 - Development builds on your own iPhone do **not** need approval, so coding can start now.
 
-### 🟠 2. Landing page: three things before it goes live
+### 🟠 2. Website: ready to publish (2026-10-15)
 
-1. **`YOURFORMID`**: create a free form at formspree.io and paste its ID into the script. Until then the form runs in demo mode and captures nothing.
-2. **TARGET**: the waitlist number that means "keep going" (e.g. 300 signups in 3 weeks). It goes in the comment at the top of the file. Without it the page tests nothing.
-3. ~~"This fall" launch claim~~ **Done 2026-10-13:** now "iPhone first" in the hero pill, FAQ and final CTA. The LA-verdict stat was also reworded to say it's on appeal.
+Everything technical is done: a privacy page, a "page not found" page, fonts served from the site (no Google), a build that publishes only the website and the live app (`deploy/build.sh`), and `netlify.toml` for zero-setup Netlify. **Step-by-step for L: `deploy/README.md`.** Still L's:
 
-Then buy the domain (`scrolljar.app` is assumed throughout) and deploy to Netlify, Vercel or Cloudflare Pages.
-
-**The hero phone now runs the live prototype** (an iframe of `../prototype/index.html?embed=1`, night mode). When deploying, publish `prototype/` alongside `landing/` so that path resolves — e.g. deploy the whole `scrolljar/` folder with `landing/` as the home page, or copy `prototype/` next to `landing/index.html` and change the iframe `src` to `prototype/index.html?embed=1`.
+1. The privacy page's two placeholders: full legal name, city and country.
+2. The Formspree form ID (`FORM_ID` in `landing/site.js`). Until then the waitlist runs in demo mode and captures nothing. Sign-ups are tagged `launch` or `families`, so the Families list gets only the Families email it was promised.
+3. Buy the domain (`scrolljar.app` is assumed; another one means setting `SITE_URL`), connect the host, and forward `hello@` and `press@`.
+4. **TARGET**: the waitlist number that means "keep going" (e.g. 300 signups in 3 weeks).
 
 ### 🟡 3. Product questions still open
 
 The live list is in `sketchpad.md` → "Open questions":
 
-- Q4 Free plan limits (decided: 3 promises)
+- Q4 Free plan limits (decided: 3 deals)
 - Q5 group jar settlement (per member or pooled)
 - Q8 hour-posts in v1
 - Q12 Big Counter methodology
 - Q15 widget scope
 - **Q16 US legal entity** (needs an advisor; it gates the Stripe and App Store contracts)
 - Q21 Wobble × Teams
-
-### 🟡 4. Idea L hasn't approved yet
-
-Embed the working prototype in the landing page's hero phone, so visitors can tap the shield and watch the coin drop. **Ask L first.**
 
 ## 5. Where the docs disagree (later decisions win)
 
@@ -113,7 +108,8 @@ Embed the working prototype in the landing page's hero phone, so visitors can ta
 4. Build the iOS app in the phases of `IOS-BUILD-SPEC.md`, using the prototype as the visual and behavioural reference.
 
 ### Website structure (2026-10-14)
-- `landing/index.html` is the home page; `landing/teams.html` (for companies) and `landing/families.html` are their own pages.
-- Shared styling and behaviour live in `landing/site.css` and `landing/site.js`. Change them once, every page follows. Deploy all five files together (plus `og.png` and `prototype/` for the live demo).
+- `landing/index.html` is the home page; `landing/teams.html` (for companies), `landing/families.html` and `landing/privacy.html` are their own pages, plus `landing/404.html`. Families embeds the live app opened on the family screen (`?embed=1&show=family`).
+- Shared styling and behaviour live in `landing/site.css` and `landing/site.js`. Change them once, every page follows. Publishing goes through `deploy/build.sh` (see `deploy/README.md`): never publish the whole `scrolljar/` folder, because `docs/` is private.
 - `landing/explore/light-dark.html` is an alternative look (alternating light sections). Rebuild it from the home page with `python3 landing/explore/make-light-dark.py landing/index.html landing/explore/light-dark.html "../../prototype/index.html?embed=1" "../"`.
 - The waitlist form is still in demo mode: set `FORM_ID` in `site.js` (Formspree).
+- Fonts: the source pages load Google Fonts (handy for previews); the build swaps them for `landing/fonts/` (OFL licences included). If you add a font or weight, add it there too.

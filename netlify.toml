@@ -1,0 +1,5 @@
+# Netlify reads this automatically: it builds the ScrollJar website from scrolljar/.
+[build]
+  base = "scrolljar"
+  command = "sh deploy/build.sh"
+  publish = "dist"

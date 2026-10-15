@@ -6,15 +6,18 @@ let signed=false, joinVis=false;
 document.querySelectorAll('form[data-wl]').forEach(f=>{
   f.addEventListener('submit',async e=>{
     e.preventDefault();
-    const email=f.querySelector('input').value.trim();
+    const email=f.querySelector('input[type=email]').value.trim();
     if(!email)return;
+    /* a bot filled the hidden field: look done, send nothing */
+    const trap=f.querySelector('[name=_gotcha]');
+    if(trap&&trap.value){f.style.display='none';f.parentElement.querySelector('[data-ok]').style.display='flex';return}
     const btn=f.querySelector('button');btn.disabled=true;btn.textContent='One second…';
     let sent=false;
     if(FORM_ID!=='YOURFORMID'){
       try{
         const r=await fetch('https://formspree.io/f/'+FORM_ID,{method:'POST',
           headers:{'Accept':'application/json','Content-Type':'application/json'},
-          body:JSON.stringify({email})});
+          body:JSON.stringify({email,list:f.dataset.wl||'launch'})});
         sent=r.ok;
       }catch(_){sent=false}
     }else{sent=true;console.warn('ScrollJar: demo mode — set FORM_ID to capture real emails.')}
