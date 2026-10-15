@@ -294,7 +294,17 @@ function allowPerm(){
 function denyPerm(){ closeOv('ov-sysalert'); $('ov-noperm').classList.add('on'); }
 const PICK_CATS=['Social','Games','Entertainment','Creativity','Productivity & Finance','Education','Information & Reading','Health & Fitness','Utilities','Shopping & Food','Travel','Other'];
 const pick={apps:new Set(),cats:new Set(),open:new Set(['Social'])};
-function openPicker(){ renderPicker(); $('ov-picker').classList.add('on'); }
+let pickFor='setup', pickSaved=null;
+function openPicker(mode){
+  pickFor=mode||'setup';
+  if(pickFor==='deal'){
+    pickSaved={apps:new Set(pick.apps),cats:new Set(pick.cats)};
+    pick.apps=new Set(NEW.picked?NEW.picked.apps:[]); pick.cats=new Set(NEW.picked?NEW.picked.cats:[]);
+  }
+  renderPicker(); $('ov-picker').classList.add('on');
+}
+function restorePick(){ if(pickFor==='deal'&&pickSaved){ pick.apps=pickSaved.apps; pick.cats=pickSaved.cats; } pickFor='setup'; pickSaved=null; }
+function closePicker(){ restorePick(); closeOv('ov-picker'); }
 function renderPicker(){
   const rows=[];
   PICK_CATS.forEach(c=>{
@@ -317,11 +327,17 @@ function togglePickApp(i){ if(pick.cats.has('Social')){ pick.cats.delete('Social
 function togglePickOpen(c){ pick.open.has(c)?pick.open.delete(c):pick.open.add(c); renderPicker(); }
 function pickDone(){
   if(!pickCount()) return;
+  if(pickFor==='deal'){ NEW.picked={apps:new Set(pick.apps),cats:new Set(pick.cats)}; restorePick(); closeOv('ov-picker'); renderNew(); return; }
   closeOv('ov-picker'); closeOv('ov-preperm'); $('ov-onb').classList.remove('on');
   setStage('new');
   toast($('d1Apps').textContent+' shielded. Try opening one.');
 }
 
+function pickedName(sel){
+  const cats=[...sel.cats], a=sel.apps.size, list=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:x[0];
+  if(cats.length) return {name:list(cats)+' apps'+(a?` and ${a} more`:''), many:true};
+  return a===1 ? {name:APPS[[...sel.apps][0]].n, many:false} : {name:a+' apps', many:true};
+}
 /* ── day ~3: "want to make it real?" — stakes, charity, card. Real coins are free; Plus is optional. ── */
 let realStep=0, realPrice=5, realCharity=0, realPlan='free', realAgree=false;
 function openReal(){ realStep=0; realPrice=5; realCharity=S.charity; realPlan=S.plan; realAgree=false; renderReal(); $('ov-real').classList.add('on'); }
@@ -564,18 +580,53 @@ const COMMITS=[
   {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
   {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
 ];
-const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?'$'+c.price:'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
+const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${c.window||SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?'$'+c.price:'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
 function renderCommits(){
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
     <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${dealLine(c)}</div>${c.pending?`<div class="tiny" style="color:var(--gold-text);margin-top:2px">${c.pending}</div>`:''}</div></div>
     <span class="shieldchip"><svg width="15" height="15"><use href="#i-shield"/></svg></span></div>`).join('');
 }
+const NEW={sched:'always',price:5,forWhat:'',picked:null};
+const DEAL_COLOURS=['linear-gradient(150deg,#FFB86B,#FF5C8A)','linear-gradient(150deg,#8B7CF6,#5AA9FF)','linear-gradient(150deg,#37E2C0,#1E63FF)','linear-gradient(150deg,#FF7AC6,#8B5CF6)'];
+const hm=t=>{ const [h,m]=t.split(':').map(Number); return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?'am':'pm'); };
+const SCHED_NOTE={always:'all day, every day',mornings:'6–10am, every day',evenings:'9pm–7am, every night',work:'9am–5pm, Monday to Friday',weekend:'all day Saturday and Sunday'};
+const SCHED_SAY={always:'all day, every day',mornings:'every morning, 6–10am',evenings:'every night, 9pm–7am',work:'on weekdays, 9am–5pm',weekend:'all weekend'};
+const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function openNew(){
+  Object.assign(NEW,{sched:'always',price:5,forWhat:'',picked:null});
+  $('newFor').value=''; $('newPrice').value=5;
+  document.querySelectorAll('#schedChips .chip').forEach((c,i)=>c.classList.toggle('on',i===0)); $('customWindow').style.display='none';
+  $('newLimit').style.display = S.plan==='free'&&COMMITS.length>=3 ? '' : 'none';
+  renderNew(); go('new'); $('s-new').scrollTop=0;
+}
+function renderNew(){
+  const custom=NEW.sched==='custom', win=custom?`${hm($('schedFrom').value)}–${hm($('schedTo').value)}`:'';
+  $('priceV').textContent=NEW.price;
+  $('schedNote').textContent = custom ? win+', every day' : SCHED_NOTE[NEW.sched];
+  $('priceNote').textContent = (S.stakes?'each time you open anyway':'each time you open anyway, once you make it real')+' · 100% to '+charity().n;
+  const p=NEW.picked&&pickedName(NEW.picked);
+  $('newAppsTitle').textContent = p ? p.name : 'Choose apps';
+  $('newAppsSub').textContent = p ? 'tap to change · we only ever see anonymous tokens' : 'in Apple\'s own picker · we never see which';
+  $('newAppsIcon').style.background = p ? DEAL_COLOURS[COMMITS.length%4] : 'var(--panel-2)';
+  $('newAppsIcon').innerHTML = `<svg width="17" height="17" style="color:${p?'rgba(255,255,255,.92)':'var(--ink-2)'}"><use href="#${p?'i-app':'i-plus'}"/></svg>`;
+  const fw=NEW.forWhat.trim();
+  $('newSummary').innerHTML = !p ? '<div class="tiny" style="line-height:1.55">Choose the apps first. Everything else is ready to go.</div>'
+    : `<div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div class="sub" style="color:var(--ink);line-height:1.55">
+       <b>${esc(p.name)}</b> ${p.many?'are':'is'} shielded <b>${custom?'every day, '+win:SCHED_SAY[NEW.sched]}</b>.
+       ${S.stakes?`Opening ${p.many?'one':'it'} anyway costs <b>$${NEW.price}</b>, 100% to ${charity().n}.`
+         :`Opening ${p.many?'one':'it'} anyway is free for now; once you make it real it costs <b>$${NEW.price}</b>, 100% to ${charity().n}.`}
+       ${fw?` This time is for <b>${esc(fw)}</b>.`:''}</div>`;
+  $('sealBtn').disabled=!p;
+}
 function sealIt(){
+  if(!NEW.picked){ toast('Choose the apps first.'); return; }
   if(S.plan==='free' && COMMITS.length>=3){ toast('The free plan includes 3 deals. Plus has unlimited.'); go('paywall'); return; }
-  const forWhat=($('newFor')&&$('newFor').value.trim())||'my novel';
-  COMMITS.unshift({g:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'New deal',sched,price:+$('priceV').textContent,forWhat});
-  renderCommits();go('home');toast('Deal sealed. Your future self says thanks.');
+  const custom=NEW.sched==='custom';
+  COMMITS.unshift({g:DEAL_COLOURS[COMMITS.length%4],n:pickedName(NEW.picked).name,sched:NEW.sched,price:NEW.price,forWhat:NEW.forWhat.trim(),
+    window:custom?`${hm($('schedFrom').value)}–${hm($('schedTo').value)}`:undefined});
+  renderCommits(); go('home'); toast('Deal sealed. Your future self says thanks.');
+  const card=$('commitList').firstElementChild; if(card){ card.classList.add('justSealed'); card.scrollIntoView({block:'center'}); }
 }
 /* editing a deal */
 let dealI=0, dealDraft=null;
@@ -594,7 +645,7 @@ function renderDeal(){
   $('dealBody').innerHTML=`
     <input class="timeIn" style="font-size:16px;font-family:'Bricolage Grotesque';font-weight:700" value="${d.n.replace(/"/g,'&quot;')}" aria-label="Deal name" oninput="dealDraft.n=this.value;dealSummary()">
     <div class="eyebrow" style="margin:14px 0 8px">WHEN THE SHIELD IS ON</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">${['always','mornings','evenings','work','weekend'].map(k=>`<span class="chip${d.sched===k?' on':''}" onclick="dealDraft.sched='${k}';renderDeal()">${{always:'Always',mornings:'Mornings',evenings:'Evenings',work:'Work hours',weekend:'Weekends'}[k]}</span>`).join('')}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${['always','mornings','evenings','work','weekend'].map(k=>`<span class="chip${d.sched===k?' on':''}" onclick="dealDraft.sched='${k}';renderDeal()">${{always:'Always',mornings:'Mornings',evenings:'Nights',work:'Work hours',weekend:'Weekends'}[k]}</span>`).join('')}</div>
     ${note(SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched],d.sched!==o.sched)}
     <div class="eyebrow" style="margin:14px 0 8px">YOUR PRICE TO OPEN ANYWAY</div>
     <div class="card" style="text-align:center;margin-bottom:0"><div class="amount num" style="font-size:38px">$<span id="dealP">${d.price}</span></div>
@@ -1038,11 +1089,11 @@ function endFocus(early){
     setTimeout(()=>showExit('Session complete.','That hour was yours. Now close this and go spend the next one too.'),600); }
 }
 /* ── schedule picker ── */
-let sched='always';
 function pickSched(el,kind){
   document.querySelectorAll('#schedChips .chip').forEach(c=>c.classList.remove('on'));
-  el.classList.add('on'); sched=kind;
+  el.classList.add('on'); NEW.sched=kind;
   $('customWindow').style.display = kind==='custom' ? 'block' : 'none';
+  renderNew();
 }
 const SCHED_LABEL={always:'always',mornings:'6–10am',evenings:'9pm–7am',work:'9am–5pm',weekend:'weekends',custom:'custom window'};
 function cycleSetting(el,opts){

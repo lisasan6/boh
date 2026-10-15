@@ -240,7 +240,7 @@
       </div>
     </div>
 
-    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Your deals</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ Make a deal</span></div>
+    <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Your deals</div><span class="pill chr" role="button" tabindex="0" style="cursor:pointer" onclick="openNew()">+ Make a deal</span></div>
     <div id="commitList"></div>
 
     <div class="card spread wk3" style="cursor:pointer" onclick="go('insights')">
@@ -797,36 +797,47 @@
 
   <!-- ══ NEW COMMITMENT ══ -->
   <div class="screen" id="s-new">
-    <div class="row" style="margin-bottom:14px"><span style="font-size:19px;cursor:pointer" onclick="go('home')">‹</span><div class="display h1">Make a deal</div></div>
-    <div class="eyebrow" style="margin-bottom:8px">1 · WHAT ARE WE TAMING?</div>
-    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#FF7AC6,#8B5CF6)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The scroll one</b></div>
-    <div class="card row" style="cursor:pointer" onclick="this.classList.toggle('sel');this.style.borderColor=this.classList.contains('sel')?'var(--mint)':''"><div class="ic token" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div><b style="font-size:13.5px">The loud one</b></div>
-    <div class="eyebrow" style="margin:14px 0 8px">2 · WHEN IS THE SHIELD ON?</div>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px" id="schedChips">
-      <div class="chip on" onclick="pickSched(this,'always')">Always</div>
-      <div class="chip" onclick="pickSched(this,'mornings')">Mornings</div>
-      <div class="chip" onclick="pickSched(this,'evenings')">Evenings</div>
-      <div class="chip" onclick="pickSched(this,'work')">Work hours</div>
-      <div class="chip" onclick="pickSched(this,'weekend')">Weekends</div>
-      <div class="chip" onclick="pickSched(this,'custom')">Custom…</div>
+    <div class="row" style="margin-bottom:6px"><span class="backBtn" role="button" tabindex="0" aria-label="Back" onclick="go('home')">‹</span><div class="display h1">Make a deal</div></div>
+    <div class="sub" style="margin:0 2px 14px">A deal with yourself, made in cold blood. You can change it any time.</div>
+    <div class="card newLimit" id="newLimit" style="display:none">
+      <b style="font-size:13.5px">You have 3 deals, the most on the free plan</b>
+      <div class="tiny" style="margin-top:4px;line-height:1.5">Plus has unlimited deals. Or end one you don't need any more: that's always free.</div>
+      <button class="btn ghost" style="margin-top:10px" onclick="go('paywall')">See Plus</button>
     </div>
-    <div class="card" id="customWindow" style="display:none">
+    <div class="eyebrow" style="margin-bottom:8px">1 · WHAT ARE WE TAMING?</div>
+    <div class="card spread newApps" id="newApps" role="button" tabindex="0" onclick="openPicker('deal')" onkeydown="if(event.key==='Enter')openPicker('deal')">
+      <div class="row"><div class="ic token" id="newAppsIcon" style="background:var(--panel-2)"><svg width="17" height="17"><use href="#i-plus"/></svg></div>
+        <div><b style="font-size:13.5px" id="newAppsTitle">Choose apps</b><div class="tiny" id="newAppsSub">in Apple's own picker · we never see which</div></div></div>
+      <span style="color:var(--ink-3)">›</span>
+    </div>
+    <div class="eyebrow" style="margin:14px 0 8px">2 · WHEN IS THE SHIELD ON?</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap" id="schedChips">
+      <div class="chip on" role="button" tabindex="0" onclick="pickSched(this,'always')">Always</div>
+      <div class="chip" role="button" tabindex="0" onclick="pickSched(this,'mornings')">Mornings</div>
+      <div class="chip" role="button" tabindex="0" onclick="pickSched(this,'evenings')">Nights</div>
+      <div class="chip" role="button" tabindex="0" onclick="pickSched(this,'work')">Work hours</div>
+      <div class="chip" role="button" tabindex="0" onclick="pickSched(this,'weekend')">Weekends</div>
+      <div class="chip" role="button" tabindex="0" onclick="pickSched(this,'custom')">Custom…</div>
+    </div>
+    <div class="tiny" id="schedNote" style="margin:8px 2px 0">all day, every day</div>
+    <div class="card" id="customWindow" style="display:none;margin-top:9px">
       <div class="row" style="gap:10px">
-        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" value="21:00" id="schedFrom"></div>
-        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="07:00" id="schedTo"></div>
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">FROM</div><input class="timeIn" type="time" value="21:00" id="schedFrom" oninput="renderNew()"></div>
+        <div style="flex:1"><div class="tiny" style="margin-bottom:5px">UNTIL</div><input class="timeIn" type="time" value="07:00" id="schedTo" oninput="renderNew()"></div>
       </div>
-      <div class="tiny" style="margin-top:9px">Tightening is instant. Loosening takes 24 hours — cold blood, remember.</div>
     </div>
     <div class="eyebrow" style="margin:14px 0 8px">3 · YOUR PRICE TO OPEN ANYWAY</div>
     <div class="card" style="text-align:center">
       <div class="amount num">$<span id="priceV">5</span></div>
-      <input type="range" min="2" max="25" value="5" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="document.getElementById('priceV').textContent=this.value">
+      <input type="range" min="2" max="25" value="5" id="newPrice" aria-label="Price to open anyway" style="width:100%;accent-color:var(--mint);margin-top:10px" oninput="NEW.price=+this.value;renderNew()">
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
+      <div class="tiny" id="priceNote" style="margin-top:6px"></div>
     </div>
-    <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR?</div>
-    <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
-    <button class="btn mint" style="margin-top:10px" onclick="sealIt()">Seal the deal</button>
-    <div class="tiny" style="text-align:center;margin-top:8px">made in cold blood, kept in warm moments</div>
+    <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR? <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">· optional</span></div>
+    <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" maxlength="40" oninput="NEW.forWhat=this.value;renderNew()" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <div class="card dealSummary" id="newSummary"></div>
+    <button class="btn mint" id="sealBtn" onclick="sealIt()">Seal the deal</button>
+    <div class="tiny" style="text-align:center;margin-top:8px">Stricter changes apply now; easier ones wait 24 hours.</div>
   </div>
 
   <!-- ══ PAYWALL ══ -->
@@ -1184,7 +1195,7 @@
   <!-- ══ Apple's app picker (mock) ══ -->
   <div class="ov iosDim" id="ov-picker" style="justify-content:flex-end">
     <div class="iosSheet">
-      <div class="iosSheetHead"><button onclick="closeOv('ov-picker')">Cancel</button><b>Choose Activities</b><button id="pickDone" style="font-weight:600" onclick="pickDone()">Done</button></div>
+      <div class="iosSheetHead"><button onclick="closePicker()">Cancel</button><b>Choose Activities</b><button id="pickDone" style="font-weight:600" onclick="pickDone()">Done</button></div>
       <div class="iosSearch">Search</div>
       <div class="iosList" id="pickList"></div>
       <div class="iosFoot">Apple's picker. Real app names show here on your phone, but only you see them: ScrollJar receives anonymous tokens for whatever you tick.</div>
