@@ -1,4 +1,7 @@
-const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false};
+const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false,
+  stage:'wk3',   /* 'new' = day one, right after setup · 'wk3' = three weeks in (the demo default) */
+  stakes:true};  /* false until "Make it real": opening a shielded app is free in the first days */
+let SNAP=null;   /* the three-weeks-in data, kept so the demo can switch back from day one */
 /* card fee on the free plan: shown and added on top, so 100% of the coins arrive. Plus covers it. */
 const cardFee=x=>Math.round((x*0.029+0.30)*100)/100;
 /* this month's coins, newest first — the jar total is always their sum */
@@ -236,7 +239,7 @@ function renderJar(){
   document.querySelectorAll('[data-bind="jar"]').forEach(e=>e.textContent='$'+t);
   document.querySelectorAll('[data-bind="capfill"]').forEach(e=>e.style.width=pct+'%');
   document.querySelectorAll('[data-bind="capText"]').forEach(e=>e.textContent=
-    t>=S.cap?'Full for July · shields stay on':'$'+t+' of your $'+S.cap+' cap');
+    !S.stakes&&!t?'Empty for now':t>=S.cap?'Full for July · shields stay on':'$'+t+' of your $'+S.cap+' cap');
   document.querySelectorAll('[data-bind="coinCount"]').forEach(e=>e.textContent=COINS.length+' coin'+(COINS.length===1?'':'s'));
   document.querySelectorAll('[data-bind="charityLine"]').forEach(e=>e.textContent=charity().l);
   document.querySelectorAll('.charityName').forEach(e=>e.textContent=charity().n);
@@ -246,7 +249,8 @@ function renderJar(){
       <div style="flex:1;min-width:0"><b style="font-size:12.5px">${c.p}</b><div class="tiny">${c.when}</div></div>
       ${c.fresh?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="refundCoin(${i})">Refund</span>`:''}
       <span class="display num" style="font-size:15px;color:var(--gold-text);min-width:30px;text-align:right">$${c.amt}</span>
-    </div>`).join(''):'<div class="tiny" style="padding:10px 0">No coins yet this month.</div>';
+    </div>`).join(''):`<div class="tiny" style="padding:10px 0">${S.stakes?'No coins yet this month.':'No coins yet. Opening a shielded app is free for your first days.'}</div>`;
+  renderD1();
 }
 function refundCoin(i){
   const c=COINS.splice(i,1)[0]; renderJar();
@@ -261,7 +265,13 @@ function pickCharity(i){
   S.charity=i; renderCharities(); renderJar();
   toast('Your jar now goes to '+charity().n+' on Aug 1.');
 }
-function showShield(){$('ov-shield').classList.add('on')}
+function showShield(){
+  const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/^my /,'your ');
+  $('shieldSub').innerHTML = fw ? `You said this ${S.stage==='new'?'time':'hour'} was for <b style="color:#EFEDFF">${fw}</b>.` : 'Your first deal. The choice is still yours.';
+  $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
+  $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
+  $('ov-shield').classList.add('on');
+}
 /* ── the real-iOS bridge: shield → notification → our app ── */
 function showBridge(){
   closeOv('ov-shield');
@@ -269,7 +279,7 @@ function showBridge(){
   $('iosBanner').classList.remove('in'); $('ov-ios').classList.add('on');
   setTimeout(()=>$('iosBanner').classList.add('in'),550);
 }
-function tapBridge(){ closeOv('ov-ios'); showBreath(); }
+function tapBridge(){ closeOv('ov-ios'); d1Done('d1Pause'); showBreath(); }
 function ignoreBridge(){ closeOv('ov-ios'); resist(); }
 
 /* ── onboarding: our explainer → Apple's prompt → Face ID → Apple's picker ── */
@@ -310,6 +320,7 @@ function pickDone(){
   const parts=[]; if(pick.apps.size) parts.push(pick.apps.size+' app'+(pick.apps.size>1?'s':''));
   if(pick.cats.size) parts.push(pick.cats.size+' categor'+(pick.cats.size>1?'ies':'y'));
   closeOv('ov-picker'); closeOv('ov-preperm'); $('ov-onb').classList.remove('on');
+  setStage('new');
   toast(parts.join(' and ')+' shielded. Try opening one.');
 }
 
@@ -368,10 +379,12 @@ function renderReal(){
 function realSave(){
   if(!realAgree) return;
   const b=$('realSave'); b.disabled=true; b.textContent='Confirming with your bank…';
-  setTimeout(()=>{ S.charity=realCharity; S.plan=realPlan; renderPlan(); renderJar(); renderCharities(); realGo(4); },1200);
+  setTimeout(()=>{ S.charity=realCharity; S.plan=realPlan; S.stakes=true;
+    if(S.stage==='new'&&COMMITS[0]) COMMITS[0].price=realPrice;
+    renderPlan(); renderCommits(); renderJar(); renderCharities(); realGo(4); },1200);
 }
 function resist(){
-  ['ov-shield','ov-breath','ov-override'].forEach(closeOv);
+  ['ov-shield','ov-breath','ov-override'].forEach(closeOv); d1Done('d1Pause');
   const {box,svg,mouth}=liveJar();
   svg.classList.remove('hop');void svg.offsetWidth;svg.classList.add('hop');
   stars(box,7,true);
@@ -465,16 +478,26 @@ function launchContinue(){
 }
 function showOverride(){
   closeOv('ov-breath');
-  if(jarTotal()+5>S.cap){
+  const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
+  if(S.stakes&&jarTotal()+price>S.cap){
     ['ov-shield','ov-instead'].forEach(closeOv);
     showExit('Your jar is full for July.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on Aug 1.');
     return;
   }
+  $('ovrEyebrow').textContent=d.n.toUpperCase()+' · 15 MINUTES';
+  $('ovrSub').textContent = S.stakes ? "Totally allowed. It just isn't free — you decided that."
+    : 'Totally allowed, and free for your first days. From day 3 you can make each time cost a coin you price yourself, 100% to charity.';
+  $('ovrCost').style.display = S.stakes ? '' : 'none'; $('ovrPrice').textContent='$'+price;
+  $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
+  $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
+  $('ovrNote').textContent = S.stakes ? 'refundable for 48h, no questions' : 'no card, no coin, nothing to undo';
   $('ov-override').classList.add('on');
 }
 let winT;
 function payOverride(){
   closeOv('ov-override');
+  const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
+  if(!S.stakes){ openWindow(0); return; }
   const {box,svg}=liveJar();
   const f=document.createElement('div');f.className='flyer';
   f.innerHTML='<svg viewBox="0 0 40 40" width="26" height="26"><use href="#coin"/></svg>';
@@ -487,13 +510,21 @@ function payOverride(){
     f.remove();
     svg.classList.remove('squash');void svg.getBoundingClientRect();svg.classList.add('squash');
     stars(box,5,false);
-    COINS.unshift({p:'The scroll one',amt:5,when:'Just now',fresh:true}); renderJar();
+    COINS.unshift({p:d.n,amt:price,when:'Just now',fresh:true}); renderJar();
     jarMood(svg,'thanks',1600);
-    $('ov-window').classList.add('on');
-    let sec=899;clearInterval(winT);
-    winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
-      $('winTimer').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
+    openWindow(price);
   };
+}
+/* the unlock window: with a coin once it's real, without one in the first days */
+function openWindow(coin){
+  $('winCoin').style.display = coin ? '' : 'none';
+  $('winTitle').textContent = coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
+  $('winSub').innerHTML = coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
+    : "No coin while you're getting started. The shield comes back when the time is up.";
+  $('ov-window').classList.add('on');
+  let sec=899;clearInterval(winT); $('winTimer').textContent='15:00';
+  winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
+    $('winTimer').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
 }
 function endWindow(){
   clearInterval(winT);closeOv('ov-window');go('home');
@@ -534,7 +565,7 @@ const COMMITS=[
   {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
   {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
 ];
-const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · $${c.price} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
+const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?'$'+c.price:'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
 function renderCommits(){
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
     <div class="row"><div class="ic token" style="background:${c.g}"><svg width="17" height="17" style="color:rgba(255,255,255,.92)"><use href="#i-app"/></svg></div>
@@ -643,9 +674,8 @@ const FEED=[
   {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:'Jun 28',
    body:'Sofia joined the jar.',sub:'we donated $1 to UNICEF for the invite',kudos:2},
 ];
-function renderFeed(){
-  $('feedList').innerHTML=FEED.map((f,i)=>`
-   <div class="fcard">
+function feedCard(f,i,example){ return `
+   <div class="fcard${example?' example':''}">
      <div class="fhead">
        <div class="av" style="background:${f.c};font-size:${f.a.length>1?10:14}px">${f.a}</div>
        <div style="flex:1"><div class="fname">${f.n}</div><div class="fwhen">${f.w}</div></div>
@@ -655,11 +685,12 @@ function renderFeed(){
      ${f.sub?`<div class="tiny" style="margin-top:3px">${f.sub}</div>`:''}
      ${f.photo?`<div class="fphoto">${scene(f.photo)}</div>`:''}
      <div class="frow">
-       <div class="kudos" onclick="giveKudos(this,${i})" aria-label="High five"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div>
-       <span class="tiny">${f.t==='coin'?'reported, not judged':''}</span>
+       ${example?`<div class="kudos" aria-hidden="true"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div><span class="tiny">an example</span>`
+       :`<div class="kudos" onclick="giveKudos(this,${i})" aria-label="High five"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div>
+       <span class="tiny">${f.t==='coin'?'reported, not judged':''}</span>`}
      </div>
-   </div>`).join('');
-}
+   </div>`; }
+function renderFeed(){ $('feedList').innerHTML=FEED.map((f,i)=>feedCard(f,i)).join(''); }
 function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].kudos++; el.querySelector('span').textContent=FEED[i].kudos; }
 /* members — per-member settlement, amounts hideable */
 let showDollars=true;
@@ -1184,17 +1215,27 @@ const INSTEAD_FUN=[
   {i:'i-wave',t:'One episode — the good one',s:'42 minutes, and then it stops on its own'},
   {i:'i-heart',t:'A record, start to finish',s:'nothing to look at, which is the point'},
 ];
+const INSTEAD_WORTH_D1=[
+  {i:'i-book',t:'Twenty pages',s:'of whatever you\'re reading'},
+  {i:'i-sprout',t:'Walk to the end of the street',s:'and back, phone in your pocket'},
+  {i:'i-pen',t:'Write three lines here',s:'about what you were looking for'},
+];
+const INSTEAD_FUN_D1=[
+  {i:'i-camera',t:'A film you\'ve been meaning to see',s:'it ends by itself'},
+  {i:'i-wave',t:'One episode — the good one',s:'and then it stops on its own'},
+  {i:'i-heart',t:'A record, start to finish',s:'nothing to look at, which is the point'},
+];
 let insteadMode='worth';
 function setInsteadMode(m,el){
   insteadMode=m;
   el.parentElement.querySelectorAll('div').forEach(d=>d.classList.remove('on')); el.classList.add('on');
   $('insteadSub').textContent = m==='fun'
     ? "Fair enough — not every hour needs to mean something. Pick something that ends by itself."
-    : 'Three things that fit the twenty minutes you have and the mood you logged.';
+    : S.stage==='new' ? 'Three things that fit the twenty minutes you have.' : 'Three things that fit the twenty minutes you have and the mood you logged.';
   paintInstead();
 }
 function paintInstead(){
-  const L = insteadMode==='fun' ? INSTEAD_FUN : INSTEAD_WORTH;
+  const d1=S.stage==='new', L = insteadMode==='fun' ? (d1?INSTEAD_FUN_D1:INSTEAD_FUN) : (d1?INSTEAD_WORTH_D1:INSTEAD_WORTH);
   $('insteadList').innerHTML=L.map(o=>`<div class="insteadCard" onclick="chooseInstead('${o.t}')">
     <div class="ic" style="background:rgba(255,255,255,.08);color:var(--calm)"><svg width="17" height="17"><use href="#${o.i}"/></svg></div>
     <div style="flex:1"><b style="font-size:13px;color:var(--calm-ink)">${o.t}</b><div class="tiny">${o.s}</div></div>
@@ -1209,6 +1250,7 @@ function waveBars(seed,n){
 }
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 function renderEntries(){
+  if(!ENTRIES.length){ $('entryList').innerHTML='<div class="card tiny" style="line-height:1.55">Nothing yet. Your first line can be anything, or tap the mic and just talk.</div>'; return; }
   $('entryList').innerHTML=ENTRIES.map((e,i)=>e.voice?`<div class="entryCard">
     <div class="entryMeta"><span class="entryTag tag-voice">VOICE</span><span class="tiny">${e.t}</span></div>
     <div class="voiceRow">
@@ -1287,7 +1329,10 @@ function saveEntry(){
 /* ── instead-of screen ── */
 function showInstead(){
   closeOv('ov-breath');
-  paintInstead(); paintColleagues();
+  const fw=((COMMITS[0]||{}).forWhat||'').replace(/^my /,'your ');
+  $('insteadEyebrow').textContent = fw ? `YOU SAID THIS ${S.stage==='new'?'TIME':'HOUR'} WAS FOR ${fw.toUpperCase()}` : 'A FEW IDEAS FOR THE NEXT TWENTY MINUTES';
+  setInsteadMode('worth',$('segWorth'));
+  paintColleagues();
   $('promptChips').innerHTML=PROMPTS.slice(0,3).map(p=>`<div class="promptChip">${p}</div>`).join('');
   $('ov-instead').classList.add('on');
 }
@@ -1844,5 +1889,42 @@ $('weekSpark').innerHTML=HRS.map((h,i)=>{const last=[.7,1.1,.6,1.3,.9,.5,1.0][i]
 $('recapBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
 $('challengeBars').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*60)}px"></div><div class="l">${h.d}</div></div>`).join('');
 setInterval(()=>{const {svg}=liveJar();if(!document.hidden&&Math.random()<.4&&!svg.classList.contains('hop')){svg.classList.add('hop');setTimeout(()=>svg.classList.remove('hop'),800)}},11000);
+/* ── day one vs three weeks in ──
+   After setup the app is honest about being new: no hours yet, an empty jar, free openings until
+   "Make it real", nobody on the Board, nothing in the Diary. The demo can switch back to week 3. */
+SNAP={coins:COINS.map(c=>({...c})),feed:FEED.map(f=>({...f})),entries:ENTRIES.map(e=>({...e})),commits:COMMITS.map(c=>({...c}))};
+function setStage(st){
+  S.stage=st; document.body.dataset.stage=st;
+  $('stD1').classList.toggle('on',st==='new'); $('stW3').classList.toggle('on',st==='wk3');
+  const put=(a,b)=>a.splice(0,a.length,...b.map(x=>({...x})));
+  document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
+  if(st==='new'){
+    S.stakes=false; S.firstResist=false;
+    put(COINS,[]); put(FEED,[]); put(ENTRIES,[]);
+    put(COMMITS,[{g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'Your first deal',sched:'always',price:5,forWhat:''}]);
+    $('d1Pause').classList.remove('done');
+  } else {
+    S.stakes=true; put(COINS,SNAP.coins); put(FEED,SNAP.feed); put(ENTRIES,SNAP.entries); put(COMMITS,SNAP.commits);
+  }
+  renderCommits(); renderFeed(); renderEntries(); renderJar();
+  go('home'); $('s-home').scrollTop=0;
+}
+function d1Done(id){ const el=$(id); if(el&&S.stage==='new') el.classList.add('done'); }
+function renderD1(){
+  if(!SNAP) return;
+  const a=pick.apps.size, cats=[...pick.cats], list=x=>x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:x[0];
+  $('d1Apps').textContent = a&&cats.length ? `${a} app${a>1?'s':''} and your ${list(cats)} apps are`
+    : cats.length ? `Your ${list(cats)} apps are` : a ? (a>1?`Your ${a} apps are`:'Your app is') : 'Your apps are';
+  $('d1Impact').innerHTML = S.stakes
+    ? `It's real. Every coin in this jar goes to <b>${charity().n}</b> on the 1st, with a receipt. ${charity().l}`
+    : `Nothing given yet, and nothing owed. Opening a shielded app is free for your first days. Make it real, and every coin goes to <b>${charity().n}</b> on the 1st, with a receipt.`;
+  $('d1RealBtn').style.display = S.stakes ? 'none' : '';
+  const real=$('d1Real'), price=(COMMITS[0]||{}).price||5;
+  real.classList.toggle('done',S.stakes);
+  $('d1RealTitle').textContent = S.stakes ? "It's real" : 'Make it real, from day 3';
+  real.querySelector('span:not(.d1Tick):not(.d1Go)').textContent = S.stakes ? `done: $${price} a coin, 100% to ${charity().n}` : 'if you want: a coin you price yourself, 100% to charity';
+  if(!$('d1Example').innerHTML) $('d1Example').innerHTML=feedCard(SNAP.feed[0],-1,true);
+}
+document.body.dataset.stage=S.stage;
 /* a page embedding the app can open it on one screen: ?embed=1&show=family */
 if(Q.get('show')==='family') openFamily();

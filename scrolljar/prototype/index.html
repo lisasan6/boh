@@ -158,6 +158,7 @@
 
 <div class="topbar">
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
+  <div class="modes" role="group" aria-label="Where in the journey"><button class="ms" id="stD1" onclick="setStage('new')">Day 1</button><button class="ms on" id="stW3" onclick="setStage('wk3')">Week 3</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
   <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
@@ -168,6 +169,18 @@
   <!-- ══ HOME ══ -->
   <div class="screen on" id="s-home">
     <div class="heroPanel">
+      <div class="d1">
+        <div class="eyebrow">DAY 1</div>
+        <div class="display" style="font-size:32px;letter-spacing:-.035em;line-height:1.05;margin-top:8px">Your shield is on.</div>
+        <div class="sub" style="margin-top:8px"><span id="d1Apps">Your apps are</span> shielded. The hours you take back will show up here, starting today.</div>
+        <div class="d1Steps">
+          <div class="d1Step done"><span class="d1Tick"></span><div><b>Shield your apps</b><span>done, just now</span></div></div>
+          <div class="d1Step" id="d1Pause"><span class="d1Tick"></span><div><b>Meet the pause</b><span>when the pull comes, you get a breath, not a lecture</span></div></div>
+          <div class="d1Step" id="d1Real" role="button" tabindex="0" onclick="openReal()"><span class="d1Tick"></span><div><b id="d1RealTitle">Make it real, from day 3</b><span>if you want: a coin you price yourself, 100% to charity</span></div><span class="d1Go">›</span></div>
+        </div>
+        <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
+      </div>
+      <div class="wk3">
       <div class="eyebrow">THIS WEEK</div>
       <div class="display num" id="timeBig" style="font-size:54px;letter-spacing:-.045em;line-height:1;margin-top:6px">9h 40m</div>
       <div class="sub" style="margin-top:6px">returned to you</div>
@@ -178,6 +191,7 @@
       <div class="sparks" id="weekSpark"></div>
       <div class="sparkLegend"><span>last week</span><span id="goalLine">2 days to your 15-day mark</span></div>
       <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
+      </div>
     </div>
 
     <div class="card todayJar" style="cursor:pointer" onclick="go('jar')">
@@ -229,7 +243,7 @@
     <div class="spread" style="margin:14px 2px 8px"><div class="display h2">Your deals</div><span class="pill chr" style="cursor:pointer" onclick="go('new')">+ Make a deal</span></div>
     <div id="commitList"></div>
 
-    <div class="card spread" style="cursor:pointer" onclick="go('insights')">
+    <div class="card spread wk3" style="cursor:pointer" onclick="go('insights')">
       <div class="row"><svg width="19" height="19" style="color:var(--violet)"><use href="#i-chart"/></svg>
       <div><b style="font-size:13.5px">More about your week</b><div class="tiny">wins, a tip, where your time goes, your story</div></div></div>
       <span style="color:var(--ink-3)">›</span>
@@ -282,7 +296,12 @@
     </div>
     <div class="card lidCard"><div class="spread"><b style="font-size:13px">Lid colour</b><span class="tiny">yours to pick, any time</span></div>
       <div class="swatches" id="lidPickMe"></div></div>
-    <div class="card" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+    <div class="card d1" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
+      <div class="eyebrow">WHERE IT WILL GO</div>
+      <div class="sub" style="margin-top:8px" id="d1Impact"></div>
+      <button class="btn mint" style="margin-top:12px" id="d1RealBtn" onclick="openReal()">Make it real</button>
+    </div>
+    <div class="card wk3" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
       <div class="eyebrow">IMPACT · JULY</div>
       <div class="sub" style="margin-top:8px">Your July coins are going to <b class="charityName">Doctors Without Borders</b>. <span data-bind="charityLine"></span></div>
       <div class="row" style="margin-top:12px;gap:14px">
@@ -296,7 +315,7 @@
       <div id="coinList" style="margin-top:4px"></div>
       <div class="tiny" style="margin-top:8px">Any coin can be refunded within 48 hours, no questions asked.</div>
     </div>
-    <button class="btn ghost" onclick="showTipout()">Preview the monthly tip-out</button>
+    <button class="btn ghost wk3" onclick="showTipout()">Preview the monthly tip-out</button>
   </div>
 
   <!-- ══ CHOOSE A CHARITY ══ -->
@@ -405,7 +424,12 @@
       </div>
     </div>
 
-    <div class="card" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+    <div class="card d1" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
+      <div class="eyebrow">WEEKLY RECAP · SUNDAY</div>
+      <div class="display" style="font-size:16px;margin:9px 0 6px;line-height:1.3">Your first recap arrives Sunday</div>
+      <div class="sub">In your own words, from whatever you write this week. Nobody else reads it.</div>
+    </div>
+    <div class="card wk3" style="background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
       <div class="spread"><div class="eyebrow">WEEKLY RECAP · SUNDAY</div><span class="pill mint">ready</span></div>
       <div class="display" style="font-size:16px;margin:9px 0 6px;line-height:1.3">Your week, in your own words</div>
       <div class="sub">Three entries mentioned tiredness before 10pm. Two mentioned reading afterwards and feeling better.</div>
@@ -465,7 +489,17 @@
       <div><div class="eyebrow">BOARD</div><div class="display" style="font-size:21px;line-height:1.2;margin-top:4px">What your people did instead</div></div>
       <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
-    <div class="jarStrip">
+    <div class="d1">
+      <div class="card d1Empty">
+        <b style="font-size:15px">Nobody here yet</b>
+        <div class="sub" style="margin-top:6px">Share a jar with someone and this is where you'll see what they did instead of scrolling: a walk, a chapter, a dinner. Never their screens, never their coins.</div>
+        <button class="btn mint" style="margin-top:14px" onclick="go('invite')">Invite someone</button>
+        <div class="tiny" style="margin-top:10px">Got a link from your company or family? Open it and you'll join their jar.</div>
+      </div>
+      <div class="eyebrow" style="margin:16px 2px 8px">WHAT A POST LOOKS LIKE</div>
+      <div id="d1Example"></div>
+    </div>
+    <div class="jarStrip wk3">
       <div class="jarChip co" onclick="openCompany()"><b><i class="lidDot" data-jar="co"></i>Fernhill &amp; Co.</b><span>company</span></div>
       <div class="jarChip fam" onclick="openFamily()"><b><i class="lidDot" data-jar="fam"></i>Rossi family</b><span>family</span></div>
       <div class="jarChip cr" onclick="openCreator()"><b><i class="lidDot" data-jar="cr"></i>Unplugged September</b><span>@maya.makes · challenge</span></div>
@@ -473,7 +507,7 @@
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
       <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
     </div>
-    <div class="card coCard" style="cursor:pointer" onclick="openCompany()">
+    <div class="card coCard wk3" style="cursor:pointer" onclick="openCompany()">
       <div class="row" style="gap:12px">
         <svg width="34" height="34" viewBox="0 0 40 40" style="flex:none;filter:drop-shadow(0 0 10px rgba(185,174,255,.6))"><use href="#glowM"/></svg>
         <div style="flex:1;min-width:0"><div class="eyebrow" style="color:var(--violet)">FERNHILL &amp; CO. · SUMMER HOURS</div>
@@ -483,7 +517,7 @@
       </div>
     </div>
     <div id="feedList"></div>
-    <div class="feedEnd">
+    <div class="feedEnd wk3">
       <svg width="15" height="15" style="color:var(--mint)"><use href="#i-sprout"/></svg>
       <div class="display" style="font-size:15px;margin-top:6px">That's everything.</div>
       <div class="tiny" style="margin-top:3px">The rest of your life is off-screen.</div>
@@ -847,10 +881,10 @@
   <div class="ov shield" id="ov-shield">
     <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
     <div class="display" style="font-size:23px;margin:14px 0 8px">You made a deal with yourself</div>
-    <div class="sub" style="color:#A9A4D8;margin-bottom:6px">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
-    <div class="tiny" style="margin-bottom:24px">12 clean days and counting</div>
+    <div class="sub" style="color:#A9A4D8;margin-bottom:6px" id="shieldSub">You said this hour was for <b style="color:#EFEDFF">your novel</b>.</div>
+    <div class="tiny" style="margin-bottom:24px" id="shieldStreak">12 clean days and counting</div>
     <button class="btn mint" onclick="resist()">I'll stay committed</button>
-    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" onclick="showBridge()">Open anyway · $5</button>
+    <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" id="shieldOpen" onclick="showBridge()">Open anyway · $5</button>
     <div class="tiny devNote" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
   </div>
 
@@ -869,7 +903,7 @@
   <!-- ══ INSTEAD — what else this hour could be ══ -->
   <div class="ov" id="ov-instead" style="background:var(--scr-calm);padding:30px 22px;overflow-y:auto">
     <button class="ovClose" aria-label="Close" onclick="closeOv('ov-instead')">✕</button>
-    <div class="eyebrow" style="color:var(--calm-soft)">YOU SAID THIS HOUR WAS FOR YOUR NOVEL</div>
+    <div class="eyebrow" style="color:var(--calm-soft)" id="insteadEyebrow">YOU SAID THIS HOUR WAS FOR YOUR NOVEL</div>
     <div class="display" style="font-size:23px;margin:10px 0 6px;color:var(--calm-ink);line-height:1.2">Instead, you could…</div>
     <div class="sub" style="color:var(--calm-soft)" id="insteadSub">Three things that fit the twenty minutes you have and the mood you logged.</div>
     <div class="modeSeg" style="margin-top:14px">
@@ -893,24 +927,24 @@
   <div class="ov sheetwrap" id="ov-override">
     <div class="sheet-card" style="position:relative">
       <button class="ovClose inSheet" aria-label="Close" onclick="closeOv('ov-override')">✕</button>
-      <div class="eyebrow">THE SCROLL ONE · 15 MINUTES</div>
+      <div class="eyebrow" id="ovrEyebrow">THE SCROLL ONE · 15 MINUTES</div>
       <div class="display" style="font-size:21px;margin:8px 0 6px">Still want in?</div>
-      <div class="sub">Totally allowed. It just isn't free — you decided that.</div>
-      <div class="cost">
+      <div class="sub" id="ovrSub">Totally allowed. It just isn't free — you decided that.</div>
+      <div class="cost" id="ovrCost">
         <div><b style="font-size:12.5px">Drops into your jar</b><div class="tiny" style="margin-top:2px">→ <span class="charityName">Doctors Without Borders</span></div></div>
-        <div class="display num" style="font-size:24px;color:var(--gold-text)">$5</div>
+        <div class="display num" style="font-size:24px;color:var(--gold-text)" id="ovrPrice">$5</div>
       </div>
-      <button class="btn gold" onclick="payOverride()">Drop a coin &amp; open</button>
+      <button class="btn gold" id="ovrPay" onclick="payOverride()">Drop a coin &amp; open</button>
       <button class="btn ghost" style="margin-top:9px" onclick="resist()">Actually, I'll stay committed</button>
-      <div class="tiny" style="text-align:center;margin-top:10px">refundable for 48h, no questions</div>
+      <div class="tiny" style="text-align:center;margin-top:10px" id="ovrNote">refundable for 48h, no questions</div>
     </div>
   </div>
 
   <!-- ══ ACCESS WINDOW ══ -->
   <div class="ov" id="ov-window" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
-    <svg viewBox="0 0 40 40" width="56" height="56" style="filter:drop-shadow(0 0 20px rgba(255,201,77,.7))"><use href="#coin"/></svg>
-    <div class="display" style="font-size:22px;margin:14px 0 8px">Coin dropped. Enjoy it.</div>
-    <div class="sub" style="max-width:230px">Your $5 is on its way to <span class="charityName">Doctors Without Borders</span>.</div>
+    <svg viewBox="0 0 40 40" width="56" height="56" style="filter:drop-shadow(0 0 20px rgba(255,201,77,.7))" id="winCoin"><use href="#coin"/></svg>
+    <div class="display" style="font-size:22px;margin:14px 0 8px" id="winTitle">Coin dropped. Enjoy it.</div>
+    <div class="sub" style="max-width:230px" id="winSub">Your $5 is on its way to <span class="charityName">Doctors Without Borders</span>.</div>
     <div class="display num" style="font-size:40px;margin:20px 0;color:var(--gold-text)" id="winTimer">14:59</div>
     <button class="btn ghost" style="max-width:230px" onclick="endWindow()">Done early — back to the jar</button>
   </div>
