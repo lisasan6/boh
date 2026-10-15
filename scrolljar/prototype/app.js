@@ -360,28 +360,70 @@ function dayWords(d){
   const runs=[]; on.forEach(i=>{ const r=runs[runs.length-1]; r&&r[1]===i-1?r[1]=i:runs.push([i,i]); });
   return listAnd(runs.flatMap(([a,b])=>b-a>=2?[WEEK[a][1]+'–'+WEEK[b][1]]:b>a?[WEEK[a][1],WEEK[b][1]]:[WEEK[a][1]]));
 }
-const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false};
+const FIRST={step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',v:{},heavy:false};
 /* say it instead: on the phone, speech is turned into text and understood on-device, the answers are
-   filled in for the user to confirm, and the recording is deleted at once. Here the voice is simulated. */
+   filled in for the user to confirm, and the recording is deleted at once. Here the voice is simulated,
+   and a prototype-only row lets a tester pick what was "said" to see every case:
+   clear (filled in) · mumbled (nothing filled, try again or tap) · off-topic (nothing filled, a hint)
+   · vague (fill what's certain, ask one quick follow-up) · something heavy (a gentle way to support).
+   Nothing ever moves on by itself: the user always checks and taps Next. */
 const VOICE_DEMO=[
-  {say:'Mostly in bed when I wake up, and then late at night, like after eleven.',
-   apply(){ FIRST.scheds=['mornings']; FIRST.mine=true; FIRST.from='23:00'; FIRST.to='01:00'; }},
-  {say:'Kind of empty, honestly. And a bit annoyed that the evening just went.',
-   apply(){ FIRST.feels=['a bit empty','annoyed','like the day slipped away']; FIRST.feelOwn=''; }},
-  {say:'I want to read more, and actually get some sleep. And play the guitar again.',
-   apply(){ FIRST.fors=['sleep','reading']; FIRST.own='playing the guitar'; }}];
+  {clear:{say:'Mostly in bed when I wake up, and then late at night, like after eleven.',
+     apply(){ FIRST.scheds=['mornings']; FIRST.mine=true; FIRST.from='23:00'; FIRST.to='01:00'; }},
+   off:{say:'Honestly, I just love my dog. He\'s the best.',hint:'We couldn\'t find a time in that. Try something like “in bed in the morning” or “after 11pm”.'},
+   vague:{say:'Mostly at night, I guess.',ask:'At night. From about when?',opts:[['9pm','21:00'],['10pm','22:00'],['11pm','23:00'],['midnight','00:00']]}},
+  {clear:{say:'Kind of empty, honestly. And a bit annoyed that the evening just went.',
+     apply(){ FIRST.feels=['a bit empty','annoyed','like the day slipped away']; FIRST.feelOwn=''; }},
+   off:{say:'Is this the thing that blocks apps?',hint:'That doesn\'t sound like a feeling. Try again, or just tap below.'},
+   vague:{say:'Meh. I don\'t know.',apply(){ FIRST.feelOwn='meh, not sure'; },note:'We\'ve put that in your own words. Not knowing is an answer too.'},
+   heavy:{say:'Honestly, kind of hopeless lately.',apply(){ FIRST.feelOwn='kind of hopeless'; FIRST.heavy=true; },note:'We\'ve put that in your own words.'}},
+  {clear:{say:'I want to read more, and actually get some sleep. And play the guitar again.',
+     apply(){ FIRST.fors=['sleep','reading']; FIRST.own='playing the guitar'; }},
+   off:{say:'Wait, what time is it?',hint:'We couldn\'t find something you\'d rather do in that. Try again, or pick below.'},
+   vague:{say:'Just… other stuff, I guess.',note:'That\'s a bit open. Pick anything below that fits, or say it again.'}}];
+const SAY_KINDS=[['clear','A clear answer'],['mumble','Mumbled'],['off','Off-topic'],['vague','Too vague'],['heavy','Something heavy']];
+/* things that sound heavy, typed or said: answered with support, never a diagnosis */
+const HEAVY=/hopeless|worthless|can'?t go on|want to die|kill myself|self.?harm|hurt myself|don'?t want to be here|no point/i;
+const isHeavy=()=>FIRST.heavy||HEAVY.test(FIRST.feelOwn);
 let micTimer=null;
+const vs=()=>FIRST.v[FIRST.step]||(FIRST.v[FIRST.step]={st:null,said:'',misses:0,note:''});
+function firstGo(n){ clearTimeout(micTimer); const v=FIRST.v[FIRST.step]; if(v&&v.st==='rec') v.st=null; FIRST.step=n; renderFirst(); }
 function firstMic(){
-  clearTimeout(micTimer);
-  if(FIRST.rec){ firstHeard(); return; }
-  FIRST.rec=true; renderFirst(); micTimer=setTimeout(firstHeard,3200);
+  clearTimeout(micTimer); const v=vs();
+  if(v.st==='rec'){ firstSay('clear'); return; }
+  v.st='rec'; renderFirst(); micTimer=setTimeout(()=>firstSay('clear'),3200);
 }
-function firstHeard(){ clearTimeout(micTimer); FIRST.rec=false; const v=VOICE_DEMO[FIRST.step]; v.apply(); FIRST.heard[FIRST.step]=v.say; renderFirst(); }
+function firstSay(kind){
+  clearTimeout(micTimer); const v=vs(), d=VOICE_DEMO[FIRST.step][kind];
+  if(FIRST.step===1&&kind!=='mumble'&&kind!=='off') FIRST.heavy=false;   /* a new answer replaces the last one */
+  if(kind==='mumble'){ v.misses++; v.st='miss'; }
+  else if(kind==='off'){ v.st='off'; v.said=d.say; v.note=d.hint; }
+  else if(kind==='vague'&&d.ask){ v.st='ask'; v.said=d.say; v.note=d.ask; }
+  else { d.apply&&d.apply(); v.st='heard'; v.said=d.say; v.note=d.note||'We\'ve filled it in below. Change anything that\'s off.'; }
+  renderFirst();
+}
+function firstAsk(t){
+  const v=vs(); FIRST.scheds=FIRST.scheds.filter(x=>x!=='always');
+  if(t==='21:00'){ if(!FIRST.scheds.includes('evenings')) FIRST.scheds.push('evenings'); }
+  else { FIRST.mine=true; FIRST.from=t; FIRST.to='07:00'; }
+  v.st='heard'; v.note='Got it. Change anything that\'s off.'; renderFirst();
+}
+function firstTap(){ vs().st=null; renderFirst(); }
 function micArea(){
-  if(FIRST.rec) return `<button class="firstMic rec" onclick="firstMic()" aria-label="Stop recording"><span class="micWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Listening… tap when you're done</button>`;
-  const h=FIRST.heard[FIRST.step];
-  if(h) return `<div class="firstHeard"><div class="eyebrow">YOU SAID</div><div class="q">“${esc(h)}”</div>
-      <div class="tiny">We've filled it in below. Change anything that's off.</div>
+  const v=vs(), again=`<button class="firstMicAgain" onclick="firstMic()"><svg width="13" height="13"><use href="#i-mic"/></svg>Try again</button>`,
+    tap=`<button class="firstMicAgain plain" onclick="firstTap()">Tap instead</button>`;
+  if(v.st==='rec') return `<button class="firstMic rec" onclick="firstMic()" aria-label="Stop recording"><span class="micWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Listening… tap when you're done</button>
+    <div class="micDemo devNote"><span>Prototype · what you say:</span>${SAY_KINDS.filter(([k])=>VOICE_DEMO[FIRST.step][k]||k==='mumble').map(([k,l])=>`<button onclick="firstSay('${k}')">${l}</button>`).join('')}</div>`;
+  if(v.st==='miss') return `<div class="firstHeard"><b style="font-size:13.5px">Sorry, we didn't catch that.</b>
+      <div class="tiny" style="margin-top:4px">${v.misses>=2?'Voice isn\'t working out right now. Tapping below is quick too.':'Maybe try again somewhere a little quieter.'}</div>
+      <div class="row" style="gap:6px">${again}${tap}</div></div>`;
+  if(v.st==='off') return `<div class="firstHeard"><div class="eyebrow">YOU SAID</div><div class="q">“${esc(v.said)}”</div>
+      <div class="tiny">${v.note}</div><div class="row" style="gap:6px">${again}${tap}</div></div>`;
+  if(v.st==='ask') return `<div class="firstHeard"><div class="eyebrow">YOU SAID</div><div class="q">“${esc(v.said)}”</div>
+      <b style="font-size:13.5px">${v.note}</b>
+      <div class="firstChips" style="margin:8px 0 0">${VOICE_DEMO[0].vague.opts.map(([l,t])=>`<span class="chip" onclick="firstAsk('${t}')">${l}</span>`).join('')}</div></div>`;
+  if(v.st==='heard') return `<div class="firstHeard"><div class="eyebrow">YOU SAID</div><div class="q">“${esc(v.said)}”</div>
+      <div class="tiny">${v.note}</div>
       <button class="firstMicAgain" onclick="firstMic()"><svg width="13" height="13"><use href="#i-mic"/></svg>Say it again</button></div>`;
   return `<button class="firstMic" onclick="firstMic()"><svg width="16" height="16"><use href="#i-mic"/></svg>Say it instead</button>
     <div class="tiny firstPriv">Understood on your phone. The recording is deleted straight away.</div>`;
@@ -406,13 +448,14 @@ function firstWhen(k){
 }
 /* the feeling is a moment of noticing, not a score: it stays on the phone and is never shown back as a judgement */
 const feelSay=()=>{ const f=FIRST.feels, own=FIRST.feelOwn.trim();
+  if(isHeavy()) return '';
   if(!f.length&&!own) return 'Take a second. There\'s no wrong answer.';
   if(f.length===1&&f[0]==='fine, honestly'&&!own) return 'Good to hear. ScrollJar is for the times it isn\'t.';
   return 'Lots of people feel that way. It\'s a habit, not who you are, and habits can change.'; };
 /* everything picked, in chip order, then the user's own words: "sleep, reading and my kids" */
 const firstForList=()=>[...FOR_CHIPS.filter(c=>FIRST.fors.includes(c)),FIRST.own.trim()].filter(Boolean);
 const firstFors=()=>{ const x=firstForList(); return x.length>1?x.slice(0,-1).join(', ')+' and '+x[x.length-1]:(x[0]||''); };
-function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',heard:{},rec:false}); renderFirst(); $('ov-first').classList.add('on'); }
+function openFirst(){ clearTimeout(micTimer); Object.assign(FIRST,{step:0,scheds:[],mine:false,from:'22:00',to:'00:30',days:[1,1,1,1,1,1,1],feels:[],feelOwn:'',fors:[],own:'',v:{},heavy:false}); renderFirst(); $('ov-first').classList.add('on'); }
 function firstSentence(){
   const p=pickedName(pick), n=p.name.charAt(0).toUpperCase()+p.name.slice(1), fw=firstFors();
   return `<b>${esc(n)}</b> shielded ${whenSay()||SCHED_SAY.always}${fw?`, for <b>${esc(fw)}</b>`:''}.`;
@@ -429,15 +472,19 @@ function renderFirst(){
         <button class="firstOpt${FIRST.mine?' on':''}" aria-pressed="${FIRST.mine}" onclick="firstWhen('mine')"><b>My own times</b><span>${FIRST.mine?hm(FIRST.from)+'–'+hm(FIRST.to)+', '+dayWords(FIRST.days):'pick a window'}</span></button>
         ${FIRST.mine?`<div class="firstTimes"><input class="timeIn" type="time" value="${FIRST.from}" aria-label="From" onchange="FIRST.from=this.value;renderFirst()"><span>to</span><input class="timeIn" type="time" value="${FIRST.to}" aria-label="To" onchange="FIRST.to=this.value;renderFirst()"></div>
           <div class="firstDays" role="group" aria-label="Days">${WEEK.map(([l,,full],i)=>`<button class="${FIRST.days[i]?'on':''}" aria-pressed="${!!FIRST.days[i]}" aria-label="${full}" onclick="firstDay(${i})">${l}</button>`).join('')}</div>`:''}</div>`;
-    F.innerHTML=`<button class="btn chrome" ${FIRST.scheds.length||FIRST.mine?'':'disabled'} onclick="FIRST.step=1;renderFirst()">Next</button>`;
+    F.innerHTML=`<button class="btn chrome" ${FIRST.scheds.length||FIRST.mine?'':'disabled'} onclick="firstGo(1)">Next</button>`;
   } else if(FIRST.step===1){
     B.innerHTML=`<div class="display firstQ">When you look up and the time has gone, how do you feel?</div>
       <div class="sub">Pick as many as you like. It stays on your phone.</div>
       ${micArea()}
       <div class="firstChips">${FEEL_CHIPS.map(c=>`<span class="chip${FIRST.feels.includes(c)?' on':''}" role="checkbox" aria-checked="${FIRST.feels.includes(c)}" data-set="feels" data-k="${c}" onclick="firstChip('feels','${c}')">${c}</span>`).join('')}</div>
-      <input class="timeIn" maxlength="40" placeholder="or in your own words" aria-label="How you feel, in your own words" value="${esc(FIRST.feelOwn)}" oninput="FIRST.feelOwn=this.value;firstUpdate()">
-      <div class="firstSay" id="firstFeelSay">${feelSay()}</div>`;
-    F.innerHTML=`<button class="btn chrome" onclick="FIRST.step=2;renderFirst()">Next</button>`;
+      <input class="timeIn" maxlength="40" placeholder="or in your own words" aria-label="How you feel, in your own words" value="${esc(FIRST.feelOwn)}" oninput="FIRST.feelOwn=this.value;FIRST.heavy=false;firstUpdate()">
+      <div class="firstSay" id="firstFeelSay">${feelSay()}</div>
+      <div class="card firstHeavy" id="firstHeavy" style="${isHeavy()?'':'display:none'}"><b>That sounds heavy.</b>
+        <div class="tiny" style="margin-top:4px;line-height:1.55">Thank you for saying it. If things feel like too much, talking to someone can help, and you don't need to be in crisis to reach out.</div>
+        <a class="btn calm" href="https://findahelpline.com" target="_blank" rel="noopener" style="margin-top:10px">Find someone to talk to</a>
+        <div class="tiny" style="margin-top:7px">Free, confidential helplines near you. ScrollJar doesn't share this with anyone.</div></div>`;
+    F.innerHTML=`<button class="btn chrome" onclick="firstGo(2)">Next</button>`;
   } else {
     B.innerHTML=`<div class="display firstQ">What would you rather<br>do with that time?</div>
       <div class="sub">Pick as many as you like. If you reach for a shielded app, ScrollJar will suggest them instead.</div>
@@ -454,6 +501,7 @@ function firstUpdate(){
   document.querySelectorAll('.firstChips .chip').forEach(el=>{ const on=FIRST[el.dataset.set].includes(el.dataset.k); el.classList.toggle('on',on); el.setAttribute('aria-checked',on); });
   if($('firstLine')) $('firstLine').innerHTML=firstSentence();
   if($('firstFeelSay')) $('firstFeelSay').textContent=feelSay();
+  if($('firstHeavy')) $('firstHeavy').style.display=isHeavy()?'':'none';
 }
 function sealFirst(){
   setStage('new');
