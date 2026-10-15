@@ -1763,6 +1763,7 @@ function renderCrSetup(){
       <div class="coRule ok">Short posting windows to post and reply, with no coin</div>
       <div class="coRule ok">A public challenge your followers can join</div>
       <div class="coRule no">Nobody earns from followers' coins: not you, not us</div>
+      <div class="tiny" style="margin-top:12px;line-height:1.55">And your viewers? ScrollJar stops autopilot, not watching. People who choose what to see can still choose you.</div>
       <button class="btn mint" style="margin-top:14px" onclick="crsGo(1)">Set it up</button>`;
   } else if(crsStep===1){ K.textContent='FEEDS AND TOOLS';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Shield the feeds, keep the tools</div>
