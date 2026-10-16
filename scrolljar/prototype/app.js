@@ -710,7 +710,7 @@ function showOverride(){
     return;
   }
   $('ovrEyebrow').textContent=d.n.toUpperCase()+' · 15 MINUTES';
-  $('ovrSub').textContent = S.stakes ? "Totally allowed. It just isn't free — you decided that."
+  $('ovrSub').textContent = S.stakes ? "Totally allowed. It costs the price you set, and every cent goes to charity."
     : 'Totally allowed, and free for your first days. From day 3 you can make each time cost a coin you price yourself, 100% to charity.';
   $('ovrCost').style.display = S.stakes ? '' : 'none'; $('ovrPrice').textContent='$'+price;
   $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
@@ -1438,7 +1438,7 @@ function renderMoodLedger(){
 const REFLECTIONS=[
   {q:"How do you feel when you're in there?",s:'Not afterwards — during. Try to catch it while it\'s happening.'},
   {q:'Do these apps change your mood?',s:'Up, down, flat? Same every time, or does it depend on the day?'},
-  {q:'How many times have you told yourself you need a detox?',s:'And what happened the last few times you said it?'},
+  {q:'When did you last decide to take a break from your phone?',s:'What happened next? No wrong answers.'},
   {q:'What are you usually looking for when you reach?',s:'News? Company? An off switch? Something to stop the thinking?'},
   {q:'How often do you pick up the phone for one small thing — and stay?',s:'Checking the weather, then twenty minutes gone. That drift is the habit, not the app.'},
   {q:'Is something asking for your attention that the scrolling helps you avoid?',s:'A conversation, a decision, a feeling. No need to solve it here — naming it is enough.',heavy:true},
@@ -1474,7 +1474,7 @@ const PROMPTS=['What am I actually looking for?','What would make the next hour 
 const INSTEAD_WORTH=[
   {i:'i-book',t:'Twenty pages',s:'you left off at chapter three'},
   {i:'i-sprout',t:'Walk to the end of the street',s:'it\'s 18° and not raining'},
-  {i:'i-pen',t:'Write three lines here',s:'you said today felt heavy'},
+  {i:'i-pen',t:'Write three lines here',s:'for a day that felt heavy'},
 ];
 const INSTEAD_FUN=[
   {i:'i-camera',t:'The film you saved in March',s:'1h 52m · you\'d still be in bed by 11:40'},
@@ -1594,8 +1594,8 @@ function saveEntry(){
 /* ── instead-of screen ── */
 function showInstead(){
   closeOv('ov-breath');
-  const fw=((COMMITS[0]||{}).forWhat||'').replace(/^my /,'your ');
-  $('insteadEyebrow').textContent = fw ? `YOU SAID THIS ${S.stage==='new'?'TIME':'HOUR'} WAS FOR ${fw.toUpperCase()}` : 'A FEW IDEAS FOR THE NEXT TWENTY MINUTES';
+  const fw=((COMMITS[0]||{}).forWhat||'').replace(/\bmy\b/g,'your');
+  $('insteadEyebrow').textContent = fw ? `TIME FOR ${fw.toUpperCase()}?` : 'A FEW IDEAS FOR THE NEXT TWENTY MINUTES';
   setInsteadMode('worth',$('segWorth'));
   paintColleagues();
   $('promptChips').innerHTML=PROMPTS.slice(0,3).map(p=>`<div class="promptChip">${p}</div>`).join('');
