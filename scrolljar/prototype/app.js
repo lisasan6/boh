@@ -561,7 +561,7 @@ function renderReal(){
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Add a card for your coins</div>
       <div class="fakeField"><span style="flex:1">•••• •••• •••• 4242</span><span class="tiny">12/28 · 123</span></div>
       <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>${realPlan==='free'?', plus the card fee':''}. We email you the amount before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
-        Ending a deal honestly is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a deal counts as breaking the jar: <b>$${realPrice*5}</b> (5× your price), after a one-hour grace period to put things back.</div>
+        Ending a deal is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a deal is different: we'll let you know and give you an hour to put things back. After that, it counts as one coin of <b>$${realPrice*5}</b> (5× your price).</div>
       <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
       <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Save card</button>
       <div class="tiny" style="text-align:center;margin-top:9px">Your bank may ask you to confirm. That's normal.</div>`;
