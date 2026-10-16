@@ -140,6 +140,12 @@ iOS shield 2-button constraint · opaque tokens; 6MB monitor; ~50-token cap; ent
 20. ~~Brainstorm round 1~~ → ✅ resolved 2026-07-28 (9 approved, #7 restrained, #5 & #11 on hold)
 21. Wobble: does the standby note travel to **Teams** (a colleague's note when you wobble at 10pm), or stay strictly personal? Leaning personal-only — a manager's "standby note" would be a boundary problem.
 
+## 💡 Goal jars for friends and family (L, 2026-10-16, idea)
+A shared jar for something the group wants: a holiday, a dinner out, a camera, a theme-park trip. Coins are **virtual**: ScrollJar keeps the score and **never touches the money**; when the goal is reached, people settle it among themselves.
+- **The twist that makes it work:** the goal fills from **kept time** (days the deal held, or scroll-free hours), **not from slips**. If slips paid for the holiday, slipping would become the way to get the holiday, and the price would stop working. That's the reason "penalties to own savings" is in the parking lot below. Slips keep going 100% to charity as now.
+- Fits the family rule already in place: rewards are shared and non-cash (a family treat), never money to a child.
+- Open: pledge per kept day, per person; who sees what (the total, never who, as everywhere); what happens if the goal isn't reached (nothing is owed: it's a plan, not a debt).
+
 ## 🗄️ Parking lot (rejected, with reasons)
 Anti-charities · penalties to own savings · hard-locking · engagement mechanics for the app itself · variable-ratio rewards · contact-book import · pastel-kindergarten · mandatory Teams enrollment · workplace penalties · cash payouts to friends (superseded by Evening Catalog) · **auto-generated "warm" messages in a friend's voice** (2026-07-30 — the support has to actually be from a person, or it's a lie; we hand back the user's own words instead) · **wobble as a free pass** (would turn a support gesture into an override loophole) · **any wobble metric visible to either side** (response times, help counts, unanswered badges — turns kindness into obligation).
 
