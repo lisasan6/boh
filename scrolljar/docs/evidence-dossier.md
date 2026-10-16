@@ -65,16 +65,28 @@ July sources: [NBC](https://www.nbcnews.com/world/asia/australia-social-media-ba
 
 ## Part 3 — The science (headline findings)
 
-Full annotated bibliography with ~25 papers: **science-dossier-bibliography.md** in the project. The spine of it:
+*Corrected 15 Oct 2026 after a full source check (see science-verified-2026-10.md). The full annotated bibliography is **science-dossier-bibliography.md**.* The spine of it, worded the way we may say it publicly:
 
-1. **Self-control failure is measured, not assumed.** Allcott, Gentzkow & Song (*AER* 2022, "Digital Addiction"): their economic model estimates that self-control problems account for ~31% of social media use, and people knowingly **pay for commitment tools** to lock themselves out. ScrollJar's premise is this paper's headline result.
-2. **Users are trapped, not choosing.** Bursztyn et al. (*AER* 2025, "When Product Markets Become Collective Traps"): many active users **would prefer TikTok/Instagram not exist** — they use it because everyone else does. ScrollJar is an individual exit from a collective trap.
-3. **Leaving improves lives — causally.** Allcott et al. (*AER* 2020): deactivating Facebook for 4 weeks increased well-being and durably reduced use. Braghieri, Levy & Makarin (*AER* 2022): Facebook's college rollout caused depression +7%, anxiety +20%. Castelo et al. (*PNAS Nexus* 2025): blocking all mobile internet for two weeks (calls and texts still worked) improved sustained attention, mental health and well-being; 91% improved on at least one.
-4. **Friction works.** Grüning et al. (*PNAS* 2023, the one sec study): a simple friction screen led users to abort **36% of app-opening attempts**; attempts fell ~37% over six weeks.
-5. **Money stakes work.** Giné, Karlan & Zinman (2010): smoking deposit contracts raised quit rates ~30%+. Halpern et al. (*NEJM* 2015): among people willing to put their own money down, deposits beat equal-sized rewards by ~13 percentage points. **Caveat:** few people chose deposits (13.7% accepted vs 90% for rewards), so overall the reward programs did better (15.7% vs 10.2% quit). Always keep the "among those willing" qualifier.
-6. **The design warnings.** Gneezy & Rustichini ("A Fine Is a Price"): a small fine can become a fair price — ScrollJar's penalties must stay framed as broken commitments, never purchases. Breines & Chen (2012): self-compassion after failure beats shame for behavior change — the rough-day response is evidence-based.
-7. **The slot machine is real.** Schultz et al. (*Science* 1997) on dopamine prediction error; Schüll's *Addiction by Design*; reportedly a Meta scientist: "intermittent rewards are most effective (think slot machines)" *(not re-verified; don't quote publicly until sourced)*. ScrollJar's fixed, earned rewards are the deliberate opposite.
-8. **The gap ScrollJar can own:** no stakes-based screen-time app has any published evaluation. The first RCT is up for grabs — one sec's PNAS paper shows the playbook and the credibility payoff.
+1. **Self-control problems are measured, not assumed.** Allcott, Gentzkow & Song (*AER* 2022, "Digital Addiction") built an economic model estimating that self-control problems account for about **31%** of time on social apps. Given a limit tool, **78% set binding limits**, which cut use by **16%** over 12 weeks. *(Don't say people "pay to lock themselves out": they paid a modest amount for access to a limit tool, not a penalty.)*
+2. **Many users wish the platforms didn't exist, but stay.** In Bursztyn et al. (*AER* 2025), many active TikTok and Instagram users said they'd prefer the platform didn't exist for anyone, and stay mainly so they don't miss out. *(The authors say this can happen even with fully rational choices, so don't say "users aren't choosing.")* ScrollJar lets you cut back without having to quit.
+3. **Cutting back helps: modestly, but for real.**
+   - Four weeks off Facebook brought **small but significant** gains in well-being (Allcott et al., *AER* 2020). The largest trial, about 35,000 people, found a smaller mood gain (0.06 SD; NBER working paper 2025).
+   - Across 32 randomised trials, limiting social media gave small, reliable well-being gains (Burnell et al. 2025).
+   - Blocking mobile internet for two weeks improved attention, mental health and well-being in a randomised trial of 467 adults, though most found the block hard to stick to (Castelo et al., *PNAS Nexus* 2025).
+   - Reduction beats total abstinence: abstinence alone shows no reliable effect (Lemahieu et al. 2025), while an hour less a day helped for months (Brailovskaia et al. 2023).
+   - When Facebook reached US colleges in 2004–06, students' mental health worsened (Braghieri et al., *AER* 2022). The severe-depression share rose ~7% and anxiety disorders ~20%, relative to baseline.
+4. **A pause with an easy way out works.** In a six-week study of one sec users, people backed out of **36%** of opening attempts and openings fell by more than half (Grüning et al., *PNAS* 2023; no control group). In its randomised experiment, an easy "dismiss" option worked best and a reflective message did nothing. A 2026 RCT of a similar iPhone prompt cut ~29 minutes a day on people's most-used app (Wellspent, *JMIR mHealth*).
+5. **Money stakes work, for those who choose them.**
+   - Offering smokers a deposit they'd lose **to charity** if they smoked raised verified quitting by about **40%** (3–6 percentage points), even though only 11% took it up (Giné, Karlan & Zinman 2010).
+   - Among people willing to put their own money down, deposits beat equal-sized rewards by ~13 percentage points. Few chose deposits (13.7% vs 90%), so overall rewards did better (Halpern et al., *NEJM* 2015). Always keep "among those willing."
+6. **The design warnings.**
+   - Knowing a donation will follow can make rule-breaking *more* likely (lying rose from 48% to 63%; Gneezy, Imas & Madarász 2014), and a small fine can feel like a price (Gneezy & Rustichini 2000). So the price is always a broken deal, never a ticket, and the override stays private: moral licensing appears mainly when people are watched (Rotella et al. 2025).
+   - After a slip, losing confidence and feeling like giving up predict relapse, not guilt (real-time smoking studies). Kind, fixable framing and one small next step are the evidence-aligned response.
+7. **Habit-forming design, stated carefully.**
+   - Social-media behaviour follows reward-learning principles in human data (Lindström et al., *Nature Communications* 2021).
+   - Switching off autoplay cut Netflix viewing by ~21 minutes a day in an experiment (Schaffner et al. 2025; small).
+   - Slot machines are engineered for "time on device" (Schüll 2012). *(Not re-verified: the Meta "think slot machines" quote, so don't use it publicly. Don't claim dopamine mechanisms, and don't claim infinite scroll is proven to lengthen use.)* ScrollJar's fixed, earned rewards are the deliberate opposite of variable rewards.
+8. **The gap ScrollJar can own:** no published evaluation of any *commercial* stakes-based screen-time app exists. Only tiny lab studies (6–9 students) have tested money stakes for phone use. The first proper trial is up for grabs.
 
 ---
 
