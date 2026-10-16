@@ -12,6 +12,12 @@ The picture is stronger than in July, but several July entries were wrong or out
 
 ## 2. Verified timeline (newest first)
 
+### 2026-10-28 (scheduled) · Second Los Angeles trial: two teens' cases before one jury
+*Added 16 Oct 2026.* Judge Carolyn B. Kuhl consolidated the cases of S.J. and K.D.B. against Meta and other platforms (TikTok settled with both) for one jury, beginning 28 Oct 2026, over Meta's objection. It is the second bellwether to reach a jury in JCCP 5255. Which other defendants remain is unclear: the Daily Journal (10 Sep) lists Meta, YouTube and Snapchat, and a tracker reports a later YouTube settlement (unverified). Re-check the date just before it starts.
+**Status:** Scheduled
+**Sources:** [Bloomberg Law, 1 Sep 2026](https://news.bloomberglaw.com/litigation/next-la-social-media-trial-plans-for-two-plaintiffs-and-one-jury) · [Daily Journal, 10 Sep 2026](https://www.dailyjournal.com/articles/394317-judge-sets-two-new-social-media-addiction-trials-for-2027)
+**Quotes:** Bloomberg Law: "Judge Carolyn B. Kuhl granted a motion of individuals known in records as S.J. and K.D.B., to consolidate their cases rather than have them heard in separate courtrooms, concurrently beginning Oct. 28. Both parties have settled with TikTok." Daily Journal: "the next bellwether trial, scheduled to begin Oct. 28 with two minor plaintiffs facing Meta, YouTube and Snapchat before the same jury."
+
 ### 2026-10-14 · Appeals court lets Florida keep enforcing its under-14 account law
 The 11th Circuit reversed a preliminary injunction against Florida's HB 3 (no accounts under 14 on covered platforms; parental consent for 14–15). It found the law "likely" constitutional; the case now returns to the district court. Florida had already been enforcing it since a November 2025 stay. Notably, the court framed the law as aimed at "addictive features".
 **Status:** Decision (preliminary-injunction appeal, not a final judgment)
@@ -110,7 +116,6 @@ Prosecutor Laure Beccuau opened the probe after a parliamentary inquiry. It conc
 
 | Item | Why dropped |
 |---|---|
-| **Next JCCP trial on 28 Oct 2026** (S.J. & K.D.B. v. Meta and Snap, Los Angeles) | Only one litigation tracker states it ([MDL Update](https://mdlupdate.com/mdl/3047-social-media-adolescent-addiction/jccp-5255/), citing the Daily Journal). No court record or major outlet found. Likely true; re-check just before publishing. Context verified: the July R.K.C. trial didn't happen because the plaintiff withdrew ([Bloomberg Law](https://news.bloomberglaw.com/litigation/la-social-media-trial-dismissal-leaves-vast-landscape-of-cases)). |
 | Exact new Australian maximum penalty (A$99M vs A$109.2M) | The Act's text (parlinfo.aph.gov.au) returned 403. Use "doubled". |
 | Meta quotes "some of our users are addicted to our products" / "think slot machines" | Not found in any page opened this pass. |
 | UK Online Safety Act age checks "in force 25 Jul 2025" | Ofcom blocked access (403). The GOV.UK explainer only says the child-safety regime would be "fully in effect by Summer 2025" (deadline 24 Jul 2025). Not on theme for addictive design anyway. |
