@@ -738,3 +738,8 @@ body[data-stage="new"] .wk3{display:none!important}
 .cal .d-head{aspect-ratio:auto;font-size:9px;color:var(--ink-3);background:none}
 .cal .d-pad{background:none}
 .dealSummary:empty{display:none}
+/* day mode: a light tab bar, frosted like the cards (L, 2026-10-16); the active tab uses a deeper mint so it reads on white */
+body[data-mode="day"]{--tabbar-bg:rgba(250,249,255,.93);--tabbar-fg:#6B6890}
+body[data-mode="day"] .tabs{border-top:1px solid rgba(22,20,47,.08);box-shadow:0 -10px 26px -18px rgba(40,30,100,.3)}
+body[data-mode="day"] .tab.on{color:#0A8A72}
+body[data-mode="day"] .tab.on .i{filter:drop-shadow(0 0 6px rgba(10,138,114,.3))}
