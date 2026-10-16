@@ -89,7 +89,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 | Basic stats (time returned, streak) | ✅ | ✅ | ✅ |
 | Buddy jar (1:1 witness, no stakes) | ✅ | ✅ | ✅ |
 | **The stakes engine** — jar, charity penalties, settlement, refunds, escalation | — | ✅ | ✅ |
-| Group jars + Focus Week challenges | — | ✅ | ✅ |
+| Group jars + Our Hours challenges | — | ✅ | ✅ |
 | Full impact history + success-side giving (10 clean days = 1 unit, your cause) | — | ✅ | ✅ **at 2× units** |
 | Deep stats: Year in the Jar, records, percentiles | — | — | ✅ |
 | AI companion (when it ships), early features | — | — | ✅ |

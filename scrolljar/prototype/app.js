@@ -105,7 +105,7 @@ function buildJar(svg){
   const fill=svg.querySelector('.jarFill'); keep.forEach(g=>fill.appendChild(g));
 }
 document.querySelectorAll('svg[viewBox="0 0 200 226"]').forEach(buildJar);
-/* moods: idle (dots, smile) · happy (you stayed) · thanks (a coin landed) · rest (a focus session is on) · wow (tip-out).
+/* moods: idle (dots, smile) · happy (you stayed) · thanks (a coin landed) · rest ("Your time" is on) · wow (tip-out).
    Never sad, never disappointed: a slip is a gift to the jar, not a letdown. */
 function jarMood(svg,mood,ms){
   if(!svg) return;
@@ -1276,7 +1276,7 @@ $('hoursChart').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'c
   let cal=['M','T','W','T','F','S','S'].map(l=>`<div class="d-head">${l}</div>`).join('')+'<div class="d-pad"></div>'.repeat(lead);
   for(let d=1;d<=dim;d++) cal+=d>td?`<div class="d-off">${d}</div>`:coinDays.has(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`;
   $('cal').innerHTML=cal; })();
-/* ── focus session timers ── */
+/* ── "Your time" session timers (internal names still say focus) ── */
 let focusT, focusTotal=0, focusLeft=0;
 const RING=169.6;
 function startFocus(min){
@@ -1345,7 +1345,7 @@ const WINS=[
   {t:'Best week yet',s:'9h 40m returned'},
   {t:'12 days kept',s:'your longest run'},
   {t:'First $50 given',s:'to Doctors Without Borders'},
-  {t:'Focus Week finished',s:'with Casa Jar'},
+  {t:'Our Hours finished',s:'with Casa Jar'},
 ];
 /* ── usage report ── */
 const APPS=[
@@ -1635,7 +1635,7 @@ const CO_FEED=[
   {t:'Design squad reached its weekly goal',s:'30 scroll-free hours, a goal the squad set itself'},
   {t:'The jar passed $2,000',s:'week 3 of 6'},
   {t:'Ops & People joined the campaign',s:'5 people'},
-  {t:'The vote closed: Feeding America',s:'41% of votes · runner-up gets the autumn campaign'},
+  {t:'The vote closed: Feeding America',s:'41% of votes · runner-up gets the next campaign'},
 ];
 const money=n=>'$'+Math.round(n).toLocaleString('en-US');
 function renderCompany(animate){
@@ -1686,7 +1686,7 @@ function renderJoin(){
   [...$('cjDots').children].forEach((d,i)=>d.classList.toggle('on',i<=cjStep));
   const B=$('cjBody');
   if(cjStep===0){ $('cjKicker').textContent='FERNHILL & CO. INVITED YOU';
-    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Focus Hours: an hour a day, funded.</div>
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Your Hours: an hour a day, funded.</div>
       <div class="sub">Fernhill pledges <b>$5,000</b>. Pick one hour a day that's yours. Each one that stays scroll-free unlocks <b>$5</b> for a cause the team votes on. If you slip, nobody pays. Not you, not anyone.</div>
       <div class="coRule ok" style="margin-top:12px">Any hour works: before a shift, between shifts, or after work</div>
       <div class="coRule ok">Joining is your choice, and you can leave any time</div>
@@ -1745,7 +1745,7 @@ function showCoTip(){
    Anonymous and squad-only by default. High fives carry no count. "I'll try this" saves an idea
    to a private list; the author only learns how many saved it. The privacy check runs on the phone. */
 const CO_NOTES=[
-  {sq:'Design',t:'Finally went to the theatre. First time since spring.',when:'Tuesday',all:true},
+  {sq:'Design',t:'Finally went to the theatre. First time in months.',when:'Tuesday',all:true},
   {sq:'Design',t:'Finished that series I kept falling asleep to. It has an ending, who knew.',when:'Monday'},
   {sq:'Design',t:'Cooked a proper dinner. Phones stayed in the other room.',when:'Sunday'},
   {sq:'Platform',t:'Organised the closet. Weirdly satisfying.',when:'Tuesday',all:true},

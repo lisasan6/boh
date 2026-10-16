@@ -11,7 +11,7 @@
 >   - **Changing schedules:** same time every day, or a weekly pattern with a different hour (or none) per day. A day with no hour simply isn't counted.
 >   - **Pauses:** "On call today" and "This week is too much" pause counting. Never counts against anyone, shows no gap, stays on the phone.
 >   - **Squad goals** are set by the squad from the hours its people actually have, so a squad of shift workers isn't measured against office staff.
->   - **The jar token has no name:** the jar fills with small glowing lights (not moons, not marbles), and copy only ever says "hours", so nothing needs translating. Campaigns are named "Focus Hours" etc. (never seasonal names, which look stale part of the year). High fives never show a count, anywhere in the product.
+>   - **The jar token has no name:** the jar fills with small glowing lights (not moons, not marbles), and copy only ever says "hours", so nothing needs translating. Campaigns are named "Your Hours" etc. (never seasonal names, which look stale part of the year, and never "focus": the hours are people's own to use however they like). High fives never show a count, anywhere in the product.
 >   - Which hour someone picked never leaves the phone. The employer sees weekly totals only.
 > - **Unspent pledge rolls into the next campaign.** The company never "saves" money because people tried less; the next jar starts partly full.
 > - **$4 per employee per month**, billed annually, outside Apple. Free 6-week pilot (up to 50 people). Small teams (5–24): flat ~$99/month.
@@ -34,7 +34,7 @@ A **campaign** is a bounded run (default: 6 weeks; also monthly/quarterly) with 
 1. **The company pledges a budget** — e.g., $5,000 this quarter — into the Company Jar.
 2. **Employees vote the cause** from an HR-curated shortlist (3–5 charities via Every.org). Autonomy makes it theirs, voting makes it an event.
 3. **Scroll-free hours fill the jar.** Each person's chosen hour with no shielded app opened counts as one scroll-free hour, at most one a day (see the decisions at the top). Each converts the pledge into unlocked donation at a fixed $ per hour, calibrated so a normally-participating company unlocks 90–100%. The jar visually fills all campaign long. Work hours are structurally invisible to the campaign.
-4. **Tip-out ceremony:** campaign ends at an all-hands moment — the jar tips, confetti, the charity's thank-you, the impact stated in vivid units ("our focus funded 2,400 meals"). Ritual, not dashboard.
+4. **Tip-out ceremony:** campaign ends at an all-hands moment — the jar tips, confetti, the charity's thank-you, the impact stated in vivid units ("our hours funded 2,400 meals"). Ritual, not dashboard.
 
 The inversion in one line: **consumers pay for failure; companies pay for success.**
 
@@ -46,7 +46,7 @@ The inversion in one line: **consumers pay for failure; companies pay for succes
 - **Squads of 4–10** — department-based or self-formed, with names and squad jar mascots. Squad sets its own weekly goal of scroll-free hours from the hours its people actually have (cold blood, self-set — never imposed from above).
 - **The feed is the consumer Strava feed, squad-flavored:** finite, kudos, outcomes only. "Design squad kept 47 scroll-free hours this month" — never "Marco opened Instagram 12 times." Reactions are high fives with no counts.
 - **Friendly rivalry that charity always wins:** squads can challenge each other for a bounded week — but both sides' hours feed the *same* jar, the "winner" gets a bragging card and picks the next cause. Competition exists only between consenting squads, for one week at a time, never persistent, never individual. No standing leaderboards.
-- **Focus Weeks:** seasonal company-wide events (Deep Work Week, No-Scroll November) with themed causes and 2× jar rates.
+- **Theme weeks:** seasonal company-wide events (Deep Work Week, No-Scroll November) with themed causes and 2× jar rates.
 - **Leaders play too, as equals.** A founder's clean hour counts exactly one hour — but leader participation is the culture signal that makes everyone else feel safe joining.
 - **The perk that makes it a benefit:** every participating employee gets **Plus free** (covered by their seat) for *personal* use — their private jar, stakes, and charity, fully invisible to the employer. They keep a discount when they leave the company. Work funds the habit; the habit belongs to the person.
 - **Private Boost (decided — L, 2026-07-28):** any employee can privately add their own dollars to the campaign's cause, anytime. A **gift, never a penalty**. Rules: amounts and names visible to no one (not employer, not squadmates); the jar shows a small "boosted by teammates 💛" tag only once ≥5 distinct people have boosted (k-anonymity applies to generosity too); boosts route through the Every.org rail via web checkout (outside IAP, consistent with our Apple posture) so the employee gets their own tax receipt — it's their donation, theirs to deduct. **Employer boost-matching toggle:** the company can match boosts 1:1 up to a cap — the classic gift-matching pattern HR already knows, and the easiest upsell in the product. Copy: "Boost the jar 💛".
@@ -71,7 +71,7 @@ The inversion in one line: **consumers pay for failure; companies pay for succes
 
 - **Two budgets, one purchase:** wellbeing/HR (mental-health benefit, team building, retention, employer brand) + CSR (real donations with employee fingerprints on them). Note: we deliberately do NOT sell productivity — the pitch is *"the company that gives you your own time back"*, which is a recruiting weapon no productivity claim could match. **But the whisper line for the buyer's CFO memo is real and citable (L, 2026-07-28: "happier and less frustrated employees are more productive"):** happy workers are ~13% more productive per the causal BT field study (Bellet, De Neve & Ward, Management Science; Oxford Saïd) and ~12% in earlier experiments (Oswald, Proto & Sgroi, J. Labor Economics 2015). We sell people's own time; the business case writes itself — with someone else's peer-reviewed numbers, never our claims.
 - **The anti-surveillance wellness product:** the market is full of productivity monitoring dressed as wellness; we are architecturally incapable of it — that's the demo moment ("here's the dashboard; notice what isn't in it").
-- **Recruiting content built in:** "our team's focus funded 12,000 meals this year" is an employer-brand asset no meditation subscription produces.
+- **Recruiting content built in:** "our team's hours funded 12,000 meals this year" is an employer-brand asset no meditation subscription produces.
 - **Newsjacking works B2B too:** the addiction verdicts and bans that power consumer PR give HR leaders cover to put "attention" on the benefits agenda.
 - **Funnel synergy:** every Teams seat gifts the consumer product; alumni keep personal jars after leaving. Teams is consumer acquisition that someone else pays for.
 
@@ -83,7 +83,7 @@ Reclaimed off-hours use the same baseline-delta methodology as consumer (each pa
 
 - **Participation apathy** → short campaigns, leader modeling, squad self-formation, the vote, the ceremony. Target: 40%+ opt-in at design partners.
 - **"Is this surveillance?" skepticism** → the architecturally-absent dashboard demo + printed privacy promise; works councils/EU postponed (US-first).
-- **Gaming (idle phones counting as focus)** → same honest counting as consumer (shield events + baseline delta), plus campaign calibration; the stakes are charitable, so gaming incentive is low — nobody profits from cheating.
+- **Gaming (idle phones counting as hours)** → same honest counting as consumer (shield events + baseline delta), plus campaign calibration; the stakes are charitable, so gaming incentive is low — nobody profits from cheating.
 - **Sales capacity (solo founder)** → design partners via warm intros only in phase 3; no outbound motion until consumer proves the story.
 - **Sabotage-resistance (analyzed 2026-07-28):** the employer's exposure is pre-committed and capped at the pledge; malicious over-participation just funds the charity, and faked hours send capped money to the cause, not to the cheater. No path lets malice extract value or exceed the chosen budget. Worst attack = apathy (jar stays empty; company keeps unspent pledge).
 - **Why employee-paid penalties stay out of the workplace context:** power dynamics contaminate voluntary consent; flat penalties are regressive across pay grades; shame/licensing effects amplify under observation (colleagues = maximum observation); and the Glassdoor-post brand risk is asymmetric. Employees who want stakes have them in their private personal jar (invisible to employer). The safe middle path is now a shipped feature: **Private Boost** (§2) — gifts, never penalties, amounts never shown. Workplace penalties remain never.
@@ -95,7 +95,7 @@ Teams isn't just revenue — it's a **launch board**: every company becomes a pa
 - **Every seat is already a personal Plus membership** → personal buddy and group jars → the standard invitation system (invite links, invites-that-donate) reaches friends and family *outside* the company. The employer pays for the seat; the seat launches consumer households.
 - **Family extension (employer toggle):** each seat can extend Plus to up to 2 household members — a benefit upgrade companies already understand (the Calm/Headspace family model), and every extension seeds a consumer home.
 - **Plus-one campaigns (opt-in per company):** an employee may attach one outside plus-one (partner, friend) to a company campaign; the plus-one's clean hours count at 50% toward the Company Jar. Every campaign becomes a wave of invitations with a cause attached — and the employer chose the rate, so the pledge math stays honest.
-- **Share moments engineered to leave the building:** the tip-out ceremony share card ("My focus helped fund 2,400 meals"), squad bragging cards, Year in the Company Jar — all designed for the feed the recipient's *friends* see, not the company intranet.
+- **Share moments engineered to leave the building:** the tip-out ceremony share card ("My hours helped fund 2,400 meals"), squad bragging cards, Year in the Company Jar — all designed for the feed the recipient's *friends* see, not the company intranet.
 - **The alumni effect:** leave the job, keep your jar (with a leaver's discount). The benefit outlives the deal; the consumer relationship compounds across careers.
 - **Metric:** external activations per seat per campaign — the launch-board K-factor. This is the number that makes Teams not just self-sustaining but *self-marketing*.
 

@@ -129,7 +129,7 @@ Privacy rules:
 | Prototype | SwiftUI view | Notes |
 |---|---|---|
 | `ov-onb` | OnboardingView | 4 slides → FamilyControls auth → FamilyActivityPicker → blocked. **No card, no account wall.** Target: under 2 minutes. |
-| `s-home` | TodayView | Hero panel, focus session, "Your deals", tips, links |
+| `s-home` | TodayView | Hero panel, "Your time" session, "Your deals", tips, links |
 | `s-jar`, `s-charity`, `ov-tipout` | JarView, CharityView, TipOutView | The jar component (§7a), lid picker, monthly ceremony, visible settlement steps |
 | `s-new` | NewDealView | "Make a deal": apps, schedule, price slider $2–25, intention, "Seal the deal" |
 | `ov-deal` | DealEditView | Stricter now, easier in 24 hours, ending free with 24 hours' notice |
@@ -163,7 +163,7 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
   - The company jar holds glowing lights, one per scroll-free hour.
 - **Lid:** a rounded bar. The owner picks its colour: silver (default), mint, lavender, copper or cork. Picking one makes the jar hop and smile.
 - **Face and moods:**
-  - The face has two eyes and a mouth. The moods are idle, happy (you stayed), thanks (a coin landed), rest (a focus session is on, with sleepy eyes) and wow (the tip-out).
+  - The face has two eyes and a mouth. The moods are idle, happy (you stayed), thanks (a coin landed), rest ("Your time" is on, with sleepy eyes) and wow (the tip-out).
   - **Never sad or disappointed:** a slip is a gift to the jar.
   - The eyes follow your finger by up to about 2.6 points, then drift back after about 2.6 s. The eyes blink every 5.6 s.
   - Tapping a big jar makes it giggle (a hop and a smile).
