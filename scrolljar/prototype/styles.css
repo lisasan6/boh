@@ -733,3 +733,5 @@ body[data-stage="new"] .wk3{display:none!important}
 .d1DealCard:hover,.d1DealCard:focus-visible{border-color:rgba(55,226,192,.5)}
 .d1DealCard .d1Live{margin-top:0}
 .d1Edit{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:12px;font-weight:700;color:var(--ink-2)}
+.capBox{margin:-2px 0 12px;padding:10px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)}
+.chip.soon{border-style:dashed;border-color:var(--gold);color:var(--gold)}

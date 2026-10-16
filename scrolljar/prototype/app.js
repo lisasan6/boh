@@ -4,13 +4,22 @@ const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false,
 let SNAP=null;   /* the three-weeks-in data, kept so the demo can switch back from day one */
 /* card fee on the free plan: shown and added on top, so 100% of the coins arrive. Plus covers it. */
 const cardFee=x=>Math.round((x*0.029+0.30)*100)/100;
+/* the demo follows the real calendar, so it never looks out of date: this month, the next tip-out, days ago */
+const TODAY=new Date();
+const dfmt=(d,o)=>d.toLocaleString('en-GB',o);
+const MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH=dfmt(TODAY,{month:'long'});
+const NEXT1=MON3[(TODAY.getMonth()+1)%12]+' 1';
+const daysAgo=n=>{ const d=new Date(TODAY); d.setDate(d.getDate()-n); return d; };
+const dayMon=d=>dfmt(d,{weekday:'short'})+' '+d.getDate()+' '+MON3[d.getMonth()];
+const monDay=d=>MON3[d.getMonth()]+' '+d.getDate();
 /* this month's coins, newest first — the jar total is always their sum */
 const COINS=[
   {p:'The scroll one',amt:5, when:'Today · 9:12pm',    fresh:true},
   {p:'The loud one',  amt:10,when:'Yesterday · 11:40pm',fresh:true},
-  {p:'The scroll one',amt:5, when:'Sun 20 Jul · 10:05pm'},
-  {p:'The scroll one',amt:5, when:'Wed 16 Jul · 9:48pm'},
-  {p:'The loud one',  amt:10,when:'Fri 11 Jul · 11:02pm'},
+  {p:'The scroll one',amt:5, when:dayMon(daysAgo(3))+' · 10:05pm'},
+  {p:'The scroll one',amt:5, when:dayMon(daysAgo(7))+' · 9:48pm'},
+  {p:'The loud one',  amt:10,when:dayMon(daysAgo(12))+' · 11:02pm'},
 ];
 const jarTotal=()=>COINS.reduce((t,c)=>t+c.amt,0);
 const CHARITIES=[
@@ -243,7 +252,7 @@ function renderJar(){
   document.querySelectorAll('[data-bind="jar"]').forEach(e=>e.textContent='$'+t);
   document.querySelectorAll('[data-bind="capfill"]').forEach(e=>e.style.width=pct+'%');
   document.querySelectorAll('[data-bind="capText"]').forEach(e=>e.textContent=
-    !S.stakes&&!t?'Empty for now':t>=S.cap?'Full for July · shields stay on':'$'+t+' of your $'+S.cap+' cap');
+    !S.stakes&&!t?'Empty for now':t>=S.cap?'Full for '+MONTH+' · shields stay on':'$'+t+' of your $'+S.cap+' cap');
   document.querySelectorAll('[data-bind="coinCount"]').forEach(e=>e.textContent=COINS.length+' coin'+(COINS.length===1?'':'s'));
   document.querySelectorAll('[data-bind="charityLine"]').forEach(e=>e.textContent=charity().l);
   document.querySelectorAll('.charityName').forEach(e=>e.textContent=charity().n);
@@ -267,7 +276,26 @@ function renderCharities(){
 }
 function pickCharity(i){
   S.charity=i; renderCharities(); renderJar();
-  toast('Your jar now goes to '+charity().n+' on Aug 1.');
+  toast('Your jar now goes to '+charity().n+' on '+NEXT1+'.');
+}
+/* You: the monthly cap. Lowering it is instant; raising it waits 24 hours, in cold blood */
+let capPending=null;
+function toggleCap(){ const b=$('capBox'), open=b.style.display==='none'; b.style.display=open?'':'none'; $('capPill').setAttribute('aria-expanded',open); if(open) renderCap(); }
+function renderCap(){
+  $('capBox').innerHTML=`<div class="tiny" style="margin-bottom:7px">The most your jar can take in a month. When it's full, the shields stay on and nothing more is charged.</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${[20,35,50,75,100].map(v=>`<span class="chip${v===S.cap?' on':''}${v===capPending?' soon':''}" onclick="setCap(${v})">$${v}</span>`).join('')}</div>`;
+}
+function setCap(v){
+  if(v===S.cap){ capPending=null; }
+  else if(v<S.cap){ S.cap=v; capPending=null; renderJar(); toast('Cap lowered to $'+v+'. That happens straight away.'); }
+  else { capPending=v; toast('Your cap goes up to $'+v+' in 24 hours. Raising it waits a day, in cold blood.'); }
+  $('capPill').textContent='$'+S.cap+(capPending?' → $'+capPending:'')+' ›'; renderCap();
+}
+/* You: quiet mode rests the shields for a day, booked 24 hours ahead; cancelling is instant */
+let quietOn=false;
+function toggleQuiet(){
+  quietOn=!quietOn; $('quietPill').textContent=quietOn?'Tomorrow':'Off'; $('quietPill').classList.toggle('mint',quietOn); $('quietPill').classList.toggle('chr',!quietOn);
+  toast(quietOn?'Quiet mode is booked for tomorrow: the shields rest for the day. Booking a day ahead makes it a plan, not an impulse.':'Quiet mode cancelled. The shields stay on.');
 }
 /* the shield's first button, in the user's own words: "Back to my novel". Several things: all of them if short, else the first */
 function backTo(d){
@@ -284,7 +312,7 @@ function showShield(){
   setStayButtons();
   const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/\bmy\b/g,'your');
   $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
-  $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' clean days and counting';
+  $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' days kept and counting';
   $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
   $('ov-shield').classList.add('on');
 }
@@ -569,7 +597,7 @@ function renderReal(){
     B.innerHTML=`<div style="text-align:center;padding:8px 0 4px">
       <svg viewBox="0 0 40 40" width="52" height="52" style="filter:drop-shadow(0 0 16px rgba(255,201,77,.7))"><use href="#coin"/></svg>
       <div class="display" style="font-size:22px;margin:12px 0 8px">It's real now.</div>
-      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On Aug 1 it all goes to ${ch}.${realPlan==='free'?'':' Plus is on, so the card fee is on us.'}</div></div>
+      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On ${NEXT1} it all goes to ${ch}.${realPlan==='free'?'':' Plus is on, so the card fee is on us.'}</div></div>
       <button class="btn mint" style="margin-top:16px" onclick="closeOv('ov-real')">Got it</button>`;
   }
 }
@@ -678,7 +706,7 @@ function showOverride(){
   const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
   if(S.stakes&&jarTotal()+price>S.cap){
     ['ov-shield','ov-instead'].forEach(closeOv);
-    showExit('Your jar is full for July.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on Aug 1.');
+    showExit('Your jar is full for '+MONTH+'.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on '+NEXT1+'.');
     return;
   }
   $('ovrEyebrow').textContent=d.n.toUpperCase()+' · 15 MINUTES';
@@ -895,17 +923,17 @@ function scene(kind){
 const FEED=[
   {t:'post',a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',w:'2h ago',
    body:'Ran the long way home instead of scrolling on the sofa.',photo:'run',kudos:4},
-  {t:'week',a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',w:'5h ago',
-   body:"Luca's week held — 6 clean days.",kudos:7},
+  {t:'week',a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',w:'5h ago',
+   body:"Noor's week held: the deal kept 6 days running.",kudos:7},
   {t:'quiet',a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',w:'yesterday',
    body:'Giulia regained an hour for herself.',sub:'kept private — she chose the quiet post',kudos:3,supporter:true},
   {t:'jar',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'this week',
    body:'The jar gained $23 this week.',sub:'from the four of you — never who, never how much each',kudos:6},
   {t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'yesterday',
    body:'Finished chapter three. Turns out books still work.',photo:'book',kudos:5},
-  {t:'tipout',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:'Jul 1',
+  {t:'tipout',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:monDay(new Date(TODAY.getFullYear(),TODAY.getMonth(),1)),
    body:'The jar tipped out — $52 to UNICEF.',sub:'receipt from Every.org',kudos:11},
-  {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:'Jun 28',
+  {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:monDay(new Date(TODAY.getFullYear(),TODAY.getMonth(),0)),
    body:'Sofia joined the jar.',sub:'we donated $1 to UNICEF for the invite',kudos:2},
 ];
 function feedCard(f,i,example){ return `
@@ -929,10 +957,10 @@ function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.
 /* members — per-member settlement, amounts hideable */
 let showDollars=true;
 const MEMBERS=[
-  {a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',coins:2,amt:10,note:'9 clean days'},
+  {a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',coins:2,amt:10,note:'9 days kept'},
   {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true},
-  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 clean days'},
-  {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 clean days'},
+  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 days kept'},
+  {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 days kept'},
 ];
 function renderMembers(){
   $('memberList').innerHTML=MEMBERS.map(m=>`
@@ -954,7 +982,7 @@ const BUDDIES=[
    sub:'in her own session until 9:40 · left a note',
    note:"Whatever it is, it will still be there in twenty minutes and you'll be less tired. Put the kettle on. Tell me about it tomorrow. — M",
    when:'she wrote this on 12 June, in her own words, on a calm Tuesday'},
-  {id:'luca',a:'L',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Luca',st:'away',
+  {id:'noor',a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',st:'away',
    sub:'in his own session · no note left yet'},
   {id:'casa',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',st:'live',
    sub:'3 people · Giulia is around', via:'Giulia', vc:'linear-gradient(150deg,#FFB86B,#FF5C8A)', va:'G'},
@@ -1312,7 +1340,7 @@ function tipAction(){ TIPS[tipIdx].go(); }
 /* ── celebrations ── */
 const WINS=[
   {t:'Best week yet',s:'9h 40m returned'},
-  {t:'12 clean days',s:'your longest run'},
+  {t:'12 days kept',s:'your longest run'},
   {t:'First $50 given',s:'to Doctors Without Borders'},
   {t:'Focus Week finished',s:'with Casa Jar'},
 ];
@@ -1837,7 +1865,7 @@ function famTreatCard(){
 function renderFamily(animate){
   const B=$('famBody'), kidsMoney=FAM.unlocked, coins=FAM.coinsIn?FAM.coins:0;
   if(FAM.view==='parent'){
-    $('famEyebrow').textContent='THE FAMILY JAR · JULY';
+    $('famEyebrow').textContent='THE FAMILY JAR · '+MONTH.toUpperCase();
     $('famAmt').textContent=money(kidsMoney+coins);
     $('famSub').innerHTML=`for good this month`+famKey(coins?`${money(coins)} in grown-ups' coins`:'',`${money(kidsMoney)} from the kids' scroll-free hours`);
     drawFamJar($('famJarG'),Math.floor(coins/4),Math.round(famKidsHours()*0.8),animate);
@@ -1865,7 +1893,7 @@ function renderFamily(animate){
     paintLids();
   } else {
     const k=FAM.members.find(m=>m.n==='Mia');
-    $('famEyebrow').textContent='YOUR HOURS · JULY';
+    $('famEyebrow').textContent='YOUR HOURS · '+MONTH.toUpperCase();
     $('famAmt').textContent=FAM.mia.hours+' hours';
     $('famSub').innerHTML=`scroll-free this month · that's ${money(FAM.mia.hours*FAM.perHour)} for ${k.cause}`+famKey('','each glowing coin is one scroll-free hour');
     drawFamJar($('famJarG'),0,FAM.mia.hours,animate);
@@ -2194,5 +2222,8 @@ function renderD1(){
   if(!$('d1Example').innerHTML) $('d1Example').innerHTML=feedCard(SNAP.feed[0],-1,true);
 }
 document.body.dataset.stage=S.stage;
+document.querySelectorAll('[data-date]').forEach(el=>{ const k=el.dataset.date; const mon=daysAgo((TODAY.getDay()+6)%7);
+  el.textContent = k==='next1'?NEXT1 : k==='month'?MONTH : k==='week'?monDay(mon) : k==='MONTH'?MONTH.toUpperCase()
+    : k==='NEXT1'?(dfmt(new Date(TODAY.getFullYear(),TODAY.getMonth()+1,1),{month:'long'})+' 1').toUpperCase() : el.textContent; });
 /* a page embedding the app can open it on one screen: ?embed=1&show=family */
 if(Q.get('show')==='family') openFamily();

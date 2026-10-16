@@ -217,7 +217,7 @@
         <div style="flex:1;min-width:0">
           <div class="spread"><b style="font-size:13.5px">The jar</b><span class="display num" style="font-size:20px;color:var(--gold-text)" data-bind="jar">$35</span></div>
           <div class="capBar"><i data-bind="capfill"></i></div>
-          <div class="tiny" style="margin-top:6px"><span data-bind="capText">$35 of your $50 cap</span> · tips out Aug 1</div>
+          <div class="tiny" style="margin-top:6px"><span data-bind="capText">$35 of your $50 cap</span> · tips out <span data-date="next1">Aug 1</span></div>
         </div>
         <span style="color:var(--ink-3)">›</span>
       </div>
@@ -301,7 +301,7 @@
       <div class="amount num" style="margin-top:8px" data-bind="jar">$35</div>
       <div class="capBar" style="max-width:220px;margin:12px auto 0"><i data-bind="capfill"></i></div>
       <div class="tiny" style="margin-top:7px" data-bind="capText">$35 of your $50 cap</div>
-      <div class="tiny" style="margin-top:4px">→ <span class="charityName">Doctors Without Borders</span> · tips Aug 1 · <span style="color:var(--violet);cursor:pointer" onclick="go('charity')">change</span></div>
+      <div class="tiny" style="margin-top:4px">→ <span class="charityName">Doctors Without Borders</span> · tips <span data-date="next1">Aug 1</span> · <span style="color:var(--violet);cursor:pointer" onclick="go('charity')">change</span></div>
     </div>
     <div class="card lidCard"><div class="spread"><b style="font-size:13px">Lid colour</b><span class="tiny">yours to pick, any time</span></div>
       <div class="swatches" id="lidPickMe"></div></div>
@@ -311,8 +311,8 @@
       <button class="btn mint" style="margin-top:12px" id="d1RealBtn" onclick="openReal()">Make it real</button>
     </div>
     <div class="card wk3" style="background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))">
-      <div class="eyebrow">IMPACT · JULY</div>
-      <div class="sub" style="margin-top:8px">Your July coins are going to <b class="charityName">Doctors Without Borders</b>. <span data-bind="charityLine"></span></div>
+      <div class="eyebrow">IMPACT · <span data-date="MONTH">JULY</span></div>
+      <div class="sub" style="margin-top:8px">Your <span data-date="month">July</span> coins are going to <b class="charityName">Doctors Without Borders</b>. <span data-bind="charityLine"></span></div>
       <div class="row" style="margin-top:12px;gap:14px">
         <div><div class="display num" style="font-size:22px;color:var(--gold-text)">$83</div><div class="tiny">given all-time</div></div>
         <div><div class="display num" style="font-size:22px">4</div><div class="tiny">months of giving</div></div>
@@ -348,7 +348,7 @@
       <div class="legend"><span><i style="background:var(--mint)"></i>clean</span><span><i style="background:var(--gold)"></i>coin day</span></div>
     </div>
     <div class="card">
-      <b style="font-size:13px">July</b>
+      <b style="font-size:13px" data-date="month">July</b>
       <div class="tiny" style="margin-top:2px">both kinds of day count</div>
       <div class="cal" id="cal"></div>
     </div>
@@ -451,7 +451,7 @@
 
   <!-- ══ WEEKLY RECAP ══ -->
   <div class="screen" id="s-recap">
-    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Week of Jul 21</div></div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('diary')">‹</span><div class="display h1">Week of <span data-date="week">Jul 21</span></div></div>
     <div class="heroPanel">
       <div class="eyebrow">IN YOUR OWN WORDS</div>
       <div class="display" style="font-size:20px;margin:10px 0;line-height:1.25">"Tired, but I read instead."</div>
@@ -460,7 +460,7 @@
     <div class="card">
       <b style="font-size:13.5px">What showed up</b>
       <div class="themeRow"><span class="themeDot" style="background:var(--peach)"></span><div><b style="font-size:12.5px">Tiredness before 10pm</b><div class="tiny">4 entries · usually right before a coin</div></div></div>
-      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a clean day</div></div></div>
+      <div class="themeRow"><span class="themeDot" style="background:var(--mint)"></span><div><b style="font-size:12.5px">Reading, and feeling better after</b><div class="tiny">3 entries · every one of them a day the deal held</div></div></div>
       <div class="themeRow"><span class="themeDot" style="background:var(--violet)"></span><div><b style="font-size:12.5px">Boredom at lunch</b><div class="tiny">2 entries · the pull was mild, you rode it out</div></div></div>
     </div>
     <div class="card">
@@ -566,7 +566,7 @@
       <div id="fvKid" onclick="setFamView('kid')">Mia's view (12)</div>
     </div>
     <div class="heroPanel" style="text-align:center">
-      <div class="eyebrow" id="famEyebrow">THE FAMILY JAR · JULY</div>
+      <div class="eyebrow" id="famEyebrow">THE FAMILY JAR · <span data-date="MONTH">JULY</span></div>
       <div class="jarbox" id="famJarBox" style="margin-top:8px">
         <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="famJarSvg">
           <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
@@ -663,11 +663,11 @@
       <div class="display h1" id="jarName" onclick="renameJar()" style="cursor:pointer">Casa Jar</div>
       <span class="tiny" onclick="renameJar()" style="cursor:pointer">rename</span></div>
     <div class="heroPanel" style="text-align:center">
-      <div class="eyebrow">JULY · EVERYONE GIVES TO UNICEF</div>
+      <div class="eyebrow"><span data-date="MONTH">JULY</span> · EVERYONE GIVES TO UNICEF</div>
       <div class="amount num" style="margin-top:8px" id="groupTotal">$38</div>
       <div class="tiny" style="margin-top:6px">each person's coins go from their own card</div>
       <div class="row" style="justify-content:center;gap:6px;margin-top:14px">
-        <div class="av" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)">L</div>
+        <div class="av" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)">N</div>
         <div class="av" style="background:linear-gradient(150deg,#FFB86B,#FF5C8A)">G</div>
         <div class="av" style="background:linear-gradient(150deg,#8B7CF6,#5AA9FF)">M</div>
         <div class="av" style="background:linear-gradient(150deg,#FFE9A8,#E0A422);color:#3A2A00">You</div>
@@ -743,9 +743,10 @@
   <div class="screen" id="s-you">
     <div class="display h1" style="margin-bottom:12px">You</div>
     <div class="card">
-      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Peek valve</b><div class="tiny">one free peek every 48h</div></div><span class="pill mint" id="peekState">5 min · ready</span></div>
-      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Monthly cap</b><div class="tiny">your safety valve</div></div><span class="pill gold">$50</span></div>
-      <div class="spread"><div><b style="font-size:13px">Quiet mode</b><div class="tiny">schedule 24h ahead</div></div><span class="pill chr">Off</span></div>
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Peek valve</b><div class="tiny">one free peek every 48h</div></div><span class="pill mint" id="peekState" role="button" tabindex="0" style="cursor:pointer" onclick="toast('One free 5-minute peek every 48 hours, no coin and no pause. It\'s ready: you\'ll find it on any shield.')">5 min · ready</span></div>
+      <div class="spread" style="margin-bottom:12px"><div><b style="font-size:13px">Monthly cap</b><div class="tiny">your safety valve</div></div><span class="pill gold" id="capPill" role="button" tabindex="0" style="cursor:pointer" aria-expanded="false" onclick="toggleCap()">$50 ›</span></div>
+      <div id="capBox" class="capBox" style="display:none"></div>
+      <div class="spread"><div><b style="font-size:13px">Quiet mode</b><div class="tiny">schedule 24h ahead</div></div><span class="pill chr" id="quietPill" role="button" tabindex="0" style="cursor:pointer" onclick="toggleQuiet()">Off</span></div>
     </div>
     <div class="card">
       <div class="row" style="gap:12px">
@@ -785,7 +786,7 @@
       <div class="spread" style="margin:11px 0"><div><div style="font-size:12.5px;font-weight:700">Your coins</div><div class="tiny">when you pay, and how much</div></div>
         <span class="chip" onclick="cycleSetting(this,['Nobody','My people'])">Nobody</span></div>
       <div class="spread" style="margin-bottom:11px"><div><div style="font-size:12.5px;font-weight:700">Jar totals</div><div class="tiny">the collective number, never who</div></div>
-        <span class="chip on" style="cursor:default">Always shared</span></div>
+        <span class="chip on" role="button" tabindex="0" onclick="toast('Jar totals are always shared inside your jars: the collective number, never who or how much each.')">Always shared</span></div>
       <div class="spread"><div><div style="font-size:12.5px;font-weight:700">Default post</div><div class="tiny">how your reclaimed hours appear</div></div>
         <span class="chip" onclick="cycleSetting(this,['Quiet','Full'])">Quiet</span></div>
       <div class="tiny" style="margin-top:10px">Coins are private by default. Nobody sees yours unless you choose to share them.</div>
@@ -902,7 +903,7 @@
     <svg width="54" height="54" style="color:var(--chrome-1);filter:drop-shadow(0 0 20px rgba(168,184,200,.4))"><use href="#i-jar"/></svg>
     <div class="display" style="font-size:23px;margin:14px 0 8px">You made a deal with yourself</div>
     <div class="sub" style="color:#A9A4D8;margin-bottom:6px" id="shieldSub">How about <b style="color:#EFEDFF">your novel</b> instead?</div>
-    <div class="tiny" style="margin-bottom:24px" id="shieldStreak">12 clean days and counting</div>
+    <div class="tiny" style="margin-bottom:24px" id="shieldStreak">12 days kept and counting</div>
     <button class="btn mint" id="shieldStay" data-stay="" onclick="resist()">I'll stay committed</button>
     <button class="btn ghost" style="margin-top:10px;background:rgba(255,255,255,.08)" id="shieldOpen" onclick="showBridge()">Open anyway · $5</button>
     <div class="tiny devNote" style="margin-top:20px;opacity:.5">iOS shield — text + two buttons is all Apple allows</div>
@@ -972,7 +973,7 @@
   <!-- ══ TIP-OUT ══ -->
   <div class="ov" id="ov-tipout" style="background:var(--scr-bg);align-items:center;justify-content:flex-start;text-align:center;padding:34px 24px 28px;overflow-y:auto">
     <button class="ovClose" aria-label="Close" onclick="closeOv('ov-tipout')">✕</button>
-    <div class="pill chr">AUGUST 1 · TIP-OUT</div>
+    <div class="pill chr"><span data-date="NEXT1">AUGUST 1</span> · TIP-OUT</div>
     <div class="jarbox" style="margin-top:18px" id="tipJarBox">
       <svg viewBox="0 0 200 226" width="150" height="172" id="tipJar">
         <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
@@ -996,7 +997,7 @@
       <div id="settleSteps" style="margin-top:9px"></div>
     </div>
     <div class="card" style="margin-top:4px;width:100%;text-align:center;background:linear-gradient(150deg,rgba(139,124,246,.16),rgba(55,226,192,.1))">
-      <div class="eyebrow">JULY · RECEIPT</div>
+      <div class="eyebrow"><span data-date="MONTH">JULY</span> · RECEIPT</div>
       <div class="display" style="font-size:16px;margin-top:6px;line-height:1.3">9h 40m returned.<br><span data-bind="jar">$35</span> given.</div>
       <div class="tiny" style="margin-top:6px"><span class="charityName">Doctors Without Borders</span> · receipt from Every.org</div>
     </div>
@@ -1291,7 +1292,7 @@
   <!-- ══ FAMILY TIP-OUT: each kid's gift carries their name; the treat is never cash ══ -->
   <div class="ov" id="ov-famtip" style="background:var(--scr-bg);align-items:center;justify-content:flex-start;text-align:center;padding:34px 24px 28px;overflow-y:auto">
     <button class="ovClose" aria-label="Close" onclick="closeOv('ov-famtip')">✕</button>
-    <div class="pill chr">AUGUST 1 · THE FAMILY JAR TIPS OUT</div>
+    <div class="pill chr"><span data-date="NEXT1">AUGUST 1</span> · THE FAMILY JAR TIPS OUT</div>
     <div class="jarbox" style="margin-top:16px" id="ftJarBox">
       <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="ftJarSvg">
           <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
