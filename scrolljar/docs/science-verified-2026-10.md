@@ -127,7 +127,7 @@ All applied as listed, text only, no design change. Checked in a browser at 390p
 ---
 
 ## 6. Still open
-- **"100% to charity"** is only true if every coin reaches the charity after card and platform fees. The site says the fee is added on top on the free plan; confirm the same for every plan and the Teams and Families products.
+- ~~**"100% to charity"**~~ **Resolved (16 Oct):** coins go 100% to charity on every plan. Card fees are added on top on the free plan and paid by ScrollJar for members; memberships are ScrollJar's only revenue.
 - **The Meta "slot machines" / "addicted" quotes:** still unverified; keep them out of public copy until sourced.
 - **Surgeon General advisory (2023):** the often-quoted lines couldn't be opened at source; don't quote them yet.
 - **Retention:** the biggest risk the evidence points to is people dropping off. Worth designing for and measuring from day one.
