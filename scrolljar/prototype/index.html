@@ -482,7 +482,7 @@
       <span style="color:var(--ink-3)">›</span>
     </div>
     <div class="card aiCard">
-      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Plus</span></div>
+      <div class="spread"><div class="row" style="gap:8px"><svg width="16" height="16" style="color:var(--violet)"><use href="#i-wave"/></svg><b style="font-size:13px">Companion</b></div><span role="button" tabindex="0" style="cursor:pointer" onclick="go('paywall')" class="pill" style="background:rgba(139,124,246,.16);color:var(--violet)">Plus</span></div>
       <div class="sub" style="margin-top:9px">Your hardest hour is Sunday 10pm and your entries say it's tiredness, not craving. Moving that shield an hour earlier would meet the real problem. Want me to suggest a wind-down that isn't a screen?</div>
       <div class="row" style="gap:7px;margin-top:12px">
         <button class="btn mint" style="flex:1" onclick="toast('Shield moved to 9pm on Sundays.')">Do it</button>
@@ -674,7 +674,7 @@
       </div>
     </div>
     <div class="spread" style="margin:4px 2px 8px"><div class="display h2">Members</div>
-      <span class="chip" style="font-size:11px" onclick="toggleAmounts(this)">Showing $</span></div>
+      <span class="tiny">the total, never who</span></div>
     <div id="memberList"></div>
     <div class="card" style="cursor:pointer" onclick="go('challenge')">
       <div class="spread"><div><b style="font-size:13.5px">Focus Week</b><div class="tiny">3 days left · everyone halves their scroll</div></div>

@@ -956,7 +956,6 @@ function renderFeed(){ $('feedList').innerHTML=FEED.map((f,i)=>feedCard(f,i)).jo
 /* a high five is a nod, never a number: nobody sees how many a note got */
 function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].mine=true; el.setAttribute('aria-pressed','true'); el.querySelector('span').textContent='High-fived'; }
 /* members — per-member settlement, amounts hideable */
-let showDollars=true;
 const MEMBERS=[
   {a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',coins:2,amt:10,note:'9 days kept'},
   {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true},
@@ -968,11 +967,10 @@ function renderMembers(){
    <div class="memberRow">
      <div class="av" style="background:${m.c};font-size:${m.a.length>1?10:14}px">${m.a}</div>
      <div style="flex:1"><b style="font-size:13px">${m.n}</b><div class="tiny">${m.note}</div></div>
-     ${m.sup?'<span class="supporter">SUPPORTER</span>':
-       `<span class="pill gold">${showDollars?'$'+m.amt:m.coins+' coins'}</span>`}
+     ${m.sup?'<span class="supporter">SUPPORTER</span>':''}
    </div>`).join('');
 }
-function toggleAmounts(el){ showDollars=!showDollars; el.textContent=showDollars?'Showing $':'Showing coins'; renderMembers(); }
+/* nobody's coins are shown here: the jar shares its total, never who or how much each */
 /* ══ WOBBLE — asking a friend for a hand ══
    Ladder of who speaks: (1) your friend, live  (2) your friend, in advance
    (3) you, in advance.  We only ever speak last, and briefly. */
