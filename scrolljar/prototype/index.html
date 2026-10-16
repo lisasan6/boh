@@ -512,9 +512,10 @@
       <div class="jarChip co" onclick="openCompany()"><b><i class="lidDot" data-jar="co"></i>Fernhill &amp; Co.</b><span>company</span></div>
       <div class="jarChip fam" onclick="openFamily()"><b><i class="lidDot" data-jar="fam"></i>Rossi family</b><span>family</span></div>
       <div class="jarChip cr" onclick="openCreator()"><b><i class="lidDot" data-jar="cr"></i>30 Days Unplugged</b><span>@maya.makes · challenge</span></div>
+      <div class="jarChip wish" onclick="openWish()"><b><i class="lidDot" data-jar="wish"></i><span id="wishChipName">Lisbon trip</span></b><span>wish jar</span></div>
       <div class="jarChip on" onclick="go('jardetail')"><b><i class="lidDot" data-jar="casa"></i>Casa Jar</b><span>you + 3</span></div>
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
-      <div class="jarChip ghost" onclick="go('invite')"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
+      <div class="jarChip ghost" role="button" aria-label="New jar or invite" onclick="openNewJar()"><svg width="15" height="15"><use href="#i-plus"/></svg></div>
     </div>
     <div class="card coCard wk3" style="cursor:pointer" onclick="openCompany()">
       <div class="row" style="gap:12px">
@@ -580,6 +581,50 @@
       <div class="tiny" style="margin-top:4px;line-height:1.5" id="famSub"></div>
     </div>
     <div id="famBody"></div>
+  </div>
+
+  <!-- ══ WISH JAR: something you want together, filled by scroll-free time; ScrollJar never touches the money ══ -->
+  <div class="screen" id="s-wish">
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('friends')">‹</span><div class="display h1" id="wishTitle">Lisbon trip</div></div>
+    <div class="heroPanel" style="text-align:center">
+      <div class="eyebrow" id="wishEyebrow">WISH JAR · BY DEC 15</div>
+      <div class="jarbox" id="wishJarBox" style="margin-top:8px">
+        <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="wishJarSvg">
+          <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+          <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+          <g id="wishLights" clip-path="url(#body)"></g>
+          <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+          <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="amount num wishAmt" id="wishAmt">$340</div>
+      <div class="tiny" style="margin-top:4px">of <b id="wishTarget">$600</b> · from everyone's scroll-free time</div>
+      <div class="capBar" style="max-width:220px;margin:11px auto 0"><i id="wishFill" class="wishFillBar"></i></div>
+      <div class="row" style="justify-content:center;gap:6px;margin-top:14px" id="wishAvatars"></div>
+    </div>
+    <div class="card wishMine">
+      <div class="spread"><div><b style="font-size:13.5px">Your share so far</b><div class="tiny">only you see this</div></div><b class="num" id="wishMine" style="font-size:20px">$86</b></div>
+      <div class="tiny" style="margin-top:8px;line-height:1.5" id="wishMineSub">86 scroll-free hours this jar, at $1 an hour</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">How it fills</b>
+      <div class="sub" style="margin-top:5px" id="wishHow">Every hour your deals give back adds $1 to the jar, for each person. Slips don't count here and cost nothing here: your own deals still send their coins to charity, as always.</div>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:8px;margin-bottom:8px"><svg width="15" height="15" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What everyone sees</b></div>
+      <div class="seeRow ok">The wish, the total and the date</div>
+      <div class="seeRow ok">Who's in the jar</div>
+      <div class="seeRow no">Who slipped, anyone's time or apps</div>
+      <div class="seeRow no">Anyone's share but your own</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13.5px">When you get there</b>
+      <div class="sub" style="margin-top:5px">Nothing moves through ScrollJar. Each of you sees your own share and puts it in however your group likes. If the date comes first, nothing is owed: move the date, or settle for what you reached.</div>
+    </div>
+    <div class="row" style="gap:8px">
+      <button class="btn ghost" onclick="go('invite')">Invite someone</button>
+      <button class="btn ghost" onclick="wishDone()">Preview reaching it</button>
+    </div>
   </div>
 
   <div class="screen" id="s-company">
@@ -1218,6 +1263,36 @@
     <div class="firstTop"><button class="firstBack" id="firstBack" onclick="firstGo(FIRST.step-1)" aria-label="Back">‹</button><div id="firstKicker" class="firstProg"></div><span></span></div>
     <div id="firstBody" class="firstBody"></div>
     <div style="position:absolute;left:17px;right:17px;bottom:22px" id="firstFoot"></div>
+  </div>
+
+  <!-- ══ NEW JAR: a wish jar, or invite someone to an existing jar ══ -->
+  <div class="ov sheetwrap" id="ov-newjar">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="newJarKicker">NEW JAR</div><span class="backBtn" onclick="closeOv('ov-newjar')">✕</span></div>
+      <div id="newJarBody"></div>
+    </div>
+  </div>
+  <div class="ov" id="ov-wishdone" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-wishdone')">✕</button>
+    <div class="jarbox" style="width:150px;height:172px">
+      <svg viewBox="0 0 200 226" width="150" height="172" class="jarbreathe" id="wishDoneSvg">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <g id="wishDoneLights" clip-path="url(#body)"></g>
+        <path d="M80 100 q4 -6 8 0 M112 100 q4 -6 8 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <path d="M84 116 q16 14 32 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="display" style="font-size:24px;margin-top:14px;line-height:1.15" id="wishDoneTitle">You did it: Lisbon trip.</div>
+    <div class="sub" style="margin-top:8px;max-width:260px" id="wishDoneSub">$600 of scroll-free time, together.</div>
+    <div class="card" style="margin-top:16px;width:100%;text-align:left">
+      <div class="spread"><b style="font-size:13.5px">Your share</b><b class="num" style="font-size:18px" id="wishDoneMine">$152</b></div>
+      <div class="tiny" style="margin-top:6px;line-height:1.5">Put it in however your group agreed. ScrollJar never touches the money, and nobody else sees your share.</div>
+    </div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn mint" onclick="closeOv('ov-wishdone');openCompose()">Share a photo when you go</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-wishdone')">Close</button>
+    </div>
   </div>
 
   <!-- ══ DAY ~3 · MAKE IT REAL ══ -->

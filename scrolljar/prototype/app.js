@@ -2091,7 +2091,7 @@ function crsFinish(){
    Free for everyone and never earned: no colour is unlocked by a streak or sold. Your own jar has
    your colour; each shared jar has its own, so you can tell them apart on the Board. */
 const LID_NAMES={silver:'Silver',mint:'Mint',lavender:'Lavender',copper:'Copper',cork:'Cork'};
-const LIDS={me:'silver',fam:'cork',co:'lavender',cr:'copper',casa:'mint'};
+const LIDS={me:'silver',fam:'cork',co:'lavender',cr:'copper',casa:'mint',wish:'copper'};
 const lidFill=k=>k==='silver'?'url(#rim)':`url(#lid-${k})`;
 const lidSwatchBg={mint:'linear-gradient(135deg,#B8FFF0,#1FB596 45%,#0C6E5C)',lavender:'linear-gradient(135deg,#E6E0FF,#7C6BE0 45%,#4A3CA8)',
   copper:'linear-gradient(135deg,#F5C6A4,#B0643C 45%,#6E3A1E)',cork:'linear-gradient(135deg,#E8BE86,#A8743E 45%,#7A4E24)',silver:'linear-gradient(135deg,#F2F7FA,#8798A8 45%,#5F6E80)'};
@@ -2231,3 +2231,73 @@ document.querySelectorAll('[data-date]').forEach(el=>{ const k=el.dataset.date; 
     : k==='NEXT1'?(dfmt(new Date(TODAY.getFullYear(),TODAY.getMonth()+1,1),{month:'long'})+' 1').toUpperCase() : el.textContent; });
 /* a page embedding the app can open it on one screen: ?embed=1&show=family */
 if(Q.get('show')==='family') openFamily();
+
+/* ══ WISH JARS ══
+   Something a group wants together (a trip, a dinner out, a concert). It fills with scroll-free time: every hour a
+   person's own deals give back adds the agreed amount. Coins are virtual; ScrollJar never touches the money.
+   Everyone sees the wish, the total, the date and who's in; nobody sees who slipped or anyone else's share.
+   Free with one friend; groups of three or more are Plus. If the date comes first, nothing is owed. */
+const WISH={name:'Lisbon trip',kind:'trip',target:600,rate:1,hours:340,mine:86,days:60,
+  people:[{a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)'},{a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)'},{a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)'},{a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)'}]};
+const wishBy=()=>{ const d=daysAgo(-WISH.days); return MON3[d.getMonth()]+' '+d.getDate(); };
+const usd=v=>'$'+(v%1?v.toFixed(2):v.toLocaleString('en-US'));
+function renderWish(animate){
+  const got=WISH.hours*WISH.rate, pct=Math.min(1,got/WISH.target);
+  $('wishTitle').textContent=WISH.name; $('wishChipName').textContent=WISH.name;
+  $('wishEyebrow').textContent='WISH JAR'+(WISH.days?' · BY '+wishBy().toUpperCase():'');
+  $('wishAmt').textContent=usd(Math.min(got,WISH.target)); $('wishTarget').textContent=usd(WISH.target);
+  $('wishFill').style.width=(pct*100)+'%';
+  $('wishAvatars').innerHTML=WISH.people.map(p=>`<div class="av" style="background:${p.c};${p.a==='You'?'color:#3A2A00;font-size:10px':''}">${p.a}</div>`).join('');
+  $('wishMine').textContent=usd(WISH.mine*WISH.rate);
+  $('wishMineSub').textContent=`${WISH.mine} scroll-free hours in this jar, at ${usd(WISH.rate)} an hour`;
+  $('wishHow').textContent=`Every hour your deals give back adds ${usd(WISH.rate)} to the jar, for each person. Slips don't count here and cost nothing here: your own deals still send their coins to charity, as always.`;
+  drawLights($('wishLights'),Math.round(pct*POS.length),animate);
+}
+function openWish(){ go('wish'); $('s-wish').scrollTop=0; renderWish(true); }
+function wishDone(){
+  $('wishDoneTitle').textContent=`You did it: ${WISH.name}.`;
+  $('wishDoneSub').textContent=`${usd(WISH.target)} of scroll-free time, together.`;
+  $('wishDoneMine').textContent=usd(Math.round(WISH.target*WISH.mine/WISH.hours));
+  drawLights($('wishDoneLights'),POS.length,true); $('ov-wishdone').classList.add('on');
+}
+/* the "+" on the Board: start a wish jar, or invite someone to a jar you're in */
+const WISH_KINDS=[['trip','A trip'],['dinner','A dinner out'],['concert','A concert'],['home','Something for home'],['camera','A camera']];
+const NJ={step:0,kind:'trip',name:'',target:600,rate:1,days:60,people:2};
+function openNewJar(){ Object.assign(NJ,{step:0,kind:'',name:'',target:600,rate:1,days:60,people:2}); renderNewJar(); $('ov-newjar').classList.add('on'); }
+function renderNewJar(){
+  const B=$('newJarBody');
+  if(NJ.step===0){ $('newJarKicker').textContent='NEW JAR';
+    B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:12px">What kind of jar?</div>
+      <div class="njPick" role="button" tabindex="0" onclick="NJ.step=1;renderNewJar()"><b>A wish jar</b><span>For something you want together: a trip, a dinner out, a concert. It fills with everyone's scroll-free time, and ScrollJar never touches the money.</span></div>
+      <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');go('invite')"><b>Invite someone to Casa Jar</b><span>Your coins jar for UNICEF: share the deals, give together.</span></div>`;
+    return; }
+  $('newJarKicker').textContent='A WISH JAR';
+  const nm=NJ.name.trim()||((WISH_KINDS.find(k=>k[0]===NJ.kind)||[])[1]||'');
+  const by=NJ.days?(()=>{ const d=daysAgo(-NJ.days); return MON3[d.getMonth()]+' '+d.getDate(); })():'';
+  B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:4px">What are you wishing for?</div>
+    <div class="firstChips">${WISH_KINDS.map(([k,l])=>`<span class="chip${NJ.kind===k?' on':''}" onclick="NJ.kind='${k}';NJ.name='';renderNewJar()">${l}</span>`).join('')}</div>
+    <input class="timeIn" maxlength="30" placeholder="or name it: Lisbon, Mia's birthday…" aria-label="Name your wish" value="${esc(NJ.name)}" oninput="NJ.name=this.value;njLine()">
+    <div class="eyebrow" style="margin:16px 2px 8px">HOW MUCH</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${[150,300,600,1000,2000].map(v=>`<span class="chip${NJ.target===v?' on':''}" onclick="NJ.target=${v};renderNewJar()">$${v.toLocaleString('en-US')}</span>`).join('')}</div>
+    <div class="eyebrow" style="margin:16px 2px 8px">BY WHEN · optional</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${[[0,'No date'],[30,'In a month'],[90,'In 3 months'],[180,'In 6 months']].map(([v,l])=>`<span class="chip${NJ.days===v?' on':''}" onclick="NJ.days=${v};renderNewJar()">${l}</span>`).join('')}</div>
+    <div class="eyebrow" style="margin:16px 2px 8px">EACH SCROLL-FREE HOUR IS WORTH</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${[.5,1,2].map(v=>`<span class="chip${NJ.rate===v?' on':''}" onclick="NJ.rate=${v};renderNewJar()">${usd(v)} each</span>`).join('')}</div>
+    <div class="card firstDeal" id="njLine"></div>
+    <div class="tiny" style="margin:2px 2px 12px;line-height:1.5">Free with one friend. Groups of three or more are part of Plus.</div>
+    <button class="btn mint" ${nm?'':'disabled'} id="njGo" onclick="makeWish()">Make the wish jar</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="NJ.step=0;renderNewJar()">Back</button>`;
+  njLine();
+}
+function njLine(){
+  const nm=NJ.name.trim()||((WISH_KINDS.find(k=>k[0]===NJ.kind)||[])[1]||'');
+  const by=NJ.days?(()=>{ const d=daysAgo(-NJ.days); return ' by '+MON3[d.getMonth()]+' '+d.getDate(); })():'';
+  $('njLine').innerHTML=nm?`<div class="eyebrow" style="margin-bottom:6px">YOUR WISH JAR</div><b>${esc(nm)}</b>: ${usd(NJ.target)}${by}. Every scroll-free hour adds ${usd(NJ.rate)} for each person in the jar. Nothing is owed if the date comes first.`
+    :`<div class="tiny">Pick what it's for, or name it.</div>`;
+  if($('njGo')) $('njGo').disabled=!nm;
+}
+function makeWish(){
+  const nm=NJ.name.trim()||WISH_KINDS.find(k=>k[0]===NJ.kind)[1];
+  Object.assign(WISH,{name:nm,kind:NJ.kind,target:NJ.target,rate:NJ.rate,days:NJ.days,hours:0,mine:0,people:[WISH.people[0]]});
+  closeOv('ov-newjar'); openWish(); toast('Wish jar made. Invite someone to fill it with you.');
+}

@@ -115,6 +115,12 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 - **Invites that donate:** when an invitee **joins a jar and completes their first active week**, ScrollJar donates **$1** to the inviter's jar charity. Guardrails: activation-triggered only, max 10 rewarded invites/user, global monthly budget cap. Invite prompts appear at strength points only (7-day milestone, won challenge, Year in the Jar).
 - **Web kudos** (v1.5): non-users can 👏 a shared milestone card from the web.
 - No contact-book import. Invites are handmade.
+- **Wish jars (L, 2026-10-16):** a jar for something a group wants together (a trip, a dinner out, a concert, something for home). It **fills with scroll-free time**: every hour a person's own deals give back adds an agreed amount ($0.50, $1 or $2), for each person. **Coins are virtual: ScrollJar never touches the money.** At the goal each person sees only their own share and settles it however the group likes.
+  - **Slips don't count and cost nothing here.** Personal deals keep sending their coins 100% to charity. Filling the wish from slips was rejected: it would turn slipping into the way to get the trip (same reason "penalties to own savings" is parked).
+  - **Who sees what:** the wish, the total, the date and who's in. Never who slipped, anyone's time or apps, or anyone's share but your own.
+  - **Date is optional.** If it comes first, nothing is owed: move the date, or settle for what you reached. It's a plan, not a debt.
+  - **Plans:** free with one friend; groups of three or more are Plus (same line as buddy jars vs groups).
+  - Families already have the family treat (kids' scroll-free hours unlock a parent's pledge); wish jars are the grown-ups' and friends' version.
 
 ## 8. Stats, impact & the Big Counter
 

@@ -743,3 +743,17 @@ body[data-mode="day"]{--tabbar-bg:rgba(250,249,255,.93);--tabbar-fg:#6B6890}
 body[data-mode="day"] .tabs{border-top:1px solid rgba(22,20,47,.08);box-shadow:0 -10px 26px -18px rgba(40,30,100,.3)}
 body[data-mode="day"] .tab.on{color:#0A8A72}
 body[data-mode="day"] .tab.on .i{filter:drop-shadow(0 0 6px rgba(10,138,114,.3))}
+/* wish jars */
+.wishAmt{margin-top:6px;background:linear-gradient(180deg,#FFF6D8,#FFC94D);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wishFillBar{background:linear-gradient(90deg,#FFE9A8,#FFB86B);box-shadow:0 0 8px rgba(255,184,107,.55)}
+.wishMine #wishMine{color:var(--gold)}
+.seeRow{position:relative;padding-left:24px;font-size:12.5px;line-height:1.45;margin-top:6px;color:var(--ink-2)}
+.seeRow::before{position:absolute;left:0;top:0;width:16px;height:16px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.seeRow.ok::before{content:"✓";background:rgba(55,226,192,.18);color:var(--mint)}
+.seeRow.no::before{content:"✕";background:rgba(255,122,122,.14);color:#FF8A8A}
+.njPick{padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);margin-bottom:9px;cursor:pointer}
+.njPick b{display:block;font-size:14px}
+.njPick span{display:block;font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.45}
+.njPick:hover{border-color:rgba(55,226,192,.5)}
+body[data-mode="day"] .wishAmt{background:linear-gradient(180deg,#E3A21A,#A86A08);-webkit-background-clip:text;background-clip:text;color:transparent}
+body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
