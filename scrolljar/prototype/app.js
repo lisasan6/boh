@@ -579,7 +579,7 @@ function renderReal(){
         <div class="feeRow"><span>A $35 jar</span><b>$35, all to charity</b></div>
         <div class="feeRow"><span>Card fee</span><b>${plus?'covered by Plus':'+ about $'+f.toFixed(2)}</b></div></div>
       <div class="card"><div class="spread"><b style="font-size:13.5px">ScrollJar Plus</b><span class="pill chr">optional · billed by Apple</span></div>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, the danger-hours forecast, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, a heads-up before your tricky hours, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
         <div class="row" style="gap:7px;margin-top:10px">
           <span class="chip${realPlan==='free'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='free';renderReal()">Not now</span>
           <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$29.99 / year</span>
@@ -1981,7 +1981,7 @@ function renderFamSetup(){
    join with their own deals; every coin goes 100% to the challenge's cause. The creator never earns
    from followers' coins (nor do we), and everyone sees totals only: no rankings, nobody singled out.
    Apple shows us no app names: the "feeds / tools" split is guidance for the user's own picks. */
-const CR={view:'maker',handle:'@maya.makes',name:'Unplugged September',days:30,day:12,cause:'Mental Health America',
+const CR={view:'maker',handle:'@maya.makes',name:'30 Days Unplugged',days:30,day:12,cause:'Mental Health America',
   causes:['Mental Health America','Doctors Without Borders','GiveDirectly','Against Malaria Foundation'],
   people:1284,hours:9410,given:6215,
   windows:[{at:'12:00',len:30},{at:'18:00',len:30}],winLen:30,

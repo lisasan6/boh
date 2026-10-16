@@ -7,7 +7,7 @@
 - **Deals are always editable.** Stricter changes apply now; easier ones apply after 24 hours; ending a deal is free with 24 hours' notice.
 - **Membership is Free + Plus** (replaces §6's Ghost Jar / Jar Hero / Jar Legend):
   - Real coins (the stakes) work on Free, with the card fee shown and added on top so 100% of the price arrives.
-  - **Plus** ($3.99/mo · $29.99/yr) covers card fees and adds unlimited deals, groups and challenges, the danger-hours forecast and deep stats.
+  - **Plus** ($3.99/mo · $29.99/yr) covers card fees and adds unlimited deals, groups and challenges, the tricky-hours heads-up and deep stats.
   - Free keeps **3 deals** and every kindness feature. Details: `sketchpad.md` → Monetization.
 - **Breath pause:** one slow breath of about 10 seconds.
   - The stay button appears first and stays easy to tap. It speaks in the user's own words: "Back to my novel" (or "I'll stay committed" when the deal says nothing about what the time is for).

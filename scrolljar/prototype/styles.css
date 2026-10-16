@@ -737,3 +737,4 @@ body[data-stage="new"] .wk3{display:none!important}
 .chip.soon{border-style:dashed;border-color:var(--gold);color:var(--gold)}
 .cal .d-head{aspect-ratio:auto;font-size:9px;color:var(--ink-3);background:none}
 .cal .d-pad{background:none}
+.dealSummary:empty{display:none}
