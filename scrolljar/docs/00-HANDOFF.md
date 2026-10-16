@@ -22,7 +22,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 |---|---|---|
 | **App prototype v2** | Complete and clickable: 20 screens and about 30 overlays, all flows working, day and night modes, plus Families, Creators and Teams. **The most valuable asset.** | `prototype/` |
 | **Website** | Home, Teams, Families, Privacy and a 404 page in the app's night look, with the live prototype in the phones. Home has a "Sound familiar?" film reel (`#moments`, placeholder drawings until L's 9 images arrive) and a "Why money?" answer. **Ready to publish, not live** (see §4.2). | `landing/`, `deploy/` |
-| **User tests** | A 30-minute script and a checklist for 5 sessions, updated 2026-10-16 for the new setup, voice answers, the Day 1 card and wish jars (8 tasks). | [Test script](https://claude.ai/code/artifact/f2a0d9da-e08c-4b4b-962d-50aa3f93a30e), [checklist](https://claude.ai/code/artifact/19671cc6-1c63-47de-9664-604e588b5692) (Claude Docs) |
+| **User tests** | A 30-minute script and a checklist for 5 sessions, updated 2026-10-16 for the new setup, voice answers, the Day 1 card and wish jars. Both docs have the same 6 tasks and 8 end questions. | [Test script](https://claude.ai/code/artifact/f2a0d9da-e08c-4b4b-962d-50aa3f93a30e), [checklist](https://claude.ai/code/artifact/19671cc6-1c63-47de-9664-604e588b5692) (Claude Docs) |
 | Film prompts | Image-generator prompts for the 9 film scenes, plus how to keep them consistent | `docs/film-scene-prompts.md` |
 | Product spec v1.3 | Canonical (v1.3 notes on top say what changed since v1.2) | `docs/scrolljar-spec.md` |
 | Platform research | Re-verified 2026-07-30 | `docs/research-findings.md` |
