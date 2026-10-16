@@ -96,9 +96,9 @@ Three things would have embarrassed us publicly. All are now fixed in the docs:
 
 ---
 
-## 5. Proposed changes to the website and app (not made yet: awaiting L's OK)
+## 5. Changes to the website and app (approved by L and applied 16 Oct 2026)
 
-These are public, so I haven't changed them. Each is a text-only edit, with no design change.
+All applied as listed, text only, no design change. Checked in a browser at 390px and 1280px wide. (In the variable-reward note, the first sentence was dropped because it repeated the headline.)
 
 ### Website (`landing/index.html`)
 1. **"No screen-time app has been through a peer-reviewed trial yet — including ours."** This is **wrong**: the 36% study on our own cards *is* a peer-reviewed study of a screen-time app.
