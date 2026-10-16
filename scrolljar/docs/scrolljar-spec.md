@@ -119,6 +119,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
   - **Slips don't count and cost nothing here.** Personal deals keep sending their coins 100% to charity. Filling the wish from slips was rejected: it would turn slipping into the way to get the trip (same reason "penalties to own savings" is parked).
   - **Who sees what:** the wish, the total, the date and who's in. Never who slipped, anyone's time or apps, or anyone's share but your own.
   - **Date is optional.** If it comes first, nothing is owed: move the date, or settle for what you reached. It's a plan, not a debt.
+  - **Up to 2 scroll-free hours a day count per person (default, to test with users).** Without a cap the person doing best would owe the most, and people might keep their deals small to keep their share small. At $1 an hour the most anyone puts in is about $60 a month, shown up front at setup.
   - **Plans:** free with one friend; groups of three or more are Plus (same line as buddy jars vs groups).
   - Families already have the family treat (kids' scroll-free hours unlock a parent's pledge); wish jars are the grown-ups' and friends' version.
 

@@ -2237,7 +2237,10 @@ if(Q.get('show')==='family') openFamily();
    person's own deals give back adds the agreed amount. Coins are virtual; ScrollJar never touches the money.
    Everyone sees the wish, the total, the date and who's in; nobody sees who slipped or anyone else's share.
    Free with one friend; groups of three or more are Plus. If the date comes first, nothing is owed. */
-const WISH={name:'Lisbon trip',kind:'trip',target:600,rate:1,hours:340,mine:86,days:60,
+/* up to 2 scroll-free hours a day count per person, so the best-doing friend never owes the most and nobody keeps deals small to save money */
+const WISH_DAY_CAP=2;
+const wishMonthMax=rate=>Math.round(rate*WISH_DAY_CAP*30);
+const WISH={name:'Lisbon trip',kind:'trip',target:600,rate:1,hours:340,mine:78,days:60,
   people:[{a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)'},{a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)'},{a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)'},{a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)'}]};
 const wishBy=()=>{ const d=daysAgo(-WISH.days); return MON3[d.getMonth()]+' '+d.getDate(); };
 const usd=v=>'$'+(v%1?v.toFixed(2):v.toLocaleString('en-US'));
@@ -2250,7 +2253,7 @@ function renderWish(animate){
   $('wishAvatars').innerHTML=WISH.people.map(p=>`<div class="av" style="background:${p.c};${p.a==='You'?'color:#3A2A00;font-size:10px':''}">${p.a}</div>`).join('');
   $('wishMine').textContent=usd(WISH.mine*WISH.rate);
   $('wishMineSub').textContent=`${WISH.mine} scroll-free hours in this jar, at ${usd(WISH.rate)} an hour`;
-  $('wishHow').textContent=`Every hour your deals give back adds ${usd(WISH.rate)} to the jar, for each person. Slips don't count here and cost nothing here: your own deals still send their coins to charity, as always.`;
+  $('wishHow').textContent=`Every hour your deals give back adds ${usd(WISH.rate)} to the jar, up to ${WISH_DAY_CAP} hours a day each, so the most anyone puts in is about ${usd(wishMonthMax(WISH.rate))} a month. Slips don't count here and cost nothing here: your own deals still send their coins to charity, as always.`;
   drawLights($('wishLights'),Math.round(pct*POS.length),animate);
 }
 function openWish(){ go('wish'); $('s-wish').scrollTop=0; renderWish(true); }
@@ -2292,7 +2295,7 @@ function renderNewJar(){
 function njLine(){
   const nm=NJ.name.trim()||((WISH_KINDS.find(k=>k[0]===NJ.kind)||[])[1]||'');
   const by=NJ.days?(()=>{ const d=daysAgo(-NJ.days); return ' by '+MON3[d.getMonth()]+' '+d.getDate(); })():'';
-  $('njLine').innerHTML=nm?`<div class="eyebrow" style="margin-bottom:6px">YOUR WISH JAR</div><b>${esc(nm)}</b>: ${usd(NJ.target)}${by}. Every scroll-free hour adds ${usd(NJ.rate)} for each person in the jar. Nothing is owed if the date comes first.`
+  $('njLine').innerHTML=nm?`<div class="eyebrow" style="margin-bottom:6px">YOUR WISH JAR</div><b>${esc(nm)}</b>: ${usd(NJ.target)}${by}. Every scroll-free hour adds ${usd(NJ.rate)}, up to ${WISH_DAY_CAP} a day each, so the most anyone puts in is about ${usd(wishMonthMax(NJ.rate))} a month. Nothing is owed if the date comes first.`
     :`<div class="tiny">Pick what it's for, or name it.</div>`;
   if($('njGo')) $('njGo').disabled=!nm;
 }
