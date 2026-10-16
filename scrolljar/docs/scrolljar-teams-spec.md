@@ -11,7 +11,7 @@
 >   - **Changing schedules:** same time every day, or a weekly pattern with a different hour (or none) per day. A day with no hour simply isn't counted.
 >   - **Pauses:** "On call today" and "This week is too much" pause counting. Never counts against anyone, shows no gap, stays on the phone.
 >   - **Squad goals** are set by the squad from the hours its people actually have, so a squad of shift workers isn't measured against office staff.
->   - **The jar token has no name:** the jar fills with small glowing lights (not moons, not marbles), and copy only ever says "hours", so nothing needs translating. Campaigns are named "Summer Hours" etc.
+>   - **The jar token has no name:** the jar fills with small glowing lights (not moons, not marbles), and copy only ever says "hours", so nothing needs translating. Campaigns are named "Focus Hours" etc. (never seasonal names, which look stale part of the year). High fives never show a count, anywhere in the product.
 >   - Which hour someone picked never leaves the phone. The employer sees weekly totals only.
 > - **Unspent pledge rolls into the next campaign.** The company never "saves" money because people tried less; the next jar starts partly full.
 > - **$4 per employee per month**, billed annually, outside Apple. Free 6-week pilot (up to 50 people). Small teams (5–24): flat ~$99/month.

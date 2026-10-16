@@ -947,13 +947,14 @@ function feedCard(f,i,example){ return `
      ${f.sub?`<div class="tiny" style="margin-top:3px">${f.sub}</div>`:''}
      ${f.photo?`<div class="fphoto">${scene(f.photo)}</div>`:''}
      <div class="frow">
-       ${example?`<div class="kudos" aria-hidden="true"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div><span class="tiny">an example</span>`
-       :`<div class="kudos" onclick="giveKudos(this,${i})" aria-label="High five"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.kudos}</span></div>
+       ${example?`<div class="kudos" aria-hidden="true"><svg width="14" height="14"><use href="#i-hifive"/></svg></div><span class="tiny">an example</span>`
+       :`<div class="kudos${f.mine?' done':''}" role="button" tabindex="0" onclick="giveKudos(this,${i})" aria-label="High five" aria-pressed="${!!f.mine}"><svg width="14" height="14"><use href="#i-hifive"/></svg><span>${f.mine?'High-fived':'High five'}</span></div>
        <span class="tiny">${f.t==='coin'?'reported, not judged':''}</span>`}
      </div>
    </div>`; }
 function renderFeed(){ $('feedList').innerHTML=FEED.map((f,i)=>feedCard(f,i)).join(''); }
-function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].kudos++; el.querySelector('span').textContent=FEED[i].kudos; }
+/* a high five is a nod, never a number: nobody sees how many a note got */
+function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].mine=true; el.setAttribute('aria-pressed','true'); el.querySelector('span').textContent='High-fived'; }
 /* members — per-member settlement, amounts hideable */
 let showDollars=true;
 const MEMBERS=[
@@ -1271,8 +1272,12 @@ function publishPost(){
 const HRS=[{d:'M',v:1.2},{d:'T',v:1.8},{d:'W',v:.9,coin:1},{d:'T',v:2.1},{d:'F',v:1.4},{d:'S',v:.8,coin:1},{d:'S',v:1.5}];
 const mx=Math.max(...HRS.map(h=>h.v));
 $('hoursChart').innerHTML=HRS.map(h=>`<div class="bar"><div class="b ${h.coin?'coin':''}" style="height:${Math.round(h.v/mx*76)}px"></div><div class="l">${h.d}</div></div>`).join('');
-let cal='';for(let d=1;d<=31;d++){cal+=d>26?`<div class="d-off">${d}</div>`:([11,16,20,25,26].includes(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`)}
-$('cal').innerHTML=cal;
+/* the month so far, weeks starting Monday: coin days come from this month's coins, the rest kept the deal, later days stay blank */
+(()=>{ const y=TODAY.getFullYear(), m=TODAY.getMonth(), dim=new Date(y,m+1,0).getDate(), lead=(new Date(y,m,1).getDay()+6)%7, td=TODAY.getDate();
+  const coinDays=new Set([0,1,3,7,12].map(daysAgo).filter(d=>d.getMonth()===m).map(d=>d.getDate()));
+  let cal=['M','T','W','T','F','S','S'].map(l=>`<div class="d-head">${l}</div>`).join('')+'<div class="d-pad"></div>'.repeat(lead);
+  for(let d=1;d<=dim;d++) cal+=d>td?`<div class="d-off">${d}</div>`:coinDays.has(d)?`<div class="d-coin">${d}</div>`:`<div class="d-clean">${d}</div>`;
+  $('cal').innerHTML=cal; })();
 /* ── focus session timers ── */
 let focusT, focusTotal=0, focusLeft=0;
 const RING=169.6;
@@ -1323,7 +1328,7 @@ function updateGoal(){
 }
 /* ── tips: some are science, some are permission ── */
 const TIPS=[
-  {i:'i-brain',t:"Why it's so hard at 10pm",b:'Tiredness lowers the effort your brain will spend on deciding. The feed never asks you to decide.',cta:'Discover more ›',go:()=>openRes(3)},
+  {i:'i-brain',t:"Why it's so hard at 10pm",b:'Often it isn\'t craving: it\'s the only unclaimed time in the day. Researchers call it bedtime procrastination.',cta:'Discover more ›',go:()=>openRes(3)},
   {i:'i-camera',t:"Sometimes you just want to be entertained",b:"I get it — we don't always want to optimise every hour or do something meaningful. That's completely fine. What about a good film, or the series you keep meaning to start? It ends by itself, which is more than the feed will ever do for you.",cta:'Find something that ends ›',go:()=>{ showInstead(); setInsteadMode('fun',document.getElementById('segFun')); }},
   {i:'i-wave',t:'The pull is usually tiredness, not craving',b:"Your own entries say so four times this month. Tired wants an off switch, not content — and a film is a much better off switch than a feed.",cta:'Read your recap ›',go:()=>go('recap')},
   {i:'i-brain',t:"You didn't decide to open it",b:'Many phone opens are quick checks that begin with no decision at all. The habit is the reach, not the app.',cta:'Discover more ›',go:()=>openRes(4)},
@@ -1683,7 +1688,7 @@ function renderJoin(){
   [...$('cjDots').children].forEach((d,i)=>d.classList.toggle('on',i<=cjStep));
   const B=$('cjBody');
   if(cjStep===0){ $('cjKicker').textContent='FERNHILL & CO. INVITED YOU';
-    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Summer Hours: an hour a day, funded.</div>
+    B.innerHTML=`<div class="display" style="font-size:21px;line-height:1.2;margin-bottom:8px">Focus Hours: an hour a day, funded.</div>
       <div class="sub">Fernhill pledges <b>$5,000</b>. Pick one hour a day that's yours. Each one that stays scroll-free unlocks <b>$5</b> for a cause the team votes on. If you slip, nobody pays. Not you, not anyone.</div>
       <div class="coRule ok" style="margin-top:12px">Any hour works: before a shift, between shifts, or after work</div>
       <div class="coRule ok">Joining is your choice, and you can leave any time</div>
@@ -2224,6 +2229,7 @@ function renderD1(){
 document.body.dataset.stage=S.stage;
 document.querySelectorAll('[data-date]').forEach(el=>{ const k=el.dataset.date; const mon=daysAgo((TODAY.getDay()+6)%7);
   el.textContent = k==='next1'?NEXT1 : k==='month'?MONTH : k==='week'?monDay(mon) : k==='MONTH'?MONTH.toUpperCase()
+    : k==='NEXT15'?(dfmt(new Date(TODAY.getFullYear(),TODAY.getMonth()+1,15),{month:'long'})+' 15').toUpperCase()
     : k==='NEXT1'?(dfmt(new Date(TODAY.getFullYear(),TODAY.getMonth()+1,1),{month:'long'})+' 1').toUpperCase() : el.textContent; });
 /* a page embedding the app can open it on one screen: ?embed=1&show=family */
 if(Q.get('show')==='family') openFamily();
