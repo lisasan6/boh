@@ -274,6 +274,7 @@ body[data-mode="day"] .ov.sheetwrap{background:rgba(20,23,51,.32)}
 .backBtn{font-size:19px;cursor:pointer;color:var(--ink-2);padding-right:2px}
 .jarStrip{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
 .jarStrip::-webkit-scrollbar{display:none}
+.jarStrip[hidden]{display:none}
 .jarChip{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:9px 13px;cursor:pointer;backdrop-filter:blur(10px)}
 .jarChip b{display:block;font-size:12.5px}
 .jarChip span{font-size:10.5px;color:var(--ink-3);font-weight:700}

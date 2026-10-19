@@ -499,6 +499,9 @@
       <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
     <div class="d1">
+      <div class="jarStrip" id="d1WishStrip" hidden>
+        <div class="jarChip wish" onclick="openWish()"><b><i class="lidDot" data-jar="wish"></i><span class="wishChipName">Lisbon trip</span></b><span>wish jar</span></div>
+      </div>
       <div class="card d1Empty">
         <b style="font-size:15px">Nobody here yet</b>
         <div class="sub" style="margin-top:6px">Share a jar with someone and this is where you'll see what they did instead of scrolling: a walk, a chapter, a dinner. Never their screens, never their coins.</div>
@@ -513,7 +516,7 @@
       <div class="jarChip co" onclick="openCompany()"><b><i class="lidDot" data-jar="co"></i>Fernhill &amp; Co.</b><span>company</span></div>
       <div class="jarChip fam" onclick="openFamily()"><b><i class="lidDot" data-jar="fam"></i>Rossi family</b><span>family</span></div>
       <div class="jarChip cr" onclick="openCreator()"><b><i class="lidDot" data-jar="cr"></i>30 Days Unplugged</b><span>@maya.makes · challenge</span></div>
-      <div class="jarChip wish" onclick="openWish()"><b><i class="lidDot" data-jar="wish"></i><span id="wishChipName">Lisbon trip</span></b><span>wish jar</span></div>
+      <div class="jarChip wish" onclick="openWish()"><b><i class="lidDot" data-jar="wish"></i><span class="wishChipName">Lisbon trip</span></b><span>wish jar</span></div>
       <div class="jarChip on" onclick="go('jardetail')"><b><i class="lidDot" data-jar="casa"></i>Casa Jar</b><span>you + 3</span></div>
       <div class="jarChip" onclick="toast('Buddy jar with Sofia — one witness, no stakes.')"><b>Sofia</b><span>buddy</span></div>
       <div class="jarChip ghost" role="button" aria-label="New jar or invite" onclick="openNewJar()"><svg width="15" height="15"><use href="#i-plus"/></svg></div>

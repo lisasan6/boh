@@ -2246,7 +2246,7 @@ const wishBy=()=>{ const d=daysAgo(-WISH.days); return MON3[d.getMonth()]+' '+d.
 const usd=v=>'$'+(v%1?v.toFixed(2):v.toLocaleString('en-US'));
 function renderWish(animate){
   const got=WISH.hours*WISH.rate, pct=Math.min(1,got/WISH.target);
-  $('wishTitle').textContent=WISH.name; $('wishChipName').textContent=WISH.name;
+  $('wishTitle').textContent=WISH.name; document.querySelectorAll('.wishChipName').forEach(e=>e.textContent=WISH.name);
   $('wishEyebrow').textContent='WISH JAR'+(WISH.days?' · BY '+wishBy().toUpperCase():'');
   $('wishAmt').textContent=usd(Math.min(got,WISH.target)); $('wishTarget').textContent=usd(WISH.target);
   $('wishFill').style.width=(pct*100)+'%';
@@ -2302,5 +2302,6 @@ function njLine(){
 function makeWish(){
   const nm=NJ.name.trim()||WISH_KINDS.find(k=>k[0]===NJ.kind)[1];
   Object.assign(WISH,{name:nm,kind:NJ.kind,target:NJ.target,rate:NJ.rate,days:NJ.days,hours:0,mine:0,people:[WISH.people[0]]});
+  $('d1WishStrip').hidden=false;   /* on day one the Board has no jar strip yet: this keeps the new wish jar one tap away */
   closeOv('ov-newjar'); openWish(); toast('Wish jar made. Invite someone to fill it with you.');
 }
