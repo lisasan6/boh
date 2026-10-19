@@ -51,11 +51,11 @@
 2. **The Wobble button** → Social. ✅ *Fully designed 2026-07-30 — see the Ladder of Who Speaks above.*
 3. **The 9pm Bell** → Social. Shared daily quiet moment per jar; synchronized stillness as ambient belonging.
 4. **Letters to your future self** (L: "yasss"; ✅ designed 2026-10-19, prototype `ov-letter` / `ov-letterread`) → Mechanics. Written when you make a deal, delivered at the 30-day milestone.
-6. **"We noticed."** → Mechanics. Rare clean-danger-hour notification, budgeted within sacred touchpoints.
+6. **"We noticed."** (✅ designed 2026-10-19, inside the tricky-hours heads-up) → Mechanics. Rare clean-danger-hour notification, budgeted within sacred touchpoints.
 8. **Sign your deal** (was "Sign your promise"; ✅ designed 2026-10-19, prototype `ov-sign`) → Usability/onboarding. Finger-drawn signature seals the first deal.
 9. **Charity spotlights as distribution** → Growth. Monthly featured cause; charities share impact back to their audiences.
 10. **Dinner Jars** → Social. Couple templates: phone-free dinners, screens-out-of-bedroom.
-12. **The danger-hours forecast** (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
+12. **The danger-hours forecast** (✅ designed 2026-10-19 as the Plus "tricky-hours heads-up", prototype `trickyCard`) (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
 
 **Approved with a restraint rule:**
 7. **The jar grows up** (L: "maybe — too much gamifying? but I like it") → kept, governed: the jar ages **slowly, silently, ambiently** — like a plant, not a game. No notifications about it, no progress bar toward it, no levels, nothing to chase; you simply notice one day that the glass has character. If it ever needs an announcement, it's over-gamified and gets cut. → Design & brand.

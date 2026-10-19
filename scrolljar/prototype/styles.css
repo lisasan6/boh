@@ -865,3 +865,20 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
   background:#F6F1E6;color:#2A2440;font:500 15px/1.6 'Bricolage Grotesque',Georgia,serif;box-shadow:0 18px 40px -20px rgba(0,0,0,.6)}
 .tag-letter{background:rgba(255,201,77,.16);color:var(--gold-text)}
 #ov-sign{z-index:12}
+
+/* tricky hours (Plus): a week of when the pull came. Intensity in violet, never red */
+.heat{display:grid;grid-template-columns:14px repeat(7,minmax(0,1fr));gap:3px;margin-top:12px;align-items:center}
+.heat .hb{font-size:8.5px;font-weight:700;color:var(--ink-3);text-align:center;white-space:nowrap;overflow:hidden}
+.heat .hd{font-size:10px;font-weight:700;color:var(--ink-3)}
+.heat i{display:block;height:16px;border-radius:4px;background:var(--panel-2)}
+.heat i.h1{background:rgba(139,124,246,.28)}.heat i.h2{background:rgba(139,124,246,.55)}.heat i.h3{background:var(--violet);box-shadow:0 0 10px rgba(139,124,246,.6)}
+.notePrev{margin-top:8px;padding:10px 12px;border-radius:16px;background:var(--panel-2);border:1px solid var(--line);font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.notePrev .spread span{font-size:9.5px;font-weight:700;letter-spacing:.08em;color:var(--ink-3)}
+.notePrev b{display:block;color:var(--ink);font-size:13px;margin-top:3px}
+.notePrev.quiet{opacity:.85}
+.noteActs{display:flex;gap:6px;margin-top:8px}
+.noteActs span{flex:1;text-align:center;padding:7px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
+/* giving when you win (Plus) */
+.winDots{display:flex;gap:5px;margin:12px 0 8px}
+.winDots i{flex:1;height:8px;border-radius:4px;background:var(--panel-2);border:1px solid var(--line)}
+.winDots i.on{background:var(--mint);border-color:transparent}

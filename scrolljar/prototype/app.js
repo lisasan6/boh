@@ -933,6 +933,7 @@ function payContinue(){
   S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now.');
 }
 function renderPlan(){
+  if(typeof renderTricky==='function'){ renderTricky(); renderWinGive(); }
   const c=$('planCard'); if(!c) return;
   const plus=S.plan!=='free';
   c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='creator'?'free while your challenge runs':(S.plan==='yr'?'$29.99 / year':'$3.99 / month'))+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
@@ -2663,3 +2664,68 @@ function openLetterRead(){
   const env=$('letterEnv'); env.classList.remove('open'); void env.offsetWidth; env.classList.add('open');
   if(!L.kept){ L.kept=true; ENTRIES.unshift({tag:'letter',t:'Today',b:esc(L.text),at:'a letter from you, written on '+monDay(w)}); renderEntries(); }
 }
+
+/* ══ TRICKY-HOURS HEADS-UP (Plus) — when the pull tends to come, and a heads-up before it ══
+   Built only from our own events: the moments someone reached for a shielded app (the shield's buttons).
+   We never see apps or usage. Reactive support (the pause, rough-day check-ins) stays free; this proactive
+   part is Plus. Heads-ups are rare: at most two a week, 15 minutes before, and "We noticed" counts within that. */
+const TBANDS=['6–9am','9–noon','noon–3','3–6pm','6–9pm','9–12','late'];
+const TDAYS=['M','T','W','T','F','S','S'];
+const TGRID=[[2,0,0,0,1,2,1],[2,0,0,0,1,2,0],[1,0,0,1,1,2,1],[1,0,0,0,1,2,0],[0,0,0,1,2,2,1],[0,1,1,1,1,2,2],[1,1,0,1,2,3,2]];
+const TRICKY={headsUp:true,perWeek:2};
+const isPlus=()=>S.plan!=='free';
+function renderTricky(){
+  const C=$('trickyCard'); if(!C) return;
+  if(!isPlus()){
+    C.innerHTML=`<div class="row" style="gap:10px;align-items:flex-start"><svg width="18" height="18" style="color:var(--violet);flex:none;margin-top:1px"><use href="#i-clock"/></svg>
+      <div style="flex:1"><b style="font-size:13px">Your tricky hours</b><div class="tiny" style="margin-top:3px;line-height:1.5">With Plus, see when the pull tends to come and get a gentle heads-up before it. The pause and rough-day support stay free, always.</div>
+      <div class="row" style="gap:12px;margin-top:9px"><span class="pill chr" role="button" tabindex="0" style="cursor:pointer" onclick="go('paywall')">See Plus</span>
+      <span class="tiny devNote" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline" onclick="S.plan='yr';renderPlan()">Prototype: preview it with Plus</span></div></div></div>`;
+    return; }
+  C.innerHTML=`<div class="spread"><b style="font-size:13.5px">Your tricky hours</b><span class="pill mint">PLUS</span></div>
+    <div class="tiny" style="margin-top:3px;line-height:1.5">When the pull came, these last 3 weeks: built only from the moments you reached for a shielded app. We never see which apps.</div>
+    <div class="heat" role="img" aria-label="Heat map of tricky hours. Trickiest: Sunday, 9pm to midnight; weeknights after 9 come close.">
+      <span></span>${TBANDS.map(b=>`<span class="hb">${b}</span>`).join('')}
+      ${TGRID.map((r,d)=>`<span class="hd">${TDAYS[d]}</span>${r.map(v=>`<i class="h${v}"></i>`).join('')}`).join('')}
+    </div>
+    <div class="sub" style="margin:10px 0 2px"><b style="color:var(--ink)">Trickiest: Sunday, 9pm–midnight.</b> Weeknights after 9 come close.</div>
+    <div class="spread" style="margin-top:12px;cursor:pointer" onclick="TRICKY.headsUp=!TRICKY.headsUp;renderTricky()">
+      <div style="flex:1;padding-right:10px"><b style="font-size:13px">Heads-up before them</b><div class="tiny">15 minutes before · up to ${TRICKY.perWeek} a week</div></div>
+      <div class="toggle${TRICKY.headsUp?' on':''}" role="switch" aria-checked="${TRICKY.headsUp}" aria-label="Heads-up before tricky hours" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
+    ${TRICKY.headsUp?`<div class="eyebrow" style="margin:14px 2px 6px">WHAT IT LOOKS LIKE</div>
+    <div class="notePrev"><div class="spread"><span>SCROLLJAR</span><span>Sunday, 8:45pm</span></div><b>Sunday nights tend to get tricky around 9.</b>Want to line something up? Your time can start at 9, shields on everything.
+      <div class="noteActs"><span role="button" tabindex="0" onclick="toast('Booked: your time starts Sunday at 9pm.')">Start my time at 9</span><span role="button" tabindex="0" onclick="toast('No heads-up this week.')">Not this week</span></div></div>
+    <div class="notePrev quiet"><div class="spread"><span>SCROLLJAR · RARELY</span><span>Monday, 8:30am</span></div><b>We noticed.</b>Sunday 9pm came and went, and you kept it.</div>`:''}
+    <div class="tiny" style="margin-top:10px;line-height:1.5">Never late at night, never more than ${TRICKY.perWeek} a week, and never a countdown.</div>`;
+}
+
+/* ══ GIVING WHEN YOU WIN (Plus) — every 10 days without a coin, ScrollJar gives a small fixed gift from
+   membership money (never yours) to a cause you choose, which can differ from your jar's charity.
+   The amount is a placeholder until the unit economics are set; a monthly company budget caps the total. ══ */
+const WINGIVE={per:0.5,days:7,gifts:2,cause:null};
+const wgCause=()=>CHARITIES[WINGIVE.cause===null?S.charity:WINGIVE.cause];
+function renderWinGive(){
+  const C=$('winGiveCard'); if(!C) return;
+  const amt=v=>v<1?Math.round(v*100)+'¢':'$'+v.toFixed(2);
+  if(!isPlus()){
+    C.innerHTML=`<div class="row" style="gap:10px;align-items:flex-start"><svg width="18" height="18" style="color:var(--mint);flex:none;margin-top:1px"><use href="#i-sprout"/></svg>
+      <div style="flex:1"><b style="font-size:13px">When you win, we give too</b><div class="tiny" style="margin-top:3px;line-height:1.5">With Plus, every 10 days without a coin, ScrollJar gives ${amt(WINGIVE.per)} to a cause you choose, from our membership money, never yours.</div>
+      <div class="row" style="gap:12px;margin-top:9px"><span class="pill chr" role="button" tabindex="0" style="cursor:pointer" onclick="go('paywall')">See Plus</span>
+      <span class="tiny devNote" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline" onclick="S.plan='yr';renderPlan()">Prototype: preview it with Plus</span></div></div></div>`;
+    return; }
+  C.innerHTML=`<div class="spread"><b style="font-size:13.5px">When you win, we give too</b><span class="pill mint">PLUS</span></div>
+    <div class="tiny" style="margin-top:3px;line-height:1.5">Every 10 days without a coin, ScrollJar gives ${amt(WINGIVE.per)} to your cause, from our membership money, never yours.</div>
+    <div class="winDots" aria-label="${WINGIVE.days} of 10 days without a coin">${Array.from({length:10},(_,i)=>`<i class="${i<WINGIVE.days?'on':''}"></i>`).join('')}</div>
+    <div class="sub" style="margin-bottom:10px">${WINGIVE.days} of 10 days without a coin. ${10-WINGIVE.days===1?'One more day':`${10-WINGIVE.days} more days`} to the next gift.</div>
+    <div class="spread" style="padding-top:10px;border-top:1px solid var(--line)">
+      <div><div class="tiny">so far from us</div><b class="num" style="font-size:16px">${amt(WINGIVE.gifts*WINGIVE.per)} · ${WINGIVE.gifts} gift${WINGIVE.gifts===1?'':'s'}</b></div>
+      <div style="text-align:right"><div class="tiny">your cause</div><b style="font-size:13px">${wgCause().n}</b></div></div>
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">${CHARITIES.slice(0,4).map((c,i)=>`<span class="chip${wgCause()===c?' on':''}" onclick="WINGIVE.cause=${i};renderWinGive()">${c.n}</span>`).join('')}</div>
+    <div class="tiny devNote" role="button" tabindex="0" style="margin-top:10px;cursor:pointer;text-decoration:underline" onclick="winGiveDay()">Prototype: add a day without a coin</div>`;
+}
+function winGiveDay(){
+  WINGIVE.days++;
+  if(WINGIVE.days>=10){ WINGIVE.days=0; WINGIVE.gifts++; renderWinGive(); toast(`10 days without a coin. We just gave ${Math.round(WINGIVE.per*100)}¢ to ${wgCause().n}.`); return; }
+  renderWinGive();
+}
+renderTricky(); renderWinGive();
