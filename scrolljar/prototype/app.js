@@ -717,7 +717,7 @@ function showOverride(){
   $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
   $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
   $('ovrNote').textContent = S.stakes ? 'refundable for 48h, no questions' : 'no card, no coin, nothing to undo';
-  backCoinLine();
+  backCoinLine(); renderPeekRow();
   $('ovrRise').hidden=!(S.stakes&&d.rise);
   if(d.rise) $('ovrRise').textContent=price>d.price?`Rising price: your $${d.price}, plus a bit for each opening this week, never more than $${d.price*2}. Back to $${d.price} on Monday.`
     :`Rising price is on: the next one this week would be $${Math.min(d.price*2,d.price+riseStep(d.price))}. Back to $${d.price} every Monday.`;
@@ -747,13 +747,15 @@ function payOverride(){
   };
 }
 /* the unlock window: with a coin once it's real, without one in the first days */
-function openWindow(coin){
+function openWindow(coin,peekMin){
   $('winCoin').style.display = coin ? '' : 'none';
-  $('winTitle').textContent = coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
-  $('winSub').innerHTML = coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
+  $('winTitle').textContent = peekMin ? 'A quick look. Free.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
+  $('winSub').innerHTML = peekMin ? `No coin, and today still counts as kept. The shield comes back in ${peekMin} minutes.`
+    : coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
     : "No coin while you're getting started. The shield comes back when the time is up.";
   $('ov-window').classList.add('on');
-  let sec=899;clearInterval(winT); $('winTimer').textContent='15:00';
+  const mins=peekMin||15;
+  let sec=mins*60-1;clearInterval(winT); $('winTimer').textContent=String(mins).padStart(2,'0')+':00';
   winT=setInterval(()=>{sec--;if(sec<0){endWindow();return}
     $('winTimer').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
 }
@@ -2563,3 +2565,42 @@ function weekPost(){
   renderFeed(); closeOv('ov-week'); toast('Posted to your jars.');
 }
 function weekSend(){ closeOv('ov-week'); toast('Shared. The link opens a page about Casa Jar: they can see it without the app.'); }
+
+/* ══ PEEK VALVE — one free peek every 48 hours (kindness, in every plan) ══
+   For genuine needs, like a work message. It comes after the breathing pause, on the coin sheet, so it's never
+   distraction on demand. No coin, no rising price, and it never breaks a kept day (or a friend's backing).
+   Length 2, 5 or 10 minutes: shorter applies now, longer waits 24 hours. */
+const PEEK={min:5,usedAt:null,pending:null};
+const PEEK_EVERY=48*3600e3;
+const peekReady=()=>!PEEK.usedAt||Date.now()-PEEK.usedAt>=PEEK_EVERY;
+const peekNext=()=>{ const d=new Date(PEEK.usedAt+PEEK_EVERY); return d.toLocaleString('en-US',{weekday:'long'})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+function renderPeekRow(){
+  const row=$('ovrPeek'); row.hidden=!S.stakes; if(!S.stakes) return;
+  const ok=peekReady(); row.classList.toggle('used',!ok);
+  $('ovrPeekT').textContent=ok?'Just a quick look?':'Your free peek is resting';
+  $('ovrPeekS').textContent=ok?`Your free peek: ${PEEK.min} minutes, no coin, and today still counts as kept.`:`It's back ${peekNext()}. One every 48 hours.`;
+  $('ovrPeekP').hidden=!ok;
+}
+function usePeek(){
+  if(!peekReady()){ toast(`Your next free peek is ${peekNext()}.`); return; }
+  PEEK.usedAt=Date.now(); closeOv('ov-override'); renderPeek(); openWindow(0,PEEK.min);
+}
+function renderPeek(){
+  const ok=peekReady();
+  $('peekState').textContent=(ok?'Ready':'Resting')+' ›'; $('peekState').classList.toggle('mint',ok); $('peekState').classList.toggle('chr',!ok);
+  $('peekSub').textContent=ok?`one free ${PEEK.min}-minute peek every 48h`:`next one ${peekNext()}`;
+  if($('peekBox').style.display!=='none') renderPeekBox();
+}
+function togglePeek(){ const b=$('peekBox'), open=b.style.display==='none'; b.style.display=open?'':'none'; $('peekState').setAttribute('aria-expanded',open); if(open) renderPeekBox(); }
+function renderPeekBox(){
+  $('peekBox').innerHTML=`<div class="tiny" style="margin-bottom:7px;line-height:1.5">For a genuine quick look, like a work message. You'll find it after the pause, when you're about to drop a coin: no coin, and the day still counts as kept.</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${[2,5,10].map(v=>`<span class="chip${v===PEEK.min?' on':''}${v===PEEK.pending?' soon':''}" onclick="setPeek(${v})">${v} min</span>`).join('')}</div>
+    ${PEEK.pending?`<div class="tiny" style="margin-top:7px;color:var(--gold-text)">${PEEK.pending} minutes from tomorrow.</div>`:''}`;
+}
+function setPeek(v){
+  if(v===PEEK.min){ PEEK.pending=null; }
+  else if(v<PEEK.min){ PEEK.min=v; PEEK.pending=null; toast(`Peeks are ${v} minutes now. Shorter applies straight away.`); }
+  else { PEEK.pending=v; toast(`Peeks become ${v} minutes in 24 hours. Longer waits a day, in cold blood.`); }
+  renderPeek(); renderPeekBox();
+}
+renderPeek();

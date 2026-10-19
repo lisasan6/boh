@@ -833,3 +833,8 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .wcLine{font-size:13.5px;color:#D9D5FF}.wcLine b{color:#fff;font-size:16px}
 .wcDeal{margin-top:6px;font-size:12px;font-weight:700;color:#B9B4E8}
 #ov-week [hidden]{display:none!important}
+/* peek valve on the coin sheet: a quiet alternative, never louder than the stay button */
+.peekRow{display:flex;align-items:center;gap:10px;margin-top:9px;padding:10px 12px;border-radius:14px;border:1px dashed rgba(55,226,192,.45);background:rgba(55,226,192,.06);cursor:pointer}
+.peekRow.used{border-color:var(--line);background:none;cursor:default;opacity:.8}
+.peekRow[hidden]{display:none}
+.peekRow [hidden]{display:none}
