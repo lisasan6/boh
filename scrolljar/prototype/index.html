@@ -902,6 +902,10 @@
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
       <div class="tiny" id="priceNote" style="margin-top:6px"></div>
     </div>
+    <div class="card spread" style="margin-top:-4px">
+      <div style="flex:1;min-width:0;padding-right:10px"><b style="font-size:13px">Raise it if it gets easy</b><div class="tiny" id="riseNote" style="line-height:1.5"></div></div>
+      <div class="toggle" id="newRise" role="switch" aria-checked="false" aria-label="Rising price" tabindex="0" onclick="NEW.rise=!NEW.rise;renderNew()"></div>
+    </div>
     <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR? <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">· optional</span></div>
     <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" maxlength="40" oninput="NEW.forWhat=this.value;renderNew()" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
     <div class="card dealSummary" id="newSummary"></div>
@@ -1015,6 +1019,7 @@
         <div><b style="font-size:12.5px">Drops into your jar</b><div class="tiny" style="margin-top:2px">→ <span class="charityName">Doctors Without Borders</span></div></div>
         <div class="display num" style="font-size:24px;color:var(--gold-text)" id="ovrPrice">$5</div>
       </div>
+      <div class="tiny" id="ovrRise" style="margin:-2px 2px 10px;line-height:1.5" hidden></div>
       <div class="tiny" id="ovrBack" style="margin:-2px 2px 12px;line-height:1.5" hidden></div>
       <button class="btn gold" id="ovrPay" onclick="payOverride()">Drop a coin &amp; open</button>
       <button class="btn ghost" style="margin-top:9px" data-stay="Actually, " onclick="resist()">Actually, I'll stay committed</button>

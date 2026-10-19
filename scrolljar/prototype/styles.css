@@ -822,3 +822,5 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .wgLiveT{display:flex;align-items:center;gap:5px;flex:1;cursor:pointer}
 #ov-widgets .iosDock{bottom:84px}
 #ov-widgets [hidden]{display:none!important}
+.riseWarn{margin-top:7px;font-size:11.5px;line-height:1.5;color:var(--gold-text);font-weight:600}
+.riseWarn span{text-decoration:underline;cursor:pointer}

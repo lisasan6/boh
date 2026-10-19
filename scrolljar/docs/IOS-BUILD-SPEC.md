@@ -107,7 +107,7 @@ Eight steps, with a "1 of 8" counter on every one, so people always know where t
 ```
 Deal         id, selection(FamilyActivitySelection, encoded), schedule(presets + own times + weekdays),
              price, charityId, forList[] (what the time is for, user's words: shield subtitle + "Back to …"),
-             peekMinutes, escalation{enabled, ceiling=2x},
+             peekMinutes, escalation{enabled, ceiling=2x, step=ceil(price/4), opensThisWeek (resets Monday)},
              kind(personal|creator), postingWindows?[{start, minutes}]   (creator setup)
              createdAt, pendingChange?{fields, appliesAt}   (easier changes wait 24h; stricter apply now)
              endsAt?                                         (ending: free, 24h notice)

@@ -313,7 +313,7 @@ function showShield(){
   const d=COMMITS[0]||{}, fw=(d.forWhat||'').replace(/\bmy\b/g,'your');
   $('shieldSub').innerHTML = fw ? `How about <b style="color:#EFEDFF">${fw}</b> instead?` : 'Your first deal. The choice is still yours.';
   $('shieldStreak').textContent = S.stage==='new' ? 'Day 1 · every hour counts from here' : S.streak+' days kept and counting';
-  $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+(d.price||5) : 'Open anyway';
+  $('shieldOpen').textContent = S.stakes ? 'Open anyway · $'+curPrice(d) : 'Open anyway';
   $('ov-shield').classList.add('on');
 }
 /* ── the real-iOS bridge: shield → notification → our app ── */
@@ -704,7 +704,7 @@ function launchContinue(){
 }
 function showOverride(){
   closeOv('ov-breath');
-  const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
+  const d=COMMITS[0]||{n:'Your deal',price:5}, price=curPrice(d);
   if(S.stakes&&jarTotal()+price>S.cap){
     ['ov-shield','ov-instead'].forEach(closeOv);
     showExit('Your jar is full for '+MONTH+'.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on '+NEXT1+'.');
@@ -718,12 +718,16 @@ function showOverride(){
   $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
   $('ovrNote').textContent = S.stakes ? 'refundable for 48h, no questions' : 'no card, no coin, nothing to undo';
   backCoinLine();
+  $('ovrRise').hidden=!(S.stakes&&d.rise);
+  if(d.rise) $('ovrRise').textContent=price>d.price?`Rising price: your $${d.price}, plus a bit for each opening this week, never more than $${d.price*2}. Back to $${d.price} on Monday.`
+    :`Rising price is on: the next one this week would be $${Math.min(d.price*2,d.price+riseStep(d.price))}. Back to $${d.price} every Monday.`;
   $('ov-override').classList.add('on');
 }
 let winT;
 function payOverride(){
   closeOv('ov-override'); backSlip();
-  const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
+  const d=COMMITS[0]||{n:'Your deal',price:5}, price=curPrice(d);
+  if(d.rise) d.opens=(d.opens||0)+1;
   if(!S.stakes){ openWindow(0); return; }
   const {box,svg}=liveJar();
   const f=document.createElement('div');f.className='flyer';
@@ -791,9 +795,16 @@ function showRough(){$('ov-rough').classList.add('on')}
 const SCHED_HOURS={always:168,mornings:28,evenings:70,work:40,weekend:48,custom:56};
 const COMMITS=[
   {g:'linear-gradient(150deg,#FF7AC6,#8B5CF6)',n:'The scroll one',sched:'always',price:5,forWhat:'my novel'},
-  {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep'},
+  {g:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'The loud one',sched:'evenings',price:10,forWhat:'sleep',rise:true,opens:1},
 ];
-const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${c.window||SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?'$'+c.price:'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
+/* rising price (opt-in, chosen in cold blood): each opening in a week adds about a quarter of the price,
+   in whole dollars, never more than double. Back to the deal's own price every Monday. */
+const riseStep=p=>Math.ceil(p/4);
+const curPrice=d=>d.rise?Math.min(d.price*2,d.price+riseStep(d.price)*(d.opens||0)):d.price;
+const riseSteps=p=>{ const out=[]; for(let k=1;out[out.length-1]!==p*2;k++) out.push(Math.min(p*2,p+riseStep(p)*k)); return out; };
+const riseSay=p=>{ const s=riseSteps(p); return s.length>1?`$${s.slice(0,-1).join(', $')}, then $${s[s.length-1]} at most`:`$${s[0]} at most`; };
+const priceLine=c=>c.rise?`$${c.price}, rising${curPrice(c)>c.price?' (next $'+curPrice(c)+')':''}`:'$'+c.price;
+const dealLine=c=>c.creator?`feeds shielded · tools open · posting ${CR.windows.map(winLabel).join(', ')} · $${c.price}`:`${c.window||SCHED_LABEL[c.sched]||c.sched} · ${S.stakes?priceLine(c):'free for now'} · ${c.forWhat?'for '+c.forWhat:'tap to say what it\'s for'}`;
 function renderCommits(){
   if(typeof setStayButtons==='function') setStayButtons();
   $('commitList').innerHTML=COMMITS.map((c,i)=>`<div class="card spread dealCard" role="button" tabindex="0" style="padding:12px 13px;background:${i%2?'var(--tint-b)':'var(--tint-a)'}" onclick="openDeal(${i})" onkeydown="if(event.key==='Enter')openDeal(${i})">
@@ -801,14 +812,14 @@ function renderCommits(){
     <div><b style="font-size:13.5px">${c.n}</b><div class="tiny">${dealLine(c)}</div>${c.pending?`<div class="tiny" style="color:var(--gold-text);margin-top:2px">${c.pending}</div>`:''}</div></div>
     <span class="shieldchip"><svg width="15" height="15"><use href="#i-shield"/></svg></span></div>`).join('');
 }
-const NEW={sched:'always',price:5,forWhat:'',picked:null};
+const NEW={sched:'always',price:5,forWhat:'',picked:null,rise:false};
 const DEAL_COLOURS=['linear-gradient(150deg,#FFB86B,#FF5C8A)','linear-gradient(150deg,#8B7CF6,#5AA9FF)','linear-gradient(150deg,#37E2C0,#1E63FF)','linear-gradient(150deg,#FF7AC6,#8B5CF6)'];
 const hm=t=>{ const [h,m]=t.split(':').map(Number); return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?'am':'pm'); };
 const SCHED_NOTE={always:'all day, every day',mornings:'6–10am, every day',evenings:'9pm–7am, every night',work:'9am–5pm, Monday to Friday',weekend:'all day Saturday and Sunday'};
 const SCHED_SAY={always:'all day, every day',mornings:'every morning, 6–10am',evenings:'every night, 9pm–7am',work:'on weekdays, 9am–5pm',weekend:'all weekend'};
 const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function openNew(){
-  Object.assign(NEW,{sched:'always',price:5,forWhat:'',picked:null});
+  Object.assign(NEW,{sched:'always',price:5,forWhat:'',picked:null,rise:false});
   $('newFor').value=''; $('newPrice').value=5;
   document.querySelectorAll('#schedChips .chip').forEach((c,i)=>c.classList.toggle('on',i===0)); $('customWindow').style.display='none';
   $('newLimit').style.display = S.plan==='free'&&COMMITS.length>=3 ? '' : 'none';
@@ -819,6 +830,9 @@ function renderNew(){
   $('priceV').textContent=NEW.price;
   $('schedNote').textContent = custom ? win+', every day' : SCHED_NOTE[NEW.sched];
   $('priceNote').textContent = (S.stakes?'each time you open anyway':'each time you open anyway, once you make it real')+' · 100% to '+charity().n;
+  $('newRise').classList.toggle('on',NEW.rise); $('newRise').setAttribute('aria-checked',NEW.rise);
+  $('riseNote').innerHTML = NEW.rise ? `In a week: ${riseSay(NEW.price)}. Back to $${NEW.price} every Monday.`+riseCapWarn(NEW.price)
+    : 'optional · each opening in a week costs a bit more, never more than double';
   const p=NEW.picked&&pickedName(NEW.picked);
   $('newAppsTitle').textContent = p ? p.name : 'Choose apps';
   $('newAppsSub').textContent = p ? 'tap to change · we only ever see anonymous tokens' : 'in Apple\'s own picker · we never see which';
@@ -830,14 +844,17 @@ function renderNew(){
        <b>${esc(p.name)}</b> ${p.many?'are':'is'} shielded <b>${custom?'every day, '+win:SCHED_SAY[NEW.sched]}</b>.
        ${S.stakes?`Opening ${p.many?'one':'it'} anyway costs <b>$${NEW.price}</b>, 100% to ${charity().n}.`
          :`Opening ${p.many?'one':'it'} anyway is free for now; once you make it real it costs <b>$${NEW.price}</b>, 100% to ${charity().n}.`}
+       ${NEW.rise?` If it gets easy, each opening in a week costs a bit more, up to <b>$${NEW.price*2}</b>, and it's back to $${NEW.price} every Monday.`:''}
        ${fw?` This time is for <b>${esc(fw)}</b>.`:''}</div>`;
   $('sealBtn').disabled=!p;
 }
+/* one coin at the top of a rising price must never fill the whole monthly cap on its own */
+function riseCapWarn(p){ return p*2>=S.cap ? `<div class="riseWarn">At its highest, one coin would be $${p*2}: your whole $${S.cap} monthly cap. <span role="button" tabindex="0" onclick="go('you')">Review your cap</span> or pick a lower price.</div>` : ''; }
 function sealIt(){
   if(!NEW.picked){ toast('Choose the apps first.'); return; }
   if(S.plan==='free' && COMMITS.length>=3){ toast('The free plan includes 3 deals. Plus has unlimited.'); go('paywall'); return; }
   const custom=NEW.sched==='custom';
-  COMMITS.unshift({g:DEAL_COLOURS[COMMITS.length%4],n:pickedName(NEW.picked).name,sched:NEW.sched,price:NEW.price,forWhat:NEW.forWhat.trim(),
+  COMMITS.unshift({g:DEAL_COLOURS[COMMITS.length%4],n:pickedName(NEW.picked).name,sched:NEW.sched,price:NEW.price,forWhat:NEW.forWhat.trim(),rise:NEW.rise,opens:0,
     window:custom?`${hm($('schedFrom').value)}–${hm($('schedTo').value)}`:undefined});
   renderCommits(); go('home'); toast('Deal sealed. Your future self says thanks.');
   const card=$('commitList').firstElementChild; if(card){ card.classList.add('justSealed'); card.scrollIntoView({block:'center'}); }
@@ -851,6 +868,7 @@ function dealChanges(){
   if(d.n!==o.n) now.push('name'); if(d.forWhat!==o.forWhat) now.push('what it\'s for'); if(d.charity!==o.charity&&d.charity!==undefined) now.push('charity');
   if(d.price>o.price) now.push('price up to $'+d.price); else if(d.price<o.price) later.push('price down to $'+d.price);
   if(d.sched!==o.sched){ (SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched]?now:later).push('shield '+(SCHED_LABEL[d.sched]||d.sched)); }
+  if(!!d.rise!==!!o.rise) (d.rise?now:later).push(d.rise?'rising price on':'rising price off');
   return {now,later};
 }
 function renderDeal(){
@@ -865,6 +883,11 @@ function renderDeal(){
     <div class="card" style="text-align:center;margin-bottom:0"><div class="amount num" style="font-size:38px">$<span id="dealP">${d.price}</span></div>
       <input type="range" min="2" max="25" value="${d.price}" aria-label="Price" style="width:100%;accent-color:var(--mint);margin-top:8px" oninput="dealDraft.price=+this.value;$('dealP').textContent=this.value" onchange="renderDeal()"></div>
     ${note(d.price>o.price,d.price!==o.price)}
+    <div class="card spread" style="margin:10px 0 0">
+      <div style="flex:1;min-width:0;padding-right:10px"><b style="font-size:13px">Raise it if it gets easy</b>
+        <div class="tiny" style="line-height:1.5">${d.rise?`In a week: ${riseSay(d.price)}. Back to $${d.price} every Monday.`:'each opening in a week costs a bit more, never more than double'}</div>${d.rise?riseCapWarn(d.price):''}</div>
+      <div class="toggle${d.rise?' on':''}" role="switch" aria-checked="${!!d.rise}" aria-label="Rising price" tabindex="0" onclick="dealDraft.rise=!dealDraft.rise;renderDeal()"></div></div>
+    ${note(!!d.rise,!!d.rise!==!!o.rise)}
     <div class="eyebrow" style="margin:14px 0 8px">WHAT THIS TIME IS FOR</div>
     <input class="timeIn" value="${d.forWhat.replace(/"/g,'&quot;')}" aria-label="What this time is for" oninput="dealDraft.forWhat=this.value;dealSummary()">
     <div id="dealSum"></div>
@@ -885,6 +908,7 @@ function saveDeal(){
   o.n=d.n; o.forWhat=d.forWhat;
   if(d.price>o.price) o.price=d.price;
   if(SCHED_HOURS[d.sched]>SCHED_HOURS[o.sched]) o.sched=d.sched;
+  if(d.rise&&!o.rise){ o.rise=true; o.opens=o.opens||0; }
   o.pending=later.length?'From '+tomorrowAt()+': '+later.join(', '):'';
   renderCommits(); closeOv('ov-deal');
   toast(later.length?(now.length?'Saved. The easier part starts in 24 hours.':'Saved. It starts in 24 hours, cold blood.'):'Saved. It applies right away.');
