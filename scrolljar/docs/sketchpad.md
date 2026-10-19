@@ -132,7 +132,7 @@ iOS shield 2-button constraint · opaque tokens; 6MB monitor; ~50-token cap; ent
 9. Science notes: inline or Science section?
 10. ~~Family angle~~ → ✅ designed 2026-10-14/15 (Monetization → Family; prototype `s-family`; website `families.html`)
 12. Big Counter methodology (journalist-proof)
-15. Widget scope: Home only or + Lock Screen?
+15. Widget scope: Home only or + Lock Screen? → **designed both, 2026-10-19** (prototype `ov-widgets`; build plan §7b): Home medium + 2 small, Lock Screen inline + rectangular + circular (never money), plus the Live Activity. L to confirm both ship in v1.
 16. US entity structure — needs advisor
 17. Teams: L's feature pass · seat price · family-extension default · pilot shortlist
 18. Backing: launch vs fast-follow · catalog partners · fee placement

@@ -778,3 +778,47 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .backFacts{display:flex;flex-direction:column;gap:7px;font-size:13px;line-height:1.45;color:var(--ink-2);margin:12px 2px 16px}
 .backFacts b{color:var(--ink)}
 .chip.off{opacity:.45;cursor:default}
+
+/* widgets preview: ours as iOS would show them. Widget cards use the app's own colours, so they follow day and night */
+.wgOv{cursor:default;padding:58px 20px 0}
+.wgCard{background:var(--sheet);color:var(--ink);border-radius:22px;padding:14px;box-shadow:0 10px 30px -14px rgba(0,0,0,.5);backdrop-filter:blur(20px);cursor:pointer}
+.wgMed{display:flex;gap:12px;align-items:center;height:128px}
+.wgJar{width:74px;display:flex;justify-content:center;flex:none}
+.wgK{font-size:9.5px;font-weight:800;letter-spacing:.14em;color:var(--ink-3)}
+.wgBig{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.03em;line-height:1.05;margin-top:2px}
+.wgS{font-size:11.5px;color:var(--ink-2);font-weight:600;line-height:1.3}
+.wgLine{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11.5px;font-weight:700;color:var(--mint)}
+.wgPair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0 20px}
+.wgSmall{aspect-ratio:1;min-width:0;padding:11px 12px;overflow:hidden;display:flex;flex-direction:column;cursor:default}
+.wgSmall[role="button"]{cursor:pointer}
+.wgSmall .wgBig{font-size:26px;margin:3px 0 2px}
+.wgBtn{margin-top:auto;border:0;border-radius:11px;padding:8px 6px;font:700 12px 'Inter',sans-serif;background:var(--primary-bg);color:var(--primary-fg);cursor:pointer}
+.wgBtn.ghost{background:var(--panel-2);color:var(--ink);margin-top:6px}
+.wgGrid{gap:18px 16px}
+.wgIsland{position:absolute;top:10px;left:50%;transform:translateX(-50%);height:30px;min-width:118px;border-radius:16px;background:#000;color:#7BF6E0;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 12px 0 6px;font:700 13px -apple-system,system-ui,sans-serif;z-index:4}
+.wgIsIcon{width:20px;height:20px;border-radius:7px;background:linear-gradient(165deg,#7BF6E0,#18D2B0);color:#04241E;display:flex;align-items:center;justify-content:center}
+#wgLockView{color:#fff;text-align:center;font-family:-apple-system,'SF Pro Text',system-ui,sans-serif}
+.lkDate{font-size:17px;font-weight:600;opacity:.92;margin-top:4px}
+.lkInline{display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;opacity:.85;margin-top:2px}
+.lkClock{font-family:'SF Pro Rounded',ui-rounded,-apple-system,system-ui,sans-serif;font-size:86px;font-weight:700;line-height:1;letter-spacing:-.02em;margin-top:2px}
+.lkWidgets{display:flex;justify-content:center;gap:12px;margin-top:12px}
+.lkRect{display:flex;align-items:center;gap:9px;width:160px;height:66px;border-radius:18px;padding:0 12px;text-align:left;background:rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.lkRect b{display:block;font-size:17px}.lkRect span{font-size:11.5px;opacity:.8}
+.lkCirc{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
+.lkCirc b{font-size:20px;line-height:1}.lkCirc span{font-size:10px;opacity:.8}
+.lkLive{position:absolute;left:10px;right:10px;bottom:150px;border-radius:24px;padding:13px 14px;text-align:left;background:rgba(18,18,24,.78);backdrop-filter:blur(24px);color:#fff}
+.lkProg{height:5px;border-radius:3px;background:rgba(255,255,255,.18);margin:11px 0 10px;overflow:hidden}
+.lkProg i{display:block;height:100%;border-radius:3px;background:#37E2C0}
+.lkDone{width:100%;border:0;border-radius:13px;padding:9px;font:700 13px -apple-system,system-ui,sans-serif;background:rgba(255,255,255,.16);color:#fff;cursor:pointer}
+.lkBottom{position:absolute;left:34px;right:34px;bottom:96px;display:flex;justify-content:space-between}
+.lkBottom i{width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.28);backdrop-filter:blur(10px)}
+.wgBar{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 10px;border-radius:20px;
+  background:rgba(10,12,30,.72);backdrop-filter:blur(14px);color:#fff;font:600 12px 'Inter',sans-serif}
+.wgSeg{display:flex;background:rgba(255,255,255,.12);border-radius:11px;padding:2px}
+.wgSeg button{border:0;background:none;color:#fff;font:700 11.5px 'Inter',sans-serif;padding:6px 9px;border-radius:9px;cursor:pointer;opacity:.75}
+.wgSeg button.on{background:rgba(255,255,255,.9);color:#141733;opacity:1}
+.wgLiveT{display:flex;align-items:center;gap:5px;flex:1;cursor:pointer}
+#ov-widgets .iosDock{bottom:84px}
+#ov-widgets [hidden]{display:none!important}

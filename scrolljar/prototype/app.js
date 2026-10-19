@@ -2469,3 +2469,40 @@ function backAccept(yes){
   toast(yes?`Done. ${BACK_OFFER.from}'s backing starts tomorrow.`:`No problem. ${BACK_OFFER.from} sees “not this time”.`);
 }
 renderBacking();
+
+/* ══ WIDGETS — what ours would say on the Home Screen and the Lock Screen (iOS draws them) ══
+   Home: a medium widget (your time, shield status) and two small ones (the jar; "Your time" buttons, interactive on iOS 17+).
+   Lock Screen: inline, rectangular and circular widgets that never show money, plus the Live Activity countdown
+   while an app is open after "Open anyway", with an "I'm done" button that brings the shield back. */
+let wgT=0;
+function openWidgets(tab,live){ wgFill(); wgTab(tab||'home'); wgLive(!!live); $('ov-widgets').classList.add('on'); }
+function wgFill(){
+  const t=jarTotal(), d1=S.stage==='new', time=d1?'Day 1':$('timeBig').textContent, n=COMMITS.length, sh=`Shield on · ${n} deal${n===1?'':'s'}`;
+  $('wgTime').textContent=time; $('wgTimeS').textContent=d1?'every hour counts from here':'back this week';
+  $('wgShield').textContent=sh; $('lkInline').textContent=sh;
+  $('wgJarAmt').textContent='$'+t; $('wgCharity').textContent=t?'to '+charity().n:'empty for now';
+  renderCoins($('wgCoins'),t);
+  $('lkDate').textContent=dfmt(TODAY,{weekday:'long',day:'numeric',month:'long'});
+  $('lkTime').textContent=time; $('lkTimeS').textContent=d1?'every hour counts':'back this week';
+  $('lkDays').textContent=d1?1:S.streak;
+  $('lkLiveName').textContent=((COMMITS[0]||{}).n||'Your deal')+' is open';
+}
+function wgTab(t){
+  $('wgHomeView').hidden=t!=='home'; $('wgLockView').hidden=t!=='lock';
+  $('wgTabHome').classList.toggle('on',t==='home'); $('wgTabLock').classList.toggle('on',t==='lock');
+  $('wgTabHome').setAttribute('aria-selected',t==='home'); $('wgTabLock').setAttribute('aria-selected',t==='lock');
+}
+function wgLive(on){
+  $('wgLiveChk').checked=on; $('lkLive').hidden=!on; $('wgIsland').hidden=!on;
+  clearInterval(wgT); if(on){ wgTick(); wgT=setInterval(wgTick,1000); }
+}
+/* the countdown follows the real access window when one is running */
+function wgTick(){
+  const t=$('ov-window').classList.contains('on')?$('winTimer').textContent:'12:41', [m,s]=t.split(':').map(Number);
+  $('lkLiveT').textContent=t; $('wgIslandT').textContent=t;
+  $('lkLiveBar').style.width=Math.max(0,Math.min(100,(m*60+s)/900*100))+'%';
+}
+function closeWidgets(){ clearInterval(wgT); closeOv('ov-widgets'); }
+function wgOpen(where){ closeWidgets(); go(where==='jar'?'jar':'home'); }
+function wgStart(min){ closeWidgets(); go('home'); startFocus(min); }
+function wgDone(){ const open=$('ov-window').classList.contains('on'); closeWidgets(); if(open) endWindow(); else toast('Done. The shield is back on.'); }

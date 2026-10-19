@@ -23,7 +23,7 @@ Replace `com.scrolljar` with your real prefix.
 | ShieldConfiguration ext. | `com.scrolljar.app.shieldconfig` | Draws the shield: title, subtitle, icon, 2 buttons | ✅ |
 | ShieldAction ext. | `com.scrolljar.app.shieldaction` | Handles the 2 shield buttons; can only close or defer | ✅ |
 | DeviceActivityReport ext. | `com.scrolljar.app.report` | The "Where your time goes" screen (rendered by Apple; we can't read the data) | ✅ |
-| Widget ext. | `com.scrolljar.app.widget` | Home Screen jar widget (v1) | — |
+| Widget ext. | `com.scrolljar.app.widget` | Home Screen and Lock Screen widgets, the Live Activity (§7b) | ✅ if its "Your time" buttons apply shields; — otherwise |
 
 - **App Group:** `group.com.scrolljar`, shared by all targets. It holds the shared state.
 - **Distribution entitlement** (process checked against Apple's documentation, 2026-10-19): the **Account Holder** requests `com.apple.developer.family-controls` for distribution, for the app **and the same request for each extension** (Device Activity Monitor, Device Activity Report, Shield Action, Shield Configuration).
@@ -224,6 +224,15 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
   4. The jar spins: the glass stays put and the face travels round it. A cylinder of radius 72 (in the 200-wide box) gives each feature an x position of `100 + 72·sin θ` and a width of `cos θ`. The face shows mirrored at 20% on the far side, as seen through the glass. The spin is 2 turns in 1.7 s, with an 18° wind-up and a 12° overshoot.
   5. While it spins, the jar hops 14 points, glows gold and gets a shine sweep across the glass at 1.25 s, then stars.
   - **Reduce Motion:** the jar simply empties and smiles.
+
+### 7b. Widgets and the Live Activity (prototype: `ov-widgets`, from You → Widgets, or from the open-app countdown)
+
+- **Home Screen, medium:** the jar (same drawing, small), your time back this week, and "Shield on · 2 deals". Tap opens Today.
+- **Home Screen, small (two):** the jar's total with the charity and the tip-out date (tap opens the jar); and "Your time" with two buttons, "Start 25 min" and "1 hour" (interactive widgets, iOS 17+, through App Intents).
+- **Lock Screen:** an inline line above the clock ("Shield on · 2 deals"), a rectangular widget (time back this week) and a circular one (days kept). **No money on the Lock Screen**, because anyone can see it.
+- **Live Activity** while an app is open after "Open anyway": the deal's name, the time left, a progress bar and an **"I'm done"** button that ends the window and brings the shield back. The Dynamic Island shows the jar and the time left.
+- Widgets refresh a few times an hour (WidgetKit timelines); the Live Activity follows the window's end time. No widget ever names an app: we only have tokens.
+- If the "Your time" buttons apply shields from the widget, that extension needs the Family Controls entitlement too (add it to the distribution request); otherwise the button opens the app, which applies them.
 
 ## 8. Phases and "done" criteria
 

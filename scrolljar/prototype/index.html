@@ -835,6 +835,10 @@
         <div class="tiny">Your own time stays fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
       </div>
     </div>
+    <div class="card spread" style="cursor:pointer" role="button" tabindex="0" onclick="openWidgets('home')">
+      <div><b style="font-size:13px">Widgets</b><div class="tiny">your time and your jar on the Home Screen and Lock Screen</div></div>
+      <span class="pill chr">See them</span>
+    </div>
     <div class="card">
       <b style="font-size:13px">Who sees what</b>
       <div class="tiny" style="margin-top:3px">Your people are everyone in your shared jars.</div>
@@ -1025,6 +1029,7 @@
     <div class="sub" style="max-width:230px" id="winSub">Your $5 is on its way to <span class="charityName">Doctors Without Borders</span>.</div>
     <div class="display num" style="font-size:40px;margin:20px 0;color:var(--gold-text)" id="winTimer">14:59</div>
     <button class="btn ghost" style="max-width:230px" onclick="endWindow()">I'm done early</button>
+    <div class="tiny devNote" style="margin-top:14px;cursor:pointer;text-decoration:underline" role="button" tabindex="0" onclick="openWidgets('lock',true)">Prototype: see the countdown on the Lock Screen</div>
   </div>
 
   <!-- ══ TIP-OUT ══ -->
@@ -1221,6 +1226,69 @@
       </div>
     </div>
     <div class="protoNote">On a real iPhone, Apple's block screen can't open apps or take payment, so this notification is the bridge: one extra tap.<br><b>Tap it, or tap anywhere else to let it go.</b></div>
+  </div>
+
+  <!-- ══ WIDGETS — Home Screen and Lock Screen, and the countdown while an app is open (2026-10-19).
+       iOS draws widgets; this shows what ours would say. Lock Screen widgets never show money: anyone can see a Lock Screen. ══ -->
+  <div class="ov iosHome wgOv" id="ov-widgets">
+    <div id="wgHomeView">
+      <div class="wgIsland" id="wgIsland" hidden><span class="wgIsIcon"><svg width="12" height="12"><use href="#i-jar"/></svg></span><span class="num" id="wgIslandT">12:41</span></div>
+      <div class="wgCard wgMed" role="button" tabindex="0" onclick="wgOpen('home')">
+        <div class="wgJar"><svg viewBox="0 0 200 226" width="70" height="80" id="wgJarSvg">
+            <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+            <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+            <g id="wgCoins" clip-path="url(#body)"></g>
+            <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+            <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          </svg></div>
+        <div style="flex:1;min-width:0">
+          <div class="wgK">YOUR TIME</div>
+          <div class="wgBig num" id="wgTime">9h 40m</div>
+          <div class="wgS" id="wgTimeS">back this week</div>
+          <div class="wgLine"><svg width="12" height="12"><use href="#i-shield"/></svg><span id="wgShield">Shield on · 2 deals</span></div>
+        </div>
+      </div>
+      <div class="wgPair">
+        <div class="wgCard wgSmall" role="button" tabindex="0" onclick="wgOpen('jar')">
+          <div class="wgK">THE JAR</div>
+          <div class="wgBig num" style="color:var(--gold-text)" id="wgJarAmt">$35</div>
+          <div class="wgS" id="wgCharity">to Doctors Without Borders</div>
+          <div class="wgS" style="margin-top:auto">tips out <span data-date="next1">Nov 1</span></div>
+        </div>
+        <div class="wgCard wgSmall">
+          <div class="wgK">YOUR TIME</div>
+          <div class="wgS" style="margin-top:3px">shield everything</div>
+          <button class="wgBtn" onclick="wgStart(25)">Start 25 min</button>
+          <button class="wgBtn ghost" onclick="wgStart(60)">1 hour</button>
+        </div>
+      </div>
+      <div class="iosGrid wgGrid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="iosDock"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div id="wgLockView" hidden>
+      <div class="lkDate"><span id="lkDate">Monday 19 October</span></div>
+      <div class="lkInline"><svg width="11" height="11"><use href="#i-shield"/></svg><span id="lkInline">Shield on · 2 deals</span></div>
+      <div class="lkClock num">9:41</div>
+      <div class="lkWidgets">
+        <div class="lkRect"><svg width="20" height="20"><use href="#i-jar"/></svg><div><b class="num" id="lkTime">9h 40m</b><span id="lkTimeS">back this week</span></div></div>
+        <div class="lkCirc"><b class="num" id="lkDays">12</b><span>days</span></div>
+      </div>
+      <div class="lkLive" id="lkLive" hidden>
+        <div class="row" style="gap:10px">
+          <span class="iosAppIcon" style="width:34px;height:34px"><svg width="19" height="19"><use href="#i-jar"/></svg></span>
+          <div style="flex:1;min-width:0"><b style="font-size:14px" id="lkLiveName">The scroll one is open</b><div style="font-size:12px;opacity:.7">The shield comes back after</div></div>
+          <b class="num" style="font-size:24px;color:#7BF6E0" id="lkLiveT">12:41</b>
+        </div>
+        <div class="lkProg"><i id="lkLiveBar"></i></div>
+        <button class="lkDone" onclick="wgDone()">I'm done</button>
+      </div>
+      <div class="lkBottom"><i></i><i></i></div>
+    </div>
+    <div class="wgBar">
+      <div class="wgSeg" role="tablist"><button id="wgTabHome" role="tab" onclick="wgTab('home')">Home Screen</button><button id="wgTabLock" role="tab" onclick="wgTab('lock')">Lock Screen</button></div>
+      <label class="wgLiveT"><input type="checkbox" id="wgLiveChk" onchange="wgLive(this.checked)"> An app is open</label>
+      <button class="ovClose" aria-label="Close" style="position:static" onclick="closeWidgets()">✕</button>
+    </div>
   </div>
 
   <!-- ══ ONBOARDING · why we need Screen Time (our screen, before Apple's) ══ -->
