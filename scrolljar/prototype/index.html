@@ -160,7 +160,7 @@
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="modes" role="group" aria-label="Where in the journey"><button class="ms" id="stD1" onclick="setStage('new')">Day 1</button><button class="ms on" id="stW3" onclick="setStage('wk3')">Week 3</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -1091,6 +1091,34 @@
     <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
   </button>
   <!-- ══ FIRST WIN — the real aha moment ══ -->
+  <!-- ══ DAY 7 — a whole week kept: a small celebration, and a card to share if you like.
+       A strength point: the only kind of moment where ScrollJar ever suggests inviting someone. ══ -->
+  <div class="ov" id="ov-week" style="background:var(--scr-bg);padding:28px 22px 22px;overflow-y:auto;text-align:center">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-week')">✕</button>
+    <div class="jarbox" id="weekJarBox" style="width:104px;height:118px;margin:4px auto 0;position:relative;flex:none">
+      <svg viewBox="0 0 200 226" width="104" height="118" class="jarbreathe" id="weekJarSvg">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <g id="weekCoins" clip-path="url(#body)"></g>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="eyebrow" style="margin-top:10px">DAY 7</div>
+    <div class="display" style="font-size:26px;line-height:1.1;margin:6px 0 8px" id="weekTitle">A whole week, kept.</div>
+    <div class="sub" id="weekSub"></div>
+    <div class="eyebrow" style="margin:18px 2px 8px;text-align:left">SHARE IT, IF YOU LIKE</div>
+    <div class="weekCard" id="weekCard"></div>
+    <div class="row" style="gap:6px;justify-content:center;margin:10px 0 14px">
+      <span class="chip on" id="wkHours" role="switch" aria-checked="true" tabindex="0" onclick="weekOpt('hours')">My hours</span>
+      <span class="chip" id="wkDeal" role="switch" aria-checked="false" tabindex="0" onclick="weekOpt('deal')">The deal's name</span>
+    </div>
+    <button class="btn mint" id="weekPostBtn" onclick="weekPost()">Post it to your jars</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="weekSend()">Send it to someone</button>
+    <div class="tiny" role="button" tabindex="0" style="margin-top:12px;cursor:pointer;text-decoration:underline" onclick="closeOv('ov-week')">Keep it to myself</div>
+    <div class="tiny" style="margin-top:10px;line-height:1.5">The card never shows your apps or your coins. Sent to someone, it comes with a link to Casa Jar that opens without the app.</div>
+  </div>
+
   <div class="ov" id="ov-firstwin" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
     <button class="ovClose" aria-label="Close" onclick="closeOv('ov-firstwin')">✕</button>
     <div class="jarbox" id="winJarBox" style="width:132px;height:152px">

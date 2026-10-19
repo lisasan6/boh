@@ -186,6 +186,7 @@ Privacy rules:
 | `s-usage` | UsageView | Wraps the DeviceActivityReport extension; we can't read the data |
 | `s-diary`, `ov-entry`, `ov-voice`, `s-recap`, `s-resources` | DiaryView, RecapView, ResourcesView | Local-only diary; voice notes are passive (recorded and played back, nothing analyses them) |
 | `s-friends` (tab: BOARD), `s-jardetail`, `s-challenge`, `s-invite`, `ov-compose` | BoardView, jars | **v1.1+:** build after the solo loop works |
+| `ov-week` | WeekMomentView | Day 7 of a deal: the jar's happy moment and the share card, rendered to an image (`ImageRenderer`) and shared with `ShareLink` plus the jar's invite link. No apps or coins on the card |
 | Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick. One quiet line in the pause and on the coin sheet |
 | `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |
 | `s-family`, `ov-famsetup`, `ov-famtip` | Families | Later phase; uses Apple Family Sharing. Kids are never charged or paid |

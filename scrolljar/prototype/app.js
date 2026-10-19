@@ -2530,3 +2530,36 @@ function closeWidgets(){ clearInterval(wgT); closeOv('ov-widgets'); }
 function wgOpen(where){ closeWidgets(); go(where==='jar'?'jar':'home'); }
 function wgStart(min){ closeWidgets(); go('home'); startFocus(min); }
 function wgDone(){ const open=$('ov-window').classList.contains('on'); closeWidgets(); if(open) endWindow(); else toast('Done. The shield is back on.'); }
+
+/* ══ DAY 7 — a whole week kept. Earned, fixed and predictable: it comes on the 7th day of a deal, every time,
+   never as a surprise reward. Sharing is optional and the card shows no apps and no coins. ══ */
+const WK={hours:true,deal:false};
+function openWeek(){
+  const d=COMMITS[0]||{n:'Your deal'}, first=S.stage==='new';
+  document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
+  $('weekTitle').textContent=first?'Your first week, kept.':'A whole week, kept.';
+  $('weekSub').textContent=first?`${d.n}: seven days in a row, start to finish. Every hour counted.`
+    :`${d.n}: seven days in a row, and ${$('timeBig').textContent} of your time back this week.`;
+  Object.assign(WK,{hours:!first,deal:false});
+  $('wkHours').hidden=first; $('weekPostBtn').hidden=first;   /* on day 7 of a first deal there are no hours to show and no jar to post to yet */
+  weekCard(); renderCoins($('weekCoins'),jarTotal());
+  $('ov-week').classList.add('on'); $('ov-week').scrollTop=0;
+  const svg=$('weekJarSvg');
+  setTimeout(()=>{ jarMood(svg,'happy',2600); svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop'); stars($('weekJarBox'),9,true); },350);
+}
+function weekCard(){
+  const d=COMMITS[0]||{n:'Your deal'}, hrs=WK.hours&&S.stage==='wk3';
+  $('weekCard').innerHTML=`<div class="wcBrand"><svg width="13" height="13"><use href="#i-jar"/></svg>ScrollJar</div>
+    <div class="wcBig">A week,<br>kept.</div>
+    ${hrs?`<div class="wcLine"><b class="num">${$('timeBig').textContent}</b> of my time back</div>`:''}
+    <div class="wcDeal">${WK.deal?esc(d.n)+' · ':''}7 days in a row</div>`;
+  $('wkHours').classList.toggle('on',WK.hours); $('wkHours').setAttribute('aria-checked',WK.hours);
+  $('wkDeal').classList.toggle('on',WK.deal); $('wkDeal').setAttribute('aria-checked',WK.deal);
+}
+function weekOpt(k){ WK[k]=!WK[k]; weekCard(); }
+function weekPost(){
+  FEED.unshift({t:'week',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'just now',
+    body:'A week kept: 7 days in a row.'+(WK.hours&&S.stage==='wk3'?` ${$('timeBig').textContent} of my time back.`:''),kudos:0});
+  renderFeed(); closeOv('ov-week'); toast('Posted to your jars.');
+}
+function weekSend(){ closeOv('ov-week'); toast('Shared. The link opens a page about Casa Jar: they can see it without the app.'); }

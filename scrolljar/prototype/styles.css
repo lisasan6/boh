@@ -824,3 +824,12 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 #ov-widgets [hidden]{display:none!important}
 .riseWarn{margin-top:7px;font-size:11.5px;line-height:1.5;color:var(--gold-text);font-weight:600}
 .riseWarn span{text-decoration:underline;cursor:pointer}
+/* the day-7 share card: fixed colours, because it leaves the app as an image */
+.weekCard{position:relative;overflow:hidden;border-radius:22px;padding:18px 18px 16px;text-align:left;color:#F4F3FF;
+  background:linear-gradient(150deg,#2A1E5C 0%,#0E5E57 100%);box-shadow:0 18px 40px -18px rgba(0,0,0,.6);flex:none}
+.weekCard::after{content:"";position:absolute;right:-34px;top:-34px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(55,226,192,.35),transparent 70%)}
+.wcBrand{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#7FF5DD}
+.wcBig{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:12px 0 10px}
+.wcLine{font-size:13.5px;color:#D9D5FF}.wcLine b{color:#fff;font-size:16px}
+.wcDeal{margin-top:6px;font-size:12px;font-weight:700;color:#B9B4E8}
+#ov-week [hidden]{display:none!important}
