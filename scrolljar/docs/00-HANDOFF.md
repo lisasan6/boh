@@ -72,8 +72,8 @@ These files are referenced in the docs but no longer exist:
 
 This gates TestFlight and the App Store, and approval takes weeks.
 
-- **Check whether it has been filed.** If not, file it today.
-- The steps are in `IOS-BUILD-SPEC.md` §2.
+- **Check whether it has been filed.** If not, file it today. It needs no Mac: enrolment, identifiers and the request are all on developer.apple.com.
+- The steps (checked against Apple's documentation on 2026-10-19), where to see the status, and text to paste into the form are in `IOS-BUILD-SPEC.md` §2.
 - Development builds on your own iPhone do **not** need approval, so coding can start now.
 
 ### 🟠 2. Website: ready to publish (2026-10-15)

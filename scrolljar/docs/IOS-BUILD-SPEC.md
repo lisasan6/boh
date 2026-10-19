@@ -26,10 +26,15 @@ Replace `com.scrolljar` with your real prefix.
 | Widget ext. | `com.scrolljar.app.widget` | Home Screen jar widget (v1) | — |
 
 - **App Group:** `group.com.scrolljar`, shared by all targets. It holds the shared state.
-- **Distribution entitlement:** request `com.apple.developer.family-controls` for distribution for **each** ✅ bundle ID, as Account Holder, through the Family Controls request form on developer.apple.com.
-  - Approval takes weeks with no status visibility.
+- **Distribution entitlement** (process checked against Apple's documentation, 2026-10-19): the **Account Holder** requests `com.apple.developer.family-controls` for distribution, for the app **and the same request for each extension** (Device Activity Monitor, Device Activity Report, Shield Action, Shield Configuration).
+  - Where: the form at `https://developer.apple.com/contact/request/family-controls-distribution`, or the **Capability Requests** tab in Certificates, Identifiers & Profiles.
+  - Status: Certificates, Identifiers & Profiles → Capability Requests → Family Controls. **"Assigned"** means approved; then check that "Provisioning Support" lists the distribution methods we need (App Store, TestFlight). With automatic signing, Xcode picks it up.
+  - Waits vary: developers on Apple's forums reported requests still "submitted" after weeks (spring 2026). File early.
   - The development entitlement works immediately for builds on your own device.
   - To escalate: file a code-level support request (DTS) with your Team ID.
+  - **No Mac needed for any of this:** enrolment, identifiers and the request are all on the website.
+  - **Text to paste** if the form asks how the app uses Family Controls:
+    > ScrollJar is a self-control app for adults. People pick the apps they want to use less with FamilyActivityPicker, and ScrollJar shields them during times they choose, using ManagedSettings and DeviceActivity, with individual authorization on their own iPhone. Opening a shielded app is always possible: after a short breathing pause, the person can continue, and if they've chosen to, a small amount they set in advance goes 100% to a charity they picked. We only ever handle Apple's opaque tokens: we never see which apps are selected and we don't collect usage data. The app uses four extensions: Device Activity Monitor (applies shields on schedule), Shield Configuration (the shield's text and buttons), Shield Action (the shield's two buttons) and Device Activity Report (shows people their own usage).
 - Other capabilities: Push Notifications (for Wobble), In-App Purchase, Associated Domains (invite links on `scrolljar.app`).
 - Privacy strings: microphone and speech recognition (`NSMicrophoneUsageDescription`, `NSSpeechRecognitionUsageDescription`), used only by "Say it instead" in setup (§3a). Suggested copy: "So you can say your answers instead of typing. It's understood on your phone, then deleted."
 - Deployment target: iOS 16+ per spec. Consider iOS 17+ if it simplifies the APIs.
