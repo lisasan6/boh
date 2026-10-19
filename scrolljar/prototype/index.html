@@ -67,6 +67,9 @@
   <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <rect x="8.5" y="2.4" width="7" height="2.6" rx="1.2"/><path d="M7 5.6h10v1.6c1.7 1.2 2.6 3 2.6 5v7.2c0 1.8-1.4 3.2-3.2 3.2H7.6c-1.8 0-3.2-1.4-3.2-3.2V12.2c0-2 .9-3.8 2.6-5V5.6z"/>
   </symbol>
+  <symbol id="i-letter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.2" y="5.6" width="17.6" height="12.8" rx="2.4"/><path d="M3.8 7l8.2 6 8.2-6"/>
+  </symbol>
   <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 21v-8"/><path d="M12 13c0-3.3-2.7-6-6-6 0 3.3 2.7 6 6 6z"/><path d="M12 13c0-3.9 3.1-7 7-7 0 3.9-3.1 7-7 7z"/>
   </symbol>
@@ -160,7 +163,7 @@
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="modes" role="group" aria-label="Where in the journey"><button class="ms" id="stD1" onclick="setStage('new')">Day 1</button><button class="ms on" id="stW3" onclick="setStage('wk3')">Week 3</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="openLetterRead()">Day 30</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -179,6 +182,7 @@
           <div class="d1Row"><svg width="15" height="15"><use href="#i-clock"/></svg><span id="d1WhenRow">All day, every day</span></div>
           <div class="d1Row" id="d1ForRow"><svg width="15" height="15"><use href="#i-heart"/></svg><span id="d1For"></span></div>
         </div>
+        <div class="d1SigRow" id="d1SigRow" hidden><img id="d1Sig" alt="Your signature"><span>signed, day 1</span></div>
         <div class="d1Edit">See or change your deal <span aria-hidden="true">›</span></div>
         </div>
         <div class="eyebrow" style="margin-top:16px">YOUR FIRST DAY · <span id="d1Count">1 OF 3</span></div>
@@ -187,6 +191,7 @@
           <div class="d1Step" id="d1Pause" role="button" tabindex="0" onclick="showShield()"><span class="d1Tick"></span><div><b>Meet the pause</b><span>when the pull comes, you get a breath, not a lecture · try it now</span></div><span class="d1Go">›</span></div>
           <div class="d1Step" id="d1Real" role="button" tabindex="0" onclick="openReal()"><span class="d1Tick"></span><div><b id="d1RealTitle">Make it real, from day 3</b><span>if you want: a coin you price yourself, 100% to charity</span></div><span class="d1Go">›</span></div>
         </div>
+        <div class="d1Letter" id="d1Letter" role="button" tabindex="0" onclick="openLetter()"><svg width="16" height="16"><use href="#i-letter"/></svg><div><b id="d1LetterT">Write to yourself, 30 days from now</b><span id="d1LetterS">optional · it comes back as a letter</span></div><span class="d1Go">›</span></div>
         <button class="btn chrome" style="margin-top:16px" onclick="showShield()">Try opening one of them</button>
       </div>
       <div class="wk3">
@@ -903,12 +908,15 @@
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
       <div class="tiny" id="priceNote" style="margin-top:6px"></div>
     </div>
-    <div class="card spread" style="margin-top:-4px">
+    <div class="card spread" style="margin-top:-4px;cursor:pointer" onclick="if(!event.target.closest('.riseWarn span')){NEW.rise=!NEW.rise;renderNew()}">
       <div style="flex:1;min-width:0;padding-right:10px"><b style="font-size:13px">Raise it if it gets easy</b><div class="tiny" id="riseNote" style="line-height:1.5"></div></div>
-      <div class="toggle" id="newRise" role="switch" aria-checked="false" aria-label="Rising price" tabindex="0" onclick="NEW.rise=!NEW.rise;renderNew()"></div>
+      <div class="toggle" id="newRise" role="switch" aria-checked="false" aria-label="Rising price" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>
     </div>
     <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR? <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">· optional</span></div>
     <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" maxlength="40" oninput="NEW.forWhat=this.value;renderNew()" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
+    <div class="eyebrow" style="margin:14px 0 8px">5 · A NOTE TO YOU, 30 DAYS FROM NOW <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">· optional</span></div>
+    <div class="card"><textarea id="newLetter" class="letterIn" rows="3" maxlength="280" aria-label="A note to yourself, 30 days from now" placeholder="What would you like to tell yourself in a month?"></textarea>
+      <div class="tiny" style="margin-top:4px">It stays on your phone and comes back as a letter. Nobody else reads it, us included.</div></div>
     <div class="card dealSummary" id="newSummary"></div>
     <button class="btn mint" id="sealBtn" onclick="sealIt()">Seal the deal</button>
     <div class="tiny" style="text-align:center;margin-top:8px">Stricter changes apply now; easier ones wait 24 hours.</div>
@@ -1097,6 +1105,53 @@
     <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
   </button>
   <!-- ══ FIRST WIN — the real aha moment ══ -->
+  <!-- ══ SIGN YOUR DEAL — the first deal, in your own hand (optional) ══ -->
+  <div class="ov sheetwrap" id="ov-sign">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:6px"><div class="eyebrow">SIGN YOUR DEAL</div><span class="backBtn" onclick="closeOv('ov-sign')">✕</span></div>
+      <div class="display" style="font-size:21px;margin-bottom:6px">In your own hand</div>
+      <div class="sub" id="signDeal" style="color:var(--ink);line-height:1.5"></div>
+      <div class="signPad" id="signPad"><canvas id="signCanvas" aria-label="Sign with your finger"></canvas><div class="signLine"><span>×</span></div><div class="signHint" id="signHint">Sign here with your finger</div></div>
+      <div class="spread" style="margin:6px 2px 12px"><span class="tiny" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline" onclick="signClear()">Clear</span><span class="tiny">stays on your phone</span></div>
+      <button class="btn mint" id="signGo" disabled onclick="signSeal(true)">Seal the deal</button>
+      <div class="tiny" role="button" tabindex="0" style="text-align:center;margin-top:11px;cursor:pointer;text-decoration:underline" onclick="signSeal(false)">Seal it without signing</div>
+    </div>
+  </div>
+  <!-- ══ THE LAST SCROLL — one last one, on purpose, before the first shield goes on ══ -->
+  <div class="ov" id="ov-last" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <svg width="44" height="44" style="color:var(--calm-soft);filter:drop-shadow(0 0 16px rgba(147,211,198,.45))"><use href="#i-sprout"/></svg>
+    <div class="eyebrow" style="margin-top:16px;color:var(--calm-soft)">BEFORE YOUR SHIELD GOES ON</div>
+    <div class="display" style="font-size:25px;margin:8px 0 10px;line-height:1.15;color:var(--calm-ink)">One last scroll?</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:250px">Five minutes, on purpose. A goodbye to the automatic kind.</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="lastScroll(true)">One last scroll</button>
+      <div class="tiny" role="button" tabindex="0" style="text-align:center;margin-top:12px;cursor:pointer" onclick="lastScroll(false)">No need. Shield on now.</div>
+    </div>
+  </div>
+  <!-- ══ LETTERS TO YOUR FUTURE SELF — written in cold blood, back in 30 days. On the phone only, never read by us ══ -->
+  <div class="ov sheetwrap" id="ov-letter">
+    <div class="sheet-card">
+      <div class="spread" style="margin-bottom:6px"><div class="eyebrow">A LETTER TO FUTURE YOU</div><span class="backBtn" onclick="closeOv('ov-letter')">✕</span></div>
+      <div class="display" style="font-size:21px;margin-bottom:4px">To you, 30 days from now</div>
+      <div class="sub" style="margin-bottom:10px">It comes back on <b id="letterWhen">Nov 18</b>. Nobody else reads it, us included.</div>
+      <textarea id="letterText" class="letterIn paper" rows="6" maxlength="280" aria-label="Your letter" placeholder="What do you hope you'll have done with the time? What would you like to hear on a hard day?" oninput="letterCount()"></textarea>
+      <div class="tiny" style="text-align:right;margin:4px 2px 12px" id="letterLeft">280 left</div>
+      <button class="btn mint" id="letterGo" disabled onclick="sealLetter()">Seal the letter</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="closeOv('ov-letter')">Not now</button>
+    </div>
+  </div>
+  <div class="ov" id="ov-letterread" style="background:var(--scr-bg);padding:30px 22px 24px;overflow-y:auto;text-align:center">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-letterread')">✕</button>
+    <div class="letterEnv" id="letterEnv" aria-hidden="true"><svg width="40" height="40"><use href="#i-letter"/></svg></div>
+    <div class="eyebrow" style="margin-top:12px">DAY 30 · A LETTER FROM YOU</div>
+    <div class="display" style="font-size:24px;margin:6px 0 4px">You wrote this a month ago.</div>
+    <div class="tiny" id="letterFrom">Written on Sep 19, for today</div>
+    <div class="letterPaper" id="letterBody"></div>
+    <button class="btn mint" onclick="closeOv('ov-letterread');openLetter()">Write one for the next 30 days</button>
+    <div class="tiny" role="button" tabindex="0" style="margin-top:12px;cursor:pointer;text-decoration:underline" onclick="closeOv('ov-letterread')">Keep it and close</div>
+    <div class="tiny" style="margin-top:10px">It stays on your phone, in your diary.</div>
+  </div>
+
   <!-- ══ DAY 7 — a whole week kept: a small celebration, and a card to share if you like.
        A strength point: the only kind of moment where ScrollJar ever suggests inviting someone. ══ -->
   <div class="ov" id="ov-week" style="background:var(--scr-bg);padding:28px 22px 22px;overflow-y:auto;text-align:center">

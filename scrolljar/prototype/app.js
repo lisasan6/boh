@@ -521,7 +521,7 @@ function renderFirst(){
       <input class="timeIn" id="firstIn" maxlength="40" placeholder="or in your own words" aria-label="What you'd rather do with that time" value="${esc(FIRST.own)}" oninput="FIRST.own=this.value;firstUpdate()">
       <div class="card firstDeal"><div class="eyebrow" style="margin-bottom:6px">YOUR DEAL</div><div id="firstLine">${firstSentence()}</div>
         <div class="tiny" style="margin-top:7px;line-height:1.5">Free for now: opening one gets you a pause, never a charge. Easier changes take 24 hours, stricter ones happen at once.</div></div>`;
-    F.innerHTML=`<button class="btn mint" onclick="sealFirst()">Seal the deal</button>`;
+    F.innerHTML=`<button class="btn mint" onclick="openSign()">Seal the deal</button>`;
   }
 }
 function firstChip(set,c){ const a=FIRST[set], i=a.indexOf(c); i<0?a.push(c):a.splice(i,1); firstUpdate(); }
@@ -536,11 +536,12 @@ function sealFirst(){
   const wp=whenParts(), one=wp.length===1&&wp[0].k!=='mine';
   const wins=wp.map(x=>x.k==='mine'?{from:FIRST.from,to:FIRST.to,days:[...FIRST.days]}:WIN[x.k]);
   Object.assign(COMMITS[0],{n:pickedName(pick).name,sched:one?wp[0].k:'custom',window:one?undefined:wp.map(x=>x.label).join(' · '),whenSay:whenSay(),wins,forWhat:firstFors(),forList:firstForList()});
+  COMMITS[0].sig=FIRST.sig||'';
   S.feelAfter=[...FIRST.feels,FIRST.feelOwn.trim()].filter(Boolean);
   closeOv('ov-first'); $('ov-onb').classList.remove('on');
   renderCommits(); renderD1();
   const seal=$('d1Seal'); seal.classList.remove('stamp'); void seal.offsetWidth; seal.classList.add('stamp');
-  toast('Deal sealed. Try opening one of your apps.');
+  setTimeout(()=>$('ov-last').classList.add('on'),900);   /* the last scroll: one last one, on purpose */
 }
 
 function pickedName(sel){
@@ -747,10 +748,13 @@ function payOverride(){
   };
 }
 /* the unlock window: with a coin once it's real, without one in the first days */
-function openWindow(coin,peekMin){
+let winKind='';
+function openWindow(coin,peekMin,kind){
+  winKind=kind||'';
   $('winCoin').style.display = coin ? '' : 'none';
-  $('winTitle').textContent = peekMin ? 'A quick look. Free.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
-  $('winSub').innerHTML = peekMin ? `No coin, and today still counts as kept. The shield comes back in ${peekMin} minutes.`
+  $('winTitle').textContent = winKind==='last' ? 'Your last scroll.' : peekMin ? 'A quick look. Free.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
+  $('winSub').innerHTML = winKind==='last' ? 'On purpose this time. Your shield goes on when it ends.'
+    : peekMin ? `No coin, and today still counts as kept. The shield comes back in ${peekMin} minutes.`
     : coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
     : "No coin while you're getting started. The shield comes back when the time is up.";
   $('ov-window').classList.add('on');
@@ -761,6 +765,7 @@ function openWindow(coin,peekMin){
 }
 function endWindow(){
   clearInterval(winT);closeOv('ov-window');go('home');
+  if(winKind==='last'){ winKind=''; setTimeout(()=>showExit('That was the last unconscious one.','From now on, every scroll is a choice. Your shield is on.'),450); return; }
   setTimeout(()=>$('ov-mood').classList.add('on'), 500);
 }
 function logMood(k,label){
@@ -822,7 +827,7 @@ const SCHED_SAY={always:'all day, every day',mornings:'every morning, 6–10am',
 const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function openNew(){
   Object.assign(NEW,{sched:'always',price:5,forWhat:'',picked:null,rise:false});
-  $('newFor').value=''; $('newPrice').value=5;
+  $('newFor').value=''; $('newPrice').value=5; $('newLetter').value='';
   document.querySelectorAll('#schedChips .chip').forEach((c,i)=>c.classList.toggle('on',i===0)); $('customWindow').style.display='none';
   $('newLimit').style.display = S.plan==='free'&&COMMITS.length>=3 ? '' : 'none';
   renderNew(); go('new'); $('s-new').scrollTop=0;
@@ -858,7 +863,8 @@ function sealIt(){
   const custom=NEW.sched==='custom';
   COMMITS.unshift({g:DEAL_COLOURS[COMMITS.length%4],n:pickedName(NEW.picked).name,sched:NEW.sched,price:NEW.price,forWhat:NEW.forWhat.trim(),rise:NEW.rise,opens:0,
     window:custom?`${hm($('schedFrom').value)}–${hm($('schedTo').value)}`:undefined});
-  renderCommits(); go('home'); toast('Deal sealed. Your future self says thanks.');
+  const lt=$('newLetter').value.trim(); if(lt) LETTERS.unshift({text:lt,written:new Date(),deal:COMMITS[0].n,mine:true});
+  renderCommits(); go('home'); toast(lt?'Deal sealed, and a letter for '+monDay(daysAgo(-30))+'.':'Deal sealed. Your future self says thanks.');
   const card=$('commitList').firstElementChild; if(card){ card.classList.add('justSealed'); card.scrollIntoView({block:'center'}); }
 }
 /* editing a deal */
@@ -2237,6 +2243,7 @@ function renderD1Deal(){
   $('d1For').innerHTML=fl.map(x=>`<i>${esc(x)}</i>`).join('');
   const st=shieldStatus(c.wins||[WIN[sc]||WIN.always]);
   $('d1Live').classList.toggle('on',st.on); $('d1LiveTxt').textContent=st.txt;
+  $('d1SigRow').hidden=!c.sig; if(c.sig) $('d1Sig').src=c.sig;
   const done=document.querySelectorAll('.d1Steps .d1Step.done').length; $('d1Count').textContent=`${done} OF 3`;
 }
 function renderD1(){
@@ -2604,3 +2611,55 @@ function setPeek(v){
   renderPeek(); renderPeekBox();
 }
 renderPeek();
+
+/* ══ SIGN YOUR DEAL — the first deal, signed with a finger (optional). The signature stays on the phone ══ */
+let signDrawn=false;
+function openSign(){
+  $('signDeal').innerHTML=firstSentence(); $('ov-sign').classList.add('on');
+  requestAnimationFrame(()=>{ const c=$('signCanvas'), r=c.getBoundingClientRect(), k=devicePixelRatio||1;
+    c.width=r.width*k; c.height=r.height*k; signClear(); });
+}
+function signClear(){ const c=$('signCanvas'), x=c.getContext('2d'); x.clearRect(0,0,c.width,c.height); signDrawn=false; $('signGo').disabled=true; $('signHint').hidden=false; }
+(function(){
+  const c=$('signCanvas'); let last=null;
+  const pt=e=>{ const r=c.getBoundingClientRect(), k=c.width/r.width; return [(e.clientX-r.left)*k,(e.clientY-r.top)*k]; };
+  c.addEventListener('pointerdown',e=>{ c.setPointerCapture(e.pointerId); last=pt(e); $('signHint').hidden=true; });
+  c.addEventListener('pointermove',e=>{ if(!last) return; const p=pt(e), x=c.getContext('2d'), k=c.width/c.getBoundingClientRect().width;
+    x.strokeStyle=getComputedStyle(document.body).getPropertyValue('--violet').trim()||'#8B7CF6'; x.lineWidth=2.6*k; x.lineCap='round'; x.lineJoin='round';
+    x.beginPath(); x.moveTo(last[0],last[1]); x.lineTo(p[0],p[1]); x.stroke(); last=p;
+    if(!signDrawn){ signDrawn=true; $('signGo').disabled=false; } });
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>c.addEventListener(t,()=>{ last=null; }));
+})();
+function signSeal(signed){ FIRST.sig=signed&&signDrawn?$('signCanvas').toDataURL('image/png'):''; closeOv('ov-sign'); sealFirst(); }
+
+/* ══ THE LAST SCROLL — before the first shield goes on: one last scroll, five minutes, on purpose ══ */
+function lastScroll(yes){
+  closeOv('ov-last');
+  if(yes) openWindow(0,5,'last');
+  else toast('Shield on. Try opening one of your apps.');
+}
+
+/* ══ LETTERS TO YOUR FUTURE SELF — written when you make a deal, back as a letter in 30 days.
+   On the phone only; nothing reads, sorts or answers them. When it arrives it's kept in the diary. ══ */
+const LETTERS=[{text:"Hey. If you're reading this, a month has gone by. I hope you got back to the novel, even a page a day. And if it was a hard month, that's okay too. You're still here, choosing.",written:daysAgo(30),deal:'The scroll one'}];
+function openLetter(){ $('letterText').value=''; $('letterWhen').textContent=monDay(daysAgo(-30)); letterCount(); $('ov-letter').classList.add('on'); }
+function letterCount(){ const n=$('letterText').value.length; $('letterLeft').textContent=(280-n)+' left'; $('letterGo').disabled=!$('letterText').value.trim(); }
+function sealLetter(){
+  const t=$('letterText').value.trim(); if(!t) return;
+  LETTERS.unshift({text:t,written:new Date(),deal:(COMMITS[0]||{}).n,mine:true}); closeOv('ov-letter'); renderLetterRow();
+  toast('Sealed. It comes back on '+monDay(daysAgo(-30))+'.');
+}
+function renderLetterRow(){
+  const L=LETTERS.find(l=>l.mine), row=$('d1Letter'); row.classList.toggle('done',!!L);
+  $('d1LetterT').textContent=L?'Letter sealed':'Write to yourself, 30 days from now';
+  $('d1LetterS').textContent=L?'it comes back on '+monDay(daysAgo(-30)):'optional · it comes back as a letter';
+}
+function openLetterRead(){
+  document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
+  const L=LETTERS[0], w=L.mine?daysAgo(30):L.written;   /* the demo jumps a month ahead */
+  $('letterFrom').textContent='Written on '+monDay(w)+', for today';
+  $('letterBody').textContent=L.text;
+  $('ov-letterread').classList.add('on'); $('ov-letterread').scrollTop=0;
+  const env=$('letterEnv'); env.classList.remove('open'); void env.offsetWidth; env.classList.add('open');
+  if(!L.kept){ L.kept=true; ENTRIES.unshift({tag:'letter',t:'Today',b:esc(L.text),at:'a letter from you, written on '+monDay(w)}); renderEntries(); }
+}

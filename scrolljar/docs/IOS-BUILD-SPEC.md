@@ -87,7 +87,7 @@ Eight steps, with a "1 of 8" counter on every one, so people always know where t
   - **When does scrolling get you?** Presets (in bed first thing, while I work, at night, at the weekend, all day) and "my own times" with from/to times and weekday chips (M T W T F S S). These become the deal's schedule.
   - **When you look up and the time has gone, how do you feel?** Feelings chips plus their own words. **Stays on the phone** (`feelAfter`). The prototype saves it but doesn't use it yet; anything that uses it later shows it only to them.
   - **What would you rather do with that time?** Chips plus their own words. This becomes the deal's `forList`: the shield's subtitle ("How about your novel instead?") and its stay button ("Back to my novel").
-- **Seal the deal** → the **Day 1 card** on Today (`renderD1Deal`): a headline from what the time is for ("Room for your novel."), whether the shield is on right now (from the schedule), a seal stamp, a tap to edit the deal, and a way to see the shield. No card, no account wall. Target: under 2 minutes.
+- **Seal the deal** → **"In your own hand"** (`ov-sign`): sign with a finger (PencilKit or a simple Canvas), optional, saved on the phone only → **The Last Scroll** (`ov-last`): an optional 5-minute window before the shield goes on, ending with "That was the last unconscious one." → the **Day 1 card** on Today (`renderD1Deal`): a headline from what the time is for ("Room for your novel."), whether the shield is on right now (from the schedule), a seal stamp, a tap to edit the deal, and a way to see the shield. No card, no account wall. Target: under 2 minutes.
 
 **"Say it instead" (one mic per question).** Spoken answers, because forms are tiring. The rule (CLAUDE.md): speech is turned into text and understood **on the phone only**, shown back for the user to confirm, and the recording is deleted at once. This is the only place ScrollJar transcribes anything; Diary voice notes are never transcribed.
 
@@ -116,6 +116,8 @@ Event        id, dealId, kind(resisted|override|peek|windowEnd|tamper|restore), 
 JarMonth     month, coins[], total, cap(default $50), settlement{status, stripePI, everyOrgReceipt}
 DiaryEntry   LOCAL ONLY (never leaves the phone unless the user exports it)
 FeelAfter    LOCAL ONLY: the setup feelings answer (chips + own words)
+Signature    LOCAL ONLY: the first deal's signature image
+Letter       LOCAL ONLY: text (≤280), writtenAt, dealId, opensAt (+30 days, a local notification), then kept as a diary entry
 WishJar      id, name, target, ratePerHour(0.50|1|2), dueDate?, members[], dailyCapHours=2   (no money moves)
 WishHours    wishJarId, userId, day, hours(0–2)   (only the count leaves the phone)
 Backing      id, backerId, friendId, amount(5–25), days(3|7|14), startsOn, note?, status(offered|accepted|declined|withdrawn|done),
@@ -186,6 +188,8 @@ Privacy rules:
 | `s-usage` | UsageView | Wraps the DeviceActivityReport extension; we can't read the data |
 | `s-diary`, `ov-entry`, `ov-voice`, `s-recap`, `s-resources` | DiaryView, RecapView, ResourcesView | Local-only diary; voice notes are passive (recorded and played back, nothing analyses them) |
 | `s-friends` (tab: BOARD), `s-jardetail`, `s-challenge`, `s-invite`, `ov-compose` | BoardView, jars | **v1.1+:** build after the solo loop works |
+| `ov-sign`, `ov-last` | SignView, LastScrollView | End of setup: optional signature, then the optional last scroll (a normal 5-minute window) |
+| `ov-letter`, `ov-letterread` | LetterSheet, LetterView | Write (Make a deal step 5, Day 1 card); delivered at 30 days by a local notification; then kept in the diary |
 | `ov-week` | WeekMomentView | Day 7 of a deal: the jar's happy moment and the share card, rendered to an image (`ImageRenderer`) and shared with `ShareLink` plus the jar's invite link. No apps or coins on the card |
 | Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick. One quiet line in the pause and on the coin sheet |
 | `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |

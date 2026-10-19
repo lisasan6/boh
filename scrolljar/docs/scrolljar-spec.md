@@ -65,6 +65,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 - **Price escalation (opt-in, capped 2×):** at commitment creation the user may pre-authorize "if I get comfortable overriding, raise my price" — gradual, automatic, **ceiling 2× the original price**, always visible, cancellable with 24h notice. Never a nag; escalation chosen in cold blood. **Steps (prototype, 2026-10-19):** each opening in a week adds about a quarter of the price, rounded up to whole dollars ($5 → $7 → $9 → $10), and it's back to the deal's own price every Monday. In "Make a deal" and the deal editor it's a switch, "Raise it if it gets easy": on applies now, off waits 24 hours. **Cap-collision guard:** if price × escalation ceiling approaches the monthly cap (e.g., $25 × 2 = the $50 default), setup prompts a cap review at creation time — one escalated coin must never fill the jar and freeze stakes for the month.
 - **Streaks:** lifetime clean days accrue forever; a relapse day is a "coin day" that counts toward impact. Never resets (JCR 2023: broken chains kill motivation).
 - **Success-side giving:** every 10 clean days, ScrollJar donates a fixed visible unit (e.g., 1 tree / 2 meals) from membership revenue — **to a cause the user chooses** (may differ from their penalty charity). Monthly company budget cap; unit economics reviewed quarterly.
+- **Letters to your future self (2026-10-19):** optional, written when you make a deal (a step in "Make a deal", and a row on the Day 1 card), up to 280 characters. It comes back as a letter after 30 days ("You wrote this a month ago"), then lives in the diary. On the phone only: nothing reads, sorts or answers it, and it's never quoted back anywhere else.
 - **Rough-day response:** after an expensive day — a check-in, not a bill; pattern insight ("your coins drop after 10pm on Sundays") + self-compassionate copy; restart prompts appear only after rough patches (fresh-start science), never as resets for people doing well.
 - **Non-monetary stakes** (v1.5): streak visibility, effort unlocks, social stakes — first-class for students.
 
@@ -74,6 +75,8 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 2. Screen Time permission with pre-permission explainer.
 3. **Pick your apps** — self-chosen, with "The Classics" starter pack and templates (Study / Sleep 10pm–7am / Work hours / Full detox) as one-tap suggestions, never assumptions.
 4. Blocked. That's the whole first run — no card, no account wall.
+   - **Sign your deal (2026-10-19):** "Seal the deal" opens "In your own hand": the deal in plain words and a space to sign with a finger. Optional ("Seal it without signing"); the signature stays on the phone and shows on the Day 1 card.
+   - **The Last Scroll (2026-10-19):** right after sealing, "One last scroll? Five minutes, on purpose. A goodbye to the automatic kind." A 5-minute countdown, then "That was the last unconscious one. From now on, every scroll is a choice." Skippable: "No need. Shield on now."
 5. **Ghost-first:** everyone starts free. Day ~3, after real resisted temptations: "want to make it real?" → stakes + charity + card (Stripe SetupIntent, plain-language mandate).
 6. Optional if-then plan ("If I reach for Instagram at night, then I ___" — implementation intentions, d=0.65) and baseline week capture for honest math.
 
