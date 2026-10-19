@@ -122,6 +122,15 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
   - **Up to 2 scroll-free hours a day count per person (default, to test with users).** Without a cap the person doing best would owe the most, and people might keep their deals small to keep their share small. At $1 an hour the most anyone puts in is about $60 a month, shown up front at setup.
   - **Plans:** free with one friend; groups of three or more are Plus (same line as buddy jars vs groups).
   - Families already have the family treat (kids' scroll-free hours unlock a parent's pledge); wish jars are the grown-ups' and friends' version.
+- **Backing a friend (L's idea, 2026-07-28; designed 2026-10-19):** someone you share a jar with backs your deals for **3 days, a week or two weeks**, with **$5–25**. A gift either way: a treat for you, or your cause.
+  - **Day by day:** each day you keep your deals, that day's share (amount ÷ days) becomes your treat. A day you open anyway sends that day's share to **your own charity**. No cliff: one slip never wipes out the rest.
+  - **The treat** is a gift card you pick at the end (books, coffee, cinema) or a month of Plus. **Never cash** (cash payouts to friends stay parked).
+  - **The backer pays the full amount either way, when it ends, and nothing ever goes back to them.** That makes it a unilateral conditional gift, never a bet, and nobody can collude to profit. Free plan: the card fee is added on top; Plus covers it.
+  - **Consent:** it's an offer. The friend says "Yes, back me" or "Not now" (no reason needed; the backer sees "not this time"). The backer can take a pending offer back; once accepted it runs to the end.
+  - **Who sees what:** the backer sees how many days were kept, never which apps, when, or which days, and hears when it ends, not every day. You see your own days.
+  - **At the moment of temptation, gently:** one quiet line in the breathing pause ("Noor's backing your week. Today's share is still yours.") and an honest line on the coin sheet ("Opening now also sends today's share of Noor's backing, $1.43, to …"). Never a countdown, never guilt.
+  - **Limits:** only people you share a jar with · one backing per pair at a time · up to five active per backer · never for under-18s (kids are never paid) · free on every plan.
+  - **Open:** gift-card partner and its fees (a rewards API), launch vs fast-follow (Q18), and prize-promotion law per country before going beyond the US (Q19).
 
 ## 8. Stats, impact & the Big Counter
 

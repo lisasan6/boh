@@ -632,6 +632,7 @@ function showBreath(){
   $('breathBtns').style.display='none';
   $('breathTitle').textContent='No rush.';
   const secs=Math.round(BREATH_MS*BREATHS/1000);
+  backPauseLine();
   $('breathSub').textContent=`The scroll will wait. ${SEC_WORDS[secs]||secs} seconds, ${BREATHS===1?'one breath':BREATHS===2?'two breaths':BREATHS+' breaths'}, then it's your call.`;
   startBreathCue();
   clearTimeout(breathT); clearTimeout(breathT2);
@@ -716,11 +717,12 @@ function showOverride(){
   $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
   $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
   $('ovrNote').textContent = S.stakes ? 'refundable for 48h, no questions' : 'no card, no coin, nothing to undo';
+  backCoinLine();
   $('ov-override').classList.add('on');
 }
 let winT;
 function payOverride(){
-  closeOv('ov-override');
+  closeOv('ov-override'); backSlip();
   const d=COMMITS[0]||{n:'Your deal',price:5}, price=d.price||5;
   if(!S.stakes){ openWindow(0); return; }
   const {box,svg}=liveJar();
@@ -2272,6 +2274,7 @@ function renderNewJar(){
   if(NJ.step===0){ $('newJarKicker').textContent='NEW JAR';
     B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:12px">What kind of jar?</div>
       <div class="njPick" role="button" tabindex="0" onclick="NJ.step=1;renderNewJar()"><b>A wish jar</b><span>For something you want together: a trip, a dinner out, a concert. It fills with everyone's scroll-free time, and ScrollJar never touches the money.</span></div>
+      <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');openBack()"><b>Back a friend</b><span>Back someone's week with $5 to $25: each day they keep their deals becomes a treat for them, the rest goes to their cause.</span></div>
       <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');go('invite')"><b>Invite someone to Casa Jar</b><span>Your coins jar for UNICEF: share the deals, give together.</span></div>`;
     return; }
   $('newJarKicker').textContent='A WISH JAR';
@@ -2305,3 +2308,164 @@ function makeWish(){
   $('d1WishStrip').hidden=false;   /* on day one the Board has no jar strip yet: this keeps the new wish jar one tap away */
   closeOv('ov-newjar'); openWish(); toast('Wish jar made. Invite someone to fill it with you.');
 }
+
+/* ══ BACKING — back a friend's week (L's idea from July, designed 2026-10-19) ══
+   Someone you share a jar with backs your deals for 3–14 days with $5–25. Each day you keep your deals,
+   that day's share becomes a treat for you: a gift card you pick at the end (books, coffee, cinema) or a
+   month of Plus, never cash. A day you open anyway sends that day's share to your own charity. The backer
+   pays the whole amount either way and nothing goes back to them, so it's a gift, never a bet. The backer
+   sees how many days were kept, never which apps, when, or which days. Once accepted it runs to the end. */
+const BACK_PEOPLE=[
+  {n:'Noor',a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)'},
+  {n:'Marta',a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)'},
+  {n:'Giulia',a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)'},
+  {n:'Sofia',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)'}];
+const bPerson=n=>BACK_PEOPLE.find(p=>p.n===n);
+const TREATS=[['books','Books'],['coffee','Coffee'],['cinema','Cinema'],['plus','A month of Plus']];
+const bShare=(amt,days,n)=>Math.round(amt*n/days*100)/100;
+/* someone backing you: Noor, a week, started 5 days ago; today is day 6 */
+const BACK_IN={from:'Noor',amt:10,days:7,log:['kept','kept','gave','kept','kept'],note:"You've got this. Book club's on Sunday.",treat:''};
+/* someone who'd like to back you next */
+const BACK_OFFER={from:'Sofia',amt:5,days:7,note:'For the guitar comeback.',st:'pending'};
+/* people you back: the backer sees counts only, never which days */
+const BACK_OUT=[{to:'Marta',amt:5,days:3,kept:1,gave:0,st:'on'}];
+const BK={step:'new',who:'',amt:10,days:7,note:''};
+const bDay=i=>{ const d=daysAgo(BACK_IN.log.length-i); return dfmt(d,{weekday:'short'}).slice(0,1); };
+const bState=i=>BACK_IN.log[i]||(i===BACK_IN.log.length?(BACK_IN.todayGave?'gave':'today'):'next');
+const bCount=k=>{ let n=0; for(let i=0;i<BACK_IN.days;i++) if(bState(i)===k) n++; return n; };
+const bCharity=()=>CHARITIES[S.charity].n;
+function backDots(){
+  return `<div class="backDots">${Array.from({length:BACK_IN.days},(_,i)=>`<span class="bDot ${bState(i)}"><i></i>${bDay(i)}</span>`).join('')}</div>`;
+}
+function renderBacking(){
+  const p=bPerson(BACK_IN.from), kept=bCount('kept');
+  $('backToday').innerHTML=`<div class="row" style="gap:12px;align-items:flex-start">
+      <div class="av" style="background:${p.c}">${p.a}</div>
+      <div style="flex:1;min-width:0"><div class="eyebrow">BACKED BY ${p.n.toUpperCase()}</div>
+        <b style="font-size:13.5px">${kept} days kept · ${usd(bShare(BACK_IN.amt,BACK_IN.days,kept))} toward your treat</b>${backDots()}</div>
+      <span style="color:var(--ink-3)">›</span></div>`;
+  let h='';
+  if(BACK_OFFER.st==='pending'){ const o=bPerson(BACK_OFFER.from);
+    h+=`<div class="card backCard offer" role="button" tabindex="0" onclick="openBacking('offer')"><div class="row" style="gap:12px">
+      <div class="av" style="background:${o.c}">${o.a}</div><div style="flex:1;min-width:0"><b style="font-size:13.5px">${o.n} wants to back your next week</b>
+      <div class="tiny">${usd(BACK_OFFER.amt)} · a treat for you, or your cause</div></div><span class="pill chr">Have a look</span></div></div>`; }
+  if(BACK_OFFER.st==='yes'){ const o=bPerson(BACK_OFFER.from);
+    h+=`<div class="card backCard"><div class="row" style="gap:12px"><div class="av" style="background:${o.c}">${o.a}</div>
+      <div style="flex:1;min-width:0"><b style="font-size:13.5px">${o.n}'s backing starts tomorrow</b><div class="tiny">${usd(BACK_OFFER.amt)} · 7 days</div></div></div></div>`; }
+  h+=`<div class="card backCard" role="button" tabindex="0" onclick="openBacking('in')"><div class="row" style="gap:12px">
+    <div class="av" style="background:${p.c}">${p.a}</div><div style="flex:1;min-width:0"><b style="font-size:13.5px">${p.n}'s backing your week</b>
+    <div class="tiny">${kept} of ${BACK_IN.days} days kept so far</div></div><span style="color:var(--ink-3)">›</span></div></div>`;
+  BACK_OUT.forEach((b,i)=>{ const q=bPerson(b.to);
+    h+=`<div class="card backCard" role="button" tabindex="0" onclick="openBacking('out',${i})"><div class="row" style="gap:12px">
+      <div class="av" style="background:${q.c}">${q.a}</div><div style="flex:1;min-width:0"><b style="font-size:13.5px">You're backing ${q.n}</b>
+      <div class="tiny">${b.st==='waiting'?'Waiting for '+q.n+' to say yes':b.st==='no'?'Not this time':b.fresh?`${usd(b.amt)} · ${b.days} days · starts tomorrow`:`${usd(b.amt)} · ${b.kept} of ${b.days} days kept so far`}</div></div>
+      <span style="color:var(--ink-3)">›</span></div></div>`; });
+  $('backList').innerHTML=h;
+}
+/* the pause and the coin sheet mention it once, quietly: never a countdown, never guilt */
+function backPauseLine(){
+  const el=$('breathBack'), on=S.stage==='wk3';
+  el.hidden=!on; if(!on) return;
+  el.textContent=BACK_IN.todayGave ? `${BACK_IN.from}'s backing your week. Tomorrow's share is still yours.` : `${BACK_IN.from}'s backing your week. Today's share is still yours.`;
+}
+function backCoinLine(){
+  const el=$('ovrBack'), on=S.stage==='wk3'&&!BACK_IN.todayGave;
+  el.hidden=!on; if(!on) return;
+  el.textContent=`Opening now also sends today's share of ${BACK_IN.from}'s backing, ${usd(bShare(BACK_IN.amt,BACK_IN.days,1))}, to ${bCharity()}.`;
+}
+function backSlip(){ if(S.stage==='wk3'&&!BACK_IN.todayGave){ BACK_IN.todayGave=true; renderBacking(); } }
+
+function openBack(){ Object.assign(BK,{step:'new',who:'',amt:10,days:7,note:''}); renderBackBody(); $('ov-backing').classList.add('on'); }
+function openBacking(mode,i){ BK.step=mode; BK.i=i; renderBackBody(); $('ov-backing').classList.add('on'); }
+function renderBackBody(){
+  const B=$('backBody'), K=$('backKicker'), m=BK.step;
+  if(m==='new'){
+    K.textContent='BACK A FRIEND';
+    if(S.stage!=='wk3'){
+      B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:6px">Back a friend's week</div>
+        <div class="sub" style="margin-bottom:14px">You can back anyone you share a jar with. Nobody's in a jar with you yet.</div>
+        <button class="btn mint" onclick="closeOv('ov-backing');go('invite')">Invite someone</button>`;
+      return; }
+    const busy=n=>BACK_OUT.some(b=>b.to===n&&b.st!=='no');
+    const p=bPerson(BK.who), per=bShare(BK.amt,BK.days,1), len=BACK_OPTS_DAYS.find(d=>d[0]===BK.days)[1].toLowerCase();
+    B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:4px">Back a friend's week</div>
+      <div class="sub" style="margin-bottom:6px">A gift either way: a treat for them, or their cause.</div>
+      <div class="eyebrow" style="margin:14px 2px 8px">WHO</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap">${BACK_PEOPLE.map(q=>busy(q.n)
+        ?`<span class="chip off" aria-disabled="true">${q.n} · already backing</span>`
+        :`<span class="chip${BK.who===q.n?' on':''}" role="radio" aria-checked="${BK.who===q.n}" onclick="BK.who='${q.n}';renderBackBody()">${q.n}</span>`).join('')}</div>
+      <div class="eyebrow" style="margin:16px 2px 8px">HOW MUCH</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap">${[5,10,15,25].map(v=>`<span class="chip${BK.amt===v?' on':''}" onclick="BK.amt=${v};renderBackBody()">$${v}</span>`).join('')}</div>
+      <div class="eyebrow" style="margin:16px 2px 8px">HOW LONG</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap">${BACK_OPTS_DAYS.map(([v,l])=>`<span class="chip${BK.days===v?' on':''}" onclick="BK.days=${v};renderBackBody()">${l}</span>`).join('')}</div>
+      <div class="eyebrow" style="margin:16px 2px 8px">A NOTE · optional</div>
+      <input class="timeIn" maxlength="60" placeholder="in your own words" aria-label="A note for your friend" value="${esc(BK.note)}" oninput="BK.note=this.value">
+      <div class="card firstDeal">${p?`<div class="eyebrow" style="margin-bottom:6px">YOUR BACKING</div>
+        ${usd(BK.amt)} for ${p.n}, ${len}. Each day ${p.n} keeps their deals, ${usd(per)} becomes a treat for ${p.n}. A day ${p.n} opens anyway, that share goes to ${p.n}'s own charity.
+        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends${S.plan==='plus'?'':`, plus a ${usd(cardFee(BK.amt))} card fee (Plus covers it)`}. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
+        :`<div class="tiny">Pick who you'd like to back.</div>`}</div>
+      <div class="tiny" style="margin:2px 2px 12px;line-height:1.5">Only people you share a jar with · one backing per friend at a time · up to five at once.</div>
+      <button class="btn mint" ${p?'':'disabled'} onclick="backSend()">Send the offer</button>`;
+    return; }
+  if(m==='offer'){ const o=bPerson(BACK_OFFER.from), per=bShare(BACK_OFFER.amt,BACK_OFFER.days,1);
+    K.textContent='AN OFFER';
+    B.innerHTML=`<div class="row" style="gap:12px;margin-bottom:12px"><div class="av" style="background:${o.c}">${o.a}</div>
+        <div class="display" style="font-size:20px;line-height:1.2">${o.n} wants to back your next week</div></div>
+      <div class="card backNote">“${esc(BACK_OFFER.note)}”<div class="tiny" style="margin-top:4px">${o.n}, in ${o.n}'s own words</div></div>
+      <div class="backFacts">
+        <div><b>${usd(BACK_OFFER.amt)} · 7 days · from tomorrow</b></div>
+        <div>Each day you keep your deals, ${usd(per)} becomes a treat for you: a gift card you pick at the end, or a month of Plus.</div>
+        <div>A day you open anyway, that day's share goes to ${bCharity()}.</div>
+        <div>${o.n} pays either way, and nothing goes back to ${o.n}.</div>
+        <div>${o.n} will see how many days you kept. Never your apps, your times or which days.</div></div>
+      <button class="btn mint" onclick="backAccept(true)">Yes, back me</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="backAccept(false)">Not now</button>
+      <div class="tiny" style="text-align:center;margin-top:9px">No reason needed. ${o.n} sees “not this time”.</div>`;
+    return; }
+  if(m==='out'){ const b=BACK_OUT[BK.i], q=bPerson(b.to), left=b.days-b.kept-b.gave;
+    K.textContent='YOU\'RE BACKING';
+    B.innerHTML=`<div class="row" style="gap:12px;margin-bottom:6px"><div class="av" style="background:${q.c}">${q.a}</div>
+        <div><div class="display" style="font-size:20px;line-height:1.2">${q.n}</div><div class="tiny">${usd(b.amt)} · ${b.days} days</div></div></div>
+      ${b.st==='waiting'?`<div class="sub" style="margin:10px 0 14px">Waiting for ${q.n} to say yes. You can take the offer back until then.</div>
+        <button class="btn ghost" onclick="BACK_OUT.splice(BK.i,1);renderBacking();closeOv('ov-backing');toast('Offer taken back.')">Take the offer back</button>`
+      :b.fresh?`<div class="sub" style="margin:10px 0 14px">${q.n} said yes. It starts tomorrow and runs ${b.days} days. You'll hear when it ends, not every day.</div>
+        <button class="btn mint" onclick="closeOv('ov-backing');toast('High five sent to ${q.n}.')">Send ${q.n} a high five</button>`
+      :`<div class="backBar" aria-label="${b.kept} kept, ${b.gave} to ${q.n}'s charity, ${left} to go">${'<i class="kept"></i>'.repeat(b.kept)}${'<i class="gave"></i>'.repeat(b.gave)}${'<i></i>'.repeat(left)}</div>
+        <div class="sub" style="margin-bottom:12px">${b.kept} ${b.kept===1?'day':'days'} kept so far: ${usd(bShare(b.amt,b.days,b.kept))} toward ${q.n}'s treat. ${left} to go.</div>
+        <div class="tiny" style="line-height:1.55;margin-bottom:14px">You'll hear when it ends, not every day. You see how many days were kept, never ${q.n}'s apps, times or which days.</div>
+        <button class="btn mint" onclick="closeOv('ov-backing');toast('High five sent to ${q.n}.')">Send ${q.n} a high five</button>`}`;
+    return; }
+  if(m==='in'){ const p=bPerson(BACK_IN.from), kept=bCount('kept'), gave=bCount('gave'), per=bShare(BACK_IN.amt,BACK_IN.days,1);
+    K.textContent='BACKING YOUR WEEK';
+    B.innerHTML=`<div class="row" style="gap:12px;margin-bottom:12px"><div class="av" style="background:${p.c}">${p.a}</div>
+        <div><div class="display" style="font-size:20px;line-height:1.2">${p.n}'s backing your week</div><div class="tiny">${usd(BACK_IN.amt)} · ${BACK_IN.days} days</div></div></div>
+      <div class="card backNote">“${esc(BACK_IN.note)}”<div class="tiny" style="margin-top:4px">${p.n}, in ${p.n}'s own words</div></div>
+      ${backDots()}
+      <div class="backLegend"><span><i class="kept"></i>kept</span><span><i class="gave"></i>to ${esc(bCharity())}</span><span><i class="today"></i>today</span></div>
+      <div class="sub" style="margin:10px 0 4px">${kept} days kept: ${usd(bShare(BACK_IN.amt,BACK_IN.days,kept))} toward your treat.${gave?` ${gave} ${gave===1?'day':'days'} went to ${bCharity()}: ${usd(bShare(BACK_IN.amt,BACK_IN.days,gave))}.`:''}</div>
+      <div class="sub" style="margin-bottom:12px">${BACK_IN.todayGave?"Tomorrow's share is still yours.":`Today's share, ${usd(per)}, is still yours.`}</div>
+      <div class="tiny" style="line-height:1.55;margin-bottom:14px">${p.n} sees how many days you kept. Never your apps, your times or which days.</div>
+      <button class="btn chrome" onclick="openBacking('done')">Preview the end of the week</button>`;
+    return; }
+  if(m==='done'){ const p=bPerson(BACK_IN.from), gave=bCount('gave'), kept=BACK_IN.days-gave, treat=bShare(BACK_IN.amt,BACK_IN.days,kept), cause=Math.round((BACK_IN.amt-treat)*100)/100;
+    K.textContent=p.n.toUpperCase()+"'S BACKING · DONE";
+    B.innerHTML=`<div style="text-align:center"><svg width="44" height="44" style="color:var(--gold);filter:drop-shadow(0 0 16px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
+        <div class="display" style="font-size:22px;margin:8px 0 4px">You kept ${kept} of ${BACK_IN.days} days.</div>
+        <div class="sub">${usd(treat)} becomes your treat${gave?` and ${usd(cause)} went to ${bCharity()}`:''}.</div></div>
+      <div class="eyebrow" style="margin:16px 2px 8px">PICK YOUR TREAT</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap">${TREATS.map(([k,l])=>`<span class="chip${BACK_IN.treat===k?' on':''}" role="radio" aria-checked="${BACK_IN.treat===k}" onclick="BACK_IN.treat='${k}';renderBackBody()">${l}</span>`).join('')}</div>
+      <div class="tiny" style="margin:9px 2px 14px;line-height:1.5">A gift card, never cash. Nothing goes back to ${p.n}.</div>
+      <button class="btn mint" ${BACK_IN.treat?'':'disabled'} onclick="closeOv('ov-backing');toast('Enjoy it. High five sent to ${p.n}.')">Take it, and thank ${p.n}</button>`;
+  }
+}
+const BACK_OPTS_DAYS=[[3,'3 days'],[7,'A week'],[14,'Two weeks']];
+function backSend(){
+  const n=BK.who; BACK_OUT.unshift({to:n,amt:BK.amt,days:BK.days,kept:0,gave:0,st:'waiting'});
+  closeOv('ov-backing'); renderBacking(); toast(`Sent. ${n} can say yes or not now.`);
+  setTimeout(()=>{ const b=BACK_OUT.find(x=>x.to===n&&x.st==='waiting'); if(!b) return; b.st='on'; b.fresh=true; renderBacking(); toast(`${n} said yes. It starts tomorrow.`); },3200);
+}
+function backAccept(yes){
+  BACK_OFFER.st=yes?'yes':'no'; closeOv('ov-backing'); renderBacking();
+  toast(yes?`Done. ${BACK_OFFER.from}'s backing starts tomorrow.`:`No problem. ${BACK_OFFER.from} sees “not this time”.`);
+}
+renderBacking();

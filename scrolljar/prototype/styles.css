@@ -758,3 +758,23 @@ body[data-mode="day"] .tab.on .i{filter:drop-shadow(0 0 6px rgba(10,138,114,.3))
 .njPick:hover{border-color:rgba(55,226,192,.5)}
 body[data-mode="day"] .wishAmt{background:linear-gradient(180deg,#E3A21A,#A86A08);-webkit-background-clip:text;background-clip:text;color:transparent}
 body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
+
+/* backing: a friend backs your week. Kept days are mint, days that went to your cause are gold (never red) */
+.backDots{display:flex;gap:5px;margin:10px 0 2px}
+.bDot{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--ink-3)}
+.bDot i{display:block;width:100%;height:7px;border-radius:4px;background:var(--panel-2);border:1px solid var(--line)}
+.bDot.kept i,.backLegend i.kept,.backBar i.kept{background:var(--mint);border-color:transparent}
+.bDot.gave i,.backLegend i.gave,.backBar i.gave{background:var(--gold);border-color:transparent}
+.bDot.today i,.backLegend i.today{border:1.5px solid var(--mint);background:transparent}
+.bDot.today{color:var(--mint)}
+.backLegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);font-weight:600;margin-top:8px}
+.backLegend span{display:flex;align-items:center;gap:5px}
+.backLegend i{display:inline-block;width:14px;height:7px;border-radius:4px}
+.backBar{display:flex;gap:5px;margin:14px 0 10px}
+.backBar i{flex:1;height:9px;border-radius:5px;background:var(--panel-2);border:1px solid var(--line)}
+.backCard{cursor:pointer;margin-bottom:9px}
+.backCard.offer{border-color:rgba(55,226,192,.45)}
+.backNote{font-size:14px;line-height:1.45;margin-bottom:6px}
+.backFacts{display:flex;flex-direction:column;gap:7px;font-size:13px;line-height:1.45;color:var(--ink-2);margin:12px 2px 16px}
+.backFacts b{color:var(--ink)}
+.chip.off{opacity:.45;cursor:default}

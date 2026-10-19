@@ -118,6 +118,8 @@ DiaryEntry   LOCAL ONLY (never leaves the phone unless the user exports it)
 FeelAfter    LOCAL ONLY: the setup feelings answer (chips + own words)
 WishJar      id, name, target, ratePerHour(0.50|1|2), dueDate?, members[], dailyCapHours=2   (no money moves)
 WishHours    wishJarId, userId, day, hours(0–2)   (only the count leaves the phone)
+Backing      id, backerId, friendId, amount(5–25), days(3|7|14), startsOn, note?, status(offered|accepted|declined|withdrawn|done),
+             dayResults[](kept|gave) (friend's phone only), keptCount, gaveCount (what the backer sees), treat?(books|coffee|cinema|plus)
 StandbyNote  text, writtenAt  (sent only to the user's own jar members, on a wobble)
 Jar/Group    id, name, charityId, members[], visibility settings
 ```
@@ -148,6 +150,8 @@ Privacy rules:
 - Data export and deletion are built in from day one.
 
 ## 6. Money
+
+**Backing a friend** (spec §7): the backer's card is charged the full amount once, when the backing ends (an off-session PaymentIntent, like the monthly settlement; card fee on top for Free, covered by Plus). The kept share buys the friend's treat through a gift-card rewards API (or a month of Plus); the rest goes to the friend's own charity through Every.org. A day counts as given when the friend paid a coin that day (`payOverride`); peeks don't count. Kept or given is worked out on the friend's phone and only the two counts are sent. No money ever goes back to the backer. Confirm the gift-card partner, its fees and the legal framing (a conditional gift) before launch.
 
 **Wish jars move no money.** Coins in a wish jar are virtual: no Stripe, no Every.org, no IAP. The app shows the total and each person's own share; the group settles it however they like, outside ScrollJar.
 
@@ -182,6 +186,7 @@ Privacy rules:
 | `s-usage` | UsageView | Wraps the DeviceActivityReport extension; we can't read the data |
 | `s-diary`, `ov-entry`, `ov-voice`, `s-recap`, `s-resources` | DiaryView, RecapView, ResourcesView | Local-only diary; voice notes are passive (recorded and played back, nothing analyses them) |
 | `s-friends` (tab: BOARD), `s-jardetail`, `s-challenge`, `s-invite`, `ov-compose` | BoardView, jars | **v1.1+:** build after the solo loop works |
+| Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick. One quiet line in the pause and on the coin sheet |
 | `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |
 | `s-family`, `ov-famsetup`, `ov-famtip` | Families | Later phase; uses Apple Family Sharing. Kids are never charged or paid |
 | `s-creator`, `ov-crsetup` | Creators | Later phase; a creator deal is a normal deal with posting windows |
@@ -229,7 +234,7 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
 | **2: Solo loop, no money** | Onboarding (with "Say it instead"), Day 1 card, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
 | **3: Money** | Backend, Stripe SetupIntent, settlement job, refunds, cap, Every.org donation, tip-out ceremony, jar break and grace hour | End to end in Stripe test mode, plus one real $1 donation with a receipt |
 | **4: Membership + polish** | StoreKit 2 Plus (monthly and yearly), plans screen, 3-deal Free limit, widget, Voice Law pass on every string, accessibility | Ready for TestFlight (needs the distribution entitlement) |
-| **5: Social** | Buddy and group jars, wish jars, invites with claim codes, finite feed, Wobble and standby notes | Beta testers can invite each other and fill a wish jar together |
+| **5: Social** | Buddy and group jars, wish jars, backing a friend, invites with claim codes, finite feed, Wobble and standby notes | Beta testers can invite each other and fill a wish jar together |
 | **6: Beta** | TestFlight with 100–300 users (r/nosurf, US colleges), transparency page | First real conversion data |
 | **7: Teams pilot** | Campaigns, squads, "your hour" picker, lights jar, anonymous dashboard, notes with the on-phone privacy check | One company runs a 6-week pilot. Sell it before building (see the Teams spec) |
 | **8: Families and Creators** | Family jar and setup (Family Sharing), creator setup with posting windows, public challenges | Built in parallel once Teams works |

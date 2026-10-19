@@ -66,7 +66,7 @@
 
 ---
 
-## 🎁 Backing — gift stakes (APPROVED IN PRINCIPLE, parked for later shaping)
+## 🎁 Backing — gift stakes → **designed 2026-10-19** (day by day; slipped shares to the friend's own charity; one gentle line in the pause). See spec §7 and the prototype
 **L's idea:** back a friend with $5 — win → them, lose → charity. Coupons over cash (the **Evening Catalog**: bookstore/coffee/cinema/park closed-loop cards via rewards API; never screens). Optional gifted Hero month. Structure = unilateral conditional gift (sponsor never gains → no gambling question; collusion-proof). Guardrails: $5–25 · jar-connections only · 1/pair · ≤5 active · 3–14 days · Voice Law framing ("A bet where nobody loses — either you win, or a charity does."). Q18: launch vs fast-follow · catalog partners · fee placement. ⚠️ Prize-promotion law per country at internationalization (Q19; Italy DPR 430/2001).
 
 ---
@@ -150,4 +150,4 @@ A shared jar for something the group wants: a holiday, a dinner out, a camera, a
 Anti-charities · penalties to own savings · hard-locking · engagement mechanics for the app itself · variable-ratio rewards · contact-book import · pastel-kindergarten · mandatory Teams enrollment · workplace penalties · cash payouts to friends (superseded by Evening Catalog) · **auto-generated "warm" messages in a friend's voice** (2026-07-30 — the support has to actually be from a person, or it's a lie; we hand back the user's own words instead) · **wobble as a free pass** (would turn a support gesture into an override loophole) · **any wobble metric visible to either side** (response times, help counts, unanswered badges — turns kindness into obligation).
 
 ## 🕐 On hold (not rejected, not scheduled)
-End-of-feed line (#5) · grayscale ally (#11).
+End-of-feed line (#5: already in the prototype, "That's everything." at the end of the Board) · grayscale ally (#11).

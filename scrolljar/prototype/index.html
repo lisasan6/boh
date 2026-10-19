@@ -223,6 +223,8 @@
       </div>
     </div>
 
+    <div class="card backToday wk3" id="backToday" role="button" tabindex="0" style="cursor:pointer" onclick="openBacking('in')"></div>
+
     <div class="card" id="focusCard">
       <div class="spread" style="margin-bottom:10px">
         <div class="row" style="gap:8px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-clock"/></svg><b style="font-size:13.5px">Your time</b></div>
@@ -529,6 +531,10 @@
           <div class="tiny" id="coCardSub">every scroll-free hour unlocks $5 for a cause you vote on</div></div>
         <span style="color:var(--ink-3)">›</span>
       </div>
+    </div>
+    <div class="wk3" id="backSection">
+      <div class="spread" style="margin:2px 2px 8px"><div class="eyebrow">BACKING</div><span class="pill chr" role="button" tabindex="0" style="cursor:pointer" onclick="openBack()">+ Back a friend</span></div>
+      <div id="backList"></div>
     </div>
     <div id="feedList"></div>
     <div class="feedEnd wk3">
@@ -963,6 +969,7 @@
     <div class="breathorb" id="breathOrb"><span id="breathCue">breathe</span></div>
     <div class="display" style="font-size:22px;margin-top:44px;color:var(--calm-ink)" id="breathTitle">No rush.</div>
     <div class="sub" style="color:var(--calm-soft);max-width:210px;margin-top:8px" id="breathSub">The scroll will wait. Ten seconds, one breath, then it's your call.</div>
+    <div class="tiny" id="breathBack" style="color:var(--calm-soft);max-width:230px;margin-top:14px;opacity:.85" hidden></div>
     <div style="position:absolute;left:17px;right:17px;bottom:200px" id="breathBtns" style="display:none">
       <button class="btn calm" data-stay="" onclick="resist()">I'll stay committed</button>
     </div>
@@ -1004,6 +1011,7 @@
         <div><b style="font-size:12.5px">Drops into your jar</b><div class="tiny" style="margin-top:2px">→ <span class="charityName">Doctors Without Borders</span></div></div>
         <div class="display num" style="font-size:24px;color:var(--gold-text)" id="ovrPrice">$5</div>
       </div>
+      <div class="tiny" id="ovrBack" style="margin:-2px 2px 12px;line-height:1.5" hidden></div>
       <button class="btn gold" id="ovrPay" onclick="payOverride()">Drop a coin &amp; open</button>
       <button class="btn ghost" style="margin-top:9px" data-stay="Actually, " onclick="resist()">Actually, I'll stay committed</button>
       <div class="tiny" style="text-align:center;margin-top:10px" id="ovrNote">refundable for 48h, no questions</div>
@@ -1270,6 +1278,13 @@
   </div>
 
   <!-- ══ NEW JAR: a wish jar, or invite someone to an existing jar ══ -->
+  <!-- ══ BACKING — a friend backs your week: a treat for you, or your cause ══ -->
+  <div class="ov sheetwrap" id="ov-backing">
+    <div class="sheet-card" style="max-height:92%;overflow-y:auto">
+      <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="backKicker">BACK A FRIEND</div><span class="backBtn" onclick="closeOv('ov-backing')">✕</span></div>
+      <div id="backBody"></div>
+    </div>
+  </div>
   <div class="ov sheetwrap" id="ov-newjar">
     <div class="sheet-card" style="max-height:92%;overflow-y:auto">
       <div class="spread" style="margin-bottom:8px"><div class="eyebrow" id="newJarKicker">NEW JAR</div><span class="backBtn" onclick="closeOv('ov-newjar')">✕</span></div>
