@@ -1,6 +1,6 @@
 # ScrollJar iOS: build spec
 
-**v1.1 · 2026-10-15** (v1.0 was 2026-10-13; v1.1 adds deals, the jar component, Families, Creators and Teams). This turns `scrolljar-spec.md` (the product) and `research-findings.md` (the platform limits) into an engineering plan. The prototype in `prototype/` is the visual and behavioural reference for every screen.
+**v1.2 · 2026-10-19** (v1.0 was 2026-10-13; v1.1, 2026-10-15, added deals, the jar component, Families, Creators and Teams; v1.2 adds the 8-step setup with spoken answers (§3a), the Day 1 card and wish jars (§4, §7)). This turns `scrolljar-spec.md` (the product) and `research-findings.md` (the platform limits) into an engineering plan. The prototype in `prototype/` is the visual and behavioural reference for every screen.
 
 **Verify Apple and Stripe API details against current documentation before implementing.** The limits below come from the July 2026 research.
 
@@ -31,6 +31,7 @@ Replace `com.scrolljar` with your real prefix.
   - The development entitlement works immediately for builds on your own device.
   - To escalate: file a code-level support request (DTS) with your Team ID.
 - Other capabilities: Push Notifications (for Wobble), In-App Purchase, Associated Domains (invite links on `scrolljar.app`).
+- Privacy strings: microphone and speech recognition (`NSMicrophoneUsageDescription`, `NSSpeechRecognitionUsageDescription`), used only by "Say it instead" in setup (§3a). Suggested copy: "So you can say your answers instead of typing. It's understood on your phone, then deleted."
 - Deployment target: iOS 16+ per spec. Consider iOS 17+ if it simplifies the APIs.
 
 ## 3. The core flow on real iOS (where the prototype differs)
@@ -71,11 +72,37 @@ The shield is drawn by iOS, not by us. **The shield cannot take payment or open 
 
 **Web domains:** the spec promises that instagram.com in Safari is shielded too. ManagedSettings has web-domain settings, but the research flags real extra cost. **Spike this in Phase 1** before promising it.
 
+## 3a. Setup on real iOS (prototype: `ov-onb`, `ov-preperm`, `ov-picker`, `ov-first`)
+
+Eight steps, with a "1 of 8" counter on every one, so people always know where they are.
+
+- **Steps 1–4: four intro slides.** "Skip" skips only the slides: nothing is shielded until the apps are picked, so it jumps to step 5.
+- **Step 5, your apps:** the Screen Time explainer, then `AuthorizationCenter.shared.requestAuthorization(for: .individual)`, then `FamilyActivityPicker`. If they say no to Apple: the calm "no permission" path (`ov-noperm`), never a dead end. The deal is named from the selection (categories, or "3 apps").
+- **Steps 6–8, your first deal** (`ov-first`): three questions. Every answer is multi-select, plus a box for their own words.
+  - **When does scrolling get you?** Presets (in bed first thing, while I work, at night, at the weekend, all day) and "my own times" with from/to times and weekday chips (M T W T F S S). These become the deal's schedule.
+  - **When you look up and the time has gone, how do you feel?** Feelings chips plus their own words. **Stays on the phone** (`feelAfter`). The prototype saves it but doesn't use it yet; anything that uses it later shows it only to them.
+  - **What would you rather do with that time?** Chips plus their own words. This becomes the deal's `forList`: the shield's subtitle ("How about your novel instead?") and its stay button ("Back to my novel").
+- **Seal the deal** → the **Day 1 card** on Today (`renderD1Deal`): a headline from what the time is for ("Room for your novel."), whether the shield is on right now (from the schedule), a seal stamp, a tap to edit the deal, and a way to see the shield. No card, no account wall. Target: under 2 minutes.
+
+**"Say it instead" (one mic per question).** Spoken answers, because forms are tiring. The rule (CLAUDE.md): speech is turned into text and understood **on the phone only**, shown back for the user to confirm, and the recording is deleted at once. This is the only place ScrollJar transcribes anything; Diary voice notes are never transcribed.
+
+- **Permissions:** ask for microphone and speech recognition only when the mic is first tapped, never up front. If either is refused, hide the mic and keep tapping and typing.
+- **Speech to text:** `SFSpeechRecognizer` with `requiresOnDeviceRecognition = true`. If `supportsOnDeviceRecognition` is false for the phone's language, hide the mic: audio must never go to a server. Keep audio in memory only; never write it to disk.
+- **Understanding:** on phones with Apple Intelligence, Apple's on-device Foundation Models framework turns the text into the question's answers (chips, times, days, own words). On older phones, simple word-matching against the chip words, times ("after eleven", "11pm") and day names. Check current framework availability and limits before building.
+- **Showing it back:** fill in the chips and fields and show what was heard in one line. Nothing moves on by itself: the user checks and taps Next.
+- **Edge cases** (all five are clickable in the prototype's dashed "Prototype" row):
+  - **Clear:** fill it in. "We've filled it in below. Change anything that's off."
+  - **Mumbled or silent:** fill nothing. Offer "try again" or tapping.
+  - **Off-topic:** fill nothing, and give a hint with an example of an answer that would work.
+  - **Too vague:** fill what's certain and ask one quick follow-up with tap options (e.g. "At night. From about when?" 9pm / 10pm / 11pm / midnight). "Not sure" is a valid answer to the feelings question and is kept in their own words.
+  - **Something heavy** (typed or said: the word list is `HEAVY` in `prototype/app.js`): keep it in their own words and show a calm support card with a link to findahelpline.com. Never a diagnosis, never stored beyond the phone, never shared.
+
 ## 4. Shared data (App Group + backend)
 
 ```
-Deal         id, selection(FamilyActivitySelection, encoded), schedule(always|window|weekdays + times),
-             price, charityId, intention?, peekMinutes, escalation{enabled, ceiling=2x},
+Deal         id, selection(FamilyActivitySelection, encoded), schedule(presets + own times + weekdays),
+             price, charityId, forList[] (what the time is for, user's words: shield subtitle + "Back to …"),
+             peekMinutes, escalation{enabled, ceiling=2x},
              kind(personal|creator), postingWindows?[{start, minutes}]   (creator setup)
              createdAt, pendingChange?{fields, appliesAt}   (easier changes wait 24h; stricter apply now)
              endsAt?                                         (ending: free, 24h notice)
@@ -83,6 +110,9 @@ ShieldState  dealId, intendedShielded, windowEndsAt?, lastReconciledAt          
 Event        id, dealId, kind(resisted|override|peek|windowEnd|tamper|restore), at, amount?
 JarMonth     month, coins[], total, cap(default $50), settlement{status, stripePI, everyOrgReceipt}
 DiaryEntry   LOCAL ONLY (never leaves the phone unless the user exports it)
+FeelAfter    LOCAL ONLY: the setup feelings answer (chips + own words)
+WishJar      id, name, target, ratePerHour(0.50|1|2), dueDate?, members[], dailyCapHours=2   (no money moves)
+WishHours    wishJarId, userId, day, hours(0–2)   (only the count leaves the phone)
 StandbyNote  text, writtenAt  (sent only to the user's own jar members, on a wobble)
 Jar/Group    id, name, charityId, members[], visibility settings
 ```
@@ -93,6 +123,7 @@ Privacy rules:
 - The backend stores events, not content.
 - Diary entries stay on the device.
 - Coins are private by default; jar totals are shared.
+- **Wish jars:** members see the wish, the total, the date and who's in. Each person sees only their own share. Nobody sees who slipped, anyone's time or apps, or anyone else's share.
 
 ## 5. Backend (small, US-hosted)
 
@@ -113,6 +144,14 @@ Privacy rules:
 
 ## 6. Money
 
+**Wish jars move no money.** Coins in a wish jar are virtual: no Stripe, no Every.org, no IAP. The app shows the total and each person's own share; the group settles it however they like, outside ScrollJar.
+
+- **What fills it:** scroll-free time from each person's own deals. Proposed rule for the build (confirm in testing): an hour counts when it falls inside one of the person's deal schedules and nothing was opened anyway in it. A peek doesn't break it, matching the peek rule. Counted on the phone from the shadow state and events; only the number of hours per day is sent (`WishHours`).
+- **Cap:** up to 2 hours a day per person count (the default to test with users). At $1 an hour that's about $60 a month at most, shown at setup.
+- **Slips don't count and cost nothing here.** Personal deals keep sending their coins 100% to charity, as always.
+- **The date is optional.** If it passes, nothing is owed: move the date, or settle for what was reached.
+- **Plans:** free with one friend; groups of three or more need Plus.
+
 - **Penalties go through Stripe, outside Apple IAP.** This is allowed under App Store guideline 3.1.3(e); Beeminder, StickK and Forfeit are the precedents.
   - Save the card around day 3 ("want to make it real?") with a **SetupIntent** (`usage: off_session`, 3DS at save) and a plain-language mandate.
   - Run **one off-session PaymentIntent on the 1st** for the month's jar.
@@ -128,8 +167,8 @@ Privacy rules:
 
 | Prototype | SwiftUI view | Notes |
 |---|---|---|
-| `ov-onb` | OnboardingView | 4 slides → FamilyControls auth → FamilyActivityPicker → blocked. **No card, no account wall.** Target: under 2 minutes. |
-| `s-home` | TodayView | Hero panel, "Your time" session, "Your deals", tips, links |
+| `ov-onb`, `ov-preperm`, `ov-picker`, `ov-first` | OnboardingView | 8 steps with a counter: 4 slides → FamilyControls auth → FamilyActivityPicker → 3 first-deal questions with "Say it instead" → seal (§3a). **No card, no account wall.** Target: under 2 minutes. |
+| `s-home` | TodayView | Day 1 card (first days), hero panel, "Your time" session, "Your deals", tips, links |
 | `s-jar`, `s-charity`, `ov-tipout` | JarView, CharityView, TipOutView | The jar component (§7a), lid picker, monthly ceremony, visible settlement steps |
 | `s-new` | NewDealView | "Make a deal": apps, schedule, price slider $2–25, intention, "Seal the deal" |
 | `ov-deal` | DealEditView | Stricter now, easier in 24 hours, ending free with 24 hours' notice |
@@ -138,6 +177,7 @@ Privacy rules:
 | `s-usage` | UsageView | Wraps the DeviceActivityReport extension; we can't read the data |
 | `s-diary`, `ov-entry`, `ov-voice`, `s-recap`, `s-resources` | DiaryView, RecapView, ResourcesView | Local-only diary; voice notes are passive (recorded and played back, nothing analyses them) |
 | `s-friends` (tab: BOARD), `s-jardetail`, `s-challenge`, `s-invite`, `ov-compose` | BoardView, jars | **v1.1+:** build after the solo loop works |
+| `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |
 | `s-family`, `ov-famsetup`, `ov-famtip` | Families | Later phase; uses Apple Family Sharing. Kids are never charged or paid |
 | `s-creator`, `ov-crsetup` | Creators | Later phase; a creator deal is a normal deal with posting windows |
 | `s-company`, `ov-cojoin`, `ov-conote`, `ov-ideas`, `ov-cotip` | Teams | Teams pilot; see `scrolljar-teams-spec.md` |
@@ -181,10 +221,10 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
 |---|---|---|
 | **0: Accounts** | Developer account, bundle IDs, App Group, **entitlement requests filed** | Request confirmation for all 5 IDs |
 | **1: Blocking spike** (riskiest) | Auth → picker → shield with 2 buttons → notification → our app → timed unlock → automatic re-shield; shadow-state reconcile; web-domain test | On a real iPhone: 20 cycles in a row re-shield correctly, including windows over 45 minutes and an app kill/relaunch |
-| **2: Solo loop, no money** | Onboarding, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
+| **2: Solo loop, no money** | Onboarding (with "Say it instead"), Day 1 card, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
 | **3: Money** | Backend, Stripe SetupIntent, settlement job, refunds, cap, Every.org donation, tip-out ceremony, jar break and grace hour | End to end in Stripe test mode, plus one real $1 donation with a receipt |
 | **4: Membership + polish** | StoreKit 2 Plus (monthly and yearly), plans screen, 3-deal Free limit, widget, Voice Law pass on every string, accessibility | Ready for TestFlight (needs the distribution entitlement) |
-| **5: Social** | Buddy and group jars, invites with claim codes, finite feed, Wobble and standby notes | Beta testers can invite each other |
+| **5: Social** | Buddy and group jars, wish jars, invites with claim codes, finite feed, Wobble and standby notes | Beta testers can invite each other and fill a wish jar together |
 | **6: Beta** | TestFlight with 100–300 users (r/nosurf, US colleges), transparency page | First real conversion data |
 | **7: Teams pilot** | Campaigns, squads, "your hour" picker, lights jar, anonymous dashboard, notes with the on-phone privacy check | One company runs a 6-week pilot. Sell it before building (see the Teams spec) |
 | **8: Families and Creators** | Family jar and setup (Family Sharing), creator setup with posting windows, public challenges | Built in parallel once Teams works |
