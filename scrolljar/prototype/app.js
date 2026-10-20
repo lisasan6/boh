@@ -2722,11 +2722,12 @@ function renderBell(){
   const C=$('bellCard'); if(!C) return;
   C.innerHTML=`<div class="spread"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--calm)"><use href="#i-bell"/></svg>
       <div><b style="font-size:13.5px">The Bell</b><div class="tiny">once a day, Casa Jar goes quiet together</div></div></div>
-      <div class="toggle${BELL.in?' on':''}" role="switch" aria-checked="${BELL.in}" aria-label="I'm in" tabindex="0" onclick="BELL.in=!BELL.in;renderBell();toast(BELL.in?'You\'re in. Nobody sees who is.':'You\'re out. Nobody sees that either.')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
+      <div class="toggle${BELL.in?' on':''}" role="switch" aria-checked="${BELL.in}" aria-label="I'm in" tabindex="0" onclick="bellToggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
     <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">${[['19:00','7pm'],['20:00','8pm'],['21:00','9pm'],['22:00','10pm'],['07:00','7am']].map(([v,l])=>`<span class="chip${BELL.time===v?' on':''}" onclick="BELL.time='${v}';renderBell()">${l}</span>`).join('')}</div>
     <div class="tiny" style="margin-top:8px;line-height:1.5">The jar picks the time together. When it rings, an hour of shields for whoever's in. You'll see how many are off-screen, never who.</div>
     <div class="tiny devNote" role="button" tabindex="0" style="margin-top:8px;cursor:pointer;text-decoration:underline" onclick="openBell()">Prototype: ring the Bell now</div>`;
 }
+function bellToggle(){ BELL.in=!BELL.in; renderBell(); toast(BELL.in?"You're in. Nobody sees who is.":"You're out. Nobody sees that either."); }
 function openBell(){
   $('bellKicker').textContent='CASA JAR · '+hm(BELL.time).toUpperCase(); $('bellN').textContent=BELL.n;
   $('ov-bell').classList.add('on'); const b=$('bellIcon'); b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring');
