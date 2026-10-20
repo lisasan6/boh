@@ -2,7 +2,7 @@
 
 **Live page (tick items off there):** https://claude.ai/artifact/9aWMzBqBu6VQ4m12HPGQ5c (private; pinned in L's claude.ai sidebar). When an item changes, update both this file and the page.
 
-**Decided 20 Oct 2026: L went with all of Claude's suggestions (the ⭐ options).** These still need a lawyer's check, the charity partners' answers and Apple's reply, and the product docs, website and app haven't been changed to match yet. The company type (Delaware or Italian SRL) stays open.
+**Decided 20 Oct 2026: L went with all of Claude's suggestions (the ⭐ options).** These still need a lawyer's check, the charity partners' answers and Apple's reply, and the product spec, iOS build plan, rules file, website and prototype were updated to match the same day. The company type (Delaware or Italian SRL) stays open.
 
 **Each problem lists its possible solutions underneath** (⭐ = Claude's suggestion; several can be combined). On the live page you can choose them, and the choice is saved with the date. The suggested launch plan is at the end of `legal-design-options-2026-10.md`.
 
