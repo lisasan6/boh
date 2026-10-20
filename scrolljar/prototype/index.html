@@ -85,6 +85,9 @@
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
     <path d="M12 2.8l7 2.8v6c0 4.6-3 8.1-7 9.6-4-1.5-7-5-7-9.6v-6l7-2.8z"/>
   </symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.2 16.6V11a5.8 5.8 0 0111.6 0v5.6l1.6 2H4.6z"/><path d="M10 20.6a2.1 2.1 0 004 0"/><path d="M12 3.4v1.8"/>
+  </symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.6A9 9 0 019.4 3.5a9 9 0 1011.1 11.1z" fill="currentColor"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 1.8l2.9 7.3 7.3 2.9-7.3 2.9-2.9 7.3-2.9-7.3L1.8 12l7.3-2.9z" fill="currentColor"/></symbol>
   <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -737,6 +740,7 @@
     <div class="spread" style="margin:4px 2px 8px"><div class="display h2">Members</div>
       <span class="tiny">the total, never who</span></div>
     <div id="memberList"></div>
+    <div class="card" id="bellCard"></div>
     <div class="card" style="cursor:pointer" onclick="go('challenge')">
       <div class="spread"><div><b style="font-size:13.5px">Our Hours</b><div class="tiny">3 days left · everyone halves their scroll</div></div>
       <span class="pill mint">Open</span></div>
@@ -1106,6 +1110,21 @@
     <svg width="16" height="16"><use href="#i-sun" id="cornerIcon"/></svg>
   </button>
   <!-- ══ FIRST WIN — the real aha moment ══ -->
+  <!-- ══ THE BELL — once a day, a jar goes quiet together. Counts only, never who. Skipping costs nothing ══ -->
+  <div class="ov" id="ov-bell" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-bell')">✕</button>
+    <div class="bellIcon" id="bellIcon"><svg width="46" height="46"><use href="#i-bell"/></svg></div>
+    <div class="eyebrow" style="margin-top:16px;color:var(--calm-soft)" id="bellKicker">CASA JAR · 9PM</div>
+    <div class="display" style="font-size:25px;margin:8px 0 10px;line-height:1.15;color:var(--calm-ink)">The Bell.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:250px">Casa Jar is going quiet for an hour.</div>
+    <div class="bellCount"><b class="num" id="bellN">3</b> of you are off-screen now</div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="closeOv('ov-bell');startFocus(60);toast('In. The shields are on for an hour, with Casa Jar.')">Join them for an hour</button>
+      <div class="tiny" role="button" tabindex="0" style="text-align:center;margin-top:12px;cursor:pointer" onclick="closeOv('ov-bell')">Not tonight</div>
+      <div class="tiny" style="text-align:center;margin-top:8px;color:var(--calm-soft)">Nobody sees who joined. Skipping costs nothing.</div>
+    </div>
+  </div>
+
   <!-- ══ SIGN YOUR DEAL — the first deal, in your own hand (optional) ══ -->
   <div class="ov sheetwrap" id="ov-sign">
     <div class="sheet-card">

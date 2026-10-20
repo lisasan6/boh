@@ -2309,9 +2309,11 @@ function renderNewJar(){
   if(NJ.step===0){ $('newJarKicker').textContent='NEW JAR';
     B.innerHTML=`<div class="display" style="font-size:21px;margin-bottom:12px">What kind of jar?</div>
       <div class="njPick" role="button" tabindex="0" onclick="NJ.step=1;renderNewJar()"><b>A wish jar</b><span>For something you want together: a trip, a dinner out, a concert. It fills with everyone's scroll-free time, and ScrollJar never touches the money.</span></div>
+      <div class="njPick" role="button" tabindex="0" onclick="NJ.step='dinner';renderNewJar()"><b>A dinner jar, for two</b><span>Ready-made deals to share with one person: phones down at dinner, screens out of the bedroom. Same hours for both of you.</span></div>
       <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');openBack()"><b>Back a friend</b><span>Back someone's week with $5 to $25: each day they keep their deals becomes a treat for them, the rest goes to their cause.</span></div>
       <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');go('invite')"><b>Invite someone to Casa Jar</b><span>Your coins jar for UNICEF: share the deals, give together.</span></div>`;
     return; }
+  if(NJ.step==='dinner'){ renderDinner(); return; }
   $('newJarKicker').textContent='A WISH JAR';
   const nm=NJ.name.trim()||((WISH_KINDS.find(k=>k[0]===NJ.kind)||[])[1]||'');
   const by=NJ.days?(()=>{ const d=daysAgo(-NJ.days); return MON3[d.getMonth()]+' '+d.getDate(); })():'';
@@ -2711,3 +2713,49 @@ renderTricky();
   for(let d=new Date(realSince); d<=TODAY; d.setDate(d.getDate()+1)) if(d.getDate()===1&&d>realSince) tips++;
   if(!tips){ $('impA').textContent=NEXT1; $('impAL').textContent='your first tip-out'; $('impB').textContent='$'+jarTotal(); $('impBL').textContent='on its way so far'; $('impA').style.color='var(--ink)'; $('impB').style.color='var(--gold-text)'; }
 })();
+
+/* ══ THE BELL — once a day, a jar goes quiet together, at a time the jar picks (not always 9pm: shift workers fit).
+   Each person opts in. When it rings: an hour of shields for those in, and a count of how many are off-screen,
+   never who. Skipping costs nothing and it's not a deal. ══ */
+const BELL={time:'21:00',in:true,n:3};
+function renderBell(){
+  const C=$('bellCard'); if(!C) return;
+  C.innerHTML=`<div class="spread"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--calm)"><use href="#i-bell"/></svg>
+      <div><b style="font-size:13.5px">The Bell</b><div class="tiny">once a day, Casa Jar goes quiet together</div></div></div>
+      <div class="toggle${BELL.in?' on':''}" role="switch" aria-checked="${BELL.in}" aria-label="I'm in" tabindex="0" onclick="BELL.in=!BELL.in;renderBell();toast(BELL.in?'You\'re in. Nobody sees who is.':'You\'re out. Nobody sees that either.')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div></div>
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">${[['19:00','7pm'],['20:00','8pm'],['21:00','9pm'],['22:00','10pm'],['07:00','7am']].map(([v,l])=>`<span class="chip${BELL.time===v?' on':''}" onclick="BELL.time='${v}';renderBell()">${l}</span>`).join('')}</div>
+    <div class="tiny" style="margin-top:8px;line-height:1.5">The jar picks the time together. When it rings, an hour of shields for whoever's in. You'll see how many are off-screen, never who.</div>
+    <div class="tiny devNote" role="button" tabindex="0" style="margin-top:8px;cursor:pointer;text-decoration:underline" onclick="openBell()">Prototype: ring the Bell now</div>`;
+}
+function openBell(){
+  $('bellKicker').textContent='CASA JAR · '+hm(BELL.time).toUpperCase(); $('bellN').textContent=BELL.n;
+  $('ov-bell').classList.add('on'); const b=$('bellIcon'); b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring');
+}
+renderBell();
+
+/* ══ DINNER JARS — ready-made shared deals for two. Both get the same shield hours; each person's coins
+   still go to their own charity. An offer the other person accepts. ══ */
+const DINNER_T=[['dinner','Phones down at dinner','7–8:30pm, every day'],['bed','Screens out of the bedroom','10:30pm–7am, every night']];
+const DN={t:['dinner'],who:''};
+function renderDinner(){
+  $('newJarKicker').textContent='A DINNER JAR';
+  const people=BACK_PEOPLE.map(p=>p.n);
+  $('newJarBody').innerHTML=`<div class="display" style="font-size:21px;margin-bottom:4px">A jar for two</div>
+    <div class="sub" style="margin-bottom:12px">Pick what you'd like to share. You both get the same shield hours.</div>
+    ${DINNER_T.map(([k,t,w])=>`<div class="njPick${DN.t.includes(k)?' on':''}" role="checkbox" aria-checked="${DN.t.includes(k)}" tabindex="0" onclick="const i=DN.t.indexOf('${k}');i<0?DN.t.push('${k}'):DN.t.splice(i,1);renderDinner()"><b>${t}</b><span>${w}</span></div>`).join('')}
+    <div class="eyebrow" style="margin:14px 2px 8px">WITH</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${people.map(n=>`<span class="chip${DN.who===n?' on':''}" onclick="DN.who='${n}';renderDinner()">${n}</span>`).join('')}<span class="chip" onclick="closeOv('ov-newjar');go('invite')">Someone else</span></div>
+    <div class="tiny" style="margin:12px 2px;line-height:1.5">Each of you keeps your own price and charity. Changing the hours works like any deal: stricter now, easier in 24 hours.</div>
+    <button class="btn mint" ${DN.who&&DN.t.length?'':'disabled'} onclick="dinnerSend()">Send to ${DN.who||'…'}</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="NJ.step=0;renderNewJar()">Back</button>`;
+}
+function dinnerSend(){
+  const n=DN.who, what=DN.t.map(k=>DINNER_T.find(x=>x[0]===k)[1].toLowerCase()).join(' and ');
+  closeOv('ov-newjar'); toast(`Sent. ${n} can say yes or not now.`);
+  setTimeout(()=>{
+    const strip=document.querySelector('.jarStrip.wk3'), plus=strip&&strip.querySelector('.jarChip.ghost');
+    if(plus){ const c=document.createElement('div'); c.className='jarChip'; c.setAttribute('role','button'); c.tabIndex=0;
+      c.innerHTML=`<b>Dinner jar</b><span>with ${n}</span>`; c.onclick=()=>toast(`Your dinner jar with ${n}: ${what}. Same hours for both of you.`); strip.insertBefore(c,plus); }
+    toast(`${n} said yes. ${what.charAt(0).toUpperCase()+what.slice(1)}, together from tonight.`);
+  },3000);
+}

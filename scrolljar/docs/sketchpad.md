@@ -49,12 +49,12 @@
 **Approved (into sections below):**
 1. **The Last Scroll** (✅ designed 2026-10-19, prototype `ov-last`) → Usability/onboarding. One final conscious 5-min doomscroll as goodbye ritual; "That was the last unconscious one."
 2. **The Wobble button** → Social. ✅ *Fully designed 2026-07-30 — see the Ladder of Who Speaks above.*
-3. **The 9pm Bell** → Social. Shared daily quiet moment per jar; synchronized stillness as ambient belonging.
+3. **The 9pm Bell** (✅ designed 2026-10-20 as "The Bell", time picked by the jar; prototype `bellCard` / `ov-bell`) → Social. Shared daily quiet moment per jar; synchronized stillness as ambient belonging.
 4. **Letters to your future self** (L: "yasss"; ✅ designed 2026-10-19, prototype `ov-letter` / `ov-letterread`) → Mechanics. Written when you make a deal, delivered at the 30-day milestone.
 6. **"We noticed."** (✅ designed 2026-10-19, inside the tricky-hours heads-up) → Mechanics. Rare clean-danger-hour notification, budgeted within sacred touchpoints.
 8. **Sign your deal** (was "Sign your promise"; ✅ designed 2026-10-19, prototype `ov-sign`) → Usability/onboarding. Finger-drawn signature seals the first deal.
 9. **Charity spotlights as distribution** → Growth. Monthly featured cause; charities share impact back to their audiences.
-10. **Dinner Jars** → Social. Couple templates: phone-free dinners, screens-out-of-bedroom.
+10. **Dinner Jars** (✅ designed 2026-10-20; "A dinner jar, for two" in the + sheet) → Social. Couple templates: phone-free dinners, screens-out-of-bedroom.
 12. **The danger-hours forecast** (✅ designed 2026-10-19 as the Plus "tricky-hours heads-up", prototype `trickyCard`) (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
 
 **Approved with a restraint rule:**
