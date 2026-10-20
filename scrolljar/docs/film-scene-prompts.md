@@ -33,8 +33,50 @@ Before publishing, check that the generator's terms allow commercial use. Paid p
 8. **Book.** An older white man with a bald head, white tufts of hair and a big bushy white mustache sits in a deep wingback armchair. Reading glasses sit on the end of his nose. A book lies open on his lap with a phone resting across the page, and he peers down at the phone over his glasses, eyebrows raised. A floor lamp glows beside him, and on a small side table a cup of tea steams.
 9. **1 am, darkest greys.** In a dark bedroom at night, a person lies on their side in bed, the duvet pulled up, eyes wide open and tired, lit only by the mint glow of their phone. A bedside clock shows "1:07" (EXACT, verbatim). A crescent moon shows through the window, and the rest of the room fades into deep grey shadow.
 
-## Moving versions (optional)
+## The film: making it move
 
-To make a scene move, use an image-to-video tool such as Runway, Kling, Pika, Veo or Sora on the chosen still. Ask for a 3–4 second seamless loop where only small things move: the clock hopping, the dog trotting, the TV flickering. Keep the camera locked off.
+The "Sound familiar?" reel on the website shows nine moments of an ordinary day, from 7am to 1am. To turn it into a real film, use a video generator such as Sora, Veo, Kling or Runway. There are two ways to do it.
 
-I can put short looping videos in the strip instead of stills. Each one adds roughly 0.5–1 MB to the page, so it's best for 2–3 scenes, not all nine.
+### Way 1 (recommended): one clip per scene, from your stills
+
+Generate the nine stills first, as described above. Then, for each one, use the tool's **image-to-video** mode with the still as the first frame. This keeps the characters and the style the same across all nine. Use the same opening block every time, followed by that scene's motion:
+
+> Use the attached image as the first frame. Keep the drawing style, the characters, the greys, the mint phone glow and the framing exactly as they are. Animate it as an early-1930s rubber-hose cartoon: bouncy squash and stretch, drawn on twos, camera locked off. 4 seconds. Light film flicker and grain. Don't add any text, captions or logos.
+
+The motion for each scene:
+
+1. **Bed, morning:** the alarm clock hops and rings, shaking; she lifts the phone a little closer; her heavy eyelids droop, then flick open; the light stripes from the blinds shimmer.
+2. **Coffee:** the steam from the mug thins out and stops; the wall clock's hands sweep round fast; nothing else moves except his thumb, scrolling.
+3. **Bus:** the bus stop sign whooshes past the window with speed lines; the standing passenger points back at it, mouth open; she keeps scrolling, headphones bobbing.
+4. **Dog walk:** the dog trots and tugs, tail wagging, chasing the butterfly; she drifts along behind, eyes on the phone; the squirrel's head turns to watch them go.
+5. **Desk:** the wall clock's hand ticks toward five; the sticky note flutters; his thumb scrolls; the little plant droops a bit further.
+6. **Dinner:** the child holds the drawing up higher, waits, then slowly lowers it; the parent's face stays lit by the phone; the steam from the plates fades away.
+7. **Film night:** the TV flickers; she gasps and drops her popcorn; beside her he keeps scrolling, lit mint; the cat's tail flicks.
+8. **Book:** his eyes go from the book to the phone and back, eyebrows bouncing; the tea steams; a page lifts and falls back.
+9. **1am:** the bedside clock flips from 1:07 to 1:08; her eyes blink slowly; the phone glow pulses as she scrolls; the moon slips behind a cloud.
+
+If a clip comes out nearly right, regenerate just that one rather than all nine.
+
+### Way 2: the whole film from one prompt
+
+Only some tools can make a 30–40 second film with several shots in one go, and the characters may change from shot to shot. Worth a try if your tool supports it:
+
+> An original early-1930s rubber-hose cartoon short, black and white, as if projected from a scratched 35mm print: gentle flicker, light grain, a slight gate weave and a soft vignette. The characters are ordinary people drawn with thin, even ink outlines, bold blacks and clean whites, round heads, big white eyes with pie-cut pupils, bendy rubber-hose arms and legs, four-fingered hands and big rounded shoes. Backgrounds are painted greys with airbrushed shading. The only colour anywhere is the phone screens, glowing mint green (#3CF0CB), casting a soft mint light on the faces looking at them. Bouncy squash-and-stretch animation, drawn on twos. Nine shots of about four seconds each, joined by hard cuts, camera locked off, wide framing with the bottom quarter of every frame kept as plain floor or furniture.
+>
+> 1. Morning: a young Black woman in bed under a polka-dot duvet holds her phone above her face with a dreamy half-asleep grin while a twin-bell alarm clock hops and rings on the nightstand.
+> 2. A middle-aged man with round glasses hunches over his phone at a kitchen table; the steam from his coffee fades away while the wall clock's hands spin.
+> 3. A young East Asian woman in big headphones scrolls on a bus; outside the window the bus stop whooshes past, and a standing passenger points back at it.
+> 4. A young South Asian woman in a long coat walks through a park staring at her phone while a cheerful spotted dog pulls her along, chasing a butterfly.
+> 5. A young Latino man slumps at a desk scrolling his phone; the laptop shows a blank page and the wall clock ticks toward five.
+> 6. At a family dinner, a small child holds up a crayon drawing, waits, then slowly lowers it, while the parent across the table stares at a phone.
+> 7. In a dark living room, a woman gasps at a mystery film on TV and drops her popcorn, while the man beside her scrolls his phone, lit mint; a black cat flicks its tail.
+> 8. An older man with a big white mustache in a wingback armchair looks from the open book on his lap to the phone resting on it, eyebrows bouncing; his tea steams.
+> 9. In a dark bedroom at 1am, a person lies on their side, tired eyes lit only by the mint glow of the phone, while the bedside clock flips over.
+>
+> No text, captions, subtitles, logos or watermarks anywhere.
+
+### Then send me the clips
+
+I'll cut them into the reel: the title cards ("An ordinary day", "You meant every one of them.", "Break the wheel."), the subtitles, extra flicker and grain where needed, and compression for the web. The whole film will be roughly 4–6 MB, so I'll make the page load it only when someone scrolls to it. If the tool adds sound, that's fine: the website plays the film muted.
+
+Before publishing, check that the tool's terms allow commercial use (paid plans usually do), and ask for the largest landscape size it offers.
