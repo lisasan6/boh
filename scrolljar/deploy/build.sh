@@ -49,7 +49,7 @@ if grep -l 'fonts\.googleapis\|fonts\.gstatic\|\.\./prototype' dist/*.html dist/
   echo "build: a page above still points at Google Fonts or ../prototype" >&2; exit 1
 fi
 if grep -q 'class="fill"' dist/privacy.html; then
-  echo "build: WARNING: privacy.html still has [placeholders] to fill in (name, city, country)" >&2
+  echo "build: WARNING: privacy.html still has [placeholders] to fill in (name, city, country, postal address, web host, transfer safeguard)" >&2
 fi
 if grep -q "FORM_ID='YOURFORMID'" dist/site.js; then
   echo "build: WARNING: the waitlist is in demo mode. Set FORM_ID in landing/site.js" >&2

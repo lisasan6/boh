@@ -48,7 +48,8 @@ Canonical journey state. Interactive page (scrolljar-mission-control.html) rende
 - [ ] Stripe live + Apple IAP setup (Small Business Program)
 - [ ] Commitment contract + Terms (plain language; jar break + cancellation-≠-escape wording identical to in-app)
 - [ ] US commercial co-venturer review (mitigated by Every.org structure) before "we donate" marketing
-- [ ] Privacy policy + data minimization posture (US launch; GDPR at EU expansion)
+- [ ] Privacy policy + data minimization posture (**GDPR likely applies from day one** because the founder is in Italy; see `legal-brief-2026-10.md` §1.3)
+- [ ] **Read `legal-brief-2026-10.md` with counsel** (money flow, Apple 3.2.2(iv)/4.10, children, card-fee surcharge)
 
 ## 🚀 Beta & launch (weeks 10–16)
 - [ ] TestFlight 100–300 (r/nosurf, US colleges) — conversion assumption (6% of activated) gets its first real data here
