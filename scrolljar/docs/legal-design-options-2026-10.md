@@ -106,10 +106,64 @@ Each item shows: **now** (what the product does today), **option** (the change),
 
 ---
 
+## Alternatives and workarounds (brainstorm, 21 Oct 2026)
+
+Ideas to test with a lawyer and the partners. **Suggested** marks Claude's pick. The same options are on the live page (https://claude.ai/artifact/9aWMzBqBu6VQ4m12HPGQ5c), where L can choose one per topic. The choice is saved there and should be copied into the list below.
+
+**Money flow** (pain point 1; options #1–2 above)
+- **Honor jar with web checkout (suggested).** The app counts coins but moves no money. On the 1st, a pre-filled web page lets the user pay the charity platform directly (Apple Pay, one tap) and get their own receipt. Cleanest legally; some people may not pay.
+- **Partner charges the card.** Change, Pledge or an Every.org enterprise deal charges the user's card each month on its own account. Stays automatic, but nobody offers it publicly, so it has to be asked for.
+- **Cause funds (suggested).** Users pick a cause (oceans, hunger, mental health…), each run as a fund by one partner charity. That means 5–10 agreements instead of a million consents.
+- **Our own ScrollJar Foundation.** A nonprofit that receives coins and passes them on. Could become Apple-approved, but takes months and is US only. Long-term.
+- **ScrollJar donates its own money.** Users pay ScrollJar, which gives the same amount to charity. Coins become revenue (taxed), users get no receipts, and state registration applies. Not advised.
+
+**Apple's rules** (pain point 2)
+- **Donations on the web (suggested).** Link out to a web page for the donation (allowed in US apps since 2025). This is the honor jar.
+- **Apple Pay to approved nonprofits.** If every listed charity is Apple-approved, Apple allows in-app donations to them with Apple Pay. Needs checking.
+- **Plus sells what's on top (suggested).** Blocking, the pause and the kindness features stay free forever. Plus is groups, stats, the heads-up and covered fees, as other blocking apps do.
+- **Ask App Review early (suggested).** A short written question before building, then an early TestFlight build.
+
+**Charities have to agree** (pain point 3; option #1)
+- **Cause funds (suggested):** the fewest agreements.
+- **A curated list of 20–50:** each signs a one-page agreement. Change can automate the consent.
+- **"Suggest a charity" (suggested):** ScrollJar asks the charity to opt in and adds it once it agrees, so the list grows.
+- **Hawaii sees opted-in charities only (suggested).**
+
+**Card fee on top** (pain point 6; option #3)
+- **ScrollJar pays the fees (suggested).** About 3–5% of coin volume, paid from membership revenue. Makes "the full amount arrives" true, which is also a strong marketing line.
+- **Optional "cover the fee" tick** on the free plan, unticked by default.
+- **Bank payments.** ACH (US) and SEPA (Europe) cost much less than cards, and Every.org covers fees for bank donations.
+
+**The switch-off charge** (pain point 7; option #4)
+- **One normal coin, 1× (suggested):** easy to defend, still discourages sudden exits.
+- **No charge:** switching off ends the deal; the free 24-hour exit already exists.
+- **None in the EU for the first 14 days:** keeps the charge elsewhere and respects the EU withdrawal right.
+
+**Children (Families)** (pain point 5; options #5–6)
+- **No kid accounts (suggested).** Apple's Family Controls lets the parent manage the child's phone, so everything stays under the parent's account: no child names on our server and no posting.
+- **Launch Families later (suggested),** after a children's-privacy review. It's already "coming after launch".
+- **Money features 18+ (suggested):** coins, Plus and Backing for adults only.
+
+**EU privacy and company structure** (pain point 4)
+- **GDPR as the worldwide baseline (suggested).** The strictest rules; meeting them once covers most countries.
+- **Host data in the EU (suggested).** Supabase's EU region reduces the US transfer problem.
+- **Company:** an Italian SRL first with a US company later, or a Delaware company with an EU representative. Decide with an advisor.
+
+**"100% to charity" wording** (pain point 8; option #9)
+- **"…and we pay the fees" (suggested):** "Every coin goes to your charity. We keep none of it, and we pay the fees." This needs ScrollJar to pay the fees, as above.
+- **The safe version:** "We keep none of it", plus a one-line note in the charity picker on partner fees and timing.
+
+### A launch plan that avoids most of this
+1. **Version 1 (US only):** shields, the pause, deals and the honor jar with web checkout. Cause funds or a curated list. Money features 18+, no Families, ScrollJar pays the fees.
+2. **Version 2:** automatic charging through a partner, once a deal and a lawyer's OK are in place.
+3. **Version 3:** Families (parent-only data), then the EU with local charity partners.
+
+---
+
 ### Quick decision list
 - [ ] 1. Curated, consenting charities at launch
-- [ ] 2. Money flow: A (user completes on partner checkout) or B (partner charges on its own account)
-- [ ] 3. Optional "cover the fee" tick
+- [ ] 2. Money flow: A (honor jar: user completes on partner checkout, suggested, ideally with cause funds) or B (partner charges on its own account)
+- [ ] 3. Card fees: ScrollJar pays (suggested) / optional "cover the fee" tick / bank payments
 - [ ] 4. Switch-off charge: (a) 1× / (b) 2× / (c) not for deletion / (d) none in EU first 14 days
 - [ ] 5. Parent-name receipts for Families
 - [ ] 6. Money features 18+
@@ -118,3 +172,6 @@ Each item shows: **now** (what the product does today), **option** (the change),
 - [ ] 9. Defensible charity wording and disclosures
 - [ ] 10. Fixed-position accessibility option
 - [ ] 11. Research opt-in and ethics approval
+- [ ] 12. Company: Italian SRL first, or Delaware with an EU representative
+- [ ] 13. EU data hosting
+- [ ] 14. Launch plan: Version 1 US-only honor jar, then partner automation, then Families and the EU

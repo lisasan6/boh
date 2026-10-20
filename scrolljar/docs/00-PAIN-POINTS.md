@@ -2,6 +2,8 @@
 
 **Live page (tick items off there):** https://claude.ai/artifact/9aWMzBqBu6VQ4m12HPGQ5c (private; pinned in L's claude.ai sidebar). When an item changes, update both this file and the page.
 
+**Options and workarounds** for the top items, with a suggested launch plan, are on the live page and in `legal-design-options-2026-10.md`.
+
 **Keep this list current.** When an item is solved, tick it and add the date and what was decided. When a new one turns up, add it with its source. Last reviewed: **21 October 2026**.
 
 Not legal advice. The details and sources for every item are in the linked docs.
@@ -75,7 +77,7 @@ Not legal advice. The details and sources for every item are in the linked docs.
 
 **Full detail:**
 - `legal-brief-2026-10.md` (start here)
-- `legal-design-options-2026-10.md` (the 11 decisions)
+- `legal-design-options-2026-10.md` (the decisions, plus alternatives, workarounds and a launch plan)
 - `legal-research-2026-10/` (the evidence)
 - `science-verified-2026-10.md`
 - `news-verified-2026-10.md`
