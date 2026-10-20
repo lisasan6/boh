@@ -76,6 +76,8 @@ These files are referenced in the docs but no longer exist:
 
 ## 4. OPEN: what's blocking what
 
+**Pain points at a glance:** `docs/00-PAIN-POINTS.md` (live list) and the tickable page https://claude.ai/artifact/9aWMzBqBu6VQ4m12HPGQ5c. Keep both current.
+
 ### 🔴 0. Legal: the money flow and Apple's charity rules (found 2026-10-20)
 
 Read **`docs/legal-brief-2026-10.md`** before building payments. Three things change the design:
