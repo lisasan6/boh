@@ -138,7 +138,7 @@ Every public claim must trace to `science-dossier-bibliography.md`, `psychology-
 
 - Headline: **"Your time belongs to you. Let's go get it back."**
 - Whisper line: *"You opened it to check one thing. That was 40 minutes ago."*
-- Punch line: *"Every other app like this keeps that money. We never touch it."* ⚠️ Not true of *every* app (stickK sends forfeits to a friend or a charity): in public use *"Most apps like this keep that money."* (L to confirm; 2026-10-20).
+- Punch line: *"Most apps like this keep that money. We never touch it."* (L, 2026-10-20: "most", not "every", because some apps, such as stickK, send forfeits to a friend or a charity.)
 - Win-win (its own home-page section, "The win-win"): *"Either you win the hour, or a charity does."* / *"Both doors are a win. The only one left out is the app that wanted your time."* (Time-neutral since 2026-10-14: no "night" or "evening".)
 - FAQ and app onboarding: *"Watching what you love is fine. Autopilot isn't."*
 - **L's lines (2026-10-20), now on the home page:** *"Break the wheel."* (the film reel's last title card) · *"You break the habit one choice at a time."* (end of "Another blocking app? Not quite.") · *"Take back your life and time"* (the label above "Time, returned."). Also good for the App Store, ads and social posts.
