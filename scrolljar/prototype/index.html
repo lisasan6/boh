@@ -507,7 +507,7 @@
   <div class="screen" id="s-friends">
     <div class="spread" style="margin-bottom:12px">
       <div><div class="eyebrow">BOARD</div><div class="display" style="font-size:21px;line-height:1.2;margin-top:4px">What your people did instead</div></div>
-      <button class="iconBtn" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
+      <button class="iconBtn" aria-label="Post what you did instead" onclick="openCompose()"><svg width="17" height="17"><use href="#i-camera"/></svg></button>
     </div>
     <div class="d1">
       <div class="jarStrip" id="d1WishStrip" hidden>
@@ -913,9 +913,9 @@
       <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div>
       <div class="tiny" id="priceNote" style="margin-top:6px"></div>
     </div>
-    <div class="card spread" style="margin-top:-4px;cursor:pointer" onclick="if(!event.target.closest('.riseWarn span')){NEW.rise=!NEW.rise;renderNew()}">
+    <div class="card spread" id="newRiseRow" role="switch" aria-checked="false" aria-label="Raise it if it gets easy" style="margin-top:-4px;cursor:pointer" onclick="if(!event.target.closest('.riseWarn span')){NEW.rise=!NEW.rise;renderNew()}">
       <div style="flex:1;min-width:0;padding-right:10px"><b style="font-size:13px">Raise it if it gets easy</b><div class="tiny" id="riseNote" style="line-height:1.5"></div></div>
-      <div class="toggle" id="newRise" role="switch" aria-checked="false" aria-label="Rising price" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"></div>
+      <div class="toggle" id="newRise" aria-hidden="true"></div>
     </div>
     <div class="eyebrow" style="margin:14px 0 8px">4 · WHAT IS THIS TIME FOR? <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">· optional</span></div>
     <div class="card"><input id="newFor" aria-label="What this time is for" placeholder="my novel · morning runs · my kid" maxlength="40" oninput="NEW.forWhat=this.value;renderNew()" style="width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13.5px;font-family:'Inter';font-weight:600"></div>
@@ -929,7 +929,7 @@
 
   <!-- ══ PAYWALL ══ -->
   <div class="screen" id="s-paywall">
-    <div class="row" style="margin-bottom:12px"><span style="font-size:19px;cursor:pointer" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
+    <div class="row" style="margin-bottom:12px"><span class="backBtn" aria-label="Back" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
     <div class="sub" style="margin-bottom:14px">Real coins are free for everyone, and so is kindness: the pause, the peek valve and rough-day support are in every plan. Plus is how ScrollJar earns money, so we never need a cent of your jar.</div>
     <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 deals · buddy jar · card fee shown on top</div></div>
     <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered · unlimited deals · groups and challenges · tricky-hours heads-up · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>

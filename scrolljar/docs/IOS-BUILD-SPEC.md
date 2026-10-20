@@ -210,6 +210,7 @@ Privacy rules:
 - Buttons: 16px radius.
 - Motion: "Nintendo" grammar (squash and stretch, elastic springs). Honour Reduce Motion.
 - Navigation: every sheet and pop-up has a close button or its own way out; every screen off a tab has a back arrow.
+- Accessibility (checked in the prototype on 2026-10-20 with axe-core, WCAG 2.1 AA): every tappable thing is a real Button with a label (toggles are switches with their row's title), tap targets are at least 44 points, small text uses the faint ink at 4.5:1 or better (night `#938EBF`, day `#555B6F`), Dynamic Type and VoiceOver work on every screen, and Reduce Motion is honoured everywhere.
 
 ### 7a. The jar component
 

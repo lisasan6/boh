@@ -5,7 +5,7 @@
   --mint:#37E2C0; --violet:#8B7CF6; --blue:#5AA9FF; --peach:#FF9E7A;
   --chrome-1:#F2F7FA; --chrome-2:#A8B8C8;
   --gold:#FFC94D; --gold-hi:#FFE9A8; --gold-lo:#D8951A; --gold-text:#FFC94D;
-  --ink:#EFEDFF; --ink-2:#A9A4D8; --ink-3:#6C6795;
+  --ink:#EFEDFF; --ink-2:#A9A4D8; --ink-3:#938EBF;
   --calm-bg:#0C1A1C; --calm:#4DB6A5; --calm-soft:#93D3C6; --calm-ink:#EAF7F3;
   --scr-bg:radial-gradient(125% 92% at 15% 0%, #221F52 0%, #14142E 44%, #0B0C1A 100%);
   --scr-calm:radial-gradient(125% 92% at 20% 5%, #123231 0%, #0E211F 46%, #0A1614 100%);
@@ -30,7 +30,7 @@ body[data-mode="day"]{
   --mint:#00C2A3; --violet:#6A2CF0; --blue:#1E63FF; --peach:#FF5C2B;
   --chrome-1:#FFFFFF; --chrome-2:#7A8B9C;
   --gold-text:#B26B00;
-  --ink:#0D0F1F; --ink-2:#3C4159; --ink-3:#6E7488;
+  --ink:#0D0F1F; --ink-2:#3C4159; --ink-3:#555B6F;
   --calm-bg:#E3F1EA; --calm:#00806C; --calm-soft:#3A6B60; --calm-ink:#06302A;
   --scr-bg:
     radial-gradient(88% 46% at 4% -8%, rgba(255,138,74,.28), transparent 60%),
@@ -887,3 +887,10 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .bellCount{margin-top:18px;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--calm-ink);font-size:13px;font-weight:600}
 .bellCount b{font-size:16px;margin-right:2px}
 .njPick.on{border-color:var(--mint);background:rgba(55,226,192,.08)}
+
+/* accessibility (2026-10-20): everything tappable can be reached and used from a keyboard or switch control,
+   shows where focus is, and small controls get a bigger invisible hit area (aiming for 44 points) */
+.phone :focus-visible{outline:2px solid var(--mint);outline-offset:2px;border-radius:inherit}
+.backBtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:-10px -6px -10px -14px}
+.hitPad{position:relative}
+.hitPad::after{content:"";position:absolute;inset:-12px -8px}

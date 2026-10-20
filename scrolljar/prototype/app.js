@@ -837,7 +837,7 @@ function renderNew(){
   $('priceV').textContent=NEW.price;
   $('schedNote').textContent = custom ? win+', every day' : SCHED_NOTE[NEW.sched];
   $('priceNote').textContent = (S.stakes?'each time you open anyway':'each time you open anyway, once you make it real')+' · 100% to '+charity().n;
-  $('newRise').classList.toggle('on',NEW.rise); $('newRise').setAttribute('aria-checked',NEW.rise);
+  $('newRise').classList.toggle('on',NEW.rise); $('newRiseRow').setAttribute('aria-checked',NEW.rise);
   $('riseNote').innerHTML = NEW.rise ? `In a week: ${riseSay(NEW.price)}. Back to $${NEW.price} every Monday.`+riseCapWarn(NEW.price)
     : 'optional · each opening in a week costs a bit more, never more than double';
   const p=NEW.picked&&pickedName(NEW.picked);
@@ -1920,7 +1920,7 @@ function renderFamily(animate){
     <div class="card lidCard"><b style="font-size:13px">Family lid colour</b><div class="tiny" style="margin-top:2px">anyone in the family can change it</div>
       <div class="swatches" data-lidpick="fam"></div></div>
     <div class="card"><div class="spread"><div><div style="font-size:12.5px;font-weight:700">My coins in the family jar</div><div class="tiny">only the grown-ups' total shows, never whose</div></div>
-      <div class="toggle${FAM.coinsIn?' on':''}" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
+      <div class="toggle${FAM.coinsIn?' on':''}" role="switch" aria-checked="${FAM.coinsIn}" aria-label="My coins in the family jar" tabindex="0" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
     <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What the family sees</b></div>
       <div class="coRule ok">The jar, the treat and everyone's cause</div>
       <div class="coRule ok">Each kid's gift on the tip-out receipt, with their name</div>
@@ -2760,3 +2760,29 @@ function dinnerSend(){
     toast(`${n} said yes. ${what.charAt(0).toUpperCase()+what.slice(1)}, together from tonight.`);
   },3000);
 }
+
+/* ══ ACCESSIBILITY — anything with a click handler that isn't a real button or link becomes one for keyboards
+   and screen readers (role, tab stop, Enter/Space), and controls under 24 points tall get a bigger hit area.
+   Runs on load and whenever something is redrawn. In the iOS app these are native Buttons. ══ */
+(function(){
+  const NATIVE=['BUTTON','A','INPUT','SELECT','TEXTAREA','LABEL'];
+  function fix(root){
+    (root.querySelectorAll?root:document).querySelectorAll('[onclick]').forEach(el=>{
+      if(el.dataset.a11y) return; el.dataset.a11y='1';
+      if(NATIVE.includes(el.tagName)) return;
+      if(el.classList.contains('toggle')&&!el.hasAttribute('role')){
+        el.setAttribute('role','switch'); el.setAttribute('aria-checked',el.classList.contains('on'));
+        const box=el.closest('.spread,.card'), lab=box&&box.querySelector('b'); if(lab&&!el.hasAttribute('aria-label')) el.setAttribute('aria-label',lab.textContent.trim());
+        el.addEventListener('click',()=>setTimeout(()=>el.setAttribute('aria-checked',el.classList.contains('on'))));
+      }
+      if(!el.hasAttribute('role')) el.setAttribute('role','button');
+      if(el.textContent.trim()==='‹'&&!el.hasAttribute('aria-label')) el.setAttribute('aria-label','Back');
+      if(!el.hasAttribute('tabindex')) el.tabIndex=0;
+      if(!el.getAttribute('onkeydown')) el.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target===el){ e.preventDefault(); el.click(); } });
+      requestAnimationFrame(()=>{ const r=el.getBoundingClientRect(); if(r.height&&r.height<24&&getComputedStyle(el,'::after').content==='none') el.classList.add('hitPad'); });
+    });
+    document.querySelectorAll('.winStrip,.jarStrip').forEach(s=>{ if(!s.hasAttribute('tabindex')){ s.tabIndex=0; s.setAttribute('role','region'); s.setAttribute('aria-label',s.classList.contains('jarStrip')?'Your jars':'Your wins this week'); } });
+  }
+  fix(document);
+  new MutationObserver(ms=>{ for(const m of ms) m.addedNodes.forEach(n=>{ if(n.nodeType===1) fix(n.parentElement||n); }); }).observe(document.querySelector('.phone')||document.body,{childList:true,subtree:true});
+})();
