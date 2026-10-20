@@ -1,6 +1,6 @@
 # ScrollJar: handoff to Claude Code
 
-**Date:** 2026-10-13, updated 2026-10-16. Read this first. Anything not marked OPEN is decided.
+**Date:** 2026-10-13, updated 2026-10-20. Read this first. Anything not marked OPEN is decided.
 
 This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 
@@ -27,7 +27,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 | Product spec v1.3 | Canonical (v1.3 notes on top say what changed since v1.2) | `docs/scrolljar-spec.md` |
 | Platform research | Re-verified 2026-07-30 | `docs/research-findings.md` |
 | Design system (Aurora Chrome) | Locked for the app; jar character and motion updated 2026-10-15 | `docs/design-brief.md` |
-| Psychology, evidence, science | Complete, with citations | `docs/psychology-playbook.md`, `docs/evidence-dossier.md`, `docs/science-dossier-bibliography.md` |
+| Psychology, evidence, science | **Re-verified at source 15–16 Oct 2026** and corrected (one retracted paper removed; many claims softened). Read the two reports first | `docs/science-verified-2026-10.md` (science) and `docs/news-verified-2026-10.md` (courts, laws, regulators), with the audit in `docs/science-verification-2026-10/`; then `docs/psychology-playbook.md`, `docs/science-dossier-bibliography.md`, `docs/evidence-dossier.md` |
 | Teams (B2B) mini-spec | Decisions of 2026-10-14 on top (scroll-free hours, pricing, notes) | `docs/scrolljar-teams-spec.md` |
 | Ideas, Wobble design, open questions | Living doc | `docs/sketchpad.md` |
 | **iOS build plan** | v1.1, 2026-10-15 | `docs/IOS-BUILD-SPEC.md` |
@@ -109,6 +109,17 @@ The live list is in `sketchpad.md` → "Open questions":
 - **Q16 US legal entity** (needs an advisor; it gates the Stripe and App Store contracts)
 - Q21 Wobble × Teams
 
+### 🟡 5. Facts to re-check (added 2026-10-20)
+
+Every public claim must trace to `science-dossier-bibliography.md`, `psychology-playbook.md` or `news-verified-2026-10.md`. Before using anything else, check it at its source first.
+
+- **About 27 Oct:** confirm the Los Angeles trial still starts **28 Oct** (website "Why now" list, tagged "Scheduled"), then update that line once it starts or moves.
+- **Monthly:** the K.G.M. appeals (Meta, YouTube), New Mexico's appeal, any EU final decision on TikTok or Meta (both still preliminary), and other "Why now" items. Update the "Status as of" date on the website when you do.
+- **Not yet verified, so keep out of public copy:** most of the countries table in `evidence-dossier.md` Part 2 (Indonesia, Malaysia, Turkey, Denmark and others), the Meta "think slot machines" / "addicted" quotes, the US Surgeon General's often-quoted lines.
+- **Never cite:** Ariely & Wertenbroch 2002 (retracted 2026), Shu et al. 2012 "signing at the beginning" (retracted 2021; matters for "Sign your deal"), anything by Brian Wansink. The full list is in the playbook's "Never say."
+- **New features with no evidence behind them yet** (rising price, the Day 7 share card, sign your deal, the Last Scroll, letters): fine as design choices, but never say "research shows." One unpublished study found streak feedback *increased* scrolling, so test the Day 7 card.
+- **Competitors:** don't say all stakes apps keep the money. Forfeit does; stickK sends it to a friend or a charity. "Most stakes apps keep your money" is accurate (checked 2026-10-20).
+
 ## 5. Where the docs disagree (later decisions win)
 
 - **Currency:** `psychology-playbook.md` and the brief use € in places. **USD/US-first is decided** (spec v1.2).
@@ -127,7 +138,7 @@ The live list is in `sketchpad.md` → "Open questions":
 
 - Headline: **"Your time belongs to you. Let's go get it back."**
 - Whisper line: *"You opened it to check one thing. That was 40 minutes ago."*
-- Punch line: *"Every other app like this keeps that money. We never touch it."*
+- Punch line: *"Most apps like this keep that money. We never touch it."* (L, 2026-10-20: "most", not "every", because some apps, such as stickK, send forfeits to a friend or a charity.)
 - Win-win (its own home-page section, "The win-win"): *"Either you win the hour, or a charity does."* / *"Both doors are a win. The only one left out is the app that wanted your time."* (Time-neutral since 2026-10-14: no "night" or "evening".)
 - FAQ and app onboarding: *"Watching what you love is fine. Autopilot isn't."*
 - **L's lines (2026-10-20), now on the home page:** *"Break the wheel."* (the film reel's last title card) · *"You break the habit one choice at a time."* (end of "Another blocking app? Not quite.") · *"Take back your life and time"* (the label above "Time, returned."). Also good for the App Store, ads and social posts.

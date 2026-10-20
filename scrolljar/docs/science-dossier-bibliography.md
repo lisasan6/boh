@@ -179,6 +179,7 @@ Use these only as context.
 
 ## Removed in the October 2026 check
 - **Ariely & Wertenbroch (2002)**, "Procrastination, Deadlines, and Performance," *Psychological Science*. **Retracted on 2 September 2026**: its data were judged untrustworthy, and a 2024–26 replication found no effect. Never cite it.
+- **Shu et al. (2012)**, "Signing at the beginning makes ethics salient…," *PNAS*. **Retracted in 2021** (fabricated data). Relevant because of the "Sign your deal" feature: never cite it.
 - Polarisation results from Allcott et al. (2020), which did not hold in 2020.
 - The claim that tech insiders "explicitly borrowed" slot-machine patterns (not in Schüll).
 - Any citation of **Brian Wansink**'s work on "stopping cues" or portion size (research misconduct, many retractions). Use the autoplay experiment above instead.

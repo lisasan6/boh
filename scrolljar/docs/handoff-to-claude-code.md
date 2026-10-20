@@ -38,7 +38,7 @@ nav → hero (whisper line, headline, email form, phone + 2 floating app cards) 
 
 - Headline: **"Your time belongs to you. Let's go get it back."**
 - Whisper above it: *"You opened it to check one thing. That was 40 minutes ago."*
-- Hero punch: *"Every other app like this keeps that money. We never touch it."*
+- Hero punch: *"Most apps like this keep that money. We never touch it."*
 - Win-win: *"Either you win the night, or a charity does."* / *"The only one who never wins is the app that wanted your night."*
 - Voice Law applies: never use failed, wasted, addict, guilty, shame, broke, violation. No shame, ever, in either direction.
 - L's core note: lead with the positive promise (time back, you in charge), then the mechanism. Differentiation must be understandable **immediately**.
