@@ -24,7 +24,16 @@ Each item shows: **now** (what the product does today), **option** (the change),
 - **Option B (keeps it automatic):** a partner that charges the user's card **on its own account** (a Stripe Connect "direct charge"), so the money never lands in ScrollJar's balance. The charity-partner comparison says who can do this.
 - **Why:** if money passes through ScrollJar, money-transmitter licensing and state charity-registration rules come into play. Apple also says charity money must be collected outside the app (e.g. on a web page) unless you're an approved nonprofit.
 - **Cost:** with A, some users may not complete the donation, and nothing forces them (the deal still works as friction and a pledge). With B, we depend on one partner's terms and fees.
-- **Your call:** A or B? This depends on the partner comparison and on counsel.
+- **What the partner comparison found** (21 Oct 2026, `legal-research-2026-10/charity-partners.md`, checked on each provider's own pages):
+  - **No partner publicly offers option B as-is**, meaning charging the user's card each month for a varying amount, on the partner's own account, with the receipt to the user. It has to be asked for.
+  - Partners with "the platform pays" APIs (Change, Pledge, Goodstack, Benevity) put coin money in ScrollJar's hands first.
+  - Partners where "the donor pays" (Every.org, Goodstack's hosted page, Pledge forms, PayPal Giving Fund) keep ScrollJar out of the money, which is option A.
+  - **Contact Change first** (getchange.io): the strongest US compliance help, including California AB 488 and Hawaii consent, a single co-venturer agreement and state bonds. It costs $999–$3.5k a month plus $500 a month per state for the fundraising-platform package.
+  - **Contact Pledge second** (pledge.to): the cheapest (5% plus card fees, no platform fee). It says users count as the donors and can get receipts, but its terms say charity consent "is NOT required", which clashes with California and Hawaii.
+  - Card fees can end up charged twice (ours plus the partner's), which matters for the "100%" claim.
+  - No partner says anything about Apple's rules.
+  - The questions to ask each partner are in section 4 of that file.
+- **Your call:** A or B? Ask Change and Pledge first (can they charge the user directly?), then decide with counsel.
 
 ## 3. Card fee: an optional "cover the fee" tick instead of adding it on top
 - **Now (Free plan):** the card fee is added on top so the full price reaches the charity. Plus covers it.
