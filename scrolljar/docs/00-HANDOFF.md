@@ -130,6 +130,7 @@ The live list is in `sketchpad.md` → "Open questions":
 - Punch line: *"Every other app like this keeps that money. We never touch it."*
 - Win-win (its own home-page section, "The win-win"): *"Either you win the hour, or a charity does."* / *"Both doors are a win. The only one left out is the app that wanted your time."* (Time-neutral since 2026-10-14: no "night" or "evening".)
 - FAQ and app onboarding: *"Watching what you love is fine. Autopilot isn't."*
+- **L's lines (2026-10-20), now on the home page:** *"Break the wheel."* (the film reel's last title card) · *"You break the habit one choice at a time."* (end of "Another blocking app? Not quite.") · *"Take back your life and time"* (the label above "Time, returned."). Also good for the App Store, ads and social posts.
 - L's reference site is **freedom.to**: professional, credible, structured. We can't produce its people videos, so we use real app screens instead.
 
 ## 7. Suggested order of work
