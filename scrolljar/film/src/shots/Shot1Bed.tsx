@@ -93,16 +93,15 @@ export const Shot1Bed: React.FC = () => {
       <Inked fill={WHITE} shapes={[{k: 'p', d: 'M262 600 Q250 520 330 505 Q440 488 560 512 Q610 530 600 600 Q590 660 470 668 Q330 676 280 650 Q262 632 262 600 Z'}]} />
       <path d="M300 560 q30 -10 60 4 M520 640 q30 -2 52 -22" stroke={INK} strokeWidth={2.5} fill="none" strokeLinecap="round" />
 
-      {/* her curls, fanned across the pillow: big bold black lobes */}
+      {/* her curls, flowing out across the pillow behind her head */}
       {(() => {
-        const curls = Array.from({length: 13}, (_, i) => {
-          const ang = ((150 + i * 17) * Math.PI) / 180;
-          const d = 104 + (i % 2) * 22;
-          return [478 + Math.cos(ang) * d * 1.08, 520 + Math.sin(ang) * d, 32 - (i % 3) * 4] as const;
-        });
+        const curls: [number, number, number][] = [
+          [300, 560, 26], [322, 518, 28], [352, 482, 28], [394, 456, 26], [440, 440, 24], [488, 436, 22], [530, 448, 20],
+          [292, 604, 24], [318, 642, 22], [356, 666, 20], [336, 600, 22],
+        ];
         return (
           <g>
-            <ellipse cx={440} cy={530} rx={120} ry={112} fill={INK} />
+            <path d="M560 470 Q500 420 420 432 Q330 446 300 520 Q280 600 330 660 Q380 690 440 640 Z" fill={INK} />
             {curls.map(([x, y, r], i) => (
               <circle key={i} cx={x} cy={y} r={r + OL} fill={INK} />
             ))}
@@ -116,37 +115,37 @@ export const Shot1Bed: React.FC = () => {
       {/* black satin pyjamas with white piping, and a short neck */}
       <Inked fill={INK} shapes={[{k: 'p', d: 'M420 700 Q430 625 495 606 Q560 594 606 624 L626 704 Z'}]} />
       <path d="M452 640 q30 22 64 -2 M560 610 q20 10 30 34" stroke={WHITE} strokeWidth={4} fill="none" strokeLinecap="round" />
-      <Hose a={[478, 592]} b={[484, 622]} w={34} fill={SKIN_DEEP} />
+      <Hose a={[484, 600]} b={[490, 626]} w={26} fill={SKIN_DEEP} />
 
       {/* her head: a big round baby face turned up toward the phone */}
       <g transform={`translate(480 518) rotate(-12) translate(0 ${breathe * 3})`}>
         <Inked
           fill={SKIN_DEEP}
           shapes={[
-            {k: 'p', d: 'M-90 -6 C-94 -86 90 -94 92 -8 C94 44 60 88 2 90 C-58 88 -90 46 -90 -6 Z'},
-            {k: 'c', cx: -88, cy: 16, r: 17},
+            {k: 'p', d: 'M-76 -22 C-80 -96 80 -100 80 -22 C80 26 52 72 8 98 C-34 80 -76 28 -76 -22 Z'},
+            {k: 'c', cx: -74, cy: 8, r: 15},
           ]}
         />
-        <path d="M-92 10 q8 -8 10 8" stroke={INK} strokeWidth={3} fill="none" />
+        <path d="M-78 2 q8 -8 10 8" stroke={INK} strokeWidth={3} fill="none" />
         {/* a hoop earring */}
-        <circle cx={-92} cy={44} r={13} fill="none" stroke={INK} strokeWidth={OL + 2} />
-        <circle cx={-92} cy={44} r={13} fill="none" stroke={G2} strokeWidth={2.5} />
+        <circle cx={-76} cy={34} r={12} fill="none" stroke={INK} strokeWidth={OL + 2} />
+        <circle cx={-76} cy={34} r={12} fill="none" stroke={G2} strokeWidth={2.5} />
         {/* spit curls along the hairline */}
-        {[[-74, -44, 24], [-48, -70, 26], [-14, -84, 26], [22, -84, 25], [54, -70, 24], [78, -46, 20]].map(([x, y, r], i) => (
+        {[[-64, -58, 20], [-36, -80, 20], [-4, -88, 19], [28, -86, 18], [56, -72, 17], [74, -50, 13]].map(([x, y, r], i) => (
           <g key={i}>
             <circle cx={x} cy={y} r={r} fill={INK} />
             <path d={`M${x - r * 0.4} ${y + r * 0.1} q${r * 0.4} ${-r * 0.6} ${r * 0.8} ${-r * 0.1}`} stroke={WHITE} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
           </g>
         ))}
-        <Brow x={-30} y={-26 - browLift} w={28} arch={9} thick={4} />
-        <Brow x={34} y={-25 - browLift} w={28} arch={9} thick={4} />
-        <BigEye x={-30} y={6} rx={25} ry={32} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="l" />
-        <BigEye x={32} y={8} rx={25} ry={32} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="r" />
-        <Inked fill={SKIN_DEEP} shapes={[{k: 'e', cx: 4, cy: 46, rx: 10, ry: 8}]} />
-        <ellipse cx={1} cy={43} rx={3.5} ry={2.5} fill={WHITE} opacity={0.6} />
-        <Mouth x={4} y={64} w={46} smile={0.85} open={0} />
-        <ellipse cx={-52} cy={46} rx={13} ry={8} fill={WHITE} opacity={0.12} />
-        <ellipse cx={58} cy={48} rx={13} ry={8} fill={WHITE} opacity={0.12} />
+        <Brow x={-27} y={-34 - browLift} w={26} arch={9} thick={4} />
+        <Brow x={29} y={-33 - browLift} w={26} arch={9} thick={4} />
+        <BigEye x={-27} y={2} rx={22} ry={30} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="l" />
+        <BigEye x={27} y={4} rx={22} ry={30} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="r" />
+        <Inked fill={SKIN_DEEP} shapes={[{k: 'e', cx: 3, cy: 44, rx: 8, ry: 7}]} />
+        <ellipse cx={0} cy={41} rx={3} ry={2.5} fill={WHITE} opacity={0.6} />
+        <Mouth x={5} y={64} w={38} smile={0.8} open={0} />
+        <ellipse cx={-46} cy={40} rx={11} ry={7} fill={WHITE} opacity={0.12} />
+        <ellipse cx={50} cy={42} rx={11} ry={7} fill={WHITE} opacity={0.12} />
       </g>
 
       {/* the polka-dot duvet */}
