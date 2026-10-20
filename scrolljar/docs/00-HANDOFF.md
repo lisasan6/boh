@@ -30,6 +30,7 @@ This replaces `handoff-to-claude-code.md` (31 July), which is kept for history.
 | Psychology, evidence, science | **Re-verified at source 15–16 Oct 2026** and corrected (one retracted paper removed; many claims softened). Read the two reports first | `docs/science-verified-2026-10.md` (science) and `docs/news-verified-2026-10.md` (courts, laws, regulators), with the audit in `docs/science-verification-2026-10/`; then `docs/psychology-playbook.md`, `docs/science-dossier-bibliography.md`, `docs/evidence-dossier.md` |
 | Teams (B2B) mini-spec | Decisions of 2026-10-14 on top (scroll-free hours, pricing, notes) | `docs/scrolljar-teams-spec.md` |
 | Ideas, Wobble design, open questions | Living doc | `docs/sketchpad.md` |
+| **Legal brief for counsel** | 2026-10-20, global (US first): blockers, launch needs, later markets, questions for counsel | `docs/legal-brief-2026-10.md`, research in `docs/legal-research-2026-10/` |
 | **iOS build plan** | v1.1, 2026-10-15 | `docs/IOS-BUILD-SPEC.md` |
 
 ### Prototype map: what each screen and overlay is for
@@ -74,6 +75,15 @@ These files are referenced in the docs but no longer exist:
 - The identity-direction explorations (14 directions), the mission-control HTML page and a `scrolljar.skill` file. These are history only and need no action.
 
 ## 4. OPEN: what's blocking what
+
+### 🔴 0. Legal: the money flow and Apple's charity rules (found 2026-10-20)
+
+Read **`docs/legal-brief-2026-10.md`** before building payments. Three things change the design:
+1. **Every.org can't make automatic donations through its API** ("does not provide programmatic donations or disbursements via API"). The current plan (charge on the 1st, then donate server-side) won't work as written. If coin money passes through ScrollJar's own Stripe account, money-transmitter and state charity-registration rules come into play.
+2. **Apple 3.2.2(iv):** unless you're an approved nonprofit, charity money "may only" be collected outside the app (e.g. Safari). **Apple 4.10:** no "monetizing … Screen Time APIs." Both need counsel and probably an App Review inquiry.
+3. **GDPR likely applies to all users from day one** (founder in Italy). Families means **children's data** (COPPA amended rule in force since 22 Apr 2026). The **card fee added on top** is banned for consumer cards in the EU and UK.
+
+Next step: hire counsel (US payments/nonprofit, EU/Italian privacy and consumer, App Store) and take them the brief. The full research is in `docs/legal-research-2026-10/`.
 
 ### 🔴 1. Apple Family Controls distribution entitlement
 
