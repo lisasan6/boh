@@ -1,6 +1,6 @@
 # ScrollJar — Product changes that lower legal risk (for L to decide)
 
-**21 October 2026.** These come from `legal-brief-2026-10.md`. Nothing has been built: each item is a decision for L, and ideally a quick check with a lawyer. **Not legal advice.**
+**20 October 2026.** These come from `legal-brief-2026-10.md`. Nothing has been built: each item is a decision for L, and ideally a quick check with a lawyer. **Not legal advice.**
 
 Each item shows: **now** (what the product does today), **option** (the change), **why** (the rule behind it), **cost** (what we give up), and **your call**.
 
@@ -24,7 +24,7 @@ Each item shows: **now** (what the product does today), **option** (the change),
 - **Option B (keeps it automatic):** a partner that charges the user's card **on its own account** (a Stripe Connect "direct charge"), so the money never lands in ScrollJar's balance. The charity-partner comparison says who can do this.
 - **Why:** if money passes through ScrollJar, money-transmitter licensing and state charity-registration rules come into play. Apple also says charity money must be collected outside the app (e.g. on a web page) unless you're an approved nonprofit.
 - **Cost:** with A, some users may not complete the donation, and nothing forces them (the deal still works as friction and a pledge). With B, we depend on one partner's terms and fees.
-- **What the partner comparison found** (21 Oct 2026, `legal-research-2026-10/charity-partners.md`, checked on each provider's own pages):
+- **What the partner comparison found** (20 Oct 2026, `legal-research-2026-10/charity-partners.md`, checked on each provider's own pages):
   - **No partner publicly offers option B as-is**, meaning charging the user's card each month for a varying amount, on the partner's own account, with the receipt to the user. It has to be asked for.
   - Partners with "the platform pays" APIs (Change, Pledge, Goodstack, Benevity) put coin money in ScrollJar's hands first.
   - Partners where "the donor pays" (Every.org, Goodstack's hosted page, Pledge forms, PayPal Giving Fund) keep ScrollJar out of the money, which is option A.
@@ -106,7 +106,7 @@ Each item shows: **now** (what the product does today), **option** (the change),
 
 ---
 
-## Alternatives and workarounds (brainstorm, 21 Oct 2026)
+## Alternatives and workarounds (brainstorm, 20 Oct 2026)
 
 Ideas to test with a lawyer and the partners. **Suggested** marks Claude's pick. The same options are on the live page (https://claude.ai/artifact/9aWMzBqBu6VQ4m12HPGQ5c), where L can choose one per topic. The choice is saved there and should be copied into the list below.
 
@@ -161,17 +161,21 @@ Ideas to test with a lawyer and the partners. **Suggested** marks Claude's pick.
 ---
 
 ### Quick decision list
-- [ ] 1. Curated, consenting charities at launch
-- [ ] 2. Money flow: A (honor jar: user completes on partner checkout, suggested, ideally with cause funds) or B (partner charges on its own account)
-- [ ] 3. Card fees: ScrollJar pays (suggested) / optional "cover the fee" tick / bank payments
-- [ ] 4. Switch-off charge: (a) 1× / (b) 2× / (c) not for deletion / (d) none in EU first 14 days
-- [ ] 5. Parent-name receipts for Families
-- [ ] 6. Money features 18+
-- [ ] 7. Physical gift cards only; unpicked treats to the friend's charity
-- [ ] 8. Pledges charged only when unlocked
-- [ ] 9. Defensible charity wording and disclosures
-- [ ] 10. Fixed-position accessibility option
-- [ ] 11. Research opt-in and ethics approval
-- [ ] 12. Company: Italian SRL first, or Delaware with an EU representative
-- [ ] 13. EU data hosting
-- [ ] 14. Launch plan: Version 1 US-only honor jar, then partner automation, then Families and the EU
+
+**Decided 20 Oct 2026: L went with all of Claude's suggestions.** These are still to confirm with a lawyer, the charity partners and Apple. The spec, website and app don't reflect them yet.
+
+- [x] 1. Charities: **cause funds** (5–10 partner charities), growing through **"suggest a charity"**; Hawaii sees opted-in charities only
+- [x] 2. Money flow: **A, the honor jar** (user pays on the partner's web checkout), with cause funds. B (partner charges automatically) is for Version 2
+- [x] 3. Card fees: **ScrollJar pays them** for everyone
+- [x] 4. Switch-off charge: **(a) 1×**, one normal coin
+- [x] 5. Families: **no kid accounts** (parent-managed via Family Controls), receipts in the parent's name, Families launches later after a children's-privacy review
+- [x] 6. Money features 18+
+- [x] 7. Backing: physical gift cards only; unpicked treats go to the friend's charity after 30 days
+- [x] 8. Pledges charged only when unlocked
+- [x] 9. Wording: **"Every coin goes to your charity. We keep none of it, and we pay the fees."** Plus the disclosures before a charity is picked
+- [x] 10. Fixed-position accessibility option
+- [x] 11. Mood check-ins stay on the phone; research only with a separate opt-in and ethics approval
+- [ ] 12. Company: Italian SRL first, or Delaware with an EU representative (**still open**: decide with an advisor)
+- [x] 13. GDPR as the worldwide baseline; data hosted in the EU
+- [x] 14. Launch plan: Version 1 US-only honor jar, then partner automation, then Families and the EU
+- [x] Also: launch without public posts (add the Board later with filter, report and block); advance notice handled by the honor jar now and a user-agreed range in Version 2; one lawyer pass for terms and privacy; trademark search first; Plus sells what's on top; ask App Review early

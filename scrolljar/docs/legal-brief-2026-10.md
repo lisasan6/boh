@@ -27,7 +27,7 @@ These could block launch or create real liability, and they change the product d
 - **B. ScrollJar charges, then donates in its own name.** ScrollJar becomes the donor of record. The user gets no receipt, "tax-deductible" can't be claimed, and ScrollJar holds charity money, with registration and licensing duties.
 - **C. A partner built for this:** an Every.org enterprise deal, or a rail such as Change (getchange.io), which says it handles state compliance. Ideally the card is charged directly on the partner's account (a Stripe Connect "direct charge"), so the money never lands in ScrollJar's balance.
 
-**Partner comparison (21 Oct 2026):** `legal-research-2026-10/charity-partners.md` compares Change, Pledge, Goodstack, Benevity, Every.org, PayPal Giving Fund and Daffy. None publicly documents charging the user's card for a varying monthly amount on its own account. Contact Change first, then Pledge, with the questions listed there.
+**Partner comparison (20 Oct 2026):** `legal-research-2026-10/charity-partners.md` compares Change, Pledge, Goodstack, Benevity, Every.org, PayPal Giving Fund and Daffy. None publicly documents charging the user's card for a varying monthly amount on its own account. Contact Change first, then Pledge, with the questions listed there.
 
 **Ask:** Which shape, A, B or C, should we build? For each: who is the donor of record, who issues the receipt, do we need a money-transmitter licence anywhere, and which state registrations come before launch? Read the partner's contract before choosing. Every.org's terms page couldn't be opened.
 
