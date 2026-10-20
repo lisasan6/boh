@@ -752,7 +752,7 @@ let winKind='';
 function openWindow(coin,peekMin,kind){
   winKind=kind||'';
   $('winCoin').style.display = coin ? '' : 'none';
-  $('winTitle').textContent = winKind==='last' ? 'Your last scroll.' : peekMin ? 'A quick look. Free.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
+  $('winTitle').textContent = winKind==='last' ? 'Your last scroll.' : peekMin ? 'Your free peek.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
   $('winSub').innerHTML = winKind==='last' ? 'On purpose this time. Your shield goes on when it ends.'
     : peekMin ? `No coin, and today still counts as kept. The shield comes back in ${peekMin} minutes.`
     : coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
@@ -2207,6 +2207,7 @@ function setStage(st){
     S.stakes=true; put(COINS,SNAP.coins); put(FEED,SNAP.feed); put(ENTRIES,SNAP.entries); put(COMMITS,SNAP.commits); put(MOODLOG,SNAP.moods);
   }
   renderCommits(); renderFeed(); renderEntries(); renderJar(); renderMoodLedger();
+  if(typeof renderPeek==='function') renderPeek();
   go('home'); $('s-home').scrollTop=0;
 }
 function d1Done(id){ const el=$(id); if(el&&S.stage==='new'){ el.classList.add('done'); renderD1Deal(); } }
@@ -2585,7 +2586,7 @@ const peekNext=()=>{ const d=new Date(PEEK.usedAt+PEEK_EVERY); return d.toLocale
 function renderPeekRow(){
   const row=$('ovrPeek'); row.hidden=!S.stakes; if(!S.stakes) return;
   const ok=peekReady(); row.classList.toggle('used',!ok);
-  $('ovrPeekT').textContent=ok?'Just a quick look?':'Your free peek is resting';
+  $('ovrPeekT').textContent=ok?'Need to check something real?':'Your free peek is resting';
   $('ovrPeekS').textContent=ok?`Your free peek: ${PEEK.min} minutes, no coin, and today still counts as kept.`:`It's back ${peekNext()}. One every 48 hours.`;
   $('ovrPeekP').hidden=!ok;
 }
@@ -2594,6 +2595,8 @@ function usePeek(){
   PEEK.usedAt=Date.now(); closeOv('ov-override'); renderPeek(); openWindow(0,PEEK.min);
 }
 function renderPeek(){
+  if(!S.stakes){ $('peekState').textContent='From day 3 ›'; $('peekState').classList.remove('mint'); $('peekState').classList.add('chr');
+    $('peekSub').textContent='opening is free for now, so no peek needed yet'; return; }
   const ok=peekReady();
   $('peekState').textContent=(ok?'Ready':'Resting')+' ›'; $('peekState').classList.toggle('mint',ok); $('peekState').classList.toggle('chr',!ok);
   $('peekSub').textContent=ok?`one free ${PEEK.min}-minute peek every 48h`:`next one ${peekNext()}`;
@@ -2601,7 +2604,7 @@ function renderPeek(){
 }
 function togglePeek(){ const b=$('peekBox'), open=b.style.display==='none'; b.style.display=open?'':'none'; $('peekState').setAttribute('aria-expanded',open); if(open) renderPeekBox(); }
 function renderPeekBox(){
-  $('peekBox').innerHTML=`<div class="tiny" style="margin-bottom:7px;line-height:1.5">For a genuine quick look, like a work message. You'll find it after the pause, when you're about to drop a coin: no coin, and the day still counts as kept.</div>
+  $('peekBox').innerHTML=`<div class="tiny" style="margin-bottom:7px;line-height:1.5">For something genuine, like a work message. You'll find it after the pause, when you're about to drop a coin: no coin, and the day still counts as kept.</div>
     <div class="row" style="gap:6px;flex-wrap:wrap">${[2,5,10].map(v=>`<span class="chip${v===PEEK.min?' on':''}${v===PEEK.pending?' soon':''}" onclick="setPeek(${v})">${v} min</span>`).join('')}</div>
     ${PEEK.pending?`<div class="tiny" style="margin-top:7px;color:var(--gold-text)">${PEEK.pending} minutes from tomorrow.</div>`:''}`;
 }
