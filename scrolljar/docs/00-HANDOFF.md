@@ -87,7 +87,9 @@ Read **`docs/legal-brief-2026-10.md`** before building payments. Three things ch
 2. **Apple 3.2.2(iv):** unless you're an approved nonprofit, charity money "may only" be collected outside the app (e.g. Safari). **Apple 4.10:** no "monetizing … Screen Time APIs." Both need counsel and probably an App Review inquiry.
 3. **GDPR likely applies to all users from day one** (founder in Italy). Families means **children's data** (COPPA amended rule in force since 22 Apr 2026). The **card fee added on top** is banned for consumer cards in the EU and UK.
 
-Next step: hire counsel (US payments/nonprofit, EU/Italian privacy and consumer, App Store) and take them the brief. The full research is in `docs/legal-research-2026-10/`.
+**Decided 2026-10-20:** L went with all of Claude's suggested solutions: honor jar with web checkout, cause funds, ScrollJar pays card fees, a 1× switch-off charge, money features 18+, no kid accounts with Families later, no public posts in Version 1, EU hosting, and a US-only Version 1. The full list is in `docs/legal-design-options-2026-10.md` (quick decision list). They are still to confirm with counsel, and the spec, website and app are not updated yet.
+
+Next step: hire counsel (US payments/nonprofit, EU/Italian privacy and consumer, App Store) and take them the brief and the decisions. The full research is in `docs/legal-research-2026-10/`.
 
 ### 🔴 1. Apple Family Controls distribution entitlement
 
