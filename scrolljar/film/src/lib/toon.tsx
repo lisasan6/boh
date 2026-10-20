@@ -587,3 +587,83 @@ export const Squash: React.FC<{x: number; y: number; sx: number; sy: number; rot
   rot = 0,
   children,
 }) => <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${sx} ${sy}) translate(${-x} ${-y})`}>{children}</g>;
+
+// ---------- the Fleischer / early-Disney look: big glossy eyes, bold lashes, a baby face ----------
+// A big round eye with a large black pupil, a white glint and a heavy black upper lid with three lashes.
+export const BigEye: React.FC<{
+  x: number;
+  y: number;
+  rx: number;
+  ry: number;
+  look?: Pt;
+  lid?: number; // 0 open .. 1 shut
+  lidFill: string;
+  lashes?: 'l' | 'r' | 'none';
+  pie?: boolean; // pie-cut pupil instead of the glint
+}> = ({x, y, rx, ry, look = [0, 0], lid = 0, lidFill, lashes = 'none', pie}) => {
+  const id = useId().replace(/:/g, '');
+  const prx = rx * 0.62;
+  const pry = ry * 0.68;
+  const px = x + look[0] * (rx - prx) * 0.95;
+  const py = y + look[1] * (ry - pry) * 0.95;
+  const ly = y - ry + 2 * ry * Math.min(lid, 0.98);
+  const sx = lashes === 'r' ? 1 : -1;
+  const wa = (-72 * Math.PI) / 180;
+  const wb = (-18 * Math.PI) / 180;
+  return (
+    <g>
+      <defs>
+        <clipPath id={`be${id}`}>
+          <ellipse cx={x} cy={y} rx={rx} ry={ry} />
+        </clipPath>
+      </defs>
+      <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={WHITE} />
+      <g clipPath={`url(#be${id})`}>
+        <ellipse cx={px} cy={py} rx={prx} ry={pry} fill={INK} />
+        {pie ? (
+          <path
+            d={`M${px + prx * 0.1} ${py - pry * 0.1} L${px + Math.cos(wa) * prx * 1.7} ${py + Math.sin(wa) * pry * 1.7} L${
+              px + Math.cos(wb) * prx * 1.7
+            } ${py + Math.sin(wb) * pry * 1.7} Z`}
+            fill={WHITE}
+          />
+        ) : (
+          <>
+            <ellipse cx={px - prx * 0.32} cy={py - pry * 0.4} rx={prx * 0.26} ry={pry * 0.22} fill={WHITE} />
+            <circle cx={px + prx * 0.3} cy={py + pry * 0.38} r={prx * 0.1} fill={WHITE} />
+          </>
+        )}
+        {lid > 0.01 && <rect x={x - rx - 6} y={y - ry - 6} width={rx * 2 + 12} height={ly - (y - ry) + 6} fill={lidFill} />}
+      </g>
+      <ellipse cx={x} cy={y} rx={rx} ry={ry} fill="none" stroke={INK} strokeWidth={OL} />
+      {/* the heavy upper lid line */}
+      <path
+        d={`M${x - rx * 1.05} ${lid > 0.01 ? ly + 2 : y - ry * 0.3} Q${x} ${(lid > 0.01 ? ly : y - ry) - ry * 0.18} ${x + rx * 1.05} ${
+          lid > 0.01 ? ly + 2 : y - ry * 0.3
+        }`}
+        stroke={INK}
+        strokeWidth={lashes === 'none' ? OL * 1.4 : OL * 2.2}
+        fill="none"
+        strokeLinecap="round"
+        clipPath={lid > 0.01 ? undefined : `url(#be${id})`}
+      />
+      {lashes !== 'none' && (
+        <g fill={INK}>
+          {[0, 1, 2].map((i) => {
+            const bx = x + sx * rx * (0.35 + i * 0.3);
+            const by = (lid > 0.01 ? ly : y - ry * 0.75) - 2 + i * ry * 0.12;
+            const len = rx * (0.55 + i * 0.12);
+            return (
+              <path
+                key={i}
+                d={`M${bx - 4} ${by + 3} Q${bx + sx * len * 0.3} ${by - len * 0.9} ${bx + sx * len} ${by - len * 0.85} Q${bx + sx * len * 0.45} ${
+                  by - len * 0.35
+                } ${bx + 5} ${by + 2} Z`}
+              />
+            );
+          })}
+        </g>
+      )}
+    </g>
+  );
+};

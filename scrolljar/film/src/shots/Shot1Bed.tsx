@@ -1,8 +1,8 @@
 import React from 'react';
 import {useTwos, ramp, lerp, sin, hop, squash} from '../lib/anim';
 import {
-  INK, WHITE, G1, G2, G3, G4, G5, G6, G7, SKIN_DEEP, OL,
-  Inked, Hose, Hand, Eye, Brow, Mouth, Phone, MintLight, Blur, Shadow, Wash, Floor, Grain, Shakes, ClockFace, Squash,
+  INK, WHITE, G1, G2, G3, G4, G5, G6, SKIN_DEEP, OL,
+  Inked, Hose, Hand, BigEye, Brow, Mouth, Phone, MintLight, Blur, Shadow, Wash, Floor, Grain, Shakes, Squash,
 } from '../lib/toon';
 
 // 1. Morning: in bed under a polka-dot duvet, phone held above her face, while the alarm clock hops and rings.
@@ -28,6 +28,7 @@ export const Shot1Bed: React.FC = () => {
   const cy = 600 - h * 52;
   const tilt = sin(t, P * 2) * 9;
   const ring = Math.floor(t / 2) % 2 ? 1 : -1;
+  const breathe = sin(t, 24);
 
   return (
     <svg viewBox="0 0 1920 1080" width={1920} height={1080}>
@@ -92,47 +93,60 @@ export const Shot1Bed: React.FC = () => {
       <Inked fill={WHITE} shapes={[{k: 'p', d: 'M262 600 Q250 520 330 505 Q440 488 560 512 Q610 530 600 600 Q590 660 470 668 Q330 676 280 650 Q262 632 262 600 Z'}]} />
       <path d="M300 560 q30 -10 60 4 M520 640 q30 -2 52 -22" stroke={INK} strokeWidth={2.5} fill="none" strokeLinecap="round" />
 
-      {/* her curls, fanned across the pillow */}
-      <g>
-        {[
-          [330, 560, 30], [352, 512, 30], [398, 482, 30], [452, 470, 28], [505, 482, 26], [320, 610, 26], [362, 638, 24], [292, 585, 20],
-          [548, 505, 20], [420, 456, 18], [480, 452, 16],
-        ].map(([x, y, r], i) => (
-          <circle key={i} cx={x} cy={y} r={r + OL} fill={INK} />
-        ))}
-        {[
-          [330, 560, 30], [352, 512, 30], [398, 482, 30], [452, 470, 28], [505, 482, 26], [320, 610, 26], [362, 638, 24], [292, 585, 20],
-          [548, 505, 20], [420, 456, 18], [480, 452, 16],
-        ].map(([x, y, r], i) => (
-          <path key={i} d={`M${x - r * 0.5} ${y - r * 0.2} q${r * 0.4} ${-r * 0.5} ${r * 0.8} ${-r * 0.1}`} stroke={G5} strokeWidth={3} fill="none" strokeLinecap="round" />
-        ))}
-      </g>
+      {/* her curls, fanned across the pillow: big bold black lobes */}
+      {(() => {
+        const curls = Array.from({length: 13}, (_, i) => {
+          const ang = ((150 + i * 17) * Math.PI) / 180;
+          const d = 104 + (i % 2) * 22;
+          return [478 + Math.cos(ang) * d * 1.08, 520 + Math.sin(ang) * d, 32 - (i % 3) * 4] as const;
+        });
+        return (
+          <g>
+            <ellipse cx={440} cy={530} rx={120} ry={112} fill={INK} />
+            {curls.map(([x, y, r], i) => (
+              <circle key={i} cx={x} cy={y} r={r + OL} fill={INK} />
+            ))}
+            {curls.map(([x, y, r], i) => (
+              <path key={i} d={`M${x - r * 0.55} ${y - r * 0.05} q${r * 0.45} ${-r * 0.65} ${r * 0.95} ${-r * 0.15}`} stroke={WHITE} strokeWidth={3.5} fill="none" strokeLinecap="round" opacity={0.75} />
+            ))}
+          </g>
+        );
+      })()}
 
-      {/* pyjama shoulders and neck */}
-      <Inked fill={G2} shapes={[{k: 'p', d: 'M430 690 Q440 615 500 600 Q560 592 600 620 L620 700 Z'}]} />
-      <Hose a={[470, 600]} b={[478, 630]} w={30} fill={SKIN_DEEP} />
-      <path d="M452 618 q22 26 50 2" stroke={INK} strokeWidth={OL} fill={WHITE} />
+      {/* black satin pyjamas with white piping, and a short neck */}
+      <Inked fill={INK} shapes={[{k: 'p', d: 'M420 700 Q430 625 495 606 Q560 594 606 624 L626 704 Z'}]} />
+      <path d="M452 640 q30 22 64 -2 M560 610 q20 10 30 34" stroke={WHITE} strokeWidth={4} fill="none" strokeLinecap="round" />
+      <Hose a={[478, 592]} b={[484, 622]} w={34} fill={SKIN_DEEP} />
 
-      {/* her head, turned up toward the phone */}
-      <g transform="translate(468 548) rotate(-14)">
-        <Inked fill={SKIN_DEEP} shapes={[{k: 'e', cx: 0, cy: 0, rx: 66, ry: 70}, {k: 'c', cx: -62, cy: 12, r: 15}]} />
-        <path d="M-66 8 q6 -6 8 6" stroke={INK} strokeWidth={2.5} fill="none" />
-        {/* front curls on the hairline */}
-        {[[-48, -46, 20], [-22, -62, 20], [8, -66, 19], [36, -58, 18], [58, -40, 15]].map(([x, y, r], i) => (
-          <circle key={i} cx={x} cy={y} r={r} fill={INK} />
+      {/* her head: a big round baby face turned up toward the phone */}
+      <g transform={`translate(480 518) rotate(-12) translate(0 ${breathe * 3})`}>
+        <Inked
+          fill={SKIN_DEEP}
+          shapes={[
+            {k: 'p', d: 'M-90 -6 C-94 -86 90 -94 92 -8 C94 44 60 88 2 90 C-58 88 -90 46 -90 -6 Z'},
+            {k: 'c', cx: -88, cy: 16, r: 17},
+          ]}
+        />
+        <path d="M-92 10 q8 -8 10 8" stroke={INK} strokeWidth={3} fill="none" />
+        {/* a hoop earring */}
+        <circle cx={-92} cy={44} r={13} fill="none" stroke={INK} strokeWidth={OL + 2} />
+        <circle cx={-92} cy={44} r={13} fill="none" stroke={G2} strokeWidth={2.5} />
+        {/* spit curls along the hairline */}
+        {[[-74, -44, 24], [-48, -70, 26], [-14, -84, 26], [22, -84, 25], [54, -70, 24], [78, -46, 20]].map(([x, y, r], i) => (
+          <g key={i}>
+            <circle cx={x} cy={y} r={r} fill={INK} />
+            <path d={`M${x - r * 0.4} ${y + r * 0.1} q${r * 0.4} ${-r * 0.6} ${r * 0.8} ${-r * 0.1}`} stroke={WHITE} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
+          </g>
         ))}
-        {/* the sleep mask, pushed up onto her forehead */}
-        <path d="M-64 -30 Q0 -46 66 -26" stroke={INK} strokeWidth={10} fill="none" />
-        <Inked fill={G4} shapes={[{k: 'e', cx: -20, cy: -40, rx: 22, ry: 12, rot: -4}, {k: 'e', cx: 24, cy: -38, rx: 22, ry: 12, rot: 6}]} />
-        <path d="M-2 -40 q2 4 4 0" stroke={INK} strokeWidth={2} fill="none" />
-        <Brow x={-20} y={-24 - browLift} w={26} arch={5} />
-        <Brow x={26} y={-22 - browLift} w={26} arch={5} />
-        <Eye x={-20} y={-2} rx={15} ry={19} look={[0.45, -0.75]} lid={lid} lidFill={SKIN_DEEP} lashes="l" />
-        <Eye x={24} y={0} rx={15} ry={19} look={[0.45, -0.75]} lid={lid} lidFill={SKIN_DEEP} lashes="r" />
-        <Inked fill={SKIN_DEEP} shapes={[{k: 'e', cx: 6, cy: 22, rx: 9, ry: 7}]} />
-        <Mouth x={4} y={40} w={46} smile={0.75} open={0} />
-        <ellipse cx={-36} cy={28} rx={10} ry={6} fill={INK} opacity={0.12} />
-        <ellipse cx={44} cy={30} rx={10} ry={6} fill={INK} opacity={0.12} />
+        <Brow x={-30} y={-26 - browLift} w={28} arch={9} thick={4} />
+        <Brow x={34} y={-25 - browLift} w={28} arch={9} thick={4} />
+        <BigEye x={-30} y={6} rx={25} ry={32} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="l" />
+        <BigEye x={32} y={8} rx={25} ry={32} look={[0.45, -0.6]} lid={lid} lidFill={SKIN_DEEP} lashes="r" />
+        <Inked fill={SKIN_DEEP} shapes={[{k: 'e', cx: 4, cy: 46, rx: 10, ry: 8}]} />
+        <ellipse cx={1} cy={43} rx={3.5} ry={2.5} fill={WHITE} opacity={0.6} />
+        <Mouth x={4} y={64} w={46} smile={0.85} open={0} />
+        <ellipse cx={-52} cy={46} rx={13} ry={8} fill={WHITE} opacity={0.12} />
+        <ellipse cx={58} cy={48} rx={13} ry={8} fill={WHITE} opacity={0.12} />
       </g>
 
       {/* the polka-dot duvet */}
@@ -164,7 +178,8 @@ export const Shot1Bed: React.FC = () => {
       })()}
 
       {/* the raised arm and the phone */}
-      <Hose a={[556, 642]} b={[hand[0] + 4, hand[1] + 18]} bend={34} w={30} fill={G2} />
+      <Hose a={[556, 642]} b={[hand[0] + 4, hand[1] + 18]} bend={34} w={30} fill={INK} />
+      <path d={`M${hand[0] - 12} ${hand[1] + 22} q16 8 32 -2`} stroke={WHITE} strokeWidth={5} fill="none" strokeLinecap="round" />
       <Phone x={hand[0] - 2} y={hand[1] - 34} w={46} h={80} rot={-30} scroll={t} />
       <Hand x={hand[0] + 6} y={hand[1] + 6} rot={-100} s={1.05} fill={SKIN_DEEP} pose="grip" />
 
@@ -174,7 +189,7 @@ export const Shot1Bed: React.FC = () => {
           <path d={`M${hand[0] - 30} ${hand[1] - 20} L${hand[0] + 20} ${hand[1] - 4} L540 590 L420 560 Z`} fill="#3CF0CB" />
         </Blur>
       </g>
-      <MintLight cx={474} cy={548} rx={92} ry={86} o={0.32} />
+      <MintLight cx={486} cy={520} rx={110} ry={100} o={0.26} />
       <MintLight cx={hand[0] - 2} cy={hand[1] - 34} rx={70} o={0.42} />
 
       {/* the nightstand */}
@@ -192,17 +207,29 @@ export const Shot1Bed: React.FC = () => {
       <Shadow cx={1590} cy={604} rx={70 - h * 26} ry={8} o={0.5 - h * 0.25} />
       <Squash x={1590} y={600} sx={sq.sx} sy={sq.sy}>
         <g transform={`translate(0 ${cy - 600}) rotate(${tilt} 1590 520)`}>
-          {/* feet */}
-          <Inked fill={G6} shapes={[{k: 't', d: 'M1556 566 L1540 596', w: 9}, {k: 't', d: 'M1624 566 L1640 596', w: 9}, {k: 'e', cx: 1536, cy: 598, rx: 14, ry: 6}, {k: 'e', cx: 1644, cy: 598, rx: 14, ry: 6}]} />
+          {/* rubber-hose legs and big round shoes */}
+          <Hose a={[1566, 566]} b={[1546 - h * 6, 590]} bend={-8} w={8} fill={INK} />
+          <Hose a={[1614, 566]} b={[1634 + h * 6, 590]} bend={8} w={8} fill={INK} />
+          <Inked fill={INK} shapes={[{k: 'e', cx: 1536 - h * 6, cy: 594, rx: 20, ry: 11}, {k: 'e', cx: 1644 + h * 6, cy: 594, rx: 20, ry: 11}]} />
+          <path d={`M${1524 - h * 6} 590 q6 -5 12 -4 M${1632 + h * 6} 590 q6 -5 12 -4`} stroke={WHITE} strokeWidth={3} fill="none" strokeLinecap="round" />
           {/* bells and the hammer between them */}
-          <g transform={`rotate(${ring * 4} 1590 470)`}>
-            <Inked fill={G3} shapes={[{k: 'p', d: 'M1514 470 Q1512 424 1552 418 Q1572 430 1566 470 Z'}, {k: 'p', d: 'M1614 470 Q1608 430 1628 418 Q1668 424 1666 470 Z'}]} />
-            <path d="M1526 444 q10 -14 24 -16 M1626 428 q14 4 22 16" stroke={WHITE} strokeWidth={4} fill="none" strokeLinecap="round" />
+          <g transform={`rotate(${ring * 5} 1590 470)`}>
+            <Inked fill={INK} shapes={[{k: 'p', d: 'M1510 472 Q1508 420 1552 414 Q1574 428 1568 472 Z'}, {k: 'p', d: 'M1612 472 Q1606 428 1628 414 Q1672 420 1670 472 Z'}]} />
+            <path d="M1524 446 q10 -16 26 -18 M1626 428 q16 4 24 18" stroke={WHITE} strokeWidth={5} fill="none" strokeLinecap="round" />
           </g>
-          <path d={`M1590 470 L${1590 + ring * 18} 432`} stroke={INK} strokeWidth={5} strokeLinecap="round" />
-          <circle cx={1590 + ring * 18} cy={430} r={8} fill={G6} stroke={INK} strokeWidth={3} />
-          <ClockFace x={1590} y={520} r={52} hour={7} minute={0} rim={G4} />
-          <path d="M1556 492 q12 -12 26 -14" stroke={WHITE} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.8} />
+          <path d={`M1590 470 L${1590 + ring * 18} 430`} stroke={INK} strokeWidth={6} strokeLinecap="round" />
+          <circle cx={1590 + ring * 18} cy={428} r={9} fill={INK} />
+          {/* the face: a dial with pie eyes and a mouth hollering */}
+          <circle cx={1590} cy={520} r={64} fill={INK} />
+          <circle cx={1590} cy={520} r={54} fill={WHITE} stroke={INK} strokeWidth={OL * 0.8} />
+          {Array.from({length: 12}, (_, i) => {
+            const an = (i * 30 * Math.PI) / 180;
+            return <path key={i} d={`M${1590 + Math.cos(an) * 46} ${520 + Math.sin(an) * 46} L${1590 + Math.cos(an) * 51} ${520 + Math.sin(an) * 51}`} stroke={INK} strokeWidth={3} strokeLinecap="round" />;
+          })}
+          <BigEye x={1572} y={500} rx={12} ry={17} look={[0, -0.2]} lidFill={WHITE} pie />
+          <BigEye x={1608} y={500} rx={12} ry={17} look={[0, -0.2]} lidFill={WHITE} pie />
+          <Mouth x={1590} y={532} w={34} smile={0.2} open={0.55 + (ring > 0 ? 0.15 : 0)} />
+          <path d="M1548 488 q12 -16 30 -20" stroke={INK} strokeOpacity={0.15} strokeWidth={6} fill="none" strokeLinecap="round" />
         </g>
       </Squash>
       <Shakes x={1590} y={cy - 100} r={50} t={t} />
