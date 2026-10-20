@@ -270,9 +270,19 @@ function refundCoin(i){
   toast('Refunded. $'+c.amt+' goes back to your card, no questions asked.');
 }
 function renderCharities(){
+  if($('charitySpot')) renderSpot();
   $('charityList').innerHTML=CHARITIES.map((c,i)=>`<div class="tierbox${i===S.charity?' sel':''}" onclick="pickCharity(${i})">
     <div class="spread"><b style="font-size:14px">${c.n}</b>${i===S.charity?'<span class="pill mint">Your charity</span>':''}</div>
     <div class="tiny" style="margin-top:5px;line-height:1.5">${c.l}</div></div>`).join('');
+}
+/* the monthly spotlight: one featured cause, shown once at the top of the list. It shares ScrollJar with its own
+   supporters (spec: charity spotlights as distribution). Never a push to switch: picking it is one tap, or nothing. */
+function renderSpot(){
+  const i=TODAY.getMonth()%CHARITIES.length, c=CHARITIES[i], mine=i===S.charity;
+  $('charitySpot').innerHTML=`<div class="eyebrow">THIS MONTH'S SPOTLIGHT · ${MONTH.toUpperCase()}</div>
+    <b style="display:block;font-size:15px;margin-top:6px">${c.n}</b><div class="tiny" style="margin-top:4px;line-height:1.5">${c.l}</div>
+    ${mine?'<div class="tiny" style="margin-top:9px;color:var(--mint);font-weight:700">Already your charity.</div>'
+      :`<button class="btn ghost" style="margin-top:10px" onclick="pickCharity(${i})">Give to them this month</button>`}`;
 }
 function pickCharity(i){
   S.charity=i; renderCharities(); renderJar();

@@ -53,7 +53,7 @@
 4. **Letters to your future self** (L: "yasss"; ✅ designed 2026-10-19, prototype `ov-letter` / `ov-letterread`) → Mechanics. Written when you make a deal, delivered at the 30-day milestone.
 6. **"We noticed."** (✅ designed 2026-10-19, inside the tricky-hours heads-up) → Mechanics. Rare clean-danger-hour notification, budgeted within sacred touchpoints.
 8. **Sign your deal** (was "Sign your promise"; ✅ designed 2026-10-19, prototype `ov-sign`) → Usability/onboarding. Finger-drawn signature seals the first deal.
-9. **Charity spotlights as distribution** → Growth. Monthly featured cause; charities share impact back to their audiences.
+9. **Charity spotlights as distribution** (✅ in-app card designed 2026-10-20: "This month's spotlight" at the top of Your charity, one tap to pick it, never a push) → Growth. Monthly featured cause; charities share impact back to their audiences.
 10. **Dinner Jars** (✅ designed 2026-10-20; "A dinner jar, for two" in the + sheet) → Social. Couple templates: phone-free dinners, screens-out-of-bedroom.
 12. **The danger-hours forecast** (✅ designed 2026-10-19 as the Plus "tricky-hours heads-up", prototype `trickyCard`) (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
 

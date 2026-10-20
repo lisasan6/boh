@@ -894,3 +894,8 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .backBtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:-10px -6px -10px -14px}
 .hitPad{position:relative}
 .hitPad::after{content:"";position:absolute;inset:-12px -8px}
+.iconBtn,.playBtn,.swatch{position:relative}
+.iconBtn::after,.playBtn::after,.swatch::after,.ovClose::after{content:"";position:absolute;inset:-6px}
+.swatch::after{inset:-7px}
+/* charity spotlight */
+.spot{margin-bottom:14px;background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))}
