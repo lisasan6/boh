@@ -162,7 +162,7 @@ Ideas to test with a lawyer and the partners. **Suggested** marks Claude's pick.
 
 ### Quick decision list
 
-**Decided 20 Oct 2026: L went with all of Claude's suggestions.** These are still to confirm with a lawyer, the charity partners and Apple. The spec, website and app don't reflect them yet.
+**Decided 20 Oct 2026: L went with all of Claude's suggestions.** These are still to confirm with a lawyer, the charity partners and Apple. The spec (v1.4 notes), iOS build plan, `CLAUDE.md`, website and prototype were updated to match the same day.
 
 - [x] 1. Charities: **cause funds** (5–10 partner charities), growing through **"suggest a charity"**; Hawaii sees opted-in charities only
 - [x] 2. Money flow: **A, the honor jar** (user pays on the partner's web checkout), with cause funds. B (partner charges automatically) is for Version 2

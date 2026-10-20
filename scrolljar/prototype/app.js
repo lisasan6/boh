@@ -2,8 +2,7 @@ const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false,
   stage:'wk3',   /* 'new' = day one, right after setup · 'wk3' = three weeks in (the demo default) */
   stakes:true};  /* false until "Make it real": opening a shielded app is free in the first days */
 let SNAP=null;   /* the three-weeks-in data, kept so the demo can switch back from day one */
-/* card fee on the free plan: shown and added on top, so 100% of the coins arrive. Plus covers it. */
-const cardFee=x=>Math.round((x*0.029+0.30)*100)/100;
+/* card fees: ScrollJar pays them on every plan, so every cent of the jar arrives (decided 2026-10-20). */
 /* the demo follows the real calendar, so it never looks out of date: this month, the next tip-out, days ago */
 const TODAY=new Date();
 const dfmt=(d,o)=>d.toLocaleString('en-GB',o);
@@ -260,14 +259,14 @@ function renderJar(){
   $('coinList').innerHTML=COINS.length?COINS.map((c,i)=>`<div class="coinRow">
       <svg viewBox="0 0 40 40" width="22" height="22" style="flex:none"><use href="#coin"/></svg>
       <div style="flex:1;min-width:0"><b style="font-size:12.5px">${c.p}</b><div class="tiny">${c.when}</div></div>
-      ${c.fresh?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="refundCoin(${i})">Refund</span>`:''}
+      ${c.fresh?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="refundCoin(${i})">Take back</span>`:''}
       <span class="display num" style="font-size:15px;color:var(--gold-text);min-width:30px;text-align:right">$${c.amt}</span>
     </div>`).join(''):`<div class="tiny" style="padding:10px 0">${S.stakes?'No coins yet this month.':'No coins yet. Opening a shielded app is free for your first days.'}</div>`;
   renderD1();
 }
 function refundCoin(i){
   const c=COINS.splice(i,1)[0]; renderJar();
-  toast('Refunded. $'+c.amt+' goes back to your card, no questions asked.');
+  toast('Taken back. $'+c.amt+' is out of your jar, no questions asked.');
 }
 function renderCharities(){
   if($('charitySpot')) renderSpot();
@@ -292,7 +291,7 @@ function pickCharity(i){
 let capPending=null;
 function toggleCap(){ const b=$('capBox'), open=b.style.display==='none'; b.style.display=open?'':'none'; $('capPill').setAttribute('aria-expanded',open); if(open) renderCap(); }
 function renderCap(){
-  $('capBox').innerHTML=`<div class="tiny" style="margin-bottom:7px">The most your jar can take in a month. When it's full, the shields stay on and nothing more is charged.</div>
+  $('capBox').innerHTML=`<div class="tiny" style="margin-bottom:7px">The most your jar can take in a month. When it's full, the shields stay on and no more coins drop in.</div>
     <div class="row" style="gap:6px;flex-wrap:wrap">${[20,35,50,75,100].map(v=>`<span class="chip${v===S.cap?' on':''}${v===capPending?' soon':''}" onclick="setCap(${v})">$${v}</span>`).join('')}</div>`;
 }
 function setCap(v){
@@ -579,42 +578,41 @@ function renderReal(){
         <div class="tiny" style="margin-top:4px">high enough to pause you, kind enough to forgive</div></div>
       <div class="eyebrow" style="margin:12px 2px 8px">WHERE IT GOES</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">${CHARITIES.map((c,i)=>`<span class="chip${i===realCharity?' on':''}" onclick="realCharity=${i};renderReal()">${c.n}</span>`).join('')}</div>
-      <div class="tiny" style="margin-top:12px;line-height:1.5">Your jar is capped at $${S.cap} a month. When it's full, the shields stay on and nothing more is charged.</div>
+      <div class="tiny" style="margin-top:12px;line-height:1.5">Your jar is capped at $${S.cap} a month. When it's full, the shields stay on and no more coins drop in.</div>
       <button class="btn mint" style="margin-top:14px" onclick="realGo(2)">Next</button>`;
-  } else if(realStep===2){ K.textContent='HOW COINS ARE CHARGED';
-    const f=cardFee(35), plus=realPlan!=='free';
-    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Once a month, by card</div>
-      <div class="sub" style="margin-bottom:12px">On the 1st we charge whatever is in your jar. 100% of it goes to ${ch}. We never keep any of it.</div>
-      <div class="card"><b style="font-size:13.5px">The card fee</b>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Card companies charge a small fee. ${plus?'<b>Plus covers it for you.</b>':'On the free plan it\'s added on top, so your coins arrive in full.'}</div>
+  } else if(realStep===2){ K.textContent='HOW YOUR JAR IS GIVEN';
+    const plus=realPlan!=='free';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Once a month, straight from you</div>
+      <div class="sub" style="margin-bottom:12px">On the 1st your jar is ready. One tap opens a secure donation page with the amount filled in, and Apple Pay works. You give straight to ${ch}, and the receipt comes to you. ScrollJar never touches the money.</div>
+      <div class="card"><b style="font-size:13.5px">The card fee is on us</b>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Card companies charge a small fee. ScrollJar pays it, so every cent of your jar arrives.</div>
         <div class="feeRow"><span>A $35 jar</span><b>$35, all to charity</b></div>
-        <div class="feeRow"><span>Card fee</span><b>${plus?'covered by Plus':'+ about $'+f.toFixed(2)}</b></div></div>
+        <div class="feeRow"><span>Card fee</span><b>paid by ScrollJar</b></div></div>
       <div class="card"><div class="spread"><b style="font-size:13.5px">ScrollJar Plus</b><span class="pill chr">optional · billed by Apple</span></div>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, a heads-up before your tricky hours, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Groups and challenges, a heads-up before your tricky hours, deep stats and unlimited deals. Blocking, the pause and the kind features stay free for everyone. Plus is how ScrollJar earns money.</div>
         <div class="row" style="gap:7px;margin-top:10px">
           <span class="chip${realPlan==='free'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='free';renderReal()">Not now</span>
           <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$29.99 / year</span>
           <span class="chip${realPlan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='mo';renderReal()">$3.99 / month</span></div></div>
-      <button class="btn mint" onclick="realGo(3)">Continue to card</button>`;
-  } else if(realStep===3){ K.textContent='YOUR CARD';
-    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Add a card for your coins</div>
-      <div class="fakeField"><span style="flex:1">•••• •••• •••• 4242</span><span class="tiny">12/28 · 123</span></div>
-      <div class="mandate" style="margin-top:12px"><b>You allow ScrollJar to charge this card once a month</b>, on the 1st, for the coins in your jar, up to your <b>$${S.cap} cap</b>${realPlan==='free'?', plus the card fee':''}. We email you the amount before every charge. Any coin can be refunded within 48 hours, no questions asked.<br><br>
-        Ending a deal is always free, with 24 hours' notice. Switching off Screen Time access, removing this card or deleting the app in the middle of a deal is different: we'll let you know and give you an hour to put things back. After that, it counts as one coin of <b>$${realPrice*5}</b> (5× your price).</div>
+      <button class="btn mint" onclick="realGo(3)">Next</button>`;
+  } else if(realStep===3){ K.textContent='SEAL THE DEAL';
+    B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Your jar runs on your word</div>
+      <div class="mandate"><b>No card to add.</b> Coins add up in the app, up to your <b>$${S.cap} cap</b>. On the 1st you give them to ${ch} yourself, in one tap. We remind you once, and nobody chases you. Any coin can be taken back within 48 hours, no questions asked.<br><br>
+        Ending a deal is always free, with 24 hours' notice. Switching off Screen Time access or deleting the app in the middle of a deal is different: we'll let you know and give you an hour to put things back. After that, one normal coin (<b>$${realPrice}</b>) drops in your jar.<br><br>
+        Coins are for adults: by agreeing, you confirm you're 18 or over.</div>
       <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
-      <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Save card</button>
-      <div class="tiny" style="text-align:center;margin-top:9px">Your bank may ask you to confirm. That's normal.</div>`;
+      <button class="btn gold" id="realSave" ${realAgree?'':'disabled'} onclick="realSave()">Seal it</button>`;
   } else { K.textContent='DONE';
     B.innerHTML=`<div style="text-align:center;padding:8px 0 4px">
       <svg viewBox="0 0 40 40" width="52" height="52" style="filter:drop-shadow(0 0 16px rgba(255,201,77,.7))"><use href="#coin"/></svg>
       <div class="display" style="font-size:22px;margin:12px 0 8px">It's real now.</div>
-      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On ${NEXT1} it all goes to ${ch}.${realPlan==='free'?'':' Plus is on, so the card fee is on us.'}</div></div>
+      <div class="sub">Next time you open a shielded app, a $${realPrice} coin drops in your jar. On ${NEXT1} your jar is ready to give to ${ch}, and the card fee is on us.</div></div>
       <button class="btn mint" style="margin-top:16px" onclick="closeOv('ov-real')">Got it</button>`;
   }
 }
 function realSave(){
   if(!realAgree) return;
-  const b=$('realSave'); b.disabled=true; b.textContent='Confirming with your bank…';
+  const b=$('realSave'); b.disabled=true; b.textContent='Sealing it…';
   setTimeout(()=>{ S.charity=realCharity; S.plan=realPlan; S.stakes=true;
     if(S.stage==='new'&&COMMITS[0]) COMMITS[0].price=realPrice;
     renderPlan(); renderCommits(); renderJar(); renderCharities(); realGo(4); },1200);
@@ -718,7 +716,7 @@ function showOverride(){
   const d=COMMITS[0]||{n:'Your deal',price:5}, price=curPrice(d);
   if(S.stakes&&jarTotal()+price>S.cap){
     ['ov-shield','ov-instead'].forEach(closeOv);
-    showExit('Your jar is full for '+MONTH+'.','You set a $'+S.cap+' cap, so nothing more can be charged. The shield stays on until the tip-out on '+NEXT1+'.');
+    showExit('Your jar is full for '+MONTH+'.','You set a $'+S.cap+' cap, so no more coins can drop in. The shield stays on until the tip-out on '+NEXT1+'.');
     return;
   }
   $('ovrEyebrow').textContent=d.n.toUpperCase()+' · 15 MINUTES';
@@ -727,7 +725,7 @@ function showOverride(){
   $('ovrCost').style.display = S.stakes ? '' : 'none'; $('ovrPrice').textContent='$'+price;
   $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
   $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
-  $('ovrNote').textContent = S.stakes ? 'refundable for 48h, no questions' : 'no card, no coin, nothing to undo';
+  $('ovrNote').textContent = S.stakes ? 'can be taken back for 48h, no questions' : 'no card, no coin, nothing to undo';
   backCoinLine(); renderPeekRow();
   $('ovrRise').hidden=!(S.stakes&&d.rise);
   if(d.rise) $('ovrRise').textContent=price>d.price?`Rising price: your $${d.price}, plus a bit for each opening this week, never more than $${d.price*2}. Back to $${d.price} on Monday.`
@@ -789,13 +787,22 @@ function logMood(k,label){
 
 /* ── tip-out ceremony ── */
 function runSettlement(){
-  const SETTLE=['Collecting your coins','Verifying with Every.org','Sending to '+charity().n,'Receipt issued to you'];
+  const SETTLE=['You gave it with Apple Pay','Every.org sends it to '+charity().n,'Card fee paid by ScrollJar','Receipt emailed to you'];
   $('settleSteps').innerHTML=SETTLE.map(t=>`<div class="settleRow"><div class="settleDot">✓</div><div class="settleTxt">${t}</div></div>`).join('');
   document.querySelectorAll('#settleSteps .settleRow').forEach((r,i)=>setTimeout(()=>r.classList.add('done'), 1400+i*620));
 }
-function showTipout(){
-  $('ov-tipout').classList.add('on'); runSettlement();
-  renderJar();
+/* the honor jar (decided 2026-10-20): on the 1st the user gives the jar on a donation page, in one tap.
+   ScrollJar never holds the money. ask=true shows that step first; the website's story skips it. */
+function showTipout(ask){
+  $('ov-tipout').classList.add('on'); renderJar();
+  $('tipAsk').hidden=!ask; $('tipAfter').hidden=!!ask;
+  const total=jarTotal(); $('tipGiveBtn').textContent='Give $'+total;
+  const amt=document.querySelector('#ov-tipout [data-bind="jar"]');
+  if(ask){ renderCoins($('tipCoins'),total); amt.textContent='$'+total; paintLids(); return; }
+  giveJar();
+}
+function giveJar(){
+  $('tipAsk').hidden=true; $('tipAfter').hidden=false; runSettlement();
   const total=jarTotal(), amt=document.querySelector('#ov-tipout [data-bind="jar"]');
   renderCoins($('tipCoins'),total); amt.textContent='$0';
   const svg=$('tipJar'), box=$('tipJarBox'); paintLids();
@@ -935,18 +942,18 @@ function endDeal(){
   const o=COMMITS[dealI]; o.pending='Ends '+tomorrowAt()+'. You can change your mind until then.';
   renderCommits(); closeOv('ov-deal'); toast('Ending in 24 hours. Nothing to pay.');
 }
-/* plans: Free (real coins, card fee shown on top) or Plus (fees covered, extras). Kindness is in both. */
+/* plans: Free (real coins) or Plus (extras). Card fees are on ScrollJar in both, and so is kindness. */
 function selTier(el,plan){ document.querySelectorAll('#s-paywall .tierbox').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); payPick=plan; }
 let payPick='yr';
 function payContinue(){
-  if(payPick==='free'){ S.plan='free'; renderPlan(); go('you'); toast('You\'re on Free. Real coins still work; the card fee is shown on top.'); return; }
-  S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now.');
+  if(payPick==='free'){ S.plan='free'; renderPlan(); go('you'); toast('You\'re on Free. Real coins still work, and the card fee is on us.'); return; }
+  S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple).');
 }
 function renderPlan(){
   if(typeof renderTricky==='function') renderTricky();
   const c=$('planCard'); if(!c) return;
   const plus=S.plan!=='free';
-  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='creator'?'free while your challenge runs':(S.plan==='yr'?'$29.99 / year':'$3.99 / month'))+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
+  c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='creator'?'free while your challenge runs':(S.plan==='yr'?'$29.99 / year':'$3.99 / month'))+' · unlimited deals':'real coins · 3 deals · card fee on us'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
 }
 /* ── the feed: outcomes only, never announcements ── */
 function scene(kind){
@@ -2358,8 +2365,8 @@ function makeWish(){
 
 /* ══ BACKING — back a friend's week (L's idea from July, designed 2026-10-19) ══
    Someone you share a jar with backs your deals for 3–14 days with $5–25. Each day you keep your deals,
-   that day's share becomes a treat for you: a gift card you pick at the end (books, coffee, cinema) or a
-   month of Plus, never cash. A day you open anyway sends that day's share to your own charity. The backer
+   that day's share becomes a treat for you: a gift card you pick at the end (printed books, coffee, cinema),
+   never cash and never digital (decided 2026-10-20). Not picked within 30 days, it goes to your own charity. A day you open anyway sends that day's share to your own charity. The backer
    pays the whole amount either way and nothing goes back to them, so it's a gift, never a bet. The backer
    sees how many days were kept, never which apps, when, or which days. Once accepted it runs to the end. */
 const BACK_PEOPLE=[
@@ -2368,7 +2375,7 @@ const BACK_PEOPLE=[
   {n:'Giulia',a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)'},
   {n:'Sofia',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)'}];
 const bPerson=n=>BACK_PEOPLE.find(p=>p.n===n);
-const TREATS=[['books','Books'],['coffee','Coffee'],['cinema','Cinema'],['plus','A month of Plus']];
+const TREATS=[['books','Books'],['coffee','Coffee'],['cinema','Cinema']];
 const bShare=(amt,days,n)=>Math.round(amt*n/days*100)/100;
 /* someone backing you: Noor, a week, started 5 days ago; today is day 6 */
 const BACK_IN={from:'Noor',amt:10,days:7,log:['kept','kept','gave','kept','kept'],note:"You've got this. Book club's on Sunday.",treat:''};
@@ -2449,7 +2456,7 @@ function renderBackBody(){
       <input class="timeIn" maxlength="60" placeholder="in your own words" aria-label="A note for your friend" value="${esc(BK.note)}" oninput="BK.note=this.value">
       <div class="card firstDeal">${p?`<div class="eyebrow" style="margin-bottom:6px">YOUR BACKING</div>
         ${usd(BK.amt)} for ${p.n}, ${len}. Each day ${p.n} keeps their deals, ${usd(per)} becomes a treat for ${p.n}. A day ${p.n} opens anyway, that share goes to ${p.n}'s own charity.
-        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends${S.plan==='plus'?'':`, plus a ${usd(cardFee(BK.amt))} card fee (Plus covers it)`}. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
+        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends, and the card fee is on us. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
         :`<div class="tiny">Pick who you'd like to back.</div>`}</div>
       <div class="tiny" style="margin:2px 2px 12px;line-height:1.5">Only people you share a jar with · one backing per friend at a time · up to five at once.</div>
       <button class="btn mint" ${p?'':'disabled'} onclick="backSend()">Send the offer</button>`;
@@ -2461,7 +2468,7 @@ function renderBackBody(){
       <div class="card backNote">“${esc(BACK_OFFER.note)}”<div class="tiny" style="margin-top:4px">${o.n}, in ${o.n}'s own words</div></div>
       <div class="backFacts">
         <div><b>${usd(BACK_OFFER.amt)} · 7 days · from tomorrow</b></div>
-        <div>Each day you keep your deals, ${usd(per)} becomes a treat for you: a gift card you pick at the end, or a month of Plus.</div>
+        <div>Each day you keep your deals, ${usd(per)} becomes a treat for you: a gift card you pick at the end, for books, coffee or the cinema.</div>
         <div>A day you open anyway, that day's share goes to ${bCharity()}.</div>
         <div>${o.n} pays either way, and nothing goes back to ${o.n}.</div>
         <div>${o.n} will see how many days you kept. Never your apps, your times or which days.</div></div>
@@ -2501,7 +2508,7 @@ function renderBackBody(){
         <div class="sub">${usd(treat)} becomes your treat${gave?` and ${usd(cause)} went to ${bCharity()}`:''}.</div></div>
       <div class="eyebrow" style="margin:16px 2px 8px">PICK YOUR TREAT</div>
       <div class="row" style="gap:6px;flex-wrap:wrap">${TREATS.map(([k,l])=>`<span class="chip${BACK_IN.treat===k?' on':''}" role="radio" aria-checked="${BACK_IN.treat===k}" onclick="BACK_IN.treat='${k}';renderBackBody()">${l}</span>`).join('')}</div>
-      <div class="tiny" style="margin:9px 2px 14px;line-height:1.5">A gift card, never cash. Nothing goes back to ${p.n}.</div>
+      <div class="tiny" style="margin:9px 2px 14px;line-height:1.5">A gift card, never cash. Nothing goes back to ${p.n}. Pick within 30 days, or it goes to your charity.</div>
       <button class="btn mint" ${BACK_IN.treat?'':'disabled'} onclick="closeOv('ov-backing');toast('Enjoy it. High five sent to ${p.n}.')">Take it, and thank ${p.n}</button>`;
   }
 }

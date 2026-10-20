@@ -2,6 +2,16 @@
 
 **v1.2 · 2026-10-19** (v1.0 was 2026-10-13; v1.1, 2026-10-15, added deals, the jar component, Families, Creators and Teams; v1.2 adds the 8-step setup with spoken answers (§3a), the Day 1 card and wish jars (§4, §7)). This turns `scrolljar-spec.md` (the product) and `research-findings.md` (the platform limits) into an engineering plan. The prototype in `prototype/` is the visual and behavioural reference for every screen.
 
+**v1.3 · 2026-10-20: L's decisions after the legal review change the money parts of this plan.** The full list is in `scrolljar-spec.md` (v1.4 notes at the top). For the build, that means:
+- **The honor jar:** the app counts coins and moves no money. On the 1st it opens the charity partner's donation page with the amount filled in; the user gives there and gets the receipt. No card is saved for coins and there is no settlement charge in Version 1.
+- **Cause funds** (5–10 partner charities) with a disclosure before picking; "suggest a charity"; Hawaii sees opted-in charities only.
+- **ScrollJar pays card fees** on every plan; nothing is added on top. Plus no longer "covers fees".
+- **Jar break is one normal coin (1×)** after the grace hour.
+- **Money features 18+**, confirmed at "Make it real" and checked with Apple's age-range signal.
+- **Backend in the EU** (Supabase EU region); GDPR is the baseline everywhere.
+- **Version 1 is US only, with no public posts** (they come later with filter, report and block). Families comes after a children's-privacy review, with no kid accounts.
+- **Ask App Review early,** in writing, before building the money phase.
+
 **Verify Apple and Stripe API details against current documentation before implementing.** The limits below come from the July 2026 research.
 
 ---
@@ -10,7 +20,7 @@
 
 - A Mac with current Xcode, and **a real iPhone**. Screen Time / FamilyControls does not work properly in the Simulator.
 - Apple Developer Program membership ($99/yr). An individual account is fastest; an organization needs a D-U-N-S number.
-- Later: a Stripe account, an Every.org account with API access, and a US entity decision (spec Q16).
+- Later: an account with the charity partner for its donation pages (Version 1 needs no Stripe account for coins), and the company decision (spec Q16).
 
 ## 2. Targets, bundle IDs, entitlements
 
@@ -59,13 +69,13 @@ The shield is drawn by iOS, not by us. **The shield cannot take payment or open 
 6. **Safety net:** DeviceActivity callbacks become unreliable after about 45 minutes, and there is **no API to read which apps are currently shielded**.
    - Keep **shadow state** in the App Group: intended shield state plus window expiry times.
    - Reconcile on every app launch, on foreground, and in every monitor callback.
-7. **Coin:** record an Override event locally and send it to the backend. Coins are charged at monthly settlement, not per override (see §6).
+7. **Coin:** record an Override event locally and send it to the backend. Coins add up for the monthly honor-jar giving on the 1st; nothing is charged per override (see §6).
 
 **Peek valve:** the same unlock mechanism, free, once every 48 hours, 2–10 minutes long, and it never breaks a clean day.
 
 **Tamper / jar break:**
 - On launch and foreground, check `AuthorizationCenter.shared.authorizationStatus`. There is no reliable callback when the user revokes access in Settings.
-- If it was revoked while a deal is active: send a warning notification and start the **grace hour**. Charge 5× only if access is not restored.
+- If it was revoked while a deal is active: send a warning notification and start the **grace hour**. Add one normal coin (1×) only if access is not restored.
 - Quitting honestly (with 24 hours' notice) is always free.
 - The copy must follow the Voice Law.
 
@@ -113,7 +123,7 @@ Deal         id, selection(FamilyActivitySelection, encoded), schedule(presets +
              endsAt?                                         (ending: free, 24h notice)
 ShieldState  dealId, intendedShielded, windowEndsAt?, lastReconciledAt                (shadow state)
 Event        id, dealId, kind(resisted|override|peek|windowEnd|tamper|restore), at, amount?
-JarMonth     month, coins[], total, cap(default $50), settlement{status, stripePI, everyOrgReceipt}
+JarMonth     month, coins[], total, cap(default $50), settlement{status: ready · given · later, givenAt, partnerRef} (given comes from the partner's confirmation where it offers one, otherwise from the user)
 DiaryEntry   LOCAL ONLY (never leaves the phone unless the user exports it)
 FeelAfter    LOCAL ONLY: the setup feelings answer (chips + own words)
 Signature    LOCAL ONLY: the first deal's signature image
@@ -134,14 +144,13 @@ Privacy rules:
 - Coins are private by default; jar totals are shared.
 - **Wish jars:** members see the wish, the total, the date and who's in. Each person sees only their own share. Nobody sees who slipped, anyone's time or apps, or anyone else's share.
 
-## 5. Backend (small, US-hosted)
+## 5. Backend (small, EU-hosted)
 
 - Supabase (Postgres, auth and edge functions) or Node with Postgres, as the spec suggests.
 - **Tables:** users, deals_meta (no tokens), events, jar_months, jars, jar_members, invites (claim codes), standby_notes, wobbles.
 - **Jobs:**
-  - Monthly settlement on the 1st.
-  - The 48-hour refund window.
-  - A pre-settlement email.
+  - "Your jar is ready" on the 1st: a pre-filled link to the partner's donation page, and one reminder the next day.
+  - The 48-hour take-back window for coins.
   - Invite activation ($1 donation once the invitee finishes their first active week; max 10 per user; global monthly cap).
 - **Push (Wobble):**
   - Use a silent push that renders in the app only.
@@ -153,7 +162,7 @@ Privacy rules:
 
 ## 6. Money
 
-**Backing a friend** (spec §7): the backer's card is charged the full amount once, when the backing ends (an off-session PaymentIntent, like the monthly settlement; card fee on top for Free, covered by Plus). The kept share buys the friend's treat through a gift-card rewards API (or a month of Plus); the rest goes to the friend's own charity through Every.org. A day counts as given when the friend paid a coin that day (`payOverride`); peeks don't count. Kept or given is worked out on the friend's phone and only the two counts are sent. No money ever goes back to the backer. Confirm the gift-card partner, its fees and the legal framing (a conditional gift) before launch.
+**Backing a friend** (spec §7; not in Version 1). ⚠️ v1.4: the money must not pass through ScrollJar's balance, so redesign this flow with the partner and counsel before building. Current design: the backer's card is charged the full amount once, when the backing ends, and the card fee is paid by ScrollJar. The kept share buys the friend's treat through a gift-card rewards API, for physical goods or services only (no month of Plus); a treat not picked within 30 days goes to the friend's charity; the rest goes to the friend's own charity through Every.org. A day counts as given when the friend paid a coin that day (`payOverride`); peeks don't count. Kept or given is worked out on the friend's phone and only the two counts are sent. No money ever goes back to the backer. Confirm the gift-card partner, its fees and the legal framing (a conditional gift) before launch.
 
 **Wish jars move no money.** Coins in a wish jar are virtual: no Stripe, no Every.org, no IAP. The app shows the total and each person's own share; the group settles it however they like, outside ScrollJar.
 
@@ -163,15 +172,16 @@ Privacy rules:
 - **The date is optional.** If it passes, nothing is owed: move the date, or settle for what was reached.
 - **Plans:** free with one friend; groups of three or more need Plus.
 
-- **Penalties go through Stripe, outside Apple IAP.** This is allowed under App Store guideline 3.1.3(e); Beeminder, StickK and Forfeit are the precedents.
-  - Save the card around day 3 ("want to make it real?") with a **SetupIntent** (`usage: off_session`, 3DS at save) and a plain-language mandate.
-  - Run **one off-session PaymentIntent on the 1st** for the month's jar.
+- **Coins use the honor jar (decided 2026-10-20), outside Apple IAP and outside ScrollJar's hands.**
+  - Around day 3 ("want to make it real?") the user picks a price and a cause, agrees in plain words, and confirms they're 18 or over. No card is saved.
+  - On the 1st, "Your jar is ready" opens the partner's donation page with the amount and charity filled in (Apple Pay works). The user gives there; the partner issues the receipt to the user.
+  - ScrollJar pays the card fees, through an arrangement with the partner (for example, the partner invoices ScrollJar).
   - Monthly cap: $50 by default. When the jar is full, blocks stay on.
-  - 48-hour no-questions refund; more than 3 refunds in a month pauses stakes.
-- ⚠️ **2026-10-20:** Every.org's public API "does not provide programmatic donations or disbursements". The server-side donation step below needs a different structure; see `docs/legal-brief-2026-10.md` §1.1–1.2 before building it.
-- **The charity rail is Every.org.** Donations go through its 501(c)(3), which issues receipts and handles regranting.
-  - Confirm the current partner/API terms and the exact flow (direct-donation structure, to avoid commercial co-venturer registration) **with counsel before launch**.
-- **Memberships use StoreKit 2 IAP:** Free and **Plus** ($3.99/mo, $29.99/yr; updated 2026-10-14, replacing Ghost Jar / Jar Hero / Jar Legend). Real coins work on Free; the card fee is added on top for free users and covered for Plus. No dark patterns, "Not now" is the default choice, and annual is shown honestly next to monthly.
+  - Coins can be taken back within 48 hours, no questions; more than 3 in a month pauses stakes.
+  - Why: Every.org's public API "does not provide programmatic donations or disbursements", Apple 3.2.2(iv) wants charity money collected outside the app, and money passing through ScrollJar would bring money-transmitter and charity-registration rules. See `docs/legal-brief-2026-10.md` §1.1–1.2.
+- **Version 2 (later):** automatic charging by a partner on its own account, with the user agreeing a range up front. Only once a partner agrees and counsel signs off.
+- **Cause funds:** 5–10 partner charities with written agreements, a short disclosure before picking, and "suggest a charity". Confirm the partner terms **with counsel before launch**.
+- **Memberships use StoreKit 2 IAP:** Free and **Plus** ($3.99/mo, $29.99/yr; updated 2026-10-14, replacing Ghost Jar / Jar Hero / Jar Legend). Real coins work on Free; ScrollJar pays card fees on every plan. No dark patterns, "Not now" is the default choice, and annual is shown honestly next to monthly.
 - Cancelling a membership **does not** end active deals (spec §4).
 - **Free has 3 active deals; Plus is unlimited.** A 4th deal on Free shows the plans, never a block on the deals already running.
 
@@ -251,18 +261,18 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
 | **0: Accounts** | Developer account, bundle IDs, App Group, **entitlement requests filed** | Request confirmation for all 5 IDs |
 | **1: Blocking spike** (riskiest) | Auth → picker → shield with 2 buttons → notification → our app → timed unlock → automatic re-shield; shadow-state reconcile; web-domain test | On a real iPhone: 20 cycles in a row re-shield correctly, including windows over 45 minutes and an app kill/relaunch |
 | **2: Solo loop, no money** | Onboarding (with "Say it instead"), Day 1 card, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
-| **3: Money** | Backend, Stripe SetupIntent, settlement job, refunds, cap, Every.org donation, tip-out ceremony, jar break and grace hour | End to end in Stripe test mode, plus one real $1 donation with a receipt |
+| **3: Money** | EU backend, cause funds and disclosures, "Your jar is ready" with the partner's pre-filled donation page, reminder, 48-hour take-back, cap, tip-out ceremony, jar break (1×) and grace hour, 18+ confirmation | One real $1 donation given on the partner's page, with the receipt reaching the user |
 | **4: Membership + polish** | StoreKit 2 Plus (monthly and yearly), plans screen, 3-deal Free limit, widget, Voice Law pass on every string, accessibility | Ready for TestFlight (needs the distribution entitlement) |
-| **5: Social** | Buddy and group jars, wish jars, backing a friend, invites with claim codes, finite feed, Wobble and standby notes | Beta testers can invite each other and fill a wish jar together |
+| **5: Social** | Buddy and group jars, wish jars, backing a friend (after its money flow is redesigned), invites with claim codes, finite feed, Wobble and standby notes. Public posts only with filter, report and block | Beta testers can invite each other and fill a wish jar together |
 | **6: Beta** | TestFlight with 100–300 users (r/nosurf, US colleges), transparency page | First real conversion data |
 | **7: Teams pilot** | Campaigns, squads, "your hour" picker, lights jar, anonymous dashboard, notes with the on-phone privacy check | One company runs a 6-week pilot. Sell it before building (see the Teams spec) |
-| **8: Families and Creators** | Family jar and setup (Family Sharing), creator setup with posting windows, public challenges | Built in parallel once Teams works |
+| **8: Families and Creators** | After a children's-privacy review: family jar and setup (Family Sharing, no kid accounts, receipts in the parent's name), creator setup with posting windows, public challenges | Built in parallel once Teams works |
 
 Android is phase 3+ of the business roadmap and is not in this plan; see `research-findings.md`.
 
 ## 9. Known risks
 
 - **Entitlement delay:** file in Phase 0, and build on development entitlements in the meantime.
-- **App Review on the charity mechanics:** prepare a precedent dossier (Forfeit, Beeminder, StickK) and use the Every.org structure.
+- **App Review on the charity mechanics:** ask App Review in writing before Phase 3 (the donation link-out, and 4.10 on monetizing Screen Time APIs), then send an early TestFlight build. Keep the precedent dossier (Forfeit, Beeminder, StickK).
 - **DeviceActivity reliability:** shadow state and reconciliation in Phase 1, before any feature work.
-- **Chargebacks:** the mandate at card save, confirmation logs, 48-hour refunds and the pre-settlement email.
+- **Chargebacks:** none for coins in Version 1 (the user gives on the partner's page). For Version 2: the agreed range, confirmation logs, 48-hour take-back and a heads-up before each charge.
