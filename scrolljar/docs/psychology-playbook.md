@@ -97,6 +97,7 @@
 10. **"Social media addiction" about people, or "addicts."** Researchers dispute whether heavy use is a true addiction. Say "habit," "autopilot," "problematic use." Quote "addictive design" only when attributing it to a court or regulator.
 11. **"Infinite scroll makes you scroll X% longer."** No randomised trial shows this. Say it removes natural stopping points.
 12. **"Cuts app use in half."** The one sec 57% figure is app *openings* among people who kept using the app, with no control group.
+13. **"Signing makes people more honest / more committed."** The study usually cited for this (Shu, Mazar, Gino, Ariely & Bazerman 2012, *PNAS*, "signing at the beginning") was **retracted in 2021** after its data were found to be fabricated. ScrollJar's "Sign your deal" is a ritual and a design choice; never justify it with research.
 
 ## The one-paragraph scientific pitch (press-ready)
 
