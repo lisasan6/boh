@@ -2729,3 +2729,11 @@ function winGiveDay(){
   renderWinGive();
 }
 renderTricky(); renderWinGive();
+
+/* the jar's impact card follows the demo's own story: three weeks in, coins real since day 3.
+   If no 1st of the month has passed since then, nothing has been given yet and the first tip-out is next. */
+(function(){
+  const realSince=daysAgo(18); let tips=0;
+  for(let d=new Date(realSince); d<=TODAY; d.setDate(d.getDate()+1)) if(d.getDate()===1&&d>realSince) tips++;
+  if(!tips){ $('impA').textContent=NEXT1; $('impAL').textContent='your first tip-out'; $('impB').textContent='$'+jarTotal(); $('impBL').textContent='on its way so far'; $('impA').style.color='var(--ink)'; $('impB').style.color='var(--gold-text)'; }
+})();
