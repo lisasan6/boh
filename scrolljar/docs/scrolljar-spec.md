@@ -168,6 +168,8 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
 
 ## 12. Compliance (US-first)
 
+> ⚠️ **2026-10-20: see `docs/legal-brief-2026-10.md`.** Every.org's API does not support programmatic donations, Apple 3.2.2(iv) limits in-app charity collection, Apple 4.10 bars monetizing Screen Time APIs, and GDPR likely applies from day one. The lines below predate that research.
+
 - **Apple:** penalties outside IAP under 3.1.3(e) (precedent dossier: Beeminder, StickK, Forfeit); donations executed server-side via Every.org (users donate through the platform 501(c)(3)); memberships via IAP. Entitlement requests day 0.
 - **US:** commercial co-venturer analysis — mitigated by Every.org direct-donation structure; state registrations reviewed with counsel before "we donate" marketing claims. **Entity question (open Q16):** Delaware C-corp/LLC vs Italian entity with US ops — advisor needed before Stripe/App Store contracts.
 - **EU (expansion phase):** SCA flows, Italian localization (Voice Law rewritten natively), Italy Law 120/2026 AGCM notification ≥15 days before charity-linked marketing.
