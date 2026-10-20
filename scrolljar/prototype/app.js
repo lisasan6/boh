@@ -933,7 +933,7 @@ function payContinue(){
   S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now.');
 }
 function renderPlan(){
-  if(typeof renderTricky==='function'){ renderTricky(); renderWinGive(); }
+  if(typeof renderTricky==='function') renderTricky();
   const c=$('planCard'); if(!c) return;
   const plus=S.plan!=='free';
   c.innerHTML=`<div class="spread"><div><b style="font-size:13px">${plus?'ScrollJar Plus':'Free plan'}</b><div class="tiny">${plus?(S.plan==='creator'?'free while your challenge runs':(S.plan==='yr'?'$29.99 / year':'$3.99 / month'))+' · card fees covered':'real coins · 3 deals · card fee shown on top'}</div></div><span class="pill ${plus?'chr':'mint'}">${plus?'Manage':'See Plus'}</span></div>`;
@@ -2699,36 +2699,7 @@ function renderTricky(){
     <div class="tiny" style="margin-top:10px;line-height:1.5">Never late at night, never more than ${TRICKY.perWeek} a week, and never a countdown.</div>`;
 }
 
-/* ══ GIVING WHEN YOU WIN (Plus) — every 10 days without a coin, ScrollJar gives a small fixed gift from
-   membership money (never yours) to a cause you choose, which can differ from your jar's charity.
-   The amount is a placeholder until the unit economics are set; a monthly company budget caps the total. ══ */
-const WINGIVE={per:0.5,days:7,gifts:2,cause:null};
-const wgCause=()=>CHARITIES[WINGIVE.cause===null?S.charity:WINGIVE.cause];
-function renderWinGive(){
-  const C=$('winGiveCard'); if(!C) return;
-  const amt=v=>v<1?Math.round(v*100)+'¢':'$'+v.toFixed(2);
-  if(!isPlus()){
-    C.innerHTML=`<div class="row" style="gap:10px;align-items:flex-start"><svg width="18" height="18" style="color:var(--mint);flex:none;margin-top:1px"><use href="#i-sprout"/></svg>
-      <div style="flex:1"><b style="font-size:13px">When you win, we give too</b><div class="tiny" style="margin-top:3px;line-height:1.5">With Plus, every 10 days without a coin, ScrollJar gives ${amt(WINGIVE.per)} to a cause you choose, from our membership money, never yours.</div>
-      <div class="row" style="gap:12px;margin-top:9px"><span class="pill chr" role="button" tabindex="0" style="cursor:pointer" onclick="go('paywall')">See Plus</span>
-      <span class="tiny devNote" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline" onclick="S.plan='yr';renderPlan()">Prototype: preview it with Plus</span></div></div></div>`;
-    return; }
-  C.innerHTML=`<div class="spread"><b style="font-size:13.5px">When you win, we give too</b><span class="pill mint">PLUS</span></div>
-    <div class="tiny" style="margin-top:3px;line-height:1.5">Every 10 days without a coin, ScrollJar gives ${amt(WINGIVE.per)} to your cause, from our membership money, never yours.</div>
-    <div class="winDots" aria-label="${WINGIVE.days} of 10 days without a coin">${Array.from({length:10},(_,i)=>`<i class="${i<WINGIVE.days?'on':''}"></i>`).join('')}</div>
-    <div class="sub" style="margin-bottom:10px">${WINGIVE.days} of 10 days without a coin. ${10-WINGIVE.days===1?'One more day':`${10-WINGIVE.days} more days`} to the next gift.</div>
-    <div class="spread" style="padding-top:10px;border-top:1px solid var(--line)">
-      <div><div class="tiny">so far from us</div><b class="num" style="font-size:16px">${amt(WINGIVE.gifts*WINGIVE.per)} · ${WINGIVE.gifts} gift${WINGIVE.gifts===1?'':'s'}</b></div>
-      <div style="text-align:right"><div class="tiny">your cause</div><b style="font-size:13px">${wgCause().n}</b></div></div>
-    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">${CHARITIES.slice(0,4).map((c,i)=>`<span class="chip${wgCause()===c?' on':''}" onclick="WINGIVE.cause=${i};renderWinGive()">${c.n}</span>`).join('')}</div>
-    <div class="tiny devNote" role="button" tabindex="0" style="margin-top:10px;cursor:pointer;text-decoration:underline" onclick="winGiveDay()">Prototype: add a day without a coin</div>`;
-}
-function winGiveDay(){
-  WINGIVE.days++;
-  if(WINGIVE.days>=10){ WINGIVE.days=0; WINGIVE.gifts++; renderWinGive(); toast(`10 days without a coin. We just gave ${Math.round(WINGIVE.per*100)}¢ to ${wgCause().n}.`); return; }
-  renderWinGive();
-}
-renderTricky(); renderWinGive();
+renderTricky();
 
 /* the jar's impact card follows the demo's own story: three weeks in, coins real since day 3.
    If no 1st of the month has passed since then, nothing has been given yet and the first tip-out is next. */

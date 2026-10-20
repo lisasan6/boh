@@ -190,7 +190,7 @@ Privacy rules:
 | `s-friends` (tab: BOARD), `s-jardetail`, `s-challenge`, `s-invite`, `ov-compose` | BoardView, jars | **v1.1+:** build after the solo loop works |
 | `ov-sign`, `ov-last` | SignView, LastScrollView | End of setup: optional signature, then the optional last scroll (a normal 5-minute window) |
 | `ov-letter`, `ov-letterread` | LetterSheet, LetterView | Write (Make a deal step 5, Day 1 card); delivered at 30 days by a local notification; then kept in the diary |
-| `trickyCard` (More about your week), `winGiveCard` (Jar) | TrickyHoursView, WinGivingView | Plus. Tricky hours: a 7×7 map from our own shield events only, plus scheduled local notifications (≤2 a week, 15 min before, none late at night). Giving: days without a coin counted on the phone; the backend pays the gift from membership revenue under a monthly budget cap |
+| `trickyCard` (More about your week) | TrickyHoursView | Plus. A 7×7 map from our own shield events only, plus scheduled local notifications (≤2 a week, 15 min before, none late at night) |
 | `ov-week` | WeekMomentView | Day 7 of a deal: the jar's happy moment and the share card, rendered to an image (`ImageRenderer`) and shared with `ShareLink` plus the jar's invite link. No apps or coins on the card |
 | Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick. One quiet line in the pause and on the coin sheet |
 | `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |

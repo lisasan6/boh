@@ -878,7 +878,3 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .notePrev.quiet{opacity:.85}
 .noteActs{display:flex;gap:6px;margin-top:8px}
 .noteActs span{flex:1;text-align:center;padding:7px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
-/* giving when you win (Plus) */
-.winDots{display:flex;gap:5px;margin:12px 0 8px}
-.winDots i{flex:1;height:8px;border-radius:4px;background:var(--panel-2);border:1px solid var(--line)}
-.winDots i.on{background:var(--mint);border-color:transparent}
