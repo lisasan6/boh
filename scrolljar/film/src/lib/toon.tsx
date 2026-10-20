@@ -667,3 +667,99 @@ export const BigEye: React.FC<{
     </g>
   );
 };
+
+// ---------- Betty Boop-era eyes and curls ----------
+// Huge black pupils, a heavy black lid line and long spiky lashes sweeping outward.
+export const BoopEye: React.FC<{
+  x: number;
+  y: number;
+  rx: number;
+  ry: number;
+  look?: Pt;
+  lid?: number; // 0 open .. 1 shut
+  lidFill: string;
+  side: 'l' | 'r'; // which way the lashes sweep
+  lashes?: number; // 0 for a man's eye
+}> = ({x, y, rx, ry, look = [0, 0], lid = 0.18, lidFill, side, lashes = 4}) => {
+  const id = useId().replace(/:/g, '');
+  const prx = rx * 0.74;
+  const pry = ry * 0.8;
+  const px = x + look[0] * (rx - prx) * 0.9;
+  const py = y + look[1] * (ry - pry) * 0.9;
+  const lidL = Math.max(0.08, Math.min(lid, 0.97));
+  const ly = y - ry + 2 * ry * lidL;
+  const sx = side === 'r' ? 1 : -1;
+  // where the lid line crosses the eye's edge
+  const half = rx * Math.sqrt(Math.max(0, 1 - ((ly - y) / ry) ** 2));
+  return (
+    <g>
+      <defs>
+        <clipPath id={`bo${id}`}>
+          <ellipse cx={x} cy={y} rx={rx} ry={ry} />
+        </clipPath>
+      </defs>
+      <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={WHITE} />
+      <g clipPath={`url(#bo${id})`}>
+        <ellipse cx={px} cy={py} rx={prx} ry={pry} fill={INK} />
+        <ellipse cx={px - prx * 0.34} cy={py - pry * 0.36} rx={prx * 0.22} ry={pry * 0.17} fill={WHITE} />
+        <circle cx={px + prx * 0.28} cy={py + pry * 0.42} r={prx * 0.08} fill={WHITE} />
+        <rect x={x - rx - 6} y={y - ry - 6} width={rx * 2 + 12} height={ly - (y - ry) + 6} fill={lidFill} />
+      </g>
+      <ellipse cx={x} cy={y} rx={rx} ry={ry} fill="none" stroke={INK} strokeWidth={OL * 0.8} />
+      {/* the heavy lid line, flicking out past the corner */}
+      <path
+        d={`M${x - sx * half * 1.02} ${ly + 3} Q${x} ${ly - ry * 0.12} ${x + sx * half * 1.05} ${ly + 1} L${x + sx * (half + rx * 0.28)} ${ly - ry * 0.12}`}
+        stroke={INK}
+        strokeWidth={OL * 2.4}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {Array.from({length: lashes}, (_, i) => {
+        const f = 0.15 + i * 0.27;
+        const bx = x + sx * half * f;
+        const by = ly - ry * 0.06 * (1 - f);
+        const len = rx * (0.62 + i * 0.13);
+        const ang = (-100 + sx * (18 + i * 16)) * (Math.PI / 180);
+        const tx = bx + Math.cos(ang) * len;
+        const ty = by + Math.sin(ang) * len;
+        return (
+          <path
+            key={i}
+            d={`M${bx - 5} ${by + 2} Q${(bx + tx) / 2 - sx * 2} ${(by + ty) / 2 - 2} ${tx} ${ty} Q${(bx + tx) / 2 + sx * 7} ${(by + ty) / 2 + 5} ${bx + 5} ${by + 2} Z`}
+            fill={INK}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
+// a spit curl: a black spiral lying on the forehead
+export const spiral = (cx: number, cy: number, r: number, turns = 1.6, dir = 1) => {
+  const pts: string[] = [];
+  const n = 28;
+  for (let i = 0; i <= n; i++) {
+    const f = i / n;
+    const a = dir * f * turns * Math.PI * 2 + Math.PI / 2;
+    const rr = r * (1 - f * 0.85);
+    pts.push(`${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr).toFixed(1)}`);
+  }
+  return `M${pts.join(' L')}`;
+};
+
+// small dark heart-shaped lips; smile lifts the corners, pucker rounds them
+export const BoopLips: React.FC<{x: number; y: number; w: number; smile?: number; open?: number}> = ({x, y, w, smile = 0.2, open = 0}) => {
+  const h = w / 2;
+  const c = -smile * w * 0.25; // corners lift
+  const d = `M${x - h} ${y + c} Q${x - h * 0.55} ${y - w * 0.32} ${x} ${y - w * 0.12} Q${x + h * 0.55} ${y - w * 0.32} ${x + h} ${y + c} Q${x + h * 0.45} ${
+    y + w * (0.34 + open * 0.4)
+  } ${x} ${y + w * (0.36 + open * 0.4)} Q${x - h * 0.45} ${y + w * (0.34 + open * 0.4)} ${x - h} ${y + c} Z`;
+  return (
+    <g>
+      <path d={d} fill={INK} stroke={INK} strokeWidth={2} strokeLinejoin="round" />
+      <path d={`M${x - h * 0.7} ${y + c * 0.6 + 2} Q${x} ${y + w * 0.06 + open * w * 0.3} ${x + h * 0.7} ${y + c * 0.6 + 2}`} stroke={G6} strokeWidth={2} fill="none" />
+      <ellipse cx={x - h * 0.25} cy={y + w * 0.2} rx={w * 0.1} ry={w * 0.045} fill={WHITE} opacity={0.5} />
+    </g>
+  );
+};
