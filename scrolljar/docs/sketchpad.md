@@ -111,7 +111,7 @@ Big Counter (audited; Q12 methodology) · reclaimed-hours mural · jar = interfa
 Strava model (finite feed, kudos, outcomes-only, no leaderboards) · Focus Weeks · hour-posts (Q8) feed the mural · **The Wobble button** (#2 — summoned support at the temptation moment; Ladder of Who Speaks, resolved 2026-07-30) · **The 9pm Bell** (#3 — synchronized quiet per jar) · **Dinner Jars** (#10 — couple templates).
 
 ## 📊 Stats & impact
-Time returned vs own baseline · vivid units + "100% reaches the program" · measure the enemy, not the joy · Year in the Jar · mood check-ins v1.5 → efficacy study.
+Time returned vs own baseline · vivid units + "100% reaches the program" · measure the enemy, not the joy · **Year in the Jar → built 2026-10-21** (own numbers only, free, opt-in; spec v1.4 notes) · mood check-ins v1.5 → efficacy study.
 
 ## 🎨 Design & brand — dual-register
 Vibrant adult core (Sora/Outfit/Space Grotesk candidates; sleek glassy jar) · calm support register · curves, amber-never-red, 100–400ms, breathing idle, CVD-validated charts · design-session briefing in project (3 directions) · privacy as feature ("we couldn't spy on you" / "neither can your boss") · Teams celestial register (moons at dusk) · **The jar grows up (#7, restrained): slow silent ambient aging — plant, not game; no notifications, no progress bar, no levels; if it needs announcing, cut it.**

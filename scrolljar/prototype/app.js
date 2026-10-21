@@ -2693,12 +2693,15 @@ function lastScroll(yes){
 /* ══ LETTERS TO YOUR FUTURE SELF — written when you make a deal, back as a letter in 30 days.
    On the phone only; nothing reads, sorts or answers them. When it arrives it's kept in the diary. ══ */
 const LETTERS=[{text:"Hey. If you're reading this, a month has gone by. I hope you got back to the novel, even a page a day. And if it was a hard month, that's okay too. You're still here, choosing.",written:daysAgo(30),deal:'The scroll one'}];
-function openLetter(){ $('letterText').value=''; $('letterWhen').textContent=monDay(daysAgo(-30)); letterCount(); $('ov-letter').classList.add('on'); }
+let LETTER_DAYS=30;   /* 30 days from a new deal; a year from Year in the Jar */
+const letterDate=()=>{ const d=daysAgo(-LETTER_DAYS); return monDay(d)+(LETTER_DAYS>=365?', '+d.getFullYear():''); };
+function openLetter(days=30){ LETTER_DAYS=days; $('letterText').value=''; $('letterHead').textContent=days===365?'To you, a year from now':'To you, 30 days from now';
+  $('letterWhen').textContent=letterDate(); letterCount(); $('ov-letter').classList.add('on'); }
 function letterCount(){ const n=$('letterText').value.length; $('letterLeft').textContent=(280-n)+' left'; $('letterGo').disabled=!$('letterText').value.trim(); }
 function sealLetter(){
   const t=$('letterText').value.trim(); if(!t) return;
   LETTERS.unshift({text:t,written:new Date(),deal:(COMMITS[0]||{}).n,mine:true}); closeOv('ov-letter'); renderLetterRow();
-  toast('Sealed. It comes back on '+monDay(daysAgo(-30))+'.');
+  toast('Sealed. It comes back on '+letterDate()+'.');
 }
 function renderLetterRow(){
   const L=LETTERS.find(l=>l.mine), row=$('d1Letter'); row.classList.toggle('done',!!L);
@@ -2839,3 +2842,44 @@ const JAR_AGES=[0,6,12];
 function setJarAge(m){ document.body.dataset.jarage=m; const b=$('ageBtn'); if(b) b.textContent=m===0?'Month 6':m===6?'Month 12':'Now'; }
 function cycleJarAge(){ const cur=+(document.body.dataset.jarage||0), next=JAR_AGES[(JAR_AGES.indexOf(cur)+1)%JAR_AGES.length]; setJarAge(next); go('jar'); }
 setJarAge(0);
+
+/* ══ YEAR IN THE JAR — one calm look back, a year after the first deal ══
+   Only the person's own numbers, measured against their own start: hours back, what the jar gave, the hour
+   that used to be hardest, and their own words from month one. No ranking, no streak, nothing posted.
+   The demo jumps a year ahead, so the figures are a plausible year rather than this jar's three weeks. */
+const YEAR={hours:[22,28,31,35,37,39,41,42,44,47,49,53],given:[35,31,28,24,22,19,17,14,12,10,9,8]};
+function yearBars(vals,cls,unit){
+  const mx=Math.max(...vals), start=daysAgo(21);
+  const mon=i=>new Date(start.getFullYear(),start.getMonth()+i,1);
+  const name=i=>mon(i).toLocaleString('en-US',{month:'long'});
+  return `<div class="bars" style="height:70px" role="img" aria-label="${vals.map((v,i)=>name(i)+': '+unit(v)).join(', ')}">`+
+    vals.map((v,i)=>`<div class="bar" title="${name(i)}: ${unit(v)}"><div class="b ${cls}" style="height:${Math.round(v/mx*48)}px"></div><div class="l">${name(i)[0]}</div></div>`).join('')+'</div>';
+}
+function openYear(){
+  document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
+  const hrs=YEAR.hours.reduce((a,b)=>a+b,0), gave=YEAR.given.reduce((a,b)=>a+b,0), first=daysAgo(21);
+  const days=Math.round(hrs/24*2)/2, dayTxt=(days%1?Math.floor(days)+'½':days)+' days';
+  const L=LETTERS.filter(l=>!l.mine).pop()||LETTERS[LETTERS.length-1];
+  $('yearSub').textContent=`Since ${first.toLocaleString('en-US',{month:'long',year:'numeric'})}. Here's what it added up to, in your own numbers.`;
+  $('yearBody').innerHTML=`
+    <div class="card"><div class="eyebrow">YOUR TIME</div>
+      <div class="display" style="font-size:24px;margin-top:6px">${hrs} hours back</div>
+      <div class="tiny" style="margin-top:3px">about ${dayTxt}, yours to spend however you liked</div>
+      ${yearBars(YEAR.hours,'',v=>v+' hours')}</div>
+    <div class="card"><div class="eyebrow">YOUR JAR</div>
+      <div class="display" style="font-size:24px;margin-top:6px;color:var(--gold-text)">$${gave} given</div>
+      <div class="tiny" style="margin-top:3px;line-height:1.5">to ${esc(charity().n)}, on twelve 1sts. The jar got lighter almost every month: fewer coins, because you needed fewer.</div>
+      ${yearBars(YEAR.given,'coin',v=>'$'+v)}</div>
+    <div class="card"><div class="eyebrow">THE HOUR THAT CHANGED</div>
+      <div class="sub" style="margin-top:6px">Last autumn, <b>9 to midnight</b> was your trickiest time. This autumn it's one of your quietest.</div></div>
+    ${L?`<div class="card"><div class="eyebrow">IN YOUR FIRST MONTH YOU WROTE</div>
+      <div style="margin-top:8px;padding:12px 14px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);font-size:13.5px;line-height:1.55">${esc(L.text)}</div></div>`:''}
+    <div class="card"><div class="eyebrow">TOGETHER</div>
+      <div class="sub" style="margin-top:6px">Casa Jar gave to four causes, each to their own. Noor backed your deals twice.</div></div>
+    <div class="tiny" style="text-align:center;margin:2px 0 14px">Your jar is a year old. It wears a ribbon now.</div>`;
+  renderCoins($('yearCoins'),Math.min(jarTotal(),S.cap));
+  $('ov-year').classList.add('on'); $('ov-year').scrollTop=0;
+  const svg=$('yearJarSvg');
+  setTimeout(()=>{ jarMood(svg,'happy',2600); svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop'); stars($('yearJarBox'),9,true); },350);
+}
+function yearSave(){ toast('Saved to your Photos. Only you have it, and nothing was posted.'); }

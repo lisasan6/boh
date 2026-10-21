@@ -166,7 +166,7 @@
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="modes" role="group" aria-label="Where in the journey"><button class="ms" id="stD1" onclick="setStage('new')">Day 1</button><button class="ms on" id="stW3" onclick="setStage('wk3')">Week 3</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="openLetterRead()">Day 30</button><button class="ms" id="ageBtn" onclick="cycleJarAge()">Month 6</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="openLetterRead()">Day 30</button><button class="ms" id="ageBtn" onclick="cycleJarAge()">Month 6</button><button class="ms" onclick="openYear()">Year 1</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -1162,7 +1162,7 @@
   <div class="ov sheetwrap" id="ov-letter">
     <div class="sheet-card">
       <div class="spread" style="margin-bottom:6px"><div class="eyebrow">A LETTER TO FUTURE YOU</div><span class="backBtn" onclick="closeOv('ov-letter')">✕</span></div>
-      <div class="display" style="font-size:21px;margin-bottom:4px">To you, 30 days from now</div>
+      <div class="display" style="font-size:21px;margin-bottom:4px" id="letterHead">To you, 30 days from now</div>
       <div class="sub" style="margin-bottom:10px">It comes back on <b id="letterWhen">Nov 18</b>. Nobody else reads it, us included.</div>
       <textarea id="letterText" class="letterIn paper" rows="6" maxlength="280" aria-label="Your letter" placeholder="What do you hope you'll have done with the time? What would you like to hear on a hard day?" oninput="letterCount()"></textarea>
       <div class="tiny" style="text-align:right;margin:4px 2px 12px" id="letterLeft">280 left</div>
@@ -1208,6 +1208,27 @@
     <button class="btn ghost" style="margin-top:8px" onclick="weekSend()">Send it to someone</button>
     <div class="tiny" role="button" tabindex="0" style="margin-top:12px;cursor:pointer;text-decoration:underline" onclick="closeOv('ov-week')">Keep it to myself</div>
     <div class="tiny" style="margin-top:10px;line-height:1.5">The card never shows your apps or your coins. Sent to someone, it comes with a link to Casa Jar that opens without the app.</div>
+  </div>
+
+  <!-- ══ YEAR IN THE JAR: one calm look back, a year after the first deal. Own numbers only, never a ranking ══ -->
+  <div class="ov" id="ov-year" style="background:var(--scr-bg);padding:28px 22px 22px;overflow-y:auto;text-align:center">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-year')">✕</button>
+    <div class="jarbox" id="yearJarBox" style="width:104px;height:118px;margin:4px auto 0;position:relative;flex:none">
+      <svg viewBox="0 0 200 226" width="104" height="118" class="jarbreathe" id="yearJarSvg">
+        <rect x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+        <path d="M52 34 h96 v14 c15 12 24 29 24 48 v88 c0 22-17 39-39 39 H67 c-22 0-39-17-39-39 V96 c0-19 9-36 24-48 z" fill="url(#glass)" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
+        <g id="yearCoins" clip-path="url(#body)"></g>
+        <circle cx="84" cy="104" r="4.6" fill="var(--jar-face)"/><circle cx="116" cy="104" r="4.6" fill="var(--jar-face)"/>
+        <path d="M88 118 q12 8 24 0" stroke="var(--jar-face)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="eyebrow" style="margin-top:10px">ONE YEAR WITH YOUR JAR</div>
+    <div class="display" style="font-size:26px;line-height:1.1;margin:6px 0 8px">A year, returned.</div>
+    <div class="sub" id="yearSub"></div>
+    <div id="yearBody" style="text-align:left;margin-top:16px"></div>
+    <button class="btn mint" onclick="closeOv('ov-year');openLetter(365)">Write to you, a year from now</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="yearSave()">Save it as an image</button>
+    <div class="tiny" style="margin-top:12px;line-height:1.5">Only you see this. It's measured against you, never anyone else, and it never shows your apps.</div>
   </div>
 
   <div class="ov" id="ov-firstwin" style="background:var(--scr-bg);align-items:center;justify-content:center;text-align:center;padding:34px 26px">

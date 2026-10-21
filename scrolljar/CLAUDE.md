@@ -19,7 +19,7 @@ The tagline: *"You can always choose distraction. It just shouldn't be free."*
 
 ## The Voice Law (applies to every string: app, site, emails)
 
-- Banned words: **failed, wasted, addict, guilty, shame, broke, violation** (and "weak" in user-facing copy about the person).
+- Banned words: **failed, wasted, addict, guilty, shame, broke, violation** (and "weak" in user-facing copy about the person). One exception: the website's "No shame" lines stay (L, 2026-10-21), because they say the opposite.
 - No shame, in either direction. Talk about the behaviour, never the person ("a hard evening", not "you're weak").
 - Coins are amber/gold, **never red**. A slip is reported, never judged.
 - We never speak in a friend's voice. If a friend left no note, the user gets their own words back, not ours.

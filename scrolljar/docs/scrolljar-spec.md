@@ -18,6 +18,7 @@
 - **Mood check-ins stay on the phone.** Research data only with a separate opt-in, independent ethics approval first, stored apart from accounts.
 - **Privacy:** GDPR is the baseline worldwide; data hosted in the EU (Supabase EU region). Company type (Italian SRL or Delaware) still open (Q16).
 - **Accessibility:** "Never mind, continue" keeps moving by default, but stays in one place with VoiceOver, Switch Control or Reduce Motion on, or by a setting.
+- **Year in the Jar (2026-10-21, in the prototype: the "Year 1" demo button):** one calm look back, a year after the first deal. It waits as a quiet card on Today and opens only if tapped (no push). It shows the person's own numbers against their own start: hours back by month, what the jar gave by month (it gets lighter as fewer coins are needed), the hour that used to be hardest, their own words from a month-one letter, and what their shared jars did. No ranking, no streak, no percentiles, nothing posted; "Save it as an image" keeps it on the phone. It ends with "Write to you, a year from now" (a letter that comes back in a year). Free for everyone: Claude's default, since it's a warm moment rather than a deep stat.
 - **Launch plan:** Version 1 is US only (shields, the pause, deals, the honor jar, cause funds). Version 2 adds partner automation. Version 3 adds Families, then the EU with local charity partners.
 
 **v1.3 changes (2026-10-14/15, L's decisions; they override older text below):**
