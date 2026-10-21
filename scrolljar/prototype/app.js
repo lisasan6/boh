@@ -2754,7 +2754,7 @@ renderTricky();
 (function(){
   const realSince=daysAgo(18); let tips=0;
   for(let d=new Date(realSince); d<=TODAY; d.setDate(d.getDate()+1)) if(d.getDate()===1&&d>realSince) tips++;
-  if(!tips){ $('impA').textContent=NEXT1; $('impAL').textContent='your first tip-out'; $('impB').textContent='$'+jarTotal(); $('impBL').textContent='on its way so far'; $('impA').style.color='var(--ink)'; $('impB').style.color='var(--gold-text)'; }
+  if(!tips){ $('impA').textContent=NEXT1; $('impAL').textContent='your first tip-out'; $('impB').textContent='$'+jarTotal(); $('impBL').textContent='in your jar so far'; $('impA').style.color='var(--ink)'; $('impB').style.color='var(--gold-text)'; }
 })();
 
 /* ══ THE BELL — once a day, a jar goes quiet together, at a time the jar picks (not always 9pm: shift workers fit).
