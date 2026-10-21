@@ -1944,7 +1944,7 @@ function renderFamily(animate){
       <div class="av" style="background:${m.c}">${m.n[0]}</div>
       <div style="flex:1"><b style="font-size:13px">${m.n}${m.age?` <span class="tiny">· ${m.age}</span>`:''}</b><div class="tiny">${m.role==='kid'?'picked: ':'gives to: '}${m.cause}</div></div>
       <span class="pill ${m.role==='kid'?'chr':'gold'}">${m.role}</span></div>`).join('')}</div>
-    <div class="card lidCard"><b style="font-size:13px">Family lid colour</b><div class="tiny" style="margin-top:2px">anyone in the family can change it</div>
+    <div class="card lidCard"><div class="spread"><b style="font-size:13px">Family lid colour</b><span class="lidName" data-lidname="fam"></span></div><div class="tiny" style="margin-top:2px">anyone in the family can change it</div>
       <div class="swatches" data-lidpick="fam"></div></div>
     <div class="card"><div class="spread"><div><div style="font-size:12.5px;font-weight:700">My coins in the family jar</div><div class="tiny">only the grown-ups' total shows, never whose</div></div>
       <div class="toggle${FAM.coinsIn?' on':''}" role="switch" aria-checked="${FAM.coinsIn}" aria-label="My coins in the family jar" tabindex="0" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
@@ -2168,12 +2168,12 @@ function paintLids(){
   document.querySelectorAll('svg[data-built]').forEach(svg=>{ const l=svg.querySelector('.lid'); if(l) l.setAttribute('fill',lidFill(LIDS[jarOwner(svg)])); });
   document.querySelectorAll('.lidDot').forEach(d=>d.style.background=lidSwatchBg[LIDS[d.dataset.jar]]);
   document.querySelectorAll('[data-lidpick]').forEach(renderLidPick);
+  document.querySelectorAll('[data-lidname]').forEach(n=>n.textContent=LID_NAMES[LIDS[n.dataset.lidname]]);
   const me=$('lidPickMe'); if(me){ me.dataset.lidpick='me'; renderLidPick(me); }
 }
 function renderLidPick(box){
   const who=box.dataset.lidpick;
-  box.innerHTML=Object.keys(LID_NAMES).map(k=>`<button class="swatch${LIDS[who]===k?' on':''}" style="background:${lidSwatchBg[k]}" aria-label="${LID_NAMES[k]} lid" aria-pressed="${LIDS[who]===k}" onclick="pickLid('${who}','${k}')"></button>`).join('')
-    +`<span class="tiny swatchName">${LID_NAMES[LIDS[who]]}</span>`;
+  box.innerHTML=Object.keys(LID_NAMES).map(k=>`<button class="swatch${LIDS[who]===k?' on':''}" style="background:${lidSwatchBg[k]}" aria-label="${LID_NAMES[k]} lid" aria-pressed="${LIDS[who]===k}" onclick="pickLid('${who}','${k}')"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.4l2.6 2.5L11 4.4"/></svg></button>`).join('');
 }
 function pickLid(who,k){
   LIDS[who]=k; paintLids();
