@@ -2,7 +2,8 @@ const S = {cap:50, charity:0, streak:12, plan:'free', firstResist:false,
   stage:'wk3',   /* 'new' = day one, right after setup · 'wk3' = three weeks in (the demo default) */
   stakes:true};  /* false until "Make it real": opening a shielded app is free in the first days */
 let SNAP=null;   /* the three-weeks-in data, kept so the demo can switch back from day one */
-/* card fee on the free plan: shown and added on top, so 100% of the coins arrive. Plus covers it. */
+/* card fee: shown and added on top, so 100% of the coins arrive. Plus covers it up to $1 a month (L, 2026-10-21). */
+const PLUS_FEE_CAP=1;
 const cardFee=x=>Math.round((x*0.029+0.30)*100)/100;
 /* the demo follows the real calendar, so it never looks out of date: this month, the next tip-out, days ago */
 const TODAY=new Date();
@@ -90,6 +91,14 @@ function buildJar(svg){
     <path d="${JAR_BODY}" fill="none" stroke="url(#rim)" stroke-width="var(--jar-stroke)"/>
     <path d="${JAR_BODY}" fill="none" stroke="url(#rimlight)" stroke-width="1.2"/>
     <rect class="lid" x="62" y="8" width="76" height="20" rx="9" fill="url(#rim)"/>
+    <g class="age" aria-hidden="true">
+      <path class="a1" d="M76 15 l13 -2.4 M110 21 l8 -1" stroke="#fff" stroke-opacity=".38" stroke-width="1.3" stroke-linecap="round"/>
+      <path class="a3" d="M140 66 l1.6 4.2 4.4 .3 -3.4 2.8 1.1 4.3 -3.7 -2.4 -3.7 2.4 1.1 -4.3 -3.4 -2.8 4.4 -.3z" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.1"/>
+      <g class="a6"><rect x="62" y="8" width="76" height="20" rx="9" fill="#FFC94D" opacity=".16"/>
+        <path d="M136 120 v-11 M141 120 v-11 M146 120 v-11 M151 120 v-11 M133 111 l21 7" stroke="#fff" stroke-opacity=".22" stroke-width="1.4" stroke-linecap="round"/></g>
+      <g class="a12"><path d="M52 40 q48 9 96 0" fill="none" stroke="#C9A46A" stroke-width="3" stroke-linecap="round"/>
+        <path d="M128 43 q-7 -9 -12 -1 q5 7 12 1 q7 -9 12 -1 q-5 7 -12 1 M128 43 l-5 13 M128 43 l4 13" fill="none" stroke="#C9A46A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </g>
     <g class="jarFace">
       <g class="eyes">
         <g class="fw" data-x="84"><g class="eyeL blinking"><circle class="eye" cx="84" cy="104" r="4.6" fill="var(--jar-face)"/>
@@ -586,11 +595,11 @@ function renderReal(){
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Once a month, by card</div>
       <div class="sub" style="margin-bottom:12px">On the 1st we charge whatever is in your jar. 100% of it goes to ${ch}. We never keep any of it.</div>
       <div class="card"><b style="font-size:13.5px">The card fee</b>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Card companies charge a small fee. ${plus?'<b>Plus covers it for you.</b>':'On the free plan it\'s added on top, so your coins arrive in full.'}</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Card companies charge a small fee. ${plus?'<b>Plus covers it, up to $1 a month.</b> Anything above that is added on top, so your coins arrive in full.':'On the free plan it\'s added on top, so your coins arrive in full.'}</div>
         <div class="feeRow"><span>A $35 jar</span><b>$35, all to charity</b></div>
-        <div class="feeRow"><span>Card fee</span><b>${plus?'covered by Plus':'+ about $'+f.toFixed(2)}</b></div></div>
+        <div class="feeRow"><span>Card fee</span><b>${plus?(f<=PLUS_FEE_CAP?'covered by Plus':'$1 covered, + about $'+(f-PLUS_FEE_CAP).toFixed(2)):'+ about $'+f.toFixed(2)}</b></div></div>
       <div class="card"><div class="spread"><b style="font-size:13.5px">ScrollJar Plus</b><span class="pill chr">optional · billed by Apple</span></div>
-        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees, plus groups and challenges, a heads-up before your tricky hours, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">Covers card fees up to $1 a month, plus groups and challenges, a heads-up before your tricky hours, deep stats and unlimited deals. It's how ScrollJar earns money.</div>
         <div class="row" style="gap:7px;margin-top:10px">
           <span class="chip${realPlan==='free'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='free';renderReal()">Not now</span>
           <span class="chip${realPlan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="realPlan='yr';renderReal()">$29.99 / year</span>
@@ -940,7 +949,7 @@ function selTier(el,plan){ document.querySelectorAll('#s-paywall .tierbox').forE
 let payPick='yr';
 function payContinue(){
   if(payPick==='free'){ S.plan='free'; renderPlan(); go('you'); toast('You\'re on Free. Real coins still work; the card fee is shown on top.'); return; }
-  S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now.');
+  S.plan=payPick; renderPlan(); go('you'); toast('Plus is on (billed by Apple). Card fees are on us now, up to $1 a month.');
 }
 function renderPlan(){
   if(typeof renderTricky==='function') renderTricky();
@@ -977,9 +986,9 @@ const FEED=[
   {t:'post',a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',w:'yesterday',
    body:'Finished chapter three. Turns out books still work.',photo:'book',kudos:5},
   {t:'tipout',a:'C',c:'linear-gradient(150deg,#37E2C0,#8B7CF6)',n:'Casa Jar',w:monDay(new Date(TODAY.getFullYear(),TODAY.getMonth(),1)),
-   body:'The jar tipped out — $52 to UNICEF.',sub:'receipt from Every.org',kudos:11},
+   body:'The jar tipped out — $52 to four causes.',sub:'receipt from Every.org',kudos:11},
   {t:'joined',a:'S',c:'linear-gradient(150deg,#FF9E7A,#FFC94D)',n:'Sofia',w:monDay(new Date(TODAY.getFullYear(),TODAY.getMonth(),0)),
-   body:'Sofia joined the jar.',sub:'we donated $1 to UNICEF for the invite',kudos:2},
+   body:'Sofia joined the jar.',sub:'we gave $1 to Noor\'s cause for the invite',kudos:2},
 ];
 function feedCard(f,i,example){ return `
    <div class="fcard${example?' example':''}">
@@ -1002,16 +1011,16 @@ function renderFeed(){ $('feedList').innerHTML=FEED.map((f,i)=>feedCard(f,i)).jo
 function giveKudos(el,i){ if(el.classList.contains('done'))return; el.classList.add('done'); FEED[i].mine=true; el.setAttribute('aria-pressed','true'); el.querySelector('span').textContent='High-fived'; }
 /* members — per-member settlement, amounts hideable */
 const MEMBERS=[
-  {a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',coins:2,amt:10,note:'9 days kept'},
-  {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true},
-  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 days kept'},
+  {a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)',n:'Noor',coins:2,amt:10,note:'9 days kept',cause:'GiveDirectly'},
+  {a:'G',c:'linear-gradient(150deg,#FFB86B,#FF5C8A)',n:'Giulia',coins:3,amt:15,note:'supporter — no stakes right now',sup:true,cause:'UNICEF USA'},
+  {a:'M',c:'linear-gradient(150deg,#8B7CF6,#5AA9FF)',n:'Marta',coins:1,amt:5,note:'14 days kept',cause:'Against Malaria Foundation'},
   {a:'You',c:'linear-gradient(150deg,#FFE9A8,#E0A422)',n:'You',coins:2,amt:8,note:'12 days kept'},
 ];
 function renderMembers(){
   $('memberList').innerHTML=MEMBERS.map(m=>`
    <div class="memberRow">
      <div class="av" style="background:${m.c};font-size:${m.a.length>1?10:14}px">${m.a}</div>
-     <div style="flex:1"><b style="font-size:13px">${m.n}</b><div class="tiny">${m.note}</div></div>
+     <div style="flex:1"><b style="font-size:13px">${m.n}</b><div class="tiny">${m.note} · gives to ${m.cause||charity().n}</div></div>
      ${m.sup?'<span class="supporter">SUPPORTER</span>':''}
    </div>`).join('');
 }
@@ -2012,7 +2021,7 @@ function renderFamSetup(){
       <button class="btn mint" style="margin-top:12px" onclick="fsGo(4)">Next</button>`;
   } else { K.textContent='THE FAMILY PLAN';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:8px">Plus for everyone</div>
-      <div class="sub" style="margin-bottom:12px">The Family plan covers Plus for everyone in the family, including card fees. Billed by Apple to one grown-up.</div>
+      <div class="sub" style="margin-bottom:12px">The Family plan covers Plus for everyone in the family, including card fees up to $1 a month each. Billed by Apple to one grown-up.</div>
       <div class="row" style="gap:7px">
         <span class="chip${FAM.plan==='yr'?' on':''}" style="flex:1;text-align:center" onclick="FAM.plan='yr';renderFamSetup()">$49.99 / year</span>
         <span class="chip${FAM.plan==='mo'?' on':''}" style="flex:1;text-align:center" onclick="FAM.plan='mo';renderFamSetup()">$6.99 / month</span></div>
@@ -2321,7 +2330,7 @@ function renderNewJar(){
       <div class="njPick" role="button" tabindex="0" onclick="NJ.step=1;renderNewJar()"><b>A wish jar</b><span>For something you want together: a trip, a dinner out, a concert. It fills with everyone's scroll-free time, and ScrollJar never touches the money.</span></div>
       <div class="njPick" role="button" tabindex="0" onclick="NJ.step='dinner';renderNewJar()"><b>A dinner jar, for two</b><span>Ready-made deals to share with one person: phones down at dinner, screens out of the bedroom. Same hours for both of you.</span></div>
       <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');openBack()"><b>Back a friend</b><span>Back someone's week with $5 to $25: each day they keep their deals becomes a treat for them, the rest goes to their cause.</span></div>
-      <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');go('invite')"><b>Invite someone to Casa Jar</b><span>Your coins jar for UNICEF: share the deals, give together.</span></div>`;
+      <div class="njPick" role="button" tabindex="0" onclick="closeOv('ov-newjar');go('invite')"><b>Invite someone to Casa Jar</b><span>Share the deals and give together, each to your own cause.</span></div>`;
     return; }
   if(NJ.step==='dinner'){ renderDinner(); return; }
   $('newJarKicker').textContent='A WISH JAR';
@@ -2449,7 +2458,7 @@ function renderBackBody(){
       <input class="timeIn" maxlength="60" placeholder="in your own words" aria-label="A note for your friend" value="${esc(BK.note)}" oninput="BK.note=this.value">
       <div class="card firstDeal">${p?`<div class="eyebrow" style="margin-bottom:6px">YOUR BACKING</div>
         ${usd(BK.amt)} for ${p.n}, ${len}. Each day ${p.n} keeps their deals, ${usd(per)} becomes a treat for ${p.n}. A day ${p.n} opens anyway, that share goes to ${p.n}'s own charity.
-        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends${S.plan==='plus'?'':`, plus a ${usd(cardFee(BK.amt))} card fee (Plus covers it)`}. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
+        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends, plus a ${usd(cardFee(BK.amt))} card fee${isPlus()?' (Plus covers up to $1 a month of card fees)':''}. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
         :`<div class="tiny">Pick who you'd like to back.</div>`}</div>
       <div class="tiny" style="margin:2px 2px 12px;line-height:1.5">Only people you share a jar with · one backing per friend at a time · up to five at once.</div>
       <button class="btn mint" ${p?'':'disabled'} onclick="backSend()">Send the offer</button>`;
@@ -2796,3 +2805,11 @@ function dinnerSend(){
   fix(document);
   new MutationObserver(ms=>{ for(const m of ms) m.addedNodes.forEach(n=>{ if(n.nodeType===1) fix(n.parentElement||n); }); }).observe(document.querySelector('.phone')||document.body,{childList:true,subtree:true});
 })();
+
+/* ══ THE JAR GROWS UP — slowly, silently: a scratch on the lid after a month, a small etched star at 3 months,
+   a warmer lid and a few tally marks at 6, a bit of twine at a year. Only on your own jar. Never announced,
+   no progress bar, nothing to chase (brainstorm #7, L 2026-10-21). The demo button steps through the ages. ══ */
+const JAR_AGES=[0,6,12];
+function setJarAge(m){ document.body.dataset.jarage=m; const b=$('ageBtn'); if(b) b.textContent=m===0?'Month 6':m===6?'Month 12':'Now'; }
+function cycleJarAge(){ const cur=+(document.body.dataset.jarage||0), next=JAR_AGES[(JAR_AGES.indexOf(cur)+1)%JAR_AGES.length]; setJarAge(next); go('jar'); }
+setJarAge(0);

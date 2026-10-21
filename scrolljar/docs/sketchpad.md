@@ -58,7 +58,7 @@
 12. **The danger-hours forecast** (✅ designed 2026-10-19 as the Plus "tricky-hours heads-up", prototype `trickyCard`) (L: "yesss — premium feature in the paid plans") → **Monetization: PAID-TIER feature.** Placement: forecast heatmap + proactive prep prompts in **Hero and up**; the conversational/personalized version folds into **Legend's AI companion** later. Boundary honored: reactive rough-day *support* stays free at every tier (kindness never paywalled) — the *proactive intelligence* is what's premium.
 
 **Approved with a restraint rule:**
-7. **The jar grows up** (L: "maybe — too much gamifying? but I like it") → kept, governed: the jar ages **slowly, silently, ambiently** — like a plant, not a game. No notifications about it, no progress bar toward it, no levels, nothing to chase; you simply notice one day that the glass has character. If it ever needs an announcement, it's over-gamified and gets cut. → Design & brand.
+7. **The jar grows up** (✅ built quietly 2026-10-21: a lid scratch at 1 month, an etched star at 3, a warmer lid and tally marks at 6, twine at a year; your own jar only; demo button "Month 6") (L: "maybe — too much gamifying? but I like it") → kept, governed: the jar ages **slowly, silently, ambiently** — like a plant, not a game. No notifications about it, no progress bar toward it, no levels, nothing to chase; you simply notice one day that the glass has character. If it ever needs an announcement, it's over-gamified and gets cut. → Design & brand.
 
 **On hold (L: "not sure" — parked, not rejected):**
 5. The end of the feed ("The rest of your life is off-screen 🌱") — revisit at feed design.
@@ -127,7 +127,7 @@ iOS shield 2-button constraint · opaque tokens; 6MB monitor; ~50-token cap; ent
 
 ## ❓ Open questions & decisions
 4. ~~Ghost Jar exact limits~~ → ✅ Free keeps **3 deals** (2026-10-14/15)
-5. Group jar settlement: per-member vs pooled
+5. ~~Group jar settlement: per-member vs pooled~~ → ✅ per member: each person's coins go to their own cause (L, 2026-10-21)
 8. Hour-posts in v1?
 9. Science notes: inline or Science section?
 10. ~~Family angle~~ → ✅ designed 2026-10-14/15 (Monetization → Family; prototype `s-family`; website `families.html`)

@@ -171,7 +171,8 @@ Privacy rules:
 - ⚠️ **2026-10-20:** Every.org's public API "does not provide programmatic donations or disbursements". The server-side donation step below needs a different structure; see `docs/legal-brief-2026-10.md` §1.1–1.2 before building it.
 - **The charity rail is Every.org.** Donations go through its 501(c)(3), which issues receipts and handles regranting.
   - Confirm the current partner/API terms and the exact flow (direct-donation structure, to avoid commercial co-venturer registration) **with counsel before launch**.
-- **Memberships use StoreKit 2 IAP:** Free and **Plus** ($3.99/mo, $29.99/yr; updated 2026-10-14, replacing Ghost Jar / Jar Hero / Jar Legend). Real coins work on Free; the card fee is added on top for free users and covered for Plus. No dark patterns, "Not now" is the default choice, and annual is shown honestly next to monthly.
+- **Memberships use StoreKit 2 IAP:** Free and **Plus** ($3.99/mo, $29.99/yr; updated 2026-10-14, replacing Ghost Jar / Jar Hero / Jar Legend). Real coins work on Free; the card fee is added on top for free users. Plus covers it **up to $1 a month** (2026-10-21); any fee above that is added on top.
+- **Shared jars:** settlement stays per person: each member's coins are charged to their own card and sent to their own charity; the jar only shows the combined total. No dark patterns, "Not now" is the default choice, and annual is shown honestly next to monthly.
 - Cancelling a membership **does not** end active deals (spec §4).
 - **Free has 3 active deals; Plus is unlimited.** A 4th deal on Free shows the plans, never a block on the deals already running.
 
@@ -221,6 +222,7 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
   - Coins pile naturally, in the order they land. The positions come from a small pour simulation and are stored as a fixed list (`POUR`), so the pile looks the same on every device.
   - The family jar adds two-tone coins (lavender rim) for hours the kids unlock.
   - The company jar holds glowing lights, one per scroll-free hour.
+- **Growing up:** your own jar quietly gains character with age (lid scratch at 1 month, etched star at 3, warmer lid and tally marks at 6, twine at 12). Never announced, no progress shown. Prototype: the `.age` layers in `buildJar`.
 - **Lid:** a rounded bar. The owner picks its colour: silver (default), mint, lavender, copper or cork. Picking one makes the jar hop and smile.
 - **Face and moods:**
   - The face has two eyes and a mouth. The moods are idle, happy (you stayed), thanks (a coin landed), rest ("Your time" is on, with sleepy eyes) and wow (the tip-out).

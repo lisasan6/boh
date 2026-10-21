@@ -166,7 +166,7 @@
   <div class="modes"><button class="ms on" id="mN" onclick="setMode('night')">Night</button><button class="ms" id="mD" onclick="setMode('day')">Day</button></div>
   <div class="modes" role="group" aria-label="Where in the journey"><button class="ms" id="stD1" onclick="setStage('new')">Day 1</button><button class="ms on" id="stW3" onclick="setStage('wk3')">Week 3</button></div>
   <div class="hint">Tap through it like a real app — start with onboarding</div>
-  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="openLetterRead()">Day 30</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
+  <div class="modes"><button class="ms" onclick="openReal()">Day 3</button><button class="ms" onclick="openWeek()">Day 7</button><button class="ms" onclick="openLetterRead()">Day 30</button><button class="ms" id="ageBtn" onclick="cycleJarAge()">Month 6</button><button class="ms" onclick="go('friends');openCompany();openJoin()">Company</button><button class="ms" onclick="go('friends');openFamSetup()">Family</button><button class="ms" onclick="go('friends');openCrSetup()">Creator</button><button class="ms" onclick="restart()" aria-label="Restart">↻</button></div>
 </div>
 
 <div class="phone"><div class="app" id="app">
@@ -728,9 +728,9 @@
       <div class="display h1" id="jarName" onclick="renameJar()" style="cursor:pointer">Casa Jar</div>
       <span class="tiny" onclick="renameJar()" style="cursor:pointer">rename</span></div>
     <div class="heroPanel" style="text-align:center">
-      <div class="eyebrow"><span data-date="MONTH">JULY</span> · EVERYONE GIVES TO UNICEF</div>
+      <div class="eyebrow"><span data-date="MONTH">JULY</span> · FOUR CAUSES</div>
       <div class="amount num" style="margin-top:8px" id="groupTotal">$38</div>
-      <div class="tiny" style="margin-top:6px">each person's coins go from their own card</div>
+      <div class="tiny" style="margin-top:6px">each person's coins go to the cause they picked</div>
       <div class="row" style="justify-content:center;gap:6px;margin-top:14px">
         <div class="av" style="background:linear-gradient(150deg,#37E2C0,#1E63FF)">N</div>
         <div class="av" style="background:linear-gradient(150deg,#FFB86B,#FF5C8A)">G</div>
@@ -773,7 +773,7 @@
     </div>
     <div class="card">
       <b style="font-size:13.5px">If everyone finishes</b>
-      <div class="sub" style="margin-top:5px">Casa Jar unlocks a <b>double tip-out</b> — we match the week's coins from our own pocket, to UNICEF.</div>
+      <div class="sub" style="margin-top:5px">Casa Jar unlocks a <b>double tip-out</b> — we match the week's coins from our own pocket, each to everyone's own cause.</div>
     </div>
     <button class="btn mint" onclick="toast('Everyone in the jar just got a nudge — kindly worded.')">Cheer the jar on</button>
   </div>
@@ -797,7 +797,7 @@
         <div style="padding:16px;text-align:center">
           <svg width="34" height="34" style="color:var(--chrome-1)"><use href="#i-jar"/></svg>
           <div class="display" style="font-size:15px;margin-top:8px">Luca invited you to Casa Jar</div>
-          <div class="tiny" style="margin-top:5px">4 people keeping their deals together.<br>This month they've given $38 to UNICEF.</div>
+          <div class="tiny" style="margin-top:5px">4 people keeping their deals together.<br>This month they've given $38 to four causes.</div>
           <div class="fakeBtn">Join the jar</div>
         </div>
       </div>
@@ -933,7 +933,7 @@
     <div class="row" style="margin-bottom:12px"><span class="backBtn" aria-label="Back" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
     <div class="sub" style="margin-bottom:14px">Real coins are free for everyone, and so is kindness: the pause, the peek valve and rough-day support are in every plan. Plus is how ScrollJar earns money, so we never need a cent of your jar.</div>
     <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 deals · buddy jar · card fee shown on top</div></div>
-    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered · unlimited deals · groups and challenges · tricky-hours heads-up · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered (up to $1 a month) · unlimited deals · groups and challenges · tricky-hours heads-up · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
     <div class="tierbox" onclick="selTier(this,'mo')"><div class="spread"><b style="font-size:14px">Plus · monthly</b><span class="display" style="font-size:15px">$3.99/mo</span></div><div class="tiny" style="margin-top:4px">Everything in yearly, cancel any time</div></div>
     <button class="btn mint" style="margin-top:6px" onclick="payContinue()">Continue</button>
     <div class="tiny" style="text-align:center;margin-top:9px">Billed by Apple. Cancel any time in your Apple account.</div>

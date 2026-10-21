@@ -7,7 +7,7 @@
 - **Deals are always editable.** Stricter changes apply now; easier ones apply after 24 hours; ending a deal is free with 24 hours' notice.
 - **Membership is Free + Plus** (replaces §6's Ghost Jar / Jar Hero / Jar Legend):
   - Real coins (the stakes) work on Free, with the card fee shown and added on top so 100% of the price arrives.
-  - **Plus** ($3.99/mo · $29.99/yr) covers card fees and adds unlimited deals, groups and challenges, the tricky-hours heads-up and deep stats.
+  - **Plus** ($3.99/mo · $29.99/yr) covers card fees **up to $1 a month** (L, 2026-10-21; above that the rest is added on top, as on Free) and adds unlimited deals, groups and challenges, the tricky-hours heads-up and deep stats.
   - Free keeps **3 deals** and every kindness feature. Details: `sketchpad.md` → Monetization.
 - **Breath pause:** one slow breath of about 10 seconds.
   - The stay button appears first and stays easy to tap. It speaks in the user's own words: "Back to my novel" (or "I'll stay committed" when the deal says nothing about what the time is for).
@@ -128,6 +128,7 @@ Commit (apps, schedule, price, charity, optional intention) → Live (OS shields
   - **Up to 2 scroll-free hours a day count per person (default, to test with users).** Without a cap the person doing best would owe the most, and people might keep their deals small to keep their share small. At $1 an hour the most anyone puts in is about $60 a month, shown up front at setup.
   - **Plans:** free with one friend; groups of three or more are Plus (same line as buddy jars vs groups).
   - Families already have the family treat (kids' scroll-free hours unlock a parent's pledge); wish jars are the grown-ups' and friends' version.
+- **Shared jars give to everyone's own cause (L, 2026-10-21; closes Q5):** in a shared jar like Casa Jar, each person's coins go to the charity they picked. The jar shows one combined total ("four causes") and each member's cause. Invite donations go to the inviter's own cause.
 - **The Bell (designed 2026-10-20, brainstorm #3):** once a day a shared jar goes quiet together, at a time the jar picks (7pm to 10pm, or 7am; never fixed at 9pm, so shift workers fit). Each person opts in. When it rings: an hour of shields for whoever's in, and a count of how many are off-screen, never who. Not a deal: skipping costs nothing and nobody sees it.
 - **Dinner jars (designed 2026-10-20, brainstorm #10):** ready-made shared deals for two, from the + on the Board: "Phones down at dinner" (7–8:30pm) and "Screens out of the bedroom" (10:30pm–7am). An offer the other person accepts; both get the same shield hours, each keeps their own price and charity, and changes follow the usual cold-blood rule.
 - **Backing a friend (L's idea, 2026-07-28; designed 2026-10-19):** someone you share a jar with backs your deals for **3 days, a week or two weeks**, with **$5–25**. A gift either way: a treat for you, or your cause.

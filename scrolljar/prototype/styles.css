@@ -899,3 +899,7 @@ body[data-mode="day"] .wishMine #wishMine{color:#A86A08}
 .swatch::after{inset:-7px}
 /* charity spotlight */
 .spot{margin-bottom:14px;background:linear-gradient(150deg,rgba(255,201,77,.14),rgba(139,124,246,.1))}
+/* the jar grows up: hidden layers, shown only on your own jar as it ages */
+.age>*{display:none}
+body[data-jarage="6"] :is(#homeJarSvg,#todayJarSvg,#weekJarSvg) :is(.a1,.a3,.a6),
+body[data-jarage="12"] :is(#homeJarSvg,#todayJarSvg,#weekJarSvg) :is(.a1,.a3,.a6,.a12){display:inline}
