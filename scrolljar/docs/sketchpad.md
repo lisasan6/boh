@@ -147,6 +147,7 @@ A shared jar for something the group wants: a holiday, a dinner out, a camera, a
 - Open: pledge per kept day, per person; who sees what (the total, never who, as everywhere); what happens if the goal isn't reached (nothing is owed: it's a plan, not a debt).
 
 ## 🗄️ Parking lot (rejected, with reasons)
+- **Our Hours "double tip-out"** (ScrollJar matching a jar's coins when everyone finishes), dropped 2026-10-21 (L): company money spent on coins, and it doesn't fit the honor jar.
 - **Giving when you win** (success-side giving), skipped 2026-10-20 (L): too costly next to covering card fees. Worth knowing for later: covering card fees alone takes up to $1.75 a month for a full jar, against about $2.12 a month that a yearly Plus member brings in after Apple's 15%. If the gift returns, fund it from a fixed slice of revenue.
 Anti-charities · penalties to own savings · hard-locking · engagement mechanics for the app itself · variable-ratio rewards · contact-book import · pastel-kindergarten · mandatory Teams enrollment · workplace penalties · cash payouts to friends (superseded by Evening Catalog) · **auto-generated "warm" messages in a friend's voice** (2026-07-30 — the support has to actually be from a person, or it's a lie; we hand back the user's own words instead) · **wobble as a free pass** (would turn a support gesture into an override loophole) · **any wobble metric visible to either side** (response times, help counts, unanswered badges — turns kindness into obligation).
 
