@@ -868,6 +868,7 @@
     <div class="card">
       <b style="font-size:13px">Changing your mind</b>
       <div class="sub" style="margin-top:5px">Ending a deal is always free: give it 24 hours' notice and it's done. Switching off Screen Time or deleting ScrollJar mid-deal is different, because the shields stop working. If that happens, we'll let you know and you'll have an hour to put it back. After that, one normal coin drops in your jar, so a deal stays a deal.</div>
+      <div class="tiny devNote" role="button" tabindex="0" style="margin-top:10px;cursor:pointer;text-decoration:underline" onclick="openShieldOff()">Prototype: see what happens if Screen Time is switched off</div>
     </div>
     <div class="card" id="planCard" style="cursor:pointer" onclick="go('paywall')">
       <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 deals · card fee on us</div></div><span class="pill mint">See Plus</span></div>
@@ -1470,6 +1471,21 @@
     </div>
     <div class="iosFaceId" id="iosFaceId"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 13V8a5 5 0 015-5h5M33 3h5a5 5 0 015 5v5M43 33v5a5 5 0 01-5 5h-5M13 43H8a5 5 0 01-5-5v-5"/><path d="M15 16v3M31 16v3M23 17v8h-2M17 31c3.5 3 8.5 3 12 0"/></svg><span>Face ID</span></div>
     <div class="protoNote" style="bottom:20px">Apple's own screen. Wording may differ slightly on your iPhone.</div>
+  </div>
+
+  <!-- ══ SHIELDS OFF: Screen Time access was switched off mid-deal. Calm, never a threat: one notice, an hour to put
+       it back with no coin, then one normal coin once (never 5×, never more while it stays off) ══ -->
+  <div class="ov" id="ov-shieldoff" style="background:var(--scr-calm);align-items:center;justify-content:center;text-align:center;padding:34px 26px">
+    <button class="ovClose" aria-label="Close" onclick="closeOv('ov-shieldoff')">✕</button>
+    <svg width="46" height="46" style="color:var(--calm-soft)"><use href="#i-shield"/></svg>
+    <div class="display" style="font-size:23px;margin-top:16px;color:var(--calm-ink)" id="soTitle">Your shields are off.</div>
+    <div class="sub" style="color:var(--calm-soft);max-width:270px;margin-top:9px" id="soSub"></div>
+    <div class="card" style="margin-top:18px;width:100%;text-align:left" id="soCard"></div>
+    <div style="position:absolute;left:17px;right:17px;bottom:22px">
+      <button class="btn calm" onclick="shieldBack()">Turn Screen Time access back on</button>
+      <div class="tiny" role="button" tabindex="0" style="text-align:center;margin-top:11px;cursor:pointer;color:var(--calm-soft);text-decoration:underline" onclick="closeOv('ov-shieldoff');go('you')">End a deal instead (free, with 24 hours' notice)</div>
+      <div class="tiny devNote" role="button" tabindex="0" id="soSkip" style="text-align:center;margin-top:9px;cursor:pointer;color:var(--calm-soft);text-decoration:underline" onclick="shieldSkip()">Prototype: skip the hour</div>
+    </div>
   </div>
 
   <!-- ══ if they say no: calm, no pressure ══ -->

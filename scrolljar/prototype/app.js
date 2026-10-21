@@ -2913,3 +2913,46 @@ function openYear(){
   setTimeout(()=>{ jarMood(svg,'happy',2600); svg.classList.remove('hop'); void svg.getBoundingClientRect(); svg.classList.add('hop'); stars($('yearJarBox'),9,true); },350);
 }
 function yearSave(){ toast('Saved to your Photos. Only you have it, and nothing was posted.'); }
+
+/* ══ SHIELDS OFF — Screen Time access switched off in the middle of a deal ══
+   Always the person's call. One notice, then an hour to put it back with no coin. After the hour, one normal
+   coin (the deal's own price) drops once, and no more while access stays off (CLAUDE.md money rules: 1×, never 5×).
+   Ending a deal stays free with 24 hours' notice. The real app learns this from the Screen Time authorization
+   status when it next runs, and from a server check-in it no longer hears. */
+let soT=0, soEnd=0, soDropped=false;
+function openShieldOff(){
+  document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
+  soDropped=false; soEnd=Date.now()+60*60e3; renderShieldOff(); $('ov-shieldoff').classList.add('on');
+  clearInterval(soT); soT=setInterval(()=>{ if(!$('ov-shieldoff').classList.contains('on')){ clearInterval(soT); return; } renderShieldOff(); },1000);
+}
+function renderShieldOff(){
+  const d=COMMITS[0]||{n:'Your deal',price:5}, left=Math.max(0,soEnd-Date.now());
+  const mm=String(Math.floor(left/60e3)).padStart(2,'0'), ss=String(Math.floor(left/1e3)%60).padStart(2,'0');
+  $('soSkip').hidden=soDropped||!S.stakes;
+  if(!S.stakes){
+    $('soTitle').textContent='Your shields are off.';
+    $('soSub').textContent='Screen Time access was switched off, so ScrollJar can\'t shield anything right now. That\'s always your call.';
+    $('soCard').innerHTML=`<div class="tiny" style="line-height:1.55">There's no coin while you're getting started. Turn it back on whenever you like, and your deals pick up where they were.</div>`;
+  } else if(!soDropped){
+    $('soTitle').textContent='Your shields are off.';
+    $('soSub').textContent='Screen Time access was switched off, so ScrollJar can\'t shield anything right now. That\'s always your call.';
+    $('soCard').innerHTML=`<div class="spread"><b style="font-size:13px">Put it back, no coin</b><b class="num" style="font-size:18px;color:var(--calm-soft)">${mm}:${ss}</b></div>
+      <div class="tiny" style="margin-top:6px;line-height:1.55">If it's still off after the hour, one normal coin ($${d.price}, your price for ${esc(d.n)}) drops in your jar, once. No more after that, however long it stays off. A deal stays a deal, and it never costs more than that.</div>`;
+  } else {
+    $('soTitle').textContent='One coin dropped.';
+    $('soSub').textContent='Your shields are still off, so one $'+d.price+' coin went in your jar. That\'s all: no more while they\'re off.';
+    $('soCard').innerHTML=`<div class="tiny" style="line-height:1.55">Turn access back on whenever you're ready and your deals pick up where they were. If you'd rather stop, ending a deal is free with 24 hours' notice.</div>`;
+  }
+}
+function shieldSkip(){
+  if(soDropped) return;
+  const d=COMMITS[0]||{n:'Your deal',price:5};
+  soDropped=true; clearInterval(soT);
+  if(S.stakes){ COINS.unshift({p:d.n+' · shields off',amt:d.price,when:'Just now'}); renderJar(); }
+  renderShieldOff();
+}
+function shieldBack(){
+  clearInterval(soT); closeOv('ov-shieldoff'); go('home');
+  toast(soDropped?'Shields back on. Your deals pick up where they were.':'Shields back on. Nothing dropped in your jar.');
+  const {svg}=liveJar(); jarMood(svg,'happy',1400);
+}
