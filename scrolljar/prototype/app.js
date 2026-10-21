@@ -811,7 +811,22 @@ function showTipout(ask){
   if(ask){ renderCoins($('tipCoins'),total); amt.textContent='$'+total; paintLids(); return; }
   giveJar();
 }
+/* a jar not given yet (L, 2026-10-21): it stays ready, quietly. One reminder the next day, then nothing:
+   no badge, no growing, nothing locks. New coins start a fresh jar with its own cap; each month that waits
+   stays its own line and is given whenever the person likes. */
+let WAIT=null;
+function laterJar(){
+  WAIT={month:MONTH,amt:jarTotal(),ch:charity().n}; closeOv('ov-tipout'); renderWait();
+  toast('No rush. It stays ready, and we\'ll remind you once, tomorrow.');
+}
+function renderWait(){
+  const c=$('jarWait'); if(!c) return; c.hidden=!WAIT; if(!WAIT) return;
+  c.innerHTML=`<div class="spread"><b style="font-size:13.5px">${WAIT.month}'s jar</b><b class="num" style="color:var(--gold-text)">$${WAIT.amt}</b></div>
+    <div class="tiny" style="margin-top:4px;line-height:1.5">Ready for ${esc(WAIT.ch)} whenever you are. No more reminders, and nothing locks.</div>
+    <button class="btn ghost" style="margin-top:10px" onclick="showTipout(true)">Give it now</button>`;
+}
 function giveJar(){
+  WAIT=null; renderWait();
   $('tipAsk').hidden=true; $('tipAfter').hidden=false; runSettlement();
   const total=jarTotal(), amt=document.querySelector('#ov-tipout [data-bind="jar"]');
   renderCoins($('tipCoins'),total); amt.textContent='$0';
@@ -2221,7 +2236,7 @@ setInterval(()=>{const {svg}=liveJar();if(!document.hidden&&Math.random()<.4&&!s
    "Make it real", nobody on the Board, nothing in the Diary. The demo can switch back to week 3. */
 SNAP={coins:COINS.map(c=>({...c})),feed:FEED.map(f=>({...f})),entries:ENTRIES.map(e=>({...e})),commits:COMMITS.map(c=>({...c})),moods:MOODLOG.map(m=>({...m}))};
 function setStage(st){
-  S.stage=st; document.body.dataset.stage=st;
+  S.stage=st; document.body.dataset.stage=st; if(st==='new'){ WAIT=null; renderWait(); }
   $('stD1').classList.toggle('on',st==='new'); $('stW3').classList.toggle('on',st==='wk3');
   const put=(a,b)=>a.splice(0,a.length,...b.map(x=>({...x})));
   document.querySelectorAll('.ov.on').forEach(o=>{ if(o.id!=='ov-onb') o.classList.remove('on'); });
