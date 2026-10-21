@@ -274,13 +274,13 @@
     <div class="row" style="margin-bottom:12px"><span class="backBtn" onclick="go('home')">‹</span><div class="display h1">More about your week</div></div>
     <div class="winStrip" id="winStrip"></div>
     <div class="card" id="trickyCard"></div>
-    <div class="card tipCard" style="cursor:pointer" id="tipCard" onclick="tipAction()">
+    <div class="card tipCard" id="tipCard">
       <div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--violet)" id="tipIcon"><use href="#i-brain"/></svg>
         <div style="flex:1"><b style="font-size:13px" id="tipTitle"></b>
         <div class="tiny" style="margin-top:3px;line-height:1.5" id="tipBody"></div></div></div>
       <div class="spread" style="margin-top:9px">
-        <span class="tiny" style="color:var(--violet)" id="tipCta">Discover more ›</span>
-        <span class="tiny" onclick="event.stopPropagation();nextTip()" style="cursor:pointer">next tip</span>
+        <span class="tiny" style="color:var(--violet);cursor:pointer" id="tipCta" onclick="tipAction()">Discover more ›</span>
+        <span class="tiny" onclick="nextTip()" style="cursor:pointer">next tip</span>
       </div>
     </div>
     <div class="card spread" style="cursor:pointer" onclick="go('usage')">
