@@ -2365,9 +2365,12 @@ function makeWish(){
 
 /* ══ BACKING — back a friend's week (L's idea from July, designed 2026-10-19) ══
    Someone you share a jar with backs your deals for 3–14 days with $5–25. Each day you keep your deals,
-   that day's share becomes a treat for you: a gift card you pick at the end (printed books, coffee, cinema),
-   never cash and never digital (decided 2026-10-20). Not picked within 30 days, it goes to your own charity. A day you open anyway sends that day's share to your own charity. The backer
-   pays the whole amount either way and nothing goes back to them, so it's a gift, never a bet. The backer
+   that day's share becomes a treat for you: books, coffee or the cinema, never cash and never digital.
+   A day you open anyway sends that day's share to your own charity. The backer gives the whole amount
+   either way and nothing goes back to them, so it's a gift, never a bet.
+   Money flow (2026-10-21): ScrollJar never holds it. When it ends, the backer gives the charity share on
+   the partner's donation page (pre-filled, card fee on us) and gives the treat themselves: in person, or
+   as a gift card they buy from the shop. A treat not picked within 30 days goes to your charity instead. The backer
    sees how many days were kept, never which apps, when, or which days. Once accepted it runs to the end. */
 const BACK_PEOPLE=[
   {n:'Noor',a:'N',c:'linear-gradient(150deg,#37E2C0,#1E63FF)'},
@@ -2382,7 +2385,7 @@ const BACK_IN={from:'Noor',amt:10,days:7,log:['kept','kept','gave','kept','kept'
 /* someone who'd like to back you next */
 const BACK_OFFER={from:'Sofia',amt:5,days:7,note:'For the guitar comeback.',st:'pending'};
 /* people you back: the backer sees counts only, never which days */
-const BACK_OUT=[{to:'Marta',amt:5,days:3,kept:1,gave:0,st:'on'}];
+const BACK_OUT=[{to:'Marta',amt:5,days:3,kept:1,gave:1,st:'on',treat:'coffee'}];
 const BK={step:'new',who:'',amt:10,days:7,note:''};
 const bDay=i=>{ const d=daysAgo(BACK_IN.log.length-i); return dfmt(d,{weekday:'short'}).slice(0,1); };
 const bState=i=>BACK_IN.log[i]||(i===BACK_IN.log.length?(BACK_IN.todayGave?'gave':'today'):'next');
@@ -2456,7 +2459,7 @@ function renderBackBody(){
       <input class="timeIn" maxlength="60" placeholder="in your own words" aria-label="A note for your friend" value="${esc(BK.note)}" oninput="BK.note=this.value">
       <div class="card firstDeal">${p?`<div class="eyebrow" style="margin-bottom:6px">YOUR BACKING</div>
         ${usd(BK.amt)} for ${p.n}, ${len}. Each day ${p.n} keeps their deals, ${usd(per)} becomes a treat for ${p.n}. A day ${p.n} opens anyway, that share goes to ${p.n}'s own charity.
-        <div class="tiny" style="margin-top:8px;line-height:1.5">You pay ${usd(BK.amt)} when it ends, and the card fee is on us. Nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
+        <div class="tiny" style="margin-top:8px;line-height:1.5">When it ends, you give it yourself: the treat in person or as a gift card, and ${p.n}'s charity share on its donation page (the card fee is on us). ScrollJar never holds the money, and nothing comes back to you. You'll see how many days were kept, never ${p.n}'s apps, times or which days.</div>`
         :`<div class="tiny">Pick who you'd like to back.</div>`}</div>
       <div class="tiny" style="margin:2px 2px 12px;line-height:1.5">Only people you share a jar with · one backing per friend at a time · up to five at once.</div>
       <button class="btn mint" ${p?'':'disabled'} onclick="backSend()">Send the offer</button>`;
@@ -2468,9 +2471,9 @@ function renderBackBody(){
       <div class="card backNote">“${esc(BACK_OFFER.note)}”<div class="tiny" style="margin-top:4px">${o.n}, in ${o.n}'s own words</div></div>
       <div class="backFacts">
         <div><b>${usd(BACK_OFFER.amt)} · 7 days · from tomorrow</b></div>
-        <div>Each day you keep your deals, ${usd(per)} becomes a treat for you: a gift card you pick at the end, for books, coffee or the cinema.</div>
+        <div>Each day you keep your deals, ${usd(per)} becomes a treat for you: books, coffee or the cinema, which ${o.n} gives you at the end.</div>
         <div>A day you open anyway, that day's share goes to ${bCharity()}.</div>
-        <div>${o.n} pays either way, and nothing goes back to ${o.n}.</div>
+        <div>${o.n} gives either way, and nothing goes back to ${o.n}.</div>
         <div>${o.n} will see how many days you kept. Never your apps, your times or which days.</div></div>
       <button class="btn mint" onclick="backAccept(true)">Yes, back me</button>
       <button class="btn ghost" style="margin-top:8px" onclick="backAccept(false)">Not now</button>
@@ -2487,7 +2490,22 @@ function renderBackBody(){
       :`<div class="backBar" aria-label="${b.kept} kept, ${b.gave} to ${q.n}'s charity, ${left} to go">${'<i class="kept"></i>'.repeat(b.kept)}${'<i class="gave"></i>'.repeat(b.gave)}${'<i></i>'.repeat(left)}</div>
         <div class="sub" style="margin-bottom:12px">${b.kept} ${b.kept===1?'day':'days'} kept so far: ${usd(bShare(b.amt,b.days,b.kept))} toward ${q.n}'s treat. ${left} to go.</div>
         <div class="tiny" style="line-height:1.55;margin-bottom:14px">You'll hear when it ends, not every day. You see how many days were kept, never ${q.n}'s apps, times or which days.</div>
-        <button class="btn mint" onclick="closeOv('ov-backing');toast('High five sent to ${q.n}.')">Send ${q.n} a high five</button>`}`;
+        <button class="btn mint" onclick="closeOv('ov-backing');toast('High five sent to ${q.n}.')">Send ${q.n} a high five</button>
+        <button class="btn chrome" style="margin-top:8px" onclick="openBacking('outdone',${BK.i})">Preview the end</button>`}`;
+    return; }
+  if(m==='outdone'){ const b=BACK_OUT[BK.i], q=bPerson(b.to), kept=b.days-b.gave, treat=bShare(b.amt,b.days,kept), cause=Math.round((b.amt-treat)*100)/100,
+      tl=(TREATS.find(t=>t[0]===b.treat)||[0,''])[1].toLowerCase();
+    K.textContent=q.n.toUpperCase()+"'S BACKING · DONE";
+    B.innerHTML=`<div style="text-align:center"><svg width="44" height="44" style="color:var(--gold);filter:drop-shadow(0 0 16px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
+        <div class="display" style="font-size:22px;margin:8px 0 4px">${q.n} kept ${kept} of ${b.days} days.</div>
+        <div class="sub">Your ${usd(b.amt)} becomes ${usd(treat)} for ${q.n}'s treat${cause?` and ${usd(cause)} for ${q.n}'s charity`:''}. You give both yourself.</div></div>
+      <div class="card" style="margin-top:14px"><div class="eyebrow">A TREAT FOR ${q.n.toUpperCase()} · ${usd(treat)}</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">${tl?`${q.n} picked ${tl}.`:`${q.n} hasn't picked yet.`} Give it however you like: take ${q.n} out, or send a gift card from the shop. Never cash.</div>
+        <button class="btn mint" style="margin-top:10px" onclick="toast('${q.n} gets a heads-up that your treat is on its way.')">Done, I've given it</button></div>
+      ${cause?`<div class="card"><div class="eyebrow">TO ${q.n.toUpperCase()}'S CHARITY · ${usd(cause)}</div>
+        <div class="tiny" style="margin-top:6px;line-height:1.55">One tap opens the charity's donation page with the amount filled in. The card fee is on us, and the receipt comes to you.</div>
+        <button class="btn gold" style="margin-top:10px" onclick="toast('Thank you. The receipt is on its way to you.')">Give ${usd(cause)}</button></div>`:''}
+      <div class="tiny" style="line-height:1.55;margin:2px 2px 0">ScrollJar never holds the money, and nothing comes back to you. We remind you once; nobody chases. If ${q.n} doesn't pick a treat within 30 days, it goes to ${q.n}'s charity too.</div>`;
     return; }
   if(m==='in'){ const p=bPerson(BACK_IN.from), kept=bCount('kept'), gave=bCount('gave'), per=bShare(BACK_IN.amt,BACK_IN.days,1);
     K.textContent='BACKING YOUR WEEK';
@@ -2496,7 +2514,7 @@ function renderBackBody(){
       <div class="card backNote">“${esc(BACK_IN.note)}”<div class="tiny" style="margin-top:4px">${p.n}, in ${p.n}'s own words</div></div>
       ${backDots()}
       <div class="backLegend"><span><i class="kept"></i>kept</span><span><i class="gave"></i>to ${esc(bCharity())}</span><span><i class="today"></i>today</span></div>
-      <div class="sub" style="margin:10px 0 4px">${kept} days kept: ${usd(bShare(BACK_IN.amt,BACK_IN.days,kept))} toward your treat.${gave?` ${gave} ${gave===1?'day':'days'} went to ${bCharity()}: ${usd(bShare(BACK_IN.amt,BACK_IN.days,gave))}.`:''}</div>
+      <div class="sub" style="margin:10px 0 4px">${kept} days kept: ${usd(bShare(BACK_IN.amt,BACK_IN.days,kept))} toward your treat.${gave?` ${gave} ${gave===1?'day goes':'days go'} to ${bCharity()}: ${usd(bShare(BACK_IN.amt,BACK_IN.days,gave))}.`:''}</div>
       <div class="sub" style="margin-bottom:12px">${BACK_IN.todayGave?"Tomorrow's share is still yours.":`Today's share, ${usd(per)}, is still yours.`}</div>
       <div class="tiny" style="line-height:1.55;margin-bottom:14px">${p.n} sees how many days you kept. Never your apps, your times or which days.</div>
       <button class="btn chrome" onclick="openBacking('done')">Preview the end of the week</button>`;
@@ -2505,11 +2523,11 @@ function renderBackBody(){
     K.textContent=p.n.toUpperCase()+"'S BACKING · DONE";
     B.innerHTML=`<div style="text-align:center"><svg width="44" height="44" style="color:var(--gold);filter:drop-shadow(0 0 16px rgba(255,201,77,.6))"><use href="#i-heart"/></svg>
         <div class="display" style="font-size:22px;margin:8px 0 4px">You kept ${kept} of ${BACK_IN.days} days.</div>
-        <div class="sub">${usd(treat)} becomes your treat${gave?` and ${usd(cause)} went to ${bCharity()}`:''}.</div></div>
+        <div class="sub">${usd(treat)} becomes your treat${gave?` and ${usd(cause)} goes to ${bCharity()}`:''}.</div></div>
       <div class="eyebrow" style="margin:16px 2px 8px">PICK YOUR TREAT</div>
       <div class="row" style="gap:6px;flex-wrap:wrap">${TREATS.map(([k,l])=>`<span class="chip${BACK_IN.treat===k?' on':''}" role="radio" aria-checked="${BACK_IN.treat===k}" onclick="BACK_IN.treat='${k}';renderBackBody()">${l}</span>`).join('')}</div>
-      <div class="tiny" style="margin:9px 2px 14px;line-height:1.5">A gift card, never cash. Nothing goes back to ${p.n}. Pick within 30 days, or it goes to your charity.</div>
-      <button class="btn mint" ${BACK_IN.treat?'':'disabled'} onclick="closeOv('ov-backing');toast('Enjoy it. High five sent to ${p.n}.')">Take it, and thank ${p.n}</button>`;
+      <div class="tiny" style="margin:9px 2px 14px;line-height:1.5">${p.n} gives it to you, in person or as a gift card. Never cash, and nothing goes back to ${p.n}. Pick within 30 days, or it goes to your charity.</div>
+      <button class="btn mint" ${BACK_IN.treat?'':'disabled'} onclick="closeOv('ov-backing');toast('Picked. ${p.n} hears what you chose, and a high five.')">Pick it, and thank ${p.n}</button>`;
   }
 }
 const BACK_OPTS_DAYS=[[3,'3 days'],[7,'A week'],[14,'Two weeks']];

@@ -72,7 +72,7 @@ Each item shows: **now** (what the product does today), **option** (the change),
 - **Option:** drop "a month of Plus" as a treat. Use gift cards for physical goods or services only (coffee, cinema, printed books). If no treat is picked within 30 days, the value goes to the friend's charity.
 - **Why:** Apple requires in-app purchase for any gift tied to digital content or services (3.2.1(vii)), and for gift cards redeemable for digital goods (3.1.1). Value ScrollJar holds that nobody claims can fall under state unclaimed-property laws.
 - **Cost:** one fewer treat option.
-- **Your call:** agree?
+- **Your call:** agree? **Decided 2026-10-20. Follow-up 2026-10-21:** the whole Backing money flow now skips ScrollJar. When it ends, the backer gives the charity share on the partner's donation page and gives the treat themselves (in person, or a gift card bought from the shop). ScrollJar sells no gift cards and holds nothing, which also removes the unclaimed-property question.
 
 ## 8. Teams and Families pledges: charge only what's unlocked
 - **Now:** the Teams spec says "unspent pledge rolls into the next campaign", and the Families screen says "whatever isn't unlocked rolls into next month". It's unclear whether the money is charged up front.
@@ -170,7 +170,7 @@ Ideas to test with a lawyer and the partners. **Suggested** marks Claude's pick.
 - [x] 4. Switch-off charge: **(a) 1×**, one normal coin
 - [x] 5. Families: **no kid accounts** (parent-managed via Family Controls), receipts in the parent's name, Families launches later after a children's-privacy review
 - [x] 6. Money features 18+
-- [x] 7. Backing: physical gift cards only; unpicked treats go to the friend's charity after 30 days
+- [x] 7. Backing: physical gift cards only; unpicked treats go to the friend's charity after 30 days. **Money flow redesigned 2026-10-21:** the backer gives the charity share on the partner's page and the treat directly; ScrollJar never holds the money
 - [x] 8. Pledges charged only when unlocked
 - [x] 9. Wording: **"Every coin goes to your charity. We keep none of it, and we pay the fees."** Plus the disclosures before a charity is picked
 - [x] 10. Fixed-position accessibility option

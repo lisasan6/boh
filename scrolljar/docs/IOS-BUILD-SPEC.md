@@ -131,7 +131,7 @@ Letter       LOCAL ONLY: text (≤280), writtenAt, dealId, opensAt (+30 days, a 
 WishJar      id, name, target, ratePerHour(0.50|1|2), dueDate?, members[], dailyCapHours=2   (no money moves)
 WishHours    wishJarId, userId, day, hours(0–2)   (only the count leaves the phone)
 Backing      id, backerId, friendId, amount(5–25), days(3|7|14), startsOn, note?, status(offered|accepted|declined|withdrawn|done),
-             dayResults[](kept|gave) (friend's phone only), keptCount, gaveCount (what the backer sees), treat?(books|coffee|cinema|plus)
+             dayResults[](kept|gave) (friend's phone only), keptCount, gaveCount (what the backer sees), treat?(books|coffee|cinema), treatGivenAt?, charityGivenAt?
 StandbyNote  text, writtenAt  (sent only to the user's own jar members, on a wobble)
 Jar/Group    id, name, charityId, members[], visibility settings
 ```
@@ -162,7 +162,7 @@ Privacy rules:
 
 ## 6. Money
 
-**Backing a friend** (spec §7; not in Version 1). ⚠️ v1.4: the money must not pass through ScrollJar's balance, so redesign this flow with the partner and counsel before building. Current design: the backer's card is charged the full amount once, when the backing ends, and the card fee is paid by ScrollJar. The kept share buys the friend's treat through a gift-card rewards API, for physical goods or services only (no month of Plus); a treat not picked within 30 days goes to the friend's charity; the rest goes to the friend's own charity through Every.org. A day counts as given when the friend paid a coin that day (`payOverride`); peeks don't count. Kept or given is worked out on the friend's phone and only the two counts are sent. No money ever goes back to the backer. Confirm the gift-card partner, its fees and the legal framing (a conditional gift) before launch.
+**Backing a friend** (spec §7; not in Version 1). **Money flow redesigned 2026-10-21: ScrollJar never holds or moves the money**, and no card is saved. When the backing ends, the app works out the two shares and shows the backer two steps: the charity share opens the partner's donation page pre-filled for the friend's charity (same link builder as the honor jar; ScrollJar pays the card fee; the receipt goes to the backer), and the treat the backer gives themselves, in person or as a gift card bought straight from the shop, then taps "Done, I've given it" (the friend gets a heads-up). ScrollJar sells no gift cards and takes no shop commission. A treat not picked within 30 days turns into a second charity link. One reminder, nobody chases. A day counts as given when the friend paid a coin that day (`payOverride`); peeks don't count. Kept or given is worked out on the friend's phone and only the two counts are sent. No money ever goes back to the backer. Confirm the gift-card partner, its fees and the legal framing (a conditional gift) before launch.
 
 **Wish jars move no money.** Coins in a wish jar are virtual: no Stripe, no Every.org, no IAP. The app shows the total and each person's own share; the group settles it however they like, outside ScrollJar.
 
@@ -205,7 +205,7 @@ Privacy rules:
 | `bellCard` (shared jar), `ov-bell` | BellView | Phase 5. A daily scheduled time per jar; opt-in; at ring time a local notification and an hour of shields; the backend returns only a count of who's in |
 | `ov-newjar` → "A dinner jar, for two" | DinnerJarSheet | Phase 5. Two templates create the same deal for both people once the other accepts |
 | `ov-week` | WeekMomentView | Day 7 of a deal: the jar's happy moment and the share card, rendered to an image (`ImageRenderer`) and shared with `ShareLink` plus the jar's invite link. No apps or coins on the card |
-| Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick. One quiet line in the pause and on the coin sheet |
+| Board "Backing" section, Today card, `ov-backing` | BackingView, BackingSheet | Phase 5. Offer, accept, your days, the backer's counts, the end with a treat pick, and the backer's two direct-giving steps. One quiet line in the pause and on the coin sheet |
 | `s-wish`, `ov-newjar`, `ov-wishdone` | WishJarView, NewJarSheet | Phase 5. Entry: the + in the Board's jar strip, or "Start a wish jar together" on an empty Board. Copper lid by default. No money moves (§6) |
 | `s-family`, `ov-famsetup`, `ov-famtip` | Families | Later phase; uses Apple Family Sharing. Kids are never charged or paid |
 | `s-creator`, `ov-crsetup` | Creators | Later phase; a creator deal is a normal deal with posting windows |
@@ -263,7 +263,7 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
 | **2: Solo loop, no money** | Onboarding (with "Say it instead"), Day 1 card, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
 | **3: Money** | EU backend, cause funds and disclosures, "Your jar is ready" with the partner's pre-filled donation page, reminder, 48-hour take-back, cap, tip-out ceremony, jar break (1×) and grace hour, 18+ confirmation | One real $1 donation given on the partner's page, with the receipt reaching the user |
 | **4: Membership + polish** | StoreKit 2 Plus (monthly and yearly), plans screen, 3-deal Free limit, widget, Voice Law pass on every string, accessibility | Ready for TestFlight (needs the distribution entitlement) |
-| **5: Social** | Buddy and group jars, wish jars, backing a friend (after its money flow is redesigned), invites with claim codes, finite feed, Wobble and standby notes. Public posts only with filter, report and block | Beta testers can invite each other and fill a wish jar together |
+| **5: Social** | Buddy and group jars, wish jars, backing a friend (direct giving, no money through ScrollJar), invites with claim codes, finite feed, Wobble and standby notes. Public posts only with filter, report and block | Beta testers can invite each other and fill a wish jar together |
 | **6: Beta** | TestFlight with 100–300 users (r/nosurf, US colleges), transparency page | First real conversion data |
 | **7: Teams pilot** | Campaigns, squads, "your hour" picker, lights jar, anonymous dashboard, notes with the on-phone privacy check | One company runs a 6-week pilot. Sell it before building (see the Teams spec) |
 | **8: Families and Creators** | After a children's-privacy review: family jar and setup (Family Sharing, no kid accounts, receipts in the parent's name), creator setup with posting windows, public challenges | Built in parallel once Teams works |
