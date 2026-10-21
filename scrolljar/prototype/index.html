@@ -333,9 +333,9 @@
     <div class="card">
       <div class="spread"><b style="font-size:13.5px">This month's coins</b><span class="tiny" data-bind="coinCount"></span></div>
       <div id="coinList" style="margin-top:4px"></div>
-      <div class="tiny" style="margin-top:8px">Any coin can be refunded within 48 hours, no questions asked.</div>
+      <div class="tiny" style="margin-top:8px">Any coin can be taken back within 48 hours, no questions asked.</div>
     </div>
-    <button class="btn ghost wk3" onclick="showTipout()">Preview the monthly tip-out</button>
+    <button class="btn ghost wk3" onclick="showTipout(true)">Preview the 1st: give your jar</button>
   </div>
 
   <!-- ══ CHOOSE A CHARITY ══ -->
@@ -864,10 +864,10 @@
     </div>
     <div class="card">
       <b style="font-size:13px">Changing your mind</b>
-      <div class="sub" style="margin-top:5px">Ending a deal is always free: give it 24 hours' notice and it's done. Switching off Screen Time or deleting ScrollJar mid-deal is different, because the shields stop working. If that happens, we'll let you know and you'll have an hour to put it back. After that, it counts as one coin at <b>5× your price</b>, so a deal stays a deal.</div>
+      <div class="sub" style="margin-top:5px">Ending a deal is always free: give it 24 hours' notice and it's done. Switching off Screen Time or deleting ScrollJar mid-deal is different, because the shields stop working. If that happens, we'll let you know and you'll have an hour to put it back. After that, one normal coin drops in your jar, so a deal stays a deal.</div>
     </div>
     <div class="card" id="planCard" style="cursor:pointer" onclick="go('paywall')">
-      <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 deals · card fee shown on top</div></div><span class="pill mint">See Plus</span></div>
+      <div class="spread"><div><b style="font-size:13px">Free plan</b><div class="tiny">real coins · 3 deals · card fee on us</div></div><span class="pill mint">See Plus</span></div>
     </div>
     <div class="card" style="background:rgba(55,226,192,.09)">
       <b style="font-size:13px"><svg class="glyph" width="13" height="13" style="color:var(--mint)"><use href="#i-heart"/></svg> Our promise</b>
@@ -932,8 +932,8 @@
   <div class="screen" id="s-paywall">
     <div class="row" style="margin-bottom:12px"><span class="backBtn" aria-label="Back" onclick="go('you')">‹</span><div class="display h1">ScrollJar Plus</div></div>
     <div class="sub" style="margin-bottom:14px">Real coins are free for everyone, and so is kindness: the pause, the peek valve and rough-day support are in every plan. Plus is how ScrollJar earns money, so we never need a cent of your jar.</div>
-    <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 deals · buddy jar · card fee shown on top</div></div>
-    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Card fees covered (up to $1 a month) · unlimited deals · groups and challenges · tricky-hours heads-up · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
+    <div class="tierbox" onclick="selTier(this,'free')"><div class="spread"><b style="font-size:14px">Free</b><span class="display" style="font-size:15px">$0</span></div><div class="tiny" style="margin-top:4px">Blocking · the pause · real coins · 3 deals · buddy jar · card fee on us</div></div>
+    <div class="tierbox sel" onclick="selTier(this,'yr')"><div class="spread"><b style="font-size:14px">Plus · yearly</b><span class="display" style="font-size:15px">$29.99/yr</span></div><div class="tiny" style="margin-top:4px">Unlimited deals · groups and challenges · tricky-hours heads-up · deep stats</div><div class="tiny" style="margin-top:5px;color:var(--ink-3)">about $2.50 a month</div></div>
     <div class="tierbox" onclick="selTier(this,'mo')"><div class="spread"><b style="font-size:14px">Plus · monthly</b><span class="display" style="font-size:15px">$3.99/mo</span></div><div class="tiny" style="margin-top:4px">Everything in yearly, cancel any time</div></div>
     <button class="btn mint" style="margin-top:6px" onclick="payContinue()">Continue</button>
     <div class="tiny" style="text-align:center;margin-top:9px">Billed by Apple. Cancel any time in your Apple account.</div>
@@ -1078,6 +1078,12 @@
       </svg>
     </div>
     <div class="amount num" style="margin-top:14px" data-bind="jar">$35</div>
+    <div id="tipAsk" hidden style="width:100%">
+      <div class="sub" style="margin-top:6px">Your jar is ready for <span class="charityName">Doctors Without Borders</span>. One tap opens a secure Every.org page with the amount filled in. You give straight to them, and ScrollJar pays the card fee.</div>
+      <button class="btn gold" id="tipGiveBtn" style="margin-top:14px" onclick="giveJar()">Give $35</button>
+      <button class="btn ghost" style="margin-top:9px" onclick="closeOv('ov-tipout');toast('No rush. We\'ll remind you once more, tomorrow.')">Later</button>
+    </div>
+    <div id="tipAfter" style="width:100%">
     <div class="sub" style="margin-top:6px">is on its way to <span class="charityName">Doctors Without Borders</span></div>
     <div class="card" style="margin-top:14px;width:100%;text-align:left">
       <div class="eyebrow">HOW YOUR MONEY TRAVELS</div>
@@ -1089,6 +1095,7 @@
       <div class="tiny" style="margin-top:6px"><span class="charityName">Doctors Without Borders</span> · receipt from Every.org</div>
     </div>
     <button class="btn violet" style="margin-top:12px" onclick="closeOv('ov-tipout')">Share the receipt</button>
+    </div>
   </div>
 
   <!-- ══ ROUGH DAY ══ -->
