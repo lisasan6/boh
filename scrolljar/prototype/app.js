@@ -295,6 +295,8 @@ function pickCharity(i){
   S.charity=i; renderCharities(); renderJar();
   toast('Your jar now goes to '+charity().n+' on '+NEXT1+'.');
 }
+/* "suggest a charity": ScrollJar asks the charity to opt in and adds it once it agrees */
+function suggestCharity(){ toast('Thanks. We\'ll ask them to join, and add them once they agree.'); }
 /* You: the monthly cap. Lowering it is instant; raising it waits 24 hours, in cold blood */
 let capPending=null;
 function toggleCap(){ const b=$('capBox'), open=b.style.display==='none'; b.style.display=open?'':'none'; $('capPill').setAttribute('aria-expanded',open); if(open) renderCap(); }
@@ -686,8 +688,9 @@ function startBreathCue(){
 }
 /* "Never mind, continue" bounces like a pinball in the space below the stay button ("Back to my novel") and stops at
    a random moment (7–9 s), always well away from where it stopped last time, so the thumb can't
-   learn it. Hard, not mean: it can be tapped while moving, never covers the main button, and with
-   reduced motion it just appears in a new spot. */
+   learn it. Hard, not mean: it can be tapped while moving and never covers the main button. With
+   Reduce Motion on, or the "Keep Never mind still" setting, it stays in one place (in the iOS app,
+   VoiceOver and Switch Control do the same). */
 let goRAF=0, goLastStop=null;
 function launchContinue(){
   const b=$('breathGo'), ov=$('ov-breath'), stay=$('breathBtns');
@@ -701,9 +704,8 @@ function launchContinue(){
   const rnd=(lo,hi)=>lo+Math.random()*(hi-lo);
   let x=rnd(minX,maxX), y=rnd(minY,maxY);
   const put=()=>{ b.style.left=x+'px'; b.style.top=y+'px'; };
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-    for(let i=0;i<30&&!far(x,y);i++){ x=rnd(minX,maxX); y=rnd(minY,maxY); }
-    goLastStop=[x,y]; put(); return; }
+  if(S.stillGo||matchMedia('(prefers-reduced-motion: reduce)').matches){
+    x=(minX+maxX)/2; y=minY; put(); return; }
   put();
   const a=rnd(20,55)*Math.PI/180, sp=rnd(170,200);
   let vx=Math.cos(a)*sp*(Math.random()<.5?-1:1), vy=Math.sin(a)*sp*(Math.random()<.5?-1:1);
@@ -1887,7 +1889,7 @@ function postNote(){
 /* ══ FAMILY JAR ══
    One jar for the family. Grown-ups' coins (if they choose) and everyone's scroll-free hours fill it.
    Kids are never charged and never paid: a grown-up pledges, and each scroll-free hour a kid keeps
-   unlocks part of the pledge for a cause that kid chose, with their name on the receipt. An optional
+   unlocks part of the pledge for a cause that kid chose. The receipt is in the grown-up's name; kids' names stay on the family's phones. An optional
    family treat is shared and non-cash; everyone's hours count, grown-ups' too. The family sees the jar
    and the totals, never anyone's apps, screens, diary or personal counts. */
 const FAM={view:'parent',pledge:20,perHour:1,unlocked:14,coins:22,coinsIn:true,hours:41,treat:'Cinema night',goal:60,
@@ -1948,7 +1950,7 @@ function renderFamily(animate){
       <div class="toggle${FAM.coinsIn?' on':''}" role="switch" aria-checked="${FAM.coinsIn}" aria-label="My coins in the family jar" tabindex="0" onclick="FAM.coinsIn=!FAM.coinsIn;renderFamily(false)"></div></div></div>
     <div class="card"><div class="row" style="gap:9px"><svg width="17" height="17" style="color:var(--mint)"><use href="#i-lock"/></svg><b style="font-size:13.5px">What the family sees</b></div>
       <div class="coRule ok">The jar, the treat and everyone's cause</div>
-      <div class="coRule ok">Each kid's gift on the tip-out receipt, with their name</div>
+      <div class="coRule ok">What each kid's hours gave, on the family's phones only</div>
       <div class="coRule no">Anyone's apps, screen time or slips</div>
       <div class="coRule no">Anyone's diary or voice notes</div>
       <div class="tiny" style="margin-top:8px">The same for grown-ups and kids. Nobody gets a report on anybody.</div></div>
@@ -1962,7 +1964,7 @@ function renderFamily(animate){
     drawFamJar($('famJarG'),0,FAM.mia.hours,animate);
     B.innerHTML=`<div class="card" style="background:linear-gradient(150deg,rgba(60,240,203,.14),rgba(155,140,255,.1))">
       <b style="font-size:14px">You never pay anything</b>
-      <div class="sub" style="margin-top:5px">Every hour you keep scroll-free unlocks $${FAM.perHour} from your family's pledge for the cause you picked. When the jar tips out, the receipt has your name on it.</div></div>
+      <div class="sub" style="margin-top:5px">Every hour you keep scroll-free unlocks $${FAM.perHour} from your family's pledge for the cause you picked. When the jar tips out, you'll see the cause your hours went to.</div></div>
     <div class="card"><div class="spread"><b style="font-size:13.5px">Your hour</b><span class="tiny">you choose it</span></div>
       <div class="sub" style="margin-top:5px">${hourLabel(FAM.mia.at)}, after school</div>
       <div class="row" style="gap:7px;margin-top:10px;flex-wrap:wrap">${['07:00','16:00','19:00'].map(t=>`<span class="chip${FAM.mia.at===t?' on':''}" onclick="FAM.mia.at='${t}';renderFamily(false)">${hourLabel(t)}</span>`).join('')}</div></div>

@@ -341,10 +341,14 @@
   <!-- ══ CHOOSE A CHARITY ══ -->
   <div class="screen" id="s-charity">
     <div class="row" style="margin-bottom:6px"><span class="backBtn" onclick="go('jar')">‹</span><div class="display h1">Your charity</div></div>
-    <div class="sub" style="margin-bottom:14px">Where your jar goes on the 1st. Every cent of your coins goes to them — we never keep any of it.</div>
+    <div class="sub" style="margin-bottom:14px">Where your jar goes on the 1st. Every coin goes to your charity. We keep none of it, and we pay the fees.</div>
     <div class="card spot" id="charitySpot"></div>
     <div id="charityList"></div>
-    <div class="tiny" style="margin-top:4px;line-height:1.5">A change applies to this month's jar, since it hasn't tipped out yet. Group jars choose their charity together. More charities, and search, come later.</div>
+    <!-- the disclosure before picking (legal review #1 and #9); final wording comes with the partner agreements -->
+    <div class="card" style="margin-top:4px"><b style="font-size:13px">How your gift gets there</b>
+      <div class="tiny" style="margin-top:6px;line-height:1.55">You give through our partner, Every.org, a US charity that passes your gift on to the one you pick, usually within a few weeks. Its card and payout fees are paid by ScrollJar. If a charity can't receive a gift, Every.org sends it to a similar one.</div>
+      <button class="btn ghost" style="margin-top:10px" onclick="suggestCharity()">Suggest a charity</button></div>
+    <div class="tiny" style="margin-top:4px;line-height:1.5">A change applies to this month's jar, since it hasn't tipped out yet. Group jars choose their charity together.</div>
   </div>
 
   <!-- ══ STORY ══ -->
@@ -843,6 +847,8 @@
         <div class="tiny">Your own time stays fully shielded. The point isn't to keep you out of the apps — it's to keep the job from eating the rest of the day.</div>
       </div>
     </div>
+    <div class="card spread"><div><div style="font-size:12.5px;font-weight:700">Keep "Never mind" still</div><div class="tiny">in the pause, it stays in one place instead of moving</div></div>
+      <div class="toggle" id="stillGo" aria-label="Keep Never mind still" onclick="this.classList.toggle('on');S.stillGo=this.classList.contains('on')"></div></div>
     <div class="card spread" style="cursor:pointer" role="button" tabindex="0" onclick="openWidgets('home')">
       <div><b style="font-size:13px">Widgets</b><div class="tiny">your time and your jar on the Home Screen and Lock Screen</div></div>
       <span class="pill chr">See them</span>
@@ -1569,7 +1575,7 @@
     </div>
   </div>
 
-  <!-- ══ FAMILY TIP-OUT: each kid's gift carries their name; the treat is never cash ══ -->
+  <!-- ══ FAMILY TIP-OUT: the receipt is in the grown-up's name, kids' names stay on the family's phones; the treat is never cash ══ -->
   <div class="ov" id="ov-famtip" style="background:var(--scr-bg);align-items:center;justify-content:flex-start;text-align:center;padding:34px 24px 28px;overflow-y:auto">
     <button class="ovClose" aria-label="Close" onclick="closeOv('ov-famtip')">✕</button>
     <div class="pill chr"><span data-date="NEXT1">AUGUST 1</span> · THE FAMILY JAR TIPS OUT</div>
@@ -1586,7 +1592,7 @@
     <div class="sub" style="margin-top:6px">given by the Rossi family this month</div>
     <div class="card" style="margin-top:14px;width:100%;text-align:left" id="ftList"></div>
     <div class="card" style="width:100%;text-align:left;background:linear-gradient(150deg,rgba(255,194,58,.14),rgba(60,240,203,.08))" id="ftTreat"></div>
-    <button class="btn mint" style="margin-top:6px" onclick="closeOv('ov-famtip');toast('Receipts sent. Each kid gets their own, with their name on it.')">Send everyone their receipt</button>
+    <button class="btn mint" style="margin-top:6px" onclick="closeOv('ov-famtip');toast('Shared on the family\'s phones. The receipt goes to the grown-up who gave it.')">Share it with the family</button>
     <div class="tiny" style="margin-top:10px;cursor:pointer" onclick="closeOv('ov-famtip')">Close</div>
   </div>
 
