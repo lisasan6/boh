@@ -116,8 +116,9 @@ Not legal advice. The details and sources for every item are in the linked docs.
     - ⭐ **One lawyer pass.** The same lawyer drafts the terms of service and checks the privacy page.
     - ⭐ **Trademark search first.** Search "ScrollJar" in the US and EU before spending on the brand.
     - ⭐ **Fixed-position "continue" option.** The link keeps moving by default, but stays in one place with VoiceOver, Switch Control or Reduce Motion on, or by a setting.
-- [ ] **14. Backing a friend:** drop "a month of Plus" as a treat (Apple requires its in-app purchase for that), and decide where unpicked treats go. *Source:* design options #7
+- [x] **14. Backing a friend:** drop "a month of Plus" as a treat (Apple requires its in-app purchase for that), and decide where unpicked treats go. *Source:* design options #7
   - ✅ **Decided 20 Oct 2026:** Physical gift cards only + Unpicked treats go to the friend's charity.
+  - ✅ **21 Oct 2026, money flow redesigned:** the backer gives the charity share on the partner's donation page and the treat directly (in person, or a gift card bought from the shop). ScrollJar never holds the money. Built into the prototype, spec and build plan.
   - **Possible solutions** (⭐ = suggested):
     - ⭐ **Physical gift cards only.** Coffee, cinema, printed books. Drop "a month of Plus", because Apple requires its in-app purchase for digital gifts.
     - ⭐ **Unpicked treats go to the friend's charity.** If no treat is picked within 30 days, its value goes to the friend's charity, so ScrollJar never holds unclaimed money.
