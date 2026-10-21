@@ -797,7 +797,7 @@ function logMood(k,label){
 
 /* ── tip-out ceremony ── */
 function runSettlement(){
-  const SETTLE=['You gave it with Apple Pay','Every.org sends it to '+charity().n,'Card fee paid by ScrollJar','Receipt emailed to you'];
+  const SETTLE=['You gave it on the donation page','Every.org sends it to '+charity().n,'Card fee paid by ScrollJar','Receipt emailed to you'];
   $('settleSteps').innerHTML=SETTLE.map(t=>`<div class="settleRow"><div class="settleDot">✓</div><div class="settleTxt">${t}</div></div>`).join('');
   document.querySelectorAll('#settleSteps .settleRow').forEach((r,i)=>setTimeout(()=>r.classList.add('done'), 1400+i*620));
 }
@@ -805,7 +805,7 @@ function runSettlement(){
    ScrollJar never holds the money. ask=true shows that step first; the website's story skips it. */
 function showTipout(ask){
   $('ov-tipout').classList.add('on'); renderJar();
-  $('tipAsk').hidden=!ask; $('tipAfter').hidden=!!ask;
+  $('tipAsk').hidden=!ask; $('tipAfter').hidden=!!ask; $('tipBack').hidden=true;
   const total=jarTotal(); $('tipGiveBtn').textContent='Give $'+total;
   const amt=document.querySelector('#ov-tipout [data-bind="jar"]');
   if(ask){ renderCoins($('tipCoins'),total); amt.textContent='$'+total; paintLids(); return; }
@@ -825,9 +825,17 @@ function renderWait(){
     <div class="tiny" style="margin-top:4px;line-height:1.5">Ready for ${esc(WAIT.ch)} whenever you are. No more reminders, and nothing locks.</div>
     <button class="btn ghost" style="margin-top:10px" onclick="showTipout(true)">Give it now</button>`;
 }
+/* "Give" opens the partner's donation page (in the app, a Safari sheet). ScrollJar can't see the payment,
+   so on the way back it asks once. A partner confirmation can replace the question in a later version. */
+function openGivePage(){
+  $('tipAsk').hidden=true; $('tipBack').hidden=false; $('tipBackBtns').hidden=true;
+  $('tipBackT').textContent='Opening the donation page…';
+  setTimeout(()=>{ $('tipBackT').innerHTML=`Welcome back. Did your gift to <b>${esc(charity().n)}</b> go through? The receipt comes from Every.org by email.`;
+    $('tipBackBtns').hidden=false; },1300);
+}
 function giveJar(){
   WAIT=null; renderWait();
-  $('tipAsk').hidden=true; $('tipAfter').hidden=false; runSettlement();
+  $('tipAsk').hidden=true; $('tipBack').hidden=true; $('tipAfter').hidden=false; runSettlement();
   const total=jarTotal(), amt=document.querySelector('#ov-tipout [data-bind="jar"]');
   renderCoins($('tipCoins'),total); amt.textContent='$0';
   const svg=$('tipJar'), box=$('tipJarBox'); paintLids();

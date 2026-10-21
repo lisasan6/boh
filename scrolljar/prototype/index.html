@@ -1083,8 +1083,16 @@
     <div class="amount num" style="margin-top:14px" data-bind="jar">$35</div>
     <div id="tipAsk" hidden style="width:100%">
       <div class="sub" style="margin-top:6px">Your jar is ready for <span class="charityName">Doctors Without Borders</span>. One tap opens a secure Every.org page with the amount filled in. You give straight to them, and ScrollJar pays the card fee.</div>
-      <button class="btn gold" id="tipGiveBtn" style="margin-top:14px" onclick="giveJar()">Give $35</button>
+      <button class="btn gold" id="tipGiveBtn" style="margin-top:14px" onclick="openGivePage()">Give $35</button>
       <button class="btn ghost" style="margin-top:9px" onclick="laterJar()">Later</button>
+    </div>
+    <!-- back from the donation page: the app can't see the payment, so it asks (honor jar) -->
+    <div id="tipBack" hidden style="width:100%">
+      <div class="sub" style="margin-top:6px" id="tipBackT"></div>
+      <div id="tipBackBtns" hidden>
+        <button class="btn gold" style="margin-top:14px" onclick="giveJar()">Yes, I gave it</button>
+        <button class="btn ghost" style="margin-top:9px" onclick="laterJar()">Not yet</button>
+      </div>
     </div>
     <div id="tipAfter" style="width:100%">
     <div class="sub" style="margin-top:6px">is on its way to <span class="charityName">Doctors Without Borders</span></div>
