@@ -150,7 +150,7 @@ Privacy rules:
 - **Tables:** users, deals_meta (no tokens), events, jar_months, jars, jar_members, invites (claim codes), standby_notes, wobbles.
 - **Jobs:**
   - "Your jar is ready" on the 1st: a pre-filled link to the partner's donation page, and one reminder the next day.
-  - The 48-hour take-back window for coins.
+  - None for undo: a coin can be undone on the phone for 2 minutes after it drops (the 48-hour take-back was dropped on 2026-10-21).
   - Invite activation ($1 donation once the invitee finishes their first active week; max 10 per user; global monthly cap).
 - **Push (Wobble):**
   - Use a silent push that renders in the app only.
@@ -263,7 +263,7 @@ One `JarView` draws every jar (yours, family, company, creator). Reference: `bui
 | **0: Accounts** | Developer account, bundle IDs, App Group, **entitlement requests filed** | Request confirmation for all 5 IDs |
 | **1: Blocking spike** (riskiest) | Auth → picker → shield with 2 buttons → notification → our app → timed unlock → automatic re-shield; shadow-state reconcile; web-domain test | On a real iPhone: 20 cycles in a row re-shield correctly, including windows over 45 minutes and an app kill/relaunch |
 | **2: Solo loop, no money** | Onboarding (with "Say it instead"), Day 1 card, Make a deal, deal editing, Today, override flow, the jar component with **fake coins**, first-win and exit moments, local stats | L can live with it for a week as a free blocker |
-| **3: Money** | EU backend, cause funds and disclosures, "Your jar is ready" with the partner's pre-filled donation page, reminder, 48-hour take-back, cap, tip-out ceremony, jar break (1×) and grace hour, 18+ confirmation | One real $1 donation given on the partner's page, with the receipt reaching the user |
+| **3: Money** | EU backend, cause funds and disclosures, "Your jar is ready" with the partner's pre-filled donation page, reminder, 2-minute coin undo, cap, tip-out ceremony, jar break (1×) and grace hour, 18+ confirmation | One real $1 donation given on the partner's page, with the receipt reaching the user |
 | **4: Membership + polish** | StoreKit 2 Plus (monthly and yearly), plans screen, 3-deal Free limit, widget, Voice Law pass on every string, accessibility | Ready for TestFlight (needs the distribution entitlement) |
 | **5: Social** | Buddy and group jars, wish jars, backing a friend (direct giving, no money through ScrollJar), invites with claim codes, finite feed, Wobble and standby notes. Public posts only with filter, report and block | Beta testers can invite each other and fill a wish jar together |
 | **6: Beta** | TestFlight with 100–300 users (r/nosurf, US colleges), transparency page | First real conversion data |

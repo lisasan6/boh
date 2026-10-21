@@ -14,8 +14,8 @@ const dayMon=d=>dfmt(d,{weekday:'short'})+' '+d.getDate()+' '+MON3[d.getMonth()]
 const monDay=d=>MON3[d.getMonth()]+' '+d.getDate();
 /* this month's coins, newest first — the jar total is always their sum */
 const COINS=[
-  {p:'The scroll one',amt:5, when:'Today · 9:12pm',    fresh:true},
-  {p:'The loud one',  amt:10,when:'Yesterday · 11:40pm',fresh:true},
+  {p:'The scroll one',amt:5, when:'Today · 9:12pm'},
+  {p:'The loud one',  amt:10,when:'Yesterday · 11:40pm'},
   {p:'The scroll one',amt:5, when:dayMon(daysAgo(3))+' · 10:05pm'},
   {p:'The scroll one',amt:5, when:dayMon(daysAgo(7))+' · 9:48pm'},
   {p:'The loud one',  amt:10,when:dayMon(daysAgo(12))+' · 11:02pm'},
@@ -267,14 +267,20 @@ function renderJar(){
   $('coinList').innerHTML=COINS.length?COINS.map((c,i)=>`<div class="coinRow">
       <svg viewBox="0 0 40 40" width="22" height="22" style="flex:none"><use href="#coin"/></svg>
       <div style="flex:1;min-width:0"><b style="font-size:12.5px">${c.p}</b><div class="tiny">${c.when}</div></div>
-      ${c.fresh?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="refundCoin(${i})">Take back</span>`:''}
+      ${undoable(c)?`<span class="chip" style="padding:6px 10px;font-size:11px" onclick="undoCoin(${c.at})">Undo</span>`:''}
       <span class="display num" style="font-size:15px;color:var(--gold-text);min-width:30px;text-align:right">$${c.amt}</span>
     </div>`).join(''):`<div class="tiny" style="padding:10px 0">${S.stakes?'No coins yet this month.':'No coins yet. Opening a shielded app is free for your first days.'}</div>`;
   renderD1();
 }
-function refundCoin(i){
-  const c=COINS.splice(i,1)[0]; renderJar();
-  toast('Taken back. $'+c.amt+' is out of your jar, no questions asked.');
+/* a mis-tap can be undone for 2 minutes after the coin drops, like unsending an email. After that the coin is
+   part of the jar: no money moves until the 1st anyway, so there's nothing to refund (L, 2026-10-21). */
+const UNDO_MS=2*60e3;
+const undoable=c=>c.at&&Date.now()-c.at<UNDO_MS;
+function undoCoin(at){
+  const i=COINS.findIndex(c=>c.at===at); if(i<0||!undoable(COINS[i])) return;
+  COINS.splice(i,1); renderJar();
+  if($('ov-window').classList.contains('on')){ clearInterval(winT); closeOv('ov-window'); go('home'); }
+  toast("Undone. That one didn't count, and your shield is back on.");
 }
 function renderCharities(){
   if($('charitySpot')) renderSpot();
@@ -607,7 +613,7 @@ function renderReal(){
       <button class="btn mint" onclick="realGo(3)">Next</button>`;
   } else if(realStep===3){ K.textContent='SEAL THE DEAL';
     B.innerHTML=`<div class="display" style="font-size:19px;margin-bottom:12px">Your jar runs on your word</div>
-      <div class="mandate"><b>No card to add.</b> Coins add up in the app, up to your <b>$${S.cap} cap</b>. On the 1st you give them to ${ch} yourself, in one tap. We remind you once, and nobody chases you. Any coin can be taken back within 48 hours, no questions asked.<br><br>
+      <div class="mandate"><b>No card to add.</b> Coins add up in the app, up to your <b>$${S.cap} cap</b>. On the 1st you give them to ${ch} yourself, in one tap. We remind you once, and nobody chases you. Tapped by mistake? A coin can be undone for 2 minutes after it drops.<br><br>
         Ending a deal is always free, with 24 hours' notice. Switching off Screen Time access or deleting the app in the middle of a deal is different: we'll let you know and give you an hour to put things back. After that, one normal coin (<b>$${realPrice}</b>) drops in your jar.<br><br>
         Coins are for adults: by agreeing, you confirm you're 18 or over.</div>
       <div class="agree${realAgree?' on':''}" onclick="realAgree=!realAgree;renderReal()"><span class="box">${realAgree?'✓':''}</span><span>I've read this and I agree.</span></div>
@@ -735,7 +741,7 @@ function showOverride(){
   $('ovrCost').style.display = S.stakes ? '' : 'none'; $('ovrPrice').textContent='$'+price;
   $('ovrPay').textContent = S.stakes ? 'Drop a coin & open' : 'Open for 15 minutes';
   $('ovrPay').className = 'btn '+(S.stakes?'gold':'mint');
-  $('ovrNote').textContent = S.stakes ? 'can be taken back for 48h, no questions' : 'no card, no coin, nothing to undo';
+  $('ovrNote').textContent = S.stakes ? 'tapped by mistake? you can undo it for 2 minutes' : 'no card, no coin, nothing to undo';
   backCoinLine(); renderPeekRow();
   $('ovrRise').hidden=!(S.stakes&&d.rise);
   if(d.rise) $('ovrRise').textContent=price>d.price?`Rising price: your $${d.price}, plus a bit for each opening this week, never more than $${d.price*2}. Back to $${d.price} on Monday.`
@@ -760,20 +766,21 @@ function payOverride(){
     f.remove();
     svg.classList.remove('squash');void svg.getBoundingClientRect();svg.classList.add('squash');
     stars(box,5,false);
-    COINS.unshift({p:d.n,amt:price,when:'Just now',fresh:true}); renderJar();
+    const at=Date.now(); COINS.unshift({p:d.n,amt:price,when:'Just now',at}); renderJar(); setTimeout(renderJar,UNDO_MS+100);
     jarMood(svg,'thanks',1600);
-    openWindow(price);
+    openWindow(price,0,'',at);
   };
 }
 /* the unlock window: with a coin once it's real, without one in the first days */
-let winKind='';
-function openWindow(coin,peekMin,kind){
+let winKind='', winCoinAt=0;
+function openWindow(coin,peekMin,kind,coinAt){
   winKind=kind||'';
+  const u=$('winUndo'); u.hidden=!coinAt; winCoinAt=coinAt; clearTimeout(u._t); if(coinAt) u._t=setTimeout(()=>u.hidden=true,UNDO_MS);
   $('winCoin').style.display = coin ? '' : 'none';
   $('winTitle').textContent = winKind==='last' ? 'Your last scroll.' : peekMin ? 'Your free peek.' : coin ? 'Coin dropped. Enjoy it.' : "You're in. Enjoy it.";
   $('winSub').innerHTML = winKind==='last' ? 'On purpose this time. Your shield goes on when it ends.'
     : peekMin ? `No coin, and today still counts as kept. The shield comes back in ${peekMin} minutes.`
-    : coin ? `Your $${coin} is on its way to <span class="charityName">${charity().n}</span>.`
+    : coin ? `Your $${coin} is in your jar for <span class="charityName">${charity().n}</span>.`
     : "No coin while you're getting started. The shield comes back when the time is up.";
   $('ov-window').classList.add('on');
   const mins=peekMin||15;
